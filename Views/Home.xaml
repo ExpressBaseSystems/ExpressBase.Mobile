@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Home">
     <NavigationPage.TitleView>
-        <Label Text="Applications" />
+        <Label Text="Choose Applications" TextColor="White" FontSize="Caption"/>
     </NavigationPage.TitleView>
     <ContentPage.Content>
         <StackLayout>
@@ -28,10 +28,10 @@
                                     <Label Grid.Column="1"
                            Text="{Binding AppName}"
                            FontAttributes="Bold" />
-                                    <CheckBox 
+                                    <!--<CheckBox 
                                CheckedChanged="OnCheckBoxCheckedChanged"
                                Grid.Column="2"
-                               HorizontalOptions="End"/>
+                               HorizontalOptions="End"/>-->
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>

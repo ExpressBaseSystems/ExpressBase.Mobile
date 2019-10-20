@@ -1,5 +1,5 @@
 ﻿using ExpressBase.Mobile.Common.Objects;
-using ExpressBase.Mobile.CoreStructures;
+using ExpressBase.Mobile.Common.Structures;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Models;
@@ -81,10 +81,7 @@ namespace ExpressBase.Mobile.Views
             EbObjectWrapper wraper = this.GetObjectByRef(item.Refid);
             try
             {
-                if(wraper.EbObjectType == (int)EbObjectTypes.WebForm)
-                {
-                    Application.Current.MainPage = new NavigationPage(new FormRender(wraper));
-                }
+                Application.Current.MainPage = new RenderMaster(wraper);
             }
             catch (Exception ex)
             {

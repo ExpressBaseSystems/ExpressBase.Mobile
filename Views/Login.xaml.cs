@@ -11,7 +11,6 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
 using ExpressBase.Mobile.Services;
-
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
@@ -20,6 +19,9 @@ namespace ExpressBase.Mobile.Views
         public Login()
         {
             InitializeComponent();
+            string url = Settings.RootUrl + "images/logo/" + Store.GetValue(Constants.SID) + ".jpg";
+            this.Logo.Source = ImageSource.FromUri(new Uri(url));
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         public Login(string username)

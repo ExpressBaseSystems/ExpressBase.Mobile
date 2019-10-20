@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Boarding_Sid : ContentPage
     {
+        public bool Running { set; get; }
+
         public Boarding_Sid()
         {
             InitializeComponent();

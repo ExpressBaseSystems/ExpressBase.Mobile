@@ -16,4 +16,10 @@
     <ProjectReference Include="..\ExpressBase.Mobile.Common\ExpressBase.Mobile.Common.csproj" />
     <ProjectReference Include="..\ExpressBase.Mobile.Objects\ExpressBase.Mobile.Objects.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Views\Shared\SideBar.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

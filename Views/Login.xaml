@@ -7,11 +7,18 @@
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Login">
     <ContentPage.Content>
-        <StackLayout Margin="20" VerticalOptions="Center">
-            <Label Text="Username" />
-            <local:TextBox x:Name="UserName" Text="{Binding UserName}"/>
-            <Label Text="Password" />
-            <local:TextBox x:Name="PassWord" />
+        <StackLayout Margin="20" VerticalOptions="CenterAndExpand">
+            <StackLayout>
+                <Image x:Name="Logo" Aspect="AspectFill"></Image>
+            </StackLayout>
+            <StackLayout Margin="0,5,0,5">
+                <Label Text="Username" />
+                <local:TextBox x:Name="UserName" Text="{Binding UserName}"/>
+            </StackLayout>
+            <StackLayout Margin="0,5,0,20">
+                <Label Text="Password" />
+                <local:TextBox x:Name="PassWord" />
+            </StackLayout>
             <Button Text="Login" 
                     BackgroundColor="#508bf9"
                     TextColor="White"

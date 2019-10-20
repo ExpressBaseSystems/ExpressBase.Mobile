@@ -8,16 +8,10 @@
              x:Class="ExpressBase.Mobile.Views.Boarding_Sid">
     <ContentPage.Content>
         <StackLayout>
-            <StackLayout Orientation="Horizontal" VerticalOptions="Start">
-                <!-- top controls -->
-            </StackLayout>
             <StackLayout VerticalOptions="CenterAndExpand" Margin="20">
                 <Label Text="Solution Url" VerticalOptions="Center" FontSize="16"/>
-                <local:TextBox x:Name="Sid" 
-                       VerticalOptions="Center"
-                       />
+                <local:TextBox x:Name="Sid" VerticalOptions="Center"/>
             </StackLayout>
-
             <StackLayout Orientation="Horizontal" VerticalOptions="End">
                 <Button Text="Next"
                 VerticalOptions="EndAndExpand"

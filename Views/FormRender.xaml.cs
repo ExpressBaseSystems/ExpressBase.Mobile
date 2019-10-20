@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.CoreStructures;
-using ExpressBase.Mobile.CustomControls;
+﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Objects;
 using ExpressBase.Mobile.Services;
@@ -27,7 +26,7 @@ namespace ExpressBase.Mobile.Views
                 string json_rgexed = EbSerializers.JsonToNETSTD(o_wraper.Json);
                 this.WebForm = EbSerializers.Json_Deserialize<EbWebForm>(json_rgexed);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -37,8 +36,17 @@ namespace ExpressBase.Mobile.Views
         void BuildUi()
         {
             this.Title = this.WebForm.DisplayName;
+            
+            StackLayout OuterStack = new StackLayout
+            {
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand
+            };
 
-            StackLayout stack = new StackLayout { Orientation = StackOrientation.Vertical };
+            StackLayout ContentStackTop = new StackLayout
+            {
+                VerticalOptions = LayoutOptions.StartAndExpand
+            };
 
             foreach (var ctrl in this.WebForm.Controls)
             {
@@ -47,10 +55,36 @@ namespace ExpressBase.Mobile.Views
                     var tempstack = new StackLayout { Margin = 10 };
                     tempstack.Children.Add(new Label { Text = ctrl.Label });
                     tempstack.Children.Add(new TextBox());
-                    stack.Children.Add(tempstack);
+                    ContentStackTop.Children.Add(tempstack);
                 }
             }
-            this.Content = stack;
+
+            StackLayout BottomStack = new StackLayout
+            {
+                VerticalOptions = LayoutOptions.End
+            };
+
+            Button btn = new Button
+            {
+                Text = "Save",
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.EndAndExpand,
+                BackgroundColor = Color.FromHex("#508bf9"),
+                TextColor = Color.White
+            };
+
+            btn.Clicked += OnSaveClicked;
+            BottomStack.Children.Add(btn);
+
+            OuterStack.Children.Add(ContentStackTop);
+            OuterStack.Children.Add(BottomStack);
+
+            this.Content = OuterStack;
+        }
+
+        public void OnSaveClicked(object sender, EventArgs e)
+        {
+
         }
     }
 }
