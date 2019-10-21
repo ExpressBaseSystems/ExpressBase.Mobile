@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using ExpressBase.Mobile.Views.Shared;
 
 namespace ExpressBase.Mobile.Views
 {
@@ -78,7 +79,7 @@ namespace ExpressBase.Mobile.Views
         void OnObjectSelected(ListView sender, EventArgs e)
         {
             ObjWrap item = (sender.SelectedItem as ObjWrap);
-            EbObjectWrapper wraper = this.GetObjectByRef(item.Refid);
+            EbObjectToMobResponse wraper = this.GetObjectByRef(item.Refid);
             try
             {
                 Application.Current.MainPage = new RenderMaster(wraper);
@@ -89,9 +90,9 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        private EbObjectWrapper GetObjectByRef(string refid)
+        private EbObjectToMobResponse GetObjectByRef(string refid)
         {
-            EbObjectWrapper wraper = null;
+            EbObjectToMobResponse wraper = new EbObjectToMobResponse();
             HttpClient client = new HttpClient();
             string uri = Settings.RootUrl + string.Format("api/object_by_ref?refid={0}", refid);
 
@@ -105,7 +106,7 @@ namespace ExpressBase.Mobile.Views
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = response.Content.ReadAsStringAsync();
-                    wraper = JsonConvert.DeserializeObject<EbObjectWrapper>(responseContent.Result);
+                    wraper = JsonConvert.DeserializeObject<EbObjectToMobResponse>(responseContent.Result);
                 }
             }
             catch (Exception ex)

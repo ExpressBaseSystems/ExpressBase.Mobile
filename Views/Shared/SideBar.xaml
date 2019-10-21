@@ -4,19 +4,33 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+             xmlns:local="clr-namespace:ExpressBase.Mobile.Views"
              x:Class="ExpressBase.Mobile.Views.Shared.SideBar"
              Title="SideBar">
     <ContentPage.Content>
         <StackLayout>
-            <StackLayout VerticalOptions="End">
-                <ListView>
-                    <ListView.ItemsSource>
-                        <x:Array Type="{x:Type x:String}">
-                            <x:String>Logout</x:String>
-                        </x:Array>
-                    </ListView.ItemsSource>
-                </ListView>
-            </StackLayout>
+            <ListView x:Name="listView" x:FieldModifier="public">
+                <ListView.ItemsSource>
+                    <x:Array Type="{x:Type local:MasterPageItem}">
+                        <local:MasterPageItem Title="Logout" />
+                        <local:MasterPageItem Title="Change Application" TargetType="{x:Type local:Home}" />
+                    </x:Array>
+                </ListView.ItemsSource>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <!--<Image Source="{Binding IconSource}" />-->
+                                <Label Grid.Column="1" Text="{Binding Title}" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

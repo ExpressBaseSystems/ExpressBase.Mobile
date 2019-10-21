@@ -8,27 +8,18 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views
 {
-    class RenderMaster : MasterDetailPage
+    class RootMaster : MasterDetailPage
     {
         SideBar Sidebar;
 
-        public RenderMaster(EbObjectToMobResponse wraper)
+        public RootMaster(Type pageType)
         {
             Sidebar = new SideBar();
             Master = Sidebar;
 
             Sidebar.listView.ItemSelected += OnItemSelected;
 
-            EbObjectWrapper obj_wrapr = wraper.ObjectWraper;
-
-            if (obj_wrapr.EbObjectType == (int)EbObjectTypes.WebForm)
-            {
-                Detail = new NavigationPage(new FormRender(obj_wrapr));
-            }
-            else if(obj_wrapr.EbObjectType == (int)EbObjectTypes.Report)
-            {
-                Detail = new NavigationPage(new ReportRender());
-            }
+            Detail = new NavigationPage((Page)Activator.CreateInstance(pageType));
         }
 
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)

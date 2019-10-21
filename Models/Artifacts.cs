@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Common.Data;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -79,5 +80,15 @@ namespace ExpressBase.Mobile.Models
         public string Apps { get; set; }
 
         public string DisplayName { get; set; }
+    }
+
+
+    public class EbObjectToMobResponse
+    {
+        public EbObjectWrapper ObjectWraper { set; get; }
+
+        public byte[] ReportResult { get; set; }
+
+        public EbDataSet TableResult { get; set; }
     }
 }

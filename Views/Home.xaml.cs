@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile.Views
         void AppSelectFinish(object sender, EventArgs e)
         {
             Store.SetValue(Constants.APPID, this.SelectedAppid.ToString());
-            Application.Current.MainPage = new NavigationPage(new ObjectsRenderer());
+            Application.Current.MainPage = new RootMaster(typeof(ObjectsRenderer));
         }
     }
 }

@@ -28,4 +28,20 @@ namespace ExpressBase.Mobile.CustomControls
             });
         }
     }
+
+    public class CustomDatePicker : DatePicker
+    {
+        public CustomDatePicker()
+        {
+
+        }
+    }
+
+    public class CustomSelect : Picker
+    {
+        public CustomSelect()
+        {
+
+        }
+    }
 }

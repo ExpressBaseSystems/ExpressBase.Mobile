@@ -38,7 +38,7 @@ namespace ExpressBase.Mobile
                         ApiAuthResponse authresponse = Auth.TryAuthenticate(username, password);
                         if (authresponse.IsValid)
                         {
-                            MainPage = new ObjectsRenderer();
+                            MainPage = new RootMaster(typeof(ObjectsRenderer));
                         }
                         else
                         {
@@ -52,7 +52,7 @@ namespace ExpressBase.Mobile
                         if (apid == null)
                             MainPage = new Home();
                         else
-                            MainPage = new ObjectsRenderer();
+                            MainPage = new RootMaster(typeof(ObjectsRenderer));
                     }
                 }
                 else

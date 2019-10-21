@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.CustomControls;
+﻿using ExpressBase.Mobile.Common.Objects;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Objects;
 using ExpressBase.Mobile.Services;
@@ -36,7 +37,7 @@ namespace ExpressBase.Mobile.Views
         void BuildUi()
         {
             this.Title = this.WebForm.DisplayName;
-            
+
             StackLayout OuterStack = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
@@ -50,13 +51,7 @@ namespace ExpressBase.Mobile.Views
 
             foreach (var ctrl in this.WebForm.Controls)
             {
-                if (ctrl is EbTextBox)
-                {
-                    var tempstack = new StackLayout { Margin = 10 };
-                    tempstack.Children.Add(new Label { Text = ctrl.Label });
-                    tempstack.Children.Add(new TextBox());
-                    ContentStackTop.Children.Add(tempstack);
-                }
+                this.EbCtrlToXamCtrl(ctrl, ContentStackTop);
             }
 
             StackLayout BottomStack = new StackLayout
@@ -85,6 +80,62 @@ namespace ExpressBase.Mobile.Views
         public void OnSaveClicked(object sender, EventArgs e)
         {
 
+        }
+
+        private void PushFromTableLayout(EbTableLayout TL, StackLayout ContentStackTop)
+        {
+            foreach (EbTableTd Td in TL.Controls)
+            {
+                foreach (var ctrl in Td.Controls)
+                {
+                    this.EbCtrlToXamCtrl(ctrl, ContentStackTop);
+                }
+            }
+        }
+
+        private void EbCtrlToXamCtrl(EbControl ctrl, StackLayout ContentStackTop)
+        {
+            if (ctrl is EbTextBox)
+            {
+                var tempstack = new StackLayout { Margin = 10 };
+                tempstack.Children.Add(new Label { Text = ctrl.Label });
+                tempstack.Children.Add(new TextBox());
+                ContentStackTop.Children.Add(tempstack);
+            }
+            else if (ctrl is EbNumeric)
+            {
+                var tempstack = new StackLayout { Margin = 10 };
+                tempstack.Children.Add(new Label { Text = ctrl.Label });
+                tempstack.Children.Add(new TextBox());
+                ContentStackTop.Children.Add(tempstack);
+            }
+            else if (ctrl is EbTableLayout)
+            {
+                this.PushFromTableLayout((ctrl as EbTableLayout), ContentStackTop);
+            }
+            else if(ctrl is EbDate)
+            {
+                var tempstack = new StackLayout { Margin = 10 };
+                tempstack.Children.Add(new Label { Text = ctrl.Label });
+                tempstack.Children.Add(new CustomDatePicker
+                {
+                    Date = DateTime.Now
+                });
+
+                ContentStackTop.Children.Add(tempstack);
+            }
+            else if(ctrl is EbSimpleSelect)
+            {
+                var tempstack = new StackLayout { Margin = 10 };
+                tempstack.Children.Add(new Label { Text = ctrl.Label });
+                var picker = new CustomSelect { Title = "-select-", TitleColor = Color.Red };
+                picker.ItemsSource = (ctrl as EbSimpleSelect).Options;
+                picker.SetBinding(Picker.ItemsSourceProperty, "EbSimpleSelectOption");
+                picker.ItemDisplayBinding = new Binding("Name");
+                tempstack.Children.Add(picker);
+
+                ContentStackTop.Children.Add(tempstack);
+            }
         }
     }
 }
