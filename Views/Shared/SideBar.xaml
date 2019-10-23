@@ -12,8 +12,9 @@
             <ListView x:Name="listView" x:FieldModifier="public">
                 <ListView.ItemsSource>
                     <x:Array Type="{x:Type local:MasterPageItem}">
-                        <local:MasterPageItem Title="Logout" />
-                        <local:MasterPageItem Title="Change Application" TargetType="{x:Type local:Home}" />
+                        <local:MasterPageItem LinkType="app_switch" Title="Change Application" TargetType="{x:Type local:Home}"/>
+                        <local:MasterPageItem LinkType="sln_switch" Title="Change Solution" TargetType="{x:Type local:Boarding_Sid}" />
+                        <local:MasterPageItem LinkType="logout" Title="Logout" TargetType="{x:Type local:Login}"/>
                     </x:Array>
                 </ListView.ItemsSource>
                 <ListView.ItemTemplate>

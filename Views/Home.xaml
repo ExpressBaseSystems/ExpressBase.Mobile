@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Home">
     <NavigationPage.TitleView>
-        <Label Text="Choose Applications" TextColor="White" FontSize="Caption"/>
+        <Label Text="Choose Application" TextColor="White" FontSize="Subtitle"/>
     </NavigationPage.TitleView>
     <ContentPage.Content>
         <StackLayout>

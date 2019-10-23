@@ -19,6 +19,9 @@ namespace ExpressBase.Mobile.Views
         public IList<AppDataToMob> Applications { get; private set; }
 
         public int SelectedAppid { get; set; }
+
+        public string SelectedAppName { get; set; }
+
         public Home()
         {
             InitializeComponent();
@@ -65,11 +68,13 @@ namespace ExpressBase.Mobile.Views
         void OnListViewItemSelected(ListView sender, EventArgs e)
         {
             this.SelectedAppid = (sender.SelectedItem as AppDataToMob).AppId;
+            this.SelectedAppName = (sender.SelectedItem as AppDataToMob).AppName;
         }
 
         void AppSelectFinish(object sender, EventArgs e)
         {
             Store.SetValue(Constants.APPID, this.SelectedAppid.ToString());
+            Store.SetValue(Constants.APPNAME, this.SelectedAppName.ToString());
             Application.Current.MainPage = new RootMaster(typeof(ObjectsRenderer));
         }
     }

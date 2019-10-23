@@ -11,5 +11,7 @@ namespace ExpressBase.Mobile.Views
         public string IconSource { get; set; }
 
         public Type TargetType { get; set; }
+
+        public string LinkType { set; get; }
     }
 }

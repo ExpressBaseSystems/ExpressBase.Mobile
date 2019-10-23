@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.ObjectsRenderer"
-             Title="Home">
+             Title="{Binding AppName}">
     <ContentPage.Content>
         <StackLayout BackgroundColor="#f2f2f2">
             <ListView HasUnevenRows="True" ItemsSource="{Binding ObjectList}" Margin="5" ItemSelected="OnObjectSelected">

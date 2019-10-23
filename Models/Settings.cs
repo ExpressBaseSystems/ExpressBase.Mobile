@@ -28,6 +28,8 @@ namespace ExpressBase.Mobile.Models
 
         public const string APPID = "appid";
 
+        public const string APPNAME = "appname";
+
         public const string USERNAME = "username";
 
         public const string PASSWORD = "password";

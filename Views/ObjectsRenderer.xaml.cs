@@ -29,6 +29,14 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
+        public string AppName
+        {
+            get
+            {
+                return Store.GetValue(Constants.APPNAME);
+            }
+        }
+
         public int LocationId
         {
             get
@@ -42,8 +50,6 @@ namespace ExpressBase.Mobile.Views
         public ObjectsRenderer()
         {
             InitializeComponent();
-
-            //this.ToolbarItems.AddToolBarItems(new CustomToolBar().ToolBar);
 
             this.ObjectList = new List<ObjWrap>();
 
@@ -114,6 +120,20 @@ namespace ExpressBase.Mobile.Views
                 Console.WriteLine(ex);
             }
             return wraper;
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            Device.BeginInvokeOnMainThread(async () => {
+                bool status = await this.DisplayAlert("Alert!", "Do you really want to exit?", "Yes", "No");
+                if (status)
+                {
+                    INativeHelper nativeHelper = null;
+                    nativeHelper = DependencyService.Get<INativeHelper>();
+                    nativeHelper.CloseApp();
+                }
+            });
+            return true;
         }
     }
 }

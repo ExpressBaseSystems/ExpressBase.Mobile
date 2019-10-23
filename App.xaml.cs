@@ -13,14 +13,8 @@ namespace ExpressBase.Mobile
     {
         public App()
         {
-            //Xamarin.Forms.Application.Current.On<Xamarin.Forms.PlatformConfiguration.Android>().UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize);
             InitializeComponent();
 
-            MainPage = new MainPage();
-        }
-
-        protected override void OnStart()
-        {
             string sid = Store.GetValue(Constants.SID);
             if (sid == null)
             {
@@ -60,6 +54,11 @@ namespace ExpressBase.Mobile
             }
         }
 
+        protected override void OnStart()
+        {
+            
+        }
+
         protected override void OnSleep()
         {
             // Handle when your app sleeps
@@ -69,7 +68,5 @@ namespace ExpressBase.Mobile
         {
             // Handle when your app resumes
         }
-
-
     }
 }
