@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace ExpressBase.Mobile.Services
@@ -23,13 +24,16 @@ namespace ExpressBase.Mobile.Services
         public static ApiAuthResponse TryAuthenticate(string username,string password)
         {
             HttpClient client = new HttpClient();
-            Uri uri = new Uri(Settings.RootUrl + "api/authenticate");
+            Uri uri = new Uri(Settings.RootUrl + "api/auth");
             ApiAuthResponse resp = null;
+
+            username = username.Trim();
+            password = password.Trim();
 
             var formContent = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "username", username.Trim() },
-                { "password", password.Trim() }
+                { "password", ToMD5Hash(string.Concat(password,username)) }
             });
 
             try
@@ -59,6 +63,21 @@ namespace ExpressBase.Mobile.Services
             Store.SetValue(Constants.DISPLAY_NAME, resp.DisplayName);
             Store.SetValue(Constants.USERNAME, username.Trim());
             Store.SetValue(Constants.PASSWORD, password.Trim());
+        }
+
+        public static string ToMD5Hash(string str)
+        {
+            var md5 = MD5.Create();
+
+            byte[] result = md5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(str));
+
+            StringBuilder strBuilder = new StringBuilder();
+            for (int i = 0; i < result.Length; i++)
+            {
+                strBuilder.Append(result[i].ToString("x2"));
+            }
+
+            return strBuilder.ToString();
         }
     }
 }

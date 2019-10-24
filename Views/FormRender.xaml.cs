@@ -20,9 +20,13 @@ namespace ExpressBase.Mobile.Views
     {
         public EbWebForm WebForm { set; get; }
 
+        public IList<Element> Elements { set; get; }
+
         public FormRender(EbObjectWrapper o_wraper)
         {
             InitializeComponent();
+            this.Elements = new List<Element>();
+
             try
             {
                 string json_rgexed = EbSerializers.JsonToNETSTD(o_wraper.Json);
@@ -69,11 +73,6 @@ namespace ExpressBase.Mobile.Views
             this.Content = OuterGrid;
         }
 
-        public void OnSaveClicked(object sender, EventArgs e)
-        {
-
-        }
-
         private void PushFromTableLayout(EbTableLayout TL, StackLayout ContentStackTop)
         {
             foreach (EbTableTd Td in TL.Controls)
@@ -85,21 +84,27 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        private void EbCtrlToXamCtrl(EbControl ctrl, StackLayout ContentStackTop)
+        private void EbCtrlToXamCtrl(EbControl ctrl, StackLayout ContentStackTop, int Margin = 10)
         {
+            var tempstack = new StackLayout { Margin = Margin };
+            tempstack.Children.Add(new Label { Text = ctrl.Label });
+
             if (ctrl is EbTextBox)
             {
-                var tempstack = new StackLayout { Margin = 10 };
-                tempstack.Children.Add(new Label { Text = ctrl.Label });
-                tempstack.Children.Add(new TextBox());
-                ContentStackTop.Children.Add(tempstack);
+                var text = new TextBox { ClassId = ctrl.Name, DbType = ctrl.EbDbType };
+                tempstack.Children.Add(text);
+                this.Elements.Add(text);
             }
             else if (ctrl is EbNumeric)
             {
-                var tempstack = new StackLayout { Margin = 10 };
-                tempstack.Children.Add(new Label { Text = ctrl.Label });
-                tempstack.Children.Add(new TextBox());
-                ContentStackTop.Children.Add(tempstack);
+                var numeric = new TextBox
+                {
+                    ClassId = ctrl.Name,
+                    Keyboard = Keyboard.Numeric,
+                    DbType = ctrl.EbDbType
+                };
+                tempstack.Children.Add(numeric);
+                this.Elements.Add(numeric);
             }
             else if (ctrl is EbTableLayout)
             {
@@ -107,31 +112,31 @@ namespace ExpressBase.Mobile.Views
             }
             else if (ctrl is EbDate)
             {
-                var tempstack = new StackLayout { Margin = 10 };
-                tempstack.Children.Add(new Label { Text = ctrl.Label });
-                tempstack.Children.Add(new CustomDatePicker
+                var date = new CustomDatePicker
                 {
-                    Date = DateTime.Now
-                });
-
-                ContentStackTop.Children.Add(tempstack);
+                    Date = DateTime.Now,
+                    ClassId = ctrl.Name,
+                    DbType = ctrl.EbDbType
+                };
+                tempstack.Children.Add(date);
+                this.Elements.Add(date);
             }
             else if (ctrl is EbSimpleSelect)
             {
-                var tempstack = new StackLayout { Margin = 10 };
-                tempstack.Children.Add(new Label { Text = ctrl.Label });
-                var picker = new CustomSelect { Title = "-select-", TitleColor = Color.Red };
+                var picker = new CustomSelect
+                {
+                    Title = "-select-",
+                    TitleColor = Color.Red,
+                    ClassId = ctrl.Name,
+                    DbType = ctrl.EbDbType
+                };
                 picker.ItemsSource = (ctrl as EbSimpleSelect).Options;
-                picker.ItemDisplayBinding = new Binding("Name");
+                picker.ItemDisplayBinding = new Binding("DisplayName");
                 tempstack.Children.Add(picker);
-                ContentStackTop.Children.Add(tempstack);
+                this.Elements.Add(picker);
             }
-
             else if (ctrl is EbFileUploader)
             {
-                var tempstack = new StackLayout { Margin = 10 };
-                tempstack.Children.Add(new Label { Text = ctrl.Label });
-
                 Grid _grid = new Grid { BackgroundColor = Color.FromHex("#f2f2f2") };
 
                 _grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
@@ -142,8 +147,13 @@ namespace ExpressBase.Mobile.Views
 
                 this.ImplementFUP(_grid);
                 tempstack.Children.Add(_grid);
-                ContentStackTop.Children.Add(tempstack);
             }
+            else if (ctrl is EbGroupBox)
+            {
+                tempstack.Children.Add(this.ImplementGroupBox((ctrl as EbGroupBox)));
+            }
+
+            ContentStackTop.Children.Add(tempstack);
         }
 
         void ImplementFUP(Grid grid)
@@ -199,10 +209,35 @@ namespace ExpressBase.Mobile.Views
             };
         }
 
+        StackLayout ImplementGroupBox(EbGroupBox Gbox)
+        {
+            StackLayout OuterStack = new StackLayout();
+            var GroupBox = new Frame
+            {
+                Padding = new Thickness(10, 5, 10, 5),
+                BackgroundColor = Color.FromHex("#dcdcdc"),
+                CornerRadius = 6
+            };
+
+            var stack = new StackLayout();
+            foreach (EbControl ctrl in Gbox.Controls)
+            {
+                this.EbCtrlToXamCtrl(ctrl, stack, 0);
+            }
+            GroupBox.Content = stack;
+            OuterStack.Children.Add(GroupBox);
+            return OuterStack;
+        }
+
         protected override bool OnBackButtonPressed()
         {
-            
-            return true;
+
+            return false;
+        }
+
+        public void OnSaveClicked(object sender, EventArgs e)
+        {
+            FormService Form = new FormService(this.Elements, this.WebForm);
         }
     }
 }
