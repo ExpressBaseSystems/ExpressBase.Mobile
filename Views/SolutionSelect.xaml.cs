@@ -11,13 +11,15 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Boarding_Sid : ContentPage
+    public partial class SolutionSelect : ContentPage
     {
         public bool Running { set; get; }
 
-        public Boarding_Sid()
+        public SolutionSelect()
         {
             InitializeComponent();
+
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         void StoreSidVal(object sender, EventArgs e)
@@ -25,7 +27,7 @@ namespace ExpressBase.Mobile.Views
             if (!string.IsNullOrEmpty(this.Sid.Text))
             {
                 Store.SetValue(Constants.SID, this.Sid.Text.Trim());
-                Application.Current.MainPage = new NavigationPage(new Login());
+                Application.Current.MainPage.Navigation.PushAsync(new Login());
             }
         }
     }

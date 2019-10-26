@@ -19,9 +19,12 @@ namespace ExpressBase.Mobile.Views
         public Login()
         {
             InitializeComponent();
+
+            NavigationPage.SetHasNavigationBar(this, true);
+            NavigationPage.SetHasBackButton(this, true);
+
             string url = Settings.RootUrl + "images/logo/" + Store.GetValue(Constants.SID) + ".jpg";
             this.Logo.Source = ImageSource.FromUri(new Uri(url));
-            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         public Login(string username)
@@ -42,7 +45,7 @@ namespace ExpressBase.Mobile.Views
             if (response.IsValid)
             {
                 Auth.UpdateStore(response, username, password);
-                Application.Current.MainPage = new NavigationPage(new Home());
+                Application.Current.MainPage.Navigation.PushAsync(new AppSelect());
             }
         }
     }

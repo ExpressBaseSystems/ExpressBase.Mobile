@@ -14,11 +14,12 @@ namespace ExpressBase.Mobile
         public App()
         {
             InitializeComponent();
+            MainPage = new NavigationPage();
 
             string sid = Store.GetValue(Constants.SID);
             if (sid == null)
             {
-                MainPage = new Boarding_Sid();
+                MainPage.Navigation.PushAsync(new SolutionSelect());
             }
             else
             {
@@ -36,7 +37,7 @@ namespace ExpressBase.Mobile
                         }
                         else
                         {
-                            MainPage = new Login(username);
+                            MainPage.Navigation.PushAsync(new Login(username));
                         }
                     }
                     else
@@ -44,13 +45,13 @@ namespace ExpressBase.Mobile
                         string apid = Store.GetValue(Constants.APPID);
 
                         if (apid == null)
-                            MainPage = new Home();
+                            MainPage.Navigation.PushAsync(new AppSelect());
                         else
                             MainPage = new RootMaster(typeof(ObjectsRenderer));
                     }
                 }
                 else
-                    MainPage = new Login();
+                    MainPage.Navigation.PushAsync(new Login());
             }
         }
 

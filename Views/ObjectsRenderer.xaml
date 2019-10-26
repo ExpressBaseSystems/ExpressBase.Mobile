@@ -8,15 +8,20 @@
              Title="{Binding AppName}">
     <ContentPage.Content>
         <StackLayout BackgroundColor="#f2f2f2">
-            <ListView HasUnevenRows="True" ItemsSource="{Binding ObjectList}" Margin="5" ItemSelected="OnObjectSelected">
+            <ListView ItemsSource="{Binding ObjectList}" Margin="5" ItemTapped="OnObjectSelected">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Grid Margin="5">
+                            <Grid Padding="10">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
-                                <Label Text="{Binding DisplayName}" VerticalOptions="Center"/>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="1" Text="{Binding DisplayName}" VerticalOptions="Center"/>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>

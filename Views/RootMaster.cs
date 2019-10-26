@@ -17,10 +17,11 @@ namespace ExpressBase.Mobile.Views
         {
             Sidebar = new SideBar();
             Master = Sidebar;
+            Detail = new NavigationPage();
 
             Sidebar.listView.ItemSelected += OnItemSelected;
 
-            Detail = new NavigationPage((Page)Activator.CreateInstance(pageType));
+            Detail.Navigation.PushAsync((Page)Activator.CreateInstance(pageType));
         }
 
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)

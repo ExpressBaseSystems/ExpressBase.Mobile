@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Home">
+             x:Class="ExpressBase.Mobile.Views.AppSelect">
     <NavigationPage.TitleView>
         <Label Text="Choose Application" TextColor="White" FontSize="Subtitle"/>
     </NavigationPage.TitleView>
@@ -28,10 +28,6 @@
                                     <Label Grid.Column="1"
                            Text="{Binding AppName}"
                            FontAttributes="Bold" />
-                                    <!--<CheckBox 
-                               CheckedChanged="OnCheckBoxCheckedChanged"
-                               Grid.Column="2"
-                               HorizontalOptions="End"/>-->
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>

@@ -85,41 +85,21 @@ namespace ExpressBase.Mobile.Views
         void OnObjectSelected(ListView sender, EventArgs e)
         {
             ObjWrap item = (sender.SelectedItem as ObjWrap);
-            EbObjectToMobResponse wraper = this.GetObjectByRef(item.Refid);
             try
             {
-                Application.Current.MainPage = new RenderMaster(wraper);
+                if (item.EbObjectType == (int)EbObjectTypes.WebForm)
+                {
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(item.Refid));
+                }
+                else if (item.EbObjectType == (int)EbObjectTypes.Report)
+                {
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ReportRender());
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.StackTrace);
             }
-        }
-
-        private EbObjectToMobResponse GetObjectByRef(string refid)
-        {
-            EbObjectToMobResponse wraper = new EbObjectToMobResponse();
-            HttpClient client = new HttpClient();
-            string uri = Settings.RootUrl + string.Format("api/object_by_ref?refid={0}", refid);
-
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-            requestMessage.Headers.Add(Constants.BTOKEN, Store.GetValue(Constants.BTOKEN));
-            requestMessage.Headers.Add(Constants.RTOKEN, Store.GetValue(Constants.RTOKEN));
-
-            try
-            {
-                var response = client.SendAsync(requestMessage).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = response.Content.ReadAsStringAsync();
-                    wraper = JsonConvert.DeserializeObject<EbObjectToMobResponse>(responseContent.Result);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-            return wraper;
         }
 
         protected override bool OnBackButtonPressed()

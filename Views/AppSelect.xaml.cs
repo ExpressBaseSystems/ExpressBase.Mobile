@@ -14,7 +14,7 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Home : ContentPage
+    public partial class AppSelect : ContentPage
     {
         public IList<AppDataToMob> Applications { get; private set; }
 
@@ -22,9 +22,11 @@ namespace ExpressBase.Mobile.Views
 
         public string SelectedAppName { get; set; }
 
-        public Home()
+        public AppSelect()
         {
             InitializeComponent();
+
+            NavigationPage.SetHasBackButton(this, false);
         }
 
         protected override void OnAppearing()

@@ -19,6 +19,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\AppSelect.xaml.cs">
+      <DependentUpon>AppSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SolutionSelect.xaml.cs">
+      <DependentUpon>SolutionSelect.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Views\ReportRender.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

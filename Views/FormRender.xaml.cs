@@ -22,14 +22,14 @@ namespace ExpressBase.Mobile.Views
 
         public IList<Element> Elements { set; get; }
 
-        public FormRender(EbObjectWrapper o_wraper)
+        public FormRender(string RefId)
         {
             InitializeComponent();
             this.Elements = new List<Element>();
-
+            EbObjectToMobResponse Response = CommonServices.GetObjectByRef(RefId);
             try
             {
-                string json_rgexed = EbSerializers.JsonToNETSTD(o_wraper.Json);
+                string json_rgexed = EbSerializers.JsonToNETSTD(Response.ObjectWraper.Json);
                 this.WebForm = EbSerializers.Json_Deserialize<EbWebForm>(json_rgexed);
             }
             catch (Exception ex)
