@@ -8,4 +8,9 @@ namespace ExpressBase.Mobile.Models
     {
         void CloseApp();
     }
+
+    public interface IToast
+    {
+        void Show(string message);
+    }
 }

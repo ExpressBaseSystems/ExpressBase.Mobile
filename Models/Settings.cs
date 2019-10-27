@@ -7,9 +7,22 @@ namespace ExpressBase.Mobile.Models
 {
     public static class Settings
     {
-        public static string RootUrl { get
+        public static string RootUrl
+        {
+            get
             {
                 return "https://" + Store.GetValue(Constants.SID) + ".eb-test.xyz/";
+            }
+        }
+
+        public static int LocationId
+        {
+            get
+            {
+                return 1;
+            }
+            set
+            {
             }
         }
     }

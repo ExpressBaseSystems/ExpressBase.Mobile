@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Common.Data;
 using ExpressBase.Mobile.Common.Structures;
 using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Objects;
 using Newtonsoft.Json;
 using System;
@@ -17,6 +18,8 @@ namespace ExpressBase.Mobile.Services
         public WebformData WebFormData { set; get; }
 
         public EbWebForm WebForm { set; get; }
+
+        public bool Status { set; get; }
 
         public FormService(IList<Element> Elements, EbWebForm WebForm)
         {
@@ -37,35 +40,59 @@ namespace ExpressBase.Mobile.Services
             Table.Add(row);
             foreach (Element el in this.Controls)
             {
-                dynamic _value = null;
-                int _type = (int)EbDbTypes.String;
-
-                if(el is TextBox)
+                if (el is TextBox)
                 {
-                    _value = (el as TextBox).Text;
-                    _type = (int)(el as TextBox).DbType;
+                    row.Columns.Add(new SingleColumn
+                    {
+                        Name = el.ClassId,
+                        Type = (int)(el as TextBox).DbType,
+                        Value = (el as TextBox).Text
+                    });
                 }
                 else if (el is CustomDatePicker)
                 {
-                    _value = (el as CustomDatePicker).Date;
-                    _type = (int)(el as CustomDatePicker).DbType;
+                    row.Columns.Add(new SingleColumn
+                    {
+                        Name = el.ClassId,
+                        Type = (int)(el as CustomDatePicker).DbType,
+                        Value = (el as CustomDatePicker).Date.ToString("yyyy-MM-dd")
+                    });
                 }
                 else if (el is CustomSelect)
                 {
                     EbSimpleSelectOption opt = (el as CustomSelect).SelectedItem as EbSimpleSelectOption;
-                    _value = opt.Value;
-                    _type = (int)(el as CustomSelect).DbType;
-                }
 
-                row.Columns.Add(new SingleColumn
+                    row.Columns.Add(new SingleColumn
+                    {
+                        Name = el.ClassId,
+                        Type = (int)(el as CustomSelect).DbType,
+                        Value = (opt == null) ? null : opt.Value
+                    });
+                }
+                else if(el is FileInput)
                 {
-                    Name = el.ClassId,
-                    Type = _type,
-                    Value = _value
-                });
+
+                }
             }
+
             this.WebFormData.MultipleTables.Add(this.WebForm.TableName, Table);
             string json = JsonConvert.SerializeObject(this.WebFormData);
+
+            this.PushToCloud(json);
+        }
+
+        private void PushToCloud(string json)
+        {
+            WebFormSaveResponse resp = CommonServices.PushWebFormData(json, this.WebForm.RefId, Settings.LocationId, 0);
+
+            if (resp.RowAffected > 0)
+            {
+                this.Status = true;
+            }
+            else
+            {
+                this.Status = false;
+            }
         }
     }
 }

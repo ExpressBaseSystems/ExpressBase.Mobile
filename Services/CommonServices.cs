@@ -1,5 +1,8 @@
-﻿using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Common.Data;
+using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Objects;
 using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -12,28 +15,51 @@ namespace ExpressBase.Mobile.Services
 
         public static EbObjectToMobResponse GetObjectByRef(string refid)
         {
-            EbObjectToMobResponse wraper = new EbObjectToMobResponse();
-            HttpClient client = new HttpClient();
-            string uri = Settings.RootUrl + string.Format("api/object_by_ref?refid={0}", refid);
-
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-            requestMessage.Headers.Add(Constants.BTOKEN, Store.GetValue(Constants.BTOKEN));
-            requestMessage.Headers.Add(Constants.RTOKEN, Store.GetValue(Constants.RTOKEN));
-
+            EbObjectToMobResponse wraper = null;
             try
             {
-                var response = client.SendAsync(requestMessage).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = response.Content.ReadAsStringAsync();
-                    wraper = JsonConvert.DeserializeObject<EbObjectToMobResponse>(responseContent.Result);
-                }
+                RestClient client = new RestClient(Settings.RootUrl + "api/object_by_ref");
+                RestRequest request = new RestRequest(Method.GET);
+                request.AddHeader(Constants.BTOKEN, Store.GetValue(Constants.BTOKEN));
+                request.AddHeader(Constants.RTOKEN, Store.GetValue(Constants.RTOKEN));
+                request.AddParameter("refid", refid);
+                var resp = client.Execute(request);
+                wraper = JsonConvert.DeserializeObject<EbObjectToMobResponse>(resp.Content);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+                wraper = new EbObjectToMobResponse();
             }
             return wraper;
+        }
+
+        public static WebFormSaveResponse PushWebFormData(string Form, string RefId, int Locid, int RowId)
+        {
+            string uri = Settings.RootUrl + "api/webform_save";
+            WebFormSaveResponse Response = null;
+            try
+            {
+                RestClient client = new RestClient(uri);
+                RestRequest request = new RestRequest(Method.POST);
+
+                request.AddHeader(Constants.BTOKEN, Store.GetValue(Constants.BTOKEN));
+                request.AddHeader(Constants.RTOKEN, Store.GetValue(Constants.RTOKEN));
+
+                request.AddParameter("webform_data", Form);
+                request.AddParameter("refid", RefId);
+                request.AddParameter("locid", Locid);
+                request.AddParameter("rowid", RowId);
+
+                var resp = client.Execute(request);
+                Response =  JsonConvert.DeserializeObject<WebFormSaveResponse>(resp.Content);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                Response = new WebFormSaveResponse();
+            }
+            return Response;
         }
     }
 }

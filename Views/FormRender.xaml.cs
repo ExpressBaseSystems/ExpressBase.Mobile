@@ -116,7 +116,8 @@ namespace ExpressBase.Mobile.Views
                 {
                     Date = DateTime.Now,
                     ClassId = ctrl.Name,
-                    DbType = ctrl.EbDbType
+                    DbType = ctrl.EbDbType,
+                    Format = "yyyy-MM-dd"
                 };
                 tempstack.Children.Add(date);
                 this.Elements.Add(date);
@@ -137,16 +138,9 @@ namespace ExpressBase.Mobile.Views
             }
             else if (ctrl is EbFileUploader)
             {
-                Grid _grid = new Grid { BackgroundColor = Color.FromHex("#f2f2f2") };
-
-                _grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                _grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-
-                _grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) });
-                _grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) });
-
-                this.ImplementFUP(_grid);
-                tempstack.Children.Add(_grid);
+                FileInput uploader = new FileInput(ctrl, this);
+                tempstack.Children.Add(uploader.Html);
+                this.Elements.Add(uploader);
             }
             else if (ctrl is EbGroupBox)
             {
@@ -154,59 +148,6 @@ namespace ExpressBase.Mobile.Views
             }
 
             ContentStackTop.Children.Add(tempstack);
-        }
-
-        void ImplementFUP(Grid grid)
-        {
-            var FilesBtn = new Button() { Text = "Choose File" };
-            grid.Children.Add(FilesBtn, 0, 0);
-
-            var CameraBtn = new Button() { Text = "Take pic" };
-            grid.Children.Add(CameraBtn, 1, 0);
-
-            CameraBtn.Clicked += async (sender, e) =>
-            {
-                await CrossMedia.Current.Initialize();
-
-                if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
-                {
-                    await DisplayAlert("No Camera", ":( No camera available.", "OK");
-                    return;
-                }
-
-                var photo = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions()
-                {
-                    AllowCropping = true
-                });
-
-                if (photo != null)
-                {
-                    Image _img = new Image
-                    {
-                        Source = ImageSource.FromStream(() => { return photo.GetStream(); })
-                    };
-                    grid.Children.Add(_img);
-                    grid.Children.Add(_img, 0, 1);
-                    Grid.SetColumnSpan(_img, 2);
-                }
-            };
-
-            //file btn event
-            FilesBtn.Clicked += async (sender, e) =>
-            {
-                var photo = await CrossMedia.Current.PickPhotoAsync(new Plugin.Media.Abstractions.PickMediaOptions() { });
-
-                if (photo != null)
-                {
-                    Image _img = new Image
-                    {
-                        Source = ImageSource.FromStream(() => { return photo.GetStream(); })
-                    };
-                    grid.Children.Add(_img);
-                    grid.Children.Add(_img, 0, 1);
-                    Grid.SetColumnSpan(_img, 2);
-                }
-            };
         }
 
         StackLayout ImplementGroupBox(EbGroupBox Gbox)
@@ -238,6 +179,11 @@ namespace ExpressBase.Mobile.Views
         public void OnSaveClicked(object sender, EventArgs e)
         {
             FormService Form = new FormService(this.Elements, this.WebForm);
+            if (Form.Status)
+            {
+                DependencyService.Get<IToast>().Show("Data pushed successfully :)");
+                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+            }
         }
     }
 }
