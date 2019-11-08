@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using ExpressBase.Mobile.Constants;
 
 namespace ExpressBase.Mobile
 {
@@ -16,20 +17,20 @@ namespace ExpressBase.Mobile
             InitializeComponent();
             MainPage = new NavigationPage();
 
-            string sid = Store.GetValue(Constants.SID);
+            string sid = Store.GetValue(AppConst.SID);
             if (sid == null)
             {
                 MainPage.Navigation.PushAsync(new SolutionSelect());
             }
             else
             {
-                string rtoken = Store.GetValue(Constants.RTOKEN);
+                string rtoken = Store.GetValue(AppConst.RTOKEN);
                 if (rtoken != null)
                 {
                     if (Auth.IsTokenExpired(rtoken))
                     {
-                        string username = Store.GetValue(Constants.USERNAME);
-                        string password = Store.GetValue(Constants.PASSWORD);
+                        string username = Store.GetValue(AppConst.USERNAME);
+                        string password = Store.GetValue(AppConst.PASSWORD);
                         ApiAuthResponse authresponse = Auth.TryAuthenticate(username, password);
                         if (authresponse.IsValid)
                         {
@@ -42,7 +43,7 @@ namespace ExpressBase.Mobile
                     }
                     else
                     {
-                        string apid = Store.GetValue(Constants.APPID);
+                        string apid = Store.GetValue(AppConst.APPID);
 
                         if (apid == null)
                             MainPage.Navigation.PushAsync(new AppSelect());

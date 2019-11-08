@@ -1,5 +1,5 @@
-﻿using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Objects;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -56,8 +56,9 @@ namespace ExpressBase.Mobile.Services
         {
             return json_core
                 .Replace(RegexConstants.COR_LIB, RegexConstants.MS_LIB)
-                .Replace(RegexConstants.EB_COM,RegexConstants.EB_M_COM)
-                .Replace(RegexConstants.EB_OBJ,RegexConstants.EB_M_OBJ);
+                .Replace(RegexConstants.EB_COM_OBJ, RegexConstants.EB_MOB)
+                .Replace(RegexConstants.EB_OBJ, RegexConstants.EB_MOB)
+                .Replace(RegexConstants.EB_COM, RegexConstants.EB_MOB);
         }
     }
 }

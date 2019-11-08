@@ -1,6 +1,6 @@
-﻿using ExpressBase.Mobile.Common.Data;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Objects;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -20,8 +20,8 @@ namespace ExpressBase.Mobile.Services
             {
                 RestClient client = new RestClient(Settings.RootUrl + "api/object_by_ref");
                 RestRequest request = new RestRequest(Method.GET);
-                request.AddHeader(Constants.BTOKEN, Store.GetValue(Constants.BTOKEN));
-                request.AddHeader(Constants.RTOKEN, Store.GetValue(Constants.RTOKEN));
+                request.AddHeader(AppConst.BTOKEN, Store.GetValue(AppConst.BTOKEN));
+                request.AddHeader(AppConst.RTOKEN, Store.GetValue(AppConst.RTOKEN));
                 request.AddParameter("refid", refid);
                 var resp = client.Execute(request);
                 wraper = JsonConvert.DeserializeObject<EbObjectToMobResponse>(resp.Content);
@@ -43,8 +43,8 @@ namespace ExpressBase.Mobile.Services
                 RestClient client = new RestClient(uri);
                 RestRequest request = new RestRequest(Method.POST);
 
-                request.AddHeader(Constants.BTOKEN, Store.GetValue(Constants.BTOKEN));
-                request.AddHeader(Constants.RTOKEN, Store.GetValue(Constants.RTOKEN));
+                request.AddHeader(AppConst.BTOKEN, Store.GetValue(AppConst.BTOKEN));
+                request.AddHeader(AppConst.RTOKEN, Store.GetValue(AppConst.RTOKEN));
 
                 request.AddParameter("webform_data", Form);
                 request.AddParameter("refid", RefId);

@@ -1,8 +1,7 @@
-﻿using ExpressBase.Mobile.Common.Data;
-using ExpressBase.Mobile.Common.Structures;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Objects;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

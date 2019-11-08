@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -57,12 +58,12 @@ namespace ExpressBase.Mobile.Services
 
         public static void UpdateStore(ApiAuthResponse resp,string username,string password)
         {
-            Store.SetValue(Constants.BTOKEN, resp.BToken);
-            Store.SetValue(Constants.RTOKEN, resp.RToken);
-            Store.SetValue(Constants.USER_ID, resp.UserId.ToString());
-            Store.SetValue(Constants.DISPLAY_NAME, resp.DisplayName);
-            Store.SetValue(Constants.USERNAME, username.Trim());
-            Store.SetValue(Constants.PASSWORD, password.Trim());
+            Store.SetValue(AppConst.BTOKEN, resp.BToken);
+            Store.SetValue(AppConst.RTOKEN, resp.RToken);
+            Store.SetValue(AppConst.USER_ID, resp.UserId.ToString());
+            Store.SetValue(AppConst.DISPLAY_NAME, resp.DisplayName);
+            Store.SetValue(AppConst.USERNAME, username.Trim());
+            Store.SetValue(AppConst.PASSWORD, password.Trim());
         }
 
         public static string ToMD5Hash(string str)

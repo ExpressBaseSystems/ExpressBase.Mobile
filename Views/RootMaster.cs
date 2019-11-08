@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Common.Structures;
+﻿using ExpressBase.Mobile.Structures;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views.Shared;
@@ -29,21 +30,26 @@ namespace ExpressBase.Mobile.Views
             var item = e.SelectedItem as MasterPageItem;
             if (item.LinkType == "logout")
             {
-                Store.Remove(Constants.BTOKEN);
-                Store.Remove(Constants.RTOKEN);
+                Store.Remove(AppConst.BTOKEN);
+                Store.Remove(AppConst.RTOKEN);
+                Store.Remove(AppConst.OBJ_COLLECTION);
+                Store.Remove(AppConst.APP_COLLECTION);
             }
             else if (item.LinkType == "app_switch")
             {
-                Store.Remove(Constants.APPID);
+                Store.Remove(AppConst.APPID);
+                Store.Remove(AppConst.OBJ_COLLECTION);
             }
             else if (item.LinkType == "sln_switch")
             {
-                Store.Remove(Constants.SID);
-                Store.Remove(Constants.APPID);
-                Store.Remove(Constants.USERNAME);
-                Store.Remove(Constants.PASSWORD);
-                Store.Remove(Constants.BTOKEN);
-                Store.Remove(Constants.RTOKEN);
+                Store.Remove(AppConst.SID);
+                Store.Remove(AppConst.APPID);
+                Store.Remove(AppConst.USERNAME);
+                Store.Remove(AppConst.PASSWORD);
+                Store.Remove(AppConst.BTOKEN);
+                Store.Remove(AppConst.RTOKEN);
+                Store.Remove(AppConst.OBJ_COLLECTION);
+                Store.Remove(AppConst.APP_COLLECTION);
             }
             Application.Current.MainPage = new NavigationPage((Page)Activator.CreateInstance(item.TargetType));
         }

@@ -15,11 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExpressBase.Mobile.Common\ExpressBase.Mobile.Common.csproj" />
-    <ProjectReference Include="..\ExpressBase.Mobile.Objects\ExpressBase.Mobile.Objects.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Views\AppSelect.xaml.cs">
       <DependentUpon>AppSelect.xaml</DependentUpon>
     </Compile>

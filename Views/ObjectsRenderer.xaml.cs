@@ -1,9 +1,8 @@
-﻿using ExpressBase.Mobile.Common.Objects;
-using ExpressBase.Mobile.Common.Structures;
+﻿using ExpressBase.Mobile;
+using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Objects;
 using ExpressBase.Mobile.Services;
 using Newtonsoft.Json;
 using System;
@@ -15,6 +14,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ExpressBase.Mobile.Views.Shared;
+using ExpressBase.Mobile.Constants;
 
 namespace ExpressBase.Mobile.Views
 {
@@ -25,7 +25,7 @@ namespace ExpressBase.Mobile.Views
         {
             get
             {
-                return Convert.ToInt32(Store.GetValue(Constants.APPID));
+                return Convert.ToInt32(Store.GetValue(AppConst.APPID));
             }
         }
 
@@ -33,7 +33,7 @@ namespace ExpressBase.Mobile.Views
         {
             get
             {
-                return Store.GetValue(Constants.APPNAME);
+                return Store.GetValue(AppConst.APPNAME);
             }
         }
 
@@ -51,15 +51,30 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
 
-            this.ObjectList = new List<ObjWrap>();
+            string _objlist = Store.GetValue(AppConst.OBJ_COLLECTION);
+            if(_objlist == null)
+            {
+                this.ObjectList = this.GetObjectList();
+                Store.SetValue(AppConst.OBJ_COLLECTION,JsonConvert.SerializeObject(this.ObjectList));
+            }
+            else
+            {
+                this.ObjectList = JsonConvert.DeserializeObject<List<ObjWrap>>(_objlist);
+            }
+            BindingContext = this;
+        }
+
+        private List<ObjWrap> GetObjectList()
+        {
+            List<ObjWrap> _objlist = new List<ObjWrap>();
 
             HttpClient client = new HttpClient();
             string content = string.Format("?appid={0}&locid={1}", this.AppId, this.LocationId);
             string uri = Settings.RootUrl + "api/objects_by_app" + content;
 
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-            requestMessage.Headers.Add(Constants.BTOKEN, Store.GetValue(Constants.BTOKEN));
-            requestMessage.Headers.Add(Constants.RTOKEN, Store.GetValue(Constants.RTOKEN));
+            requestMessage.Headers.Add(AppConst.BTOKEN, Store.GetValue(AppConst.BTOKEN));
+            requestMessage.Headers.Add(AppConst.RTOKEN, Store.GetValue(AppConst.RTOKEN));
 
             try
             {
@@ -69,9 +84,9 @@ namespace ExpressBase.Mobile.Views
                     var responseContent = response.Content.ReadAsStringAsync();
                     ObjectListToMob dict = JsonConvert.DeserializeObject<ObjectListToMob>(responseContent.Result);
 
-                    foreach (KeyValuePair<string, List<ObjWrap>> pair in dict.Objects)
+                    foreach (KeyValuePair<int, List<ObjWrap>> pair in dict.ObjectTypes)
                     {
-                        ObjectList.AddRange(pair.Value);
+                        _objlist.AddRange(pair.Value);
                     }
                 }
             }
@@ -79,7 +94,7 @@ namespace ExpressBase.Mobile.Views
             {
                 Console.WriteLine(ex);
             }
-            BindingContext = this;
+            return _objlist;
         }
 
         void OnObjectSelected(ListView sender, EventArgs e)

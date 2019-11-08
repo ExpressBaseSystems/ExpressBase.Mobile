@@ -1,4 +1,4 @@
-﻿using ExpressBase.Mobile.Common.Data;
+﻿using ExpressBase.Mobile.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,14 +26,7 @@ namespace ExpressBase.Mobile.Models
 
     public class ObjectListToMob
     {
-        public Dictionary<string, List<ObjWrap>> Objects { set; get; }
-
-        public ObjectListToMob()
-        {
-            Objects = new Dictionary<string, List<ObjWrap>>();
-        }
-
-        public int Count { get; set; }
+        public Dictionary<int, List<ObjWrap>> ObjectTypes { set; get; }
     }
 
     public class ObjWrap
@@ -81,7 +74,6 @@ namespace ExpressBase.Mobile.Models
 
         public string DisplayName { get; set; }
     }
-
 
     public class EbObjectToMobResponse
     {

@@ -11,6 +11,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
 using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.Constants;
+
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
@@ -23,7 +25,7 @@ namespace ExpressBase.Mobile.Views
             NavigationPage.SetHasNavigationBar(this, true);
             NavigationPage.SetHasBackButton(this, true);
 
-            string url = Settings.RootUrl + "images/logo/" + Store.GetValue(Constants.SID) + ".jpg";
+            string url = Settings.RootUrl + "images/logo/" + Store.GetValue(AppConst.SID) + ".jpg";
             this.Logo.Source = ImageSource.FromUri(new Uri(url));
         }
 

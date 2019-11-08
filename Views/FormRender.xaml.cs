@@ -1,7 +1,5 @@
-﻿using ExpressBase.Mobile.Common.Objects;
-using ExpressBase.Mobile.CustomControls;
+﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Objects;
 using ExpressBase.Mobile.Services;
 using Plugin.Media;
 using System;

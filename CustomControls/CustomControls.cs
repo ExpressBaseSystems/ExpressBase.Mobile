@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Common.Objects;
-using ExpressBase.Mobile.Common.Structures;
+﻿using ExpressBase.Mobile.Structures;
 using Plugin.Media;
 using System;
 using System.Collections.Generic;

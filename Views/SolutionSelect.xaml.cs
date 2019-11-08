@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace ExpressBase.Mobile.Views
         {
             if (!string.IsNullOrEmpty(this.Sid.Text))
             {
-                Store.SetValue(Constants.SID, this.Sid.Text.Trim());
+                Store.SetValue(AppConst.SID, this.Sid.Text.Trim());
                 Application.Current.MainPage.Navigation.PushAsync(new Login());
             }
         }

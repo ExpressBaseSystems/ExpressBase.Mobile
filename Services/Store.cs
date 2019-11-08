@@ -12,7 +12,11 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                return SecureStorage.GetAsync(key).Result;
+                string temp = SecureStorage.GetAsync(key).Result;
+                if (temp == null || temp == "null")
+                    return null;
+                else
+                    return temp;
             }
             catch(Exception e)
             {
