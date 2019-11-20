@@ -5,82 +5,38 @@ using System.Text;
 
 namespace ExpressBase.Mobile.Models
 {
-    class MenuData
+    public class AppCollection
     {
-        public List<AppDataToMob> Applications { get; set; }
+        public List<AppData> Applications { get; set; }
     }
 
-    public class AppDataToMob
+    public class AppData
     {
         public int AppId { set; get; }
 
         public string AppName { set; get; }
 
         public string AppIcon { set; get; }
+    }
 
-        public override string ToString()
+    public class MobilePageCollection
+    {
+        public List<MobilePagesWraper> Pages { set; get; }
+
+        public MobilePageCollection()
         {
-            return AppName;
+            this.Pages = new List<MobilePagesWraper>();
         }
     }
 
-    public class ObjectListToMob
+    public class MobilePagesWraper
     {
-        public Dictionary<int, List<ObjWrap>> ObjectTypes { set; get; }
-    }
+        public string DisplayName { set; get; }
 
-    public class ObjWrap
-    {
-        public int Id { get; set; }
+        public string Name { set; get; }
 
-        public string ObjName { get; set; }
+        public string Version { set; get; }
 
-        public string VersionNumber { get; set; }
-
-        public string Refid { get; set; }
-
-        public int EbObjectType { get; set; }
-
-        public int AppId { get; set; }
-
-        public string Description { get; set; }
-
-        public string EbType { get; set; }
-
-        public string DisplayName { get; set; }
-
-        public bool Favourite { get; set; } = false;
-    }
-
-    public class EbObjectWrapper
-    {
-        public int Id { get; set; }
-
-        public int EbObjectType { get; set; }
-
-        public string Name { get; set; }
-
-        public string Description { get; set; }
-
-        public string Status { get; set; }
-
-        public string VersionNumber { get; set; }
-
-        public string Json { get; set; }
-
-        public string RefId { get; set; }
-
-        public string Apps { get; set; }
-
-        public string DisplayName { get; set; }
-    }
-
-    public class EbObjectToMobResponse
-    {
-        public EbObjectWrapper ObjectWraper { set; get; }
-
-        public byte[] ReportResult { get; set; }
-
-        public EbDataSet TableResult { get; set; }
+        public EbMobilePage Page { set; get; }
     }
 }

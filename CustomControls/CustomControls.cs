@@ -71,21 +71,21 @@ namespace ExpressBase.Mobile.CustomControls
 
         public List<int> Source { set; get; }
 
-        private EbControl Control { set; get; }
+        //private EbControl Control { set; get; }
 
         private Page Page { set; get; }
 
         private Grid _Grid { set; get; }
 
-        public FileInput(EbControl Control, Page CurrentPage)
-        {
-            this.Control = Control;
-            this.Page = CurrentPage;
-            this.Source = new List<int>();
+        //public FileInput(EbControl Control, Page CurrentPage)
+        //{
+        //    this.Control = Control;
+        //    this.Page = CurrentPage;
+        //    this.Source = new List<int>();
 
-            this.BuildHtml();
-            this.AppendButtons();
-        }
+        //    this.BuildHtml();
+        //    this.AppendButtons();
+        //}
 
         public void BuildHtml()
         {

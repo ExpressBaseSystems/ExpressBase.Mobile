@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        public List<ObjWrap> ObjectList { set; get; }
+        public List<MobilePagesWraper> ObjectList { set; get; }
 
         public ObjectsRenderer()
         {
@@ -59,14 +59,14 @@ namespace ExpressBase.Mobile.Views
             }
             else
             {
-                this.ObjectList = JsonConvert.DeserializeObject<List<ObjWrap>>(_objlist);
+                this.ObjectList = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
             }
             BindingContext = this;
         }
 
-        private List<ObjWrap> GetObjectList()
+        private List<MobilePagesWraper> GetObjectList()
         {
-            List<ObjWrap> _objlist = new List<ObjWrap>();
+            List<MobilePagesWraper> _objlist = new List<MobilePagesWraper>();
 
             HttpClient client = new HttpClient();
             string content = string.Format("?appid={0}&locid={1}", this.AppId, this.LocationId);
@@ -82,11 +82,11 @@ namespace ExpressBase.Mobile.Views
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = response.Content.ReadAsStringAsync();
-                    ObjectListToMob dict = JsonConvert.DeserializeObject<ObjectListToMob>(responseContent.Result);
+                    MobilePageCollection collection = JsonConvert.DeserializeObject<MobilePageCollection>(responseContent.Result);
 
-                    foreach (KeyValuePair<int, List<ObjWrap>> pair in dict.ObjectTypes)
+                    foreach (MobilePagesWraper _page in collection.Pages)
                     {
-                        _objlist.AddRange(pair.Value);
+                        _objlist.Add(_page);
                     }
                 }
             }
@@ -99,17 +99,10 @@ namespace ExpressBase.Mobile.Views
 
         void OnObjectSelected(ListView sender, EventArgs e)
         {
-            ObjWrap item = (sender.SelectedItem as ObjWrap);
+            MobilePagesWraper item = (sender.SelectedItem as MobilePagesWraper);
             try
             {
-                if (item.EbObjectType == (int)EbObjectTypes.WebForm)
-                {
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(item.Refid));
-                }
-                else if (item.EbObjectType == (int)EbObjectTypes.Report)
-                {
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ReportRender());
-                }
+                
             }
             catch (Exception ex)
             {

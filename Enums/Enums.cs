@@ -9,4 +9,11 @@ namespace ExpressBase.Mobile.Enums
         files = 2,
         image = 1
     }
+
+    public enum EbDateType
+    {
+        Date = 5,
+        Time = 17,
+        DateTime = 6,
+    }
 }

@@ -13,7 +13,7 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AppSelect : ContentPage
     {
-        public IList<AppDataToMob> Applications { get; private set; }
+        public IList<AppData> Applications { get; private set; }
 
         public int SelectedAppid { get; set; }
 
@@ -32,15 +32,15 @@ namespace ExpressBase.Mobile.Views
             }
             else
             {
-                this.Applications = JsonConvert.DeserializeObject<List<AppDataToMob>>(_apps);
+                this.Applications = JsonConvert.DeserializeObject<List<AppData>>(_apps);
             }
             BindingContext = this;
         }
 
         //api call
-        private List<AppDataToMob> GetAppCollection()
+        private List<AppData> GetAppCollection()
         {
-            List<AppDataToMob> _Apps = null;
+            List<AppData> _Apps = null;
 
             HttpClient client = new HttpClient();
             Uri uri = new Uri(Settings.RootUrl + "api/menu");
@@ -55,7 +55,7 @@ namespace ExpressBase.Mobile.Views
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = response.Content.ReadAsStringAsync();
-                    _Apps = JsonConvert.DeserializeObject<MenuData>(responseContent.Result).Applications;
+                    _Apps = JsonConvert.DeserializeObject<AppCollection>(responseContent.Result).Applications;
                 }
             }
             catch (Exception ex)
@@ -67,7 +67,7 @@ namespace ExpressBase.Mobile.Views
 
         void OnListViewItemSelected(ListView sender, EventArgs e)
         {
-            AppDataToMob App = (sender.SelectedItem as AppDataToMob);
+            AppData App = (sender.SelectedItem as AppData);
             this.SelectedAppid = App.AppId;
             this.SelectedAppName = App.AppName;
         }
