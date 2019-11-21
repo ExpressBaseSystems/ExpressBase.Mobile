@@ -15,6 +15,23 @@ namespace ExpressBase.Mobile
         public virtual bool Hidden { set; get; }
 
         public virtual bool Unique { get; set; }
+
+        public string SQLiteType
+        {
+            get
+            {
+                if (this.EbDbType == EbDbTypes.String)
+                    return "TEXT";
+                else if (this.EbDbType == EbDbTypes.Int16 || this.EbDbType == EbDbTypes.Int32)
+                    return "INT";
+                else if (this.EbDbType == EbDbTypes.Decimal || this.EbDbType == EbDbTypes.Double)
+                    return "REAL";
+                else if (this.EbDbType == EbDbTypes.Date || this.EbDbType == EbDbTypes.DateTime)
+                    return "DATETIME";
+                else
+                    return "TEXT";
+            }
+        }
     }
 
     public class EbMobileTextBox : EbMobileControl
@@ -44,6 +61,10 @@ namespace ExpressBase.Mobile
     public class EbMobileSSOption : EbMobilePageBase
     {
         public string EbSid { get; set; }
+
+        public override string DisplayName { get; set; }
+
+        public string Value { get; set; }
     }
 
     public class EbMobileFileUpload : EbMobileControl

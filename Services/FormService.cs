@@ -14,84 +14,84 @@ namespace ExpressBase.Mobile.Services
     {
         protected IList<Element> Controls { set; get; }
 
-        //public WebformData WebFormData { set; get; }
+        public MobileFormData FormData { set; get; }
 
-        //public EbWebForm WebForm { set; get; }
+        public EbMobileForm Form { set; get; }
 
         public bool Status { set; get; }
 
-        //public FormService(IList<Element> Elements, EbWebForm WebForm)
-        //{
-        //    this.Controls = Elements;
-        //    this.WebForm = WebForm;
-        //    this.WebFormData = new WebformData();
-        //    this.BuildWebFormData();
-        //}
+        public FormService(IList<Element> Elements, EbMobileForm form)
+        {
+            this.Controls = Elements;
+            this.Form = form;
+            this.FormData = new MobileFormData();
+            this.BuildFormData();
+        }
 
-        //private void BuildWebFormData()
-        //{
-        //    this.WebFormData.MasterTable = this.WebForm.TableName;
-        //    SingleTable Table = new SingleTable();
-        //    SingleRow row = new SingleRow();
-        //    row.RowId = "0";
-        //    row.IsUpdate = false;
+        private void BuildFormData()
+        {
+            this.FormData.MasterTable = this.Form.TableName;
+            MobileTable Table = new MobileTable();
+            MobileTableRow row = new MobileTableRow();
+            row.RowId = 0;
+            row.IsUpdate = false;
 
-        //    Table.Add(row);
-        //    foreach (Element el in this.Controls)
-        //    {
-        //        if (el is TextBox)
-        //        {
-        //            row.Columns.Add(new SingleColumn
-        //            {
-        //                Name = el.ClassId,
-        //                Type = (int)(el as TextBox).DbType,
-        //                Value = (el as TextBox).Text
-        //            });
-        //        }
-        //        else if (el is CustomDatePicker)
-        //        {
-        //            row.Columns.Add(new SingleColumn
-        //            {
-        //                Name = el.ClassId,
-        //                Type = (int)(el as CustomDatePicker).DbType,
-        //                Value = (el as CustomDatePicker).Date.ToString("yyyy-MM-dd")
-        //            });
-        //        }
-        //        else if (el is CustomSelect)
-        //        {
-        //            EbSimpleSelectOption opt = (el as CustomSelect).SelectedItem as EbSimpleSelectOption;
+            Table.Add(row);
+            foreach (Element el in this.Controls)
+            {
+                if (el is TextBox)
+                {
+                    row.Columns.Add(new MobileTableColumn
+                    {
+                        Name = el.ClassId,
+                        Type = (el as TextBox).DbType,
+                        Value = (el as TextBox).Text
+                    });
+                }
+                else if (el is CustomDatePicker)
+                {
+                    row.Columns.Add(new MobileTableColumn
+                    {
+                        Name = el.ClassId,
+                        Type = (el as CustomDatePicker).DbType,
+                        Value = (el as CustomDatePicker).Date.ToString("yyyy-MM-dd")
+                    });
+                }
+                else if (el is CustomSelect)
+                {
+                    EbMobileSSOption opt = (el as CustomSelect).SelectedItem as EbMobileSSOption;
 
-        //            row.Columns.Add(new SingleColumn
-        //            {
-        //                Name = el.ClassId,
-        //                Type = (int)(el as CustomSelect).DbType,
-        //                Value = (opt == null) ? null : opt.Value
-        //            });
-        //        }
-        //        else if(el is FileInput)
-        //        {
+                    row.Columns.Add(new MobileTableColumn
+                    {
+                        Name = el.ClassId,
+                        Type = (el as CustomSelect).DbType,
+                        Value = (opt == null) ? null : opt.Value
+                    });
+                }
+                else if (el is FileInput)
+                {
 
-        //        }
-        //    }
+                }
+            }
 
-        //    this.WebFormData.MultipleTables.Add(this.WebForm.TableName, Table);
-        //    string json = JsonConvert.SerializeObject(this.WebFormData);
+            this.FormData.Tables.Add(Table);
+            string json = JsonConvert.SerializeObject(this.FormData);
 
-        //    this.PushToCloud(json);
-        //}
+            this.PushToCloud(json);
+        }
 
-        //private void PushToCloud(string json)
-        //{
-        //    WebFormSaveResponse resp = CommonServices.PushWebFormData(json, this.WebForm.RefId, Settings.LocationId, 0);
+        private void PushToCloud(string json)
+        {
+            //var resp = CommonServices.PushWebFormData(json, this.Page.RefId, Settings.LocationId, 0);
 
-        //    if (resp.RowAffected > 0)
-        //    {
-        //        this.Status = true;
-        //    }
-        //    else
-        //    {
-        //        this.Status = false;
-        //    }
-        //}
+            //if (resp.RowAffected > 0)
+            //{
+            //    this.Status = true;
+            //}
+            //else
+            //{
+            //    this.Status = false;
+            //}
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Structures;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;

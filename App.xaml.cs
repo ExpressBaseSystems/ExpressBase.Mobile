@@ -7,11 +7,29 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
+using System.IO;
 
 namespace ExpressBase.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
+
+        static EbDataBase _database;
+
+        public static EbDataBase DataDB
+        {
+            get
+            {
+                if (_database == null)
+                {
+                    string sid = string.Format("{0}.db3", Store.GetValue(AppConst.SID));
+                    _database = new EbDataBase(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), sid));
+                }
+                return _database;
+            }
+        }
+
         public App()
         {
             InitializeComponent();

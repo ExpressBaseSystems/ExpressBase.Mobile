@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Linq;
+using SQLite;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -35,9 +37,39 @@ namespace ExpressBase.Mobile.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-               // Response = new WebFormSaveResponse();
+                // Response = new WebFormSaveResponse();
             }
             //return Response;
+        }
+
+        public void CreateLocalTable4Form(EbMobileForm form)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendFormat("CREATE TABLE IF NOT EXISTS {0} (", form.TableName);
+
+                foreach (EbMobileControl Control in form.ChiledControls)
+                {
+                    if(Control is EbMobileTableLayout)
+                    {
+
+                    }
+                    else
+                    {
+                        sb.AppendFormat("{0} {1}", Control.Name, Control.SQLiteType);
+                        if (Control != form.ChiledControls.Last())
+                            sb.Append(",");
+                    }
+                }
+                sb.Append(");");
+
+                int status = App.DataDB.DoNonQuery(sb.ToString());
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }

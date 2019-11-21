@@ -14,3 +14,17 @@ namespace ExpressBase.Mobile.Models
         void Show(string message);
     }
 }
+
+namespace ExpressBase.Mobile.Views
+{
+    public class MasterPageItem
+    {
+        public string Title { get; set; }
+
+        public string IconSource { get; set; }
+
+        public Type TargetType { get; set; }
+
+        public string LinkType { set; get; }
+    }
+}

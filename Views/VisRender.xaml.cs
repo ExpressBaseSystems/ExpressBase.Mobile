@@ -10,11 +10,14 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class TableRender : ContentPage
+    public partial class VisRender : ContentPage
     {
-        public TableRender()
+        public EbMobilePage Page { set; get; }
+
+        public VisRender(EbMobilePage page)
         {
             InitializeComponent();
+            this.Page = page;
         }
     }
 }

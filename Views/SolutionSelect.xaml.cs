@@ -1,8 +1,10 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
+using SQLite;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +31,14 @@ namespace ExpressBase.Mobile.Views
             {
                 Store.SetValue(AppConst.SID, this.Sid.Text.Trim());
                 Application.Current.MainPage.Navigation.PushAsync(new Login());
+                this.CreateDB(this.Sid.Text.Trim());
             }
+        }
+
+        public void CreateDB(string dbName)
+        {
+            string dpPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), string.Format("{0}.db3",dbName));
+            var db = new SQLiteConnection(dpPath);
         }
     }
 }

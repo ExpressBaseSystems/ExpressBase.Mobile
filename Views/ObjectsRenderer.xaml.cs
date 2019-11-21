@@ -102,7 +102,17 @@ namespace ExpressBase.Mobile.Views
             MobilePagesWraper item = (sender.SelectedItem as MobilePagesWraper);
             try
             {
-                
+                string regexed = EbSerializers.JsonToNETSTD(item.Json);
+                EbMobilePage page = EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
+
+                if (page.Container is EbMobileForm)
+                {
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
+                }
+                else if (page.Container is EbMobileVisualization)
+                {
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new VisRender(page));
+                }
             }
             catch (Exception ex)
             {
