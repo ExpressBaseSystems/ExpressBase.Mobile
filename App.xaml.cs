@@ -14,25 +14,33 @@ namespace ExpressBase.Mobile
 {
     public partial class App : Xamarin.Forms.Application
     {
+        public static string DbPath { set; get; }
 
-        static EbDataBase _database;
+        public static IDataBase DataDB { get; set; }
 
-        public static EbDataBase DataDB
+        public App(string dbPath)
         {
-            get
+            InitializeComponent();
+
+            DbPath = dbPath;
+
+            if (DataDB == null)
             {
-                if (_database == null)
-                {
-                    string sid = string.Format("{0}.db3", Store.GetValue(AppConst.SID));
-                    _database = new EbDataBase(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), sid));
-                }
-                return _database;
+                DataDB = DependencyService.Get<IDataBase>();
             }
+
+            this.InitNavigation();
         }
 
         public App()
         {
             InitializeComponent();
+            DataDB = DependencyService.Get<IDataBase>();
+            this.InitNavigation();
+        }
+
+        void InitNavigation()
+        {
             MainPage = new NavigationPage();
 
             string sid = Store.GetValue(AppConst.SID);

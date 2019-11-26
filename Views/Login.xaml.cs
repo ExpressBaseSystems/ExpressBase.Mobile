@@ -18,13 +18,15 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Login : ContentPage
     {
-        public Login()
+        public Login(bool ShowBackButton = false)
         {
             InitializeComponent();
 
-            NavigationPage.SetHasNavigationBar(this, true);
-            NavigationPage.SetHasBackButton(this, true);
-
+            if (ShowBackButton)
+            {
+                NavigationPage.SetHasNavigationBar(this, true);
+                NavigationPage.SetHasBackButton(this, true);
+            }
             string url = Settings.RootUrl + "images/logo/" + Store.GetValue(AppConst.SID) + ".jpg";
             this.Logo.Source = ImageSource.FromUri(new Uri(url));
         }

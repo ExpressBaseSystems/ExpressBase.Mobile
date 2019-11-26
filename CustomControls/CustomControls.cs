@@ -7,12 +7,12 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
-    public interface CustomElement
+    public interface ICustomElement
     {
         EbDbTypes DbType { set; get; }
     }
 
-    public class TextBox : Entry, CustomElement
+    public class TextBox : Entry, ICustomElement
     {
         public TextBox() { }
 
@@ -38,7 +38,7 @@ namespace ExpressBase.Mobile.CustomControls
         }
     }
 
-    public class CustomDatePicker : DatePicker, CustomElement
+    public class CustomDatePicker : DatePicker, ICustomElement
     {
         public EbDbTypes DbType { set; get; }
 
@@ -48,7 +48,7 @@ namespace ExpressBase.Mobile.CustomControls
         }
     }
 
-    public class CustomSelect : Picker, CustomElement
+    public class CustomSelect : Picker, ICustomElement
     {
         public EbDbTypes DbType { set; get; }
 

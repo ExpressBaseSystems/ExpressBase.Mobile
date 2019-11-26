@@ -1,36 +1,27 @@
-﻿using SQLite;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
 namespace ExpressBase.Mobile.Data
 {
-    public class EbDataBase
+    public interface IDataBase
     {
-        readonly SQLiteConnection _database;
+        int CreateDB(string sid);
 
-        public EbDataBase(string dbPath)
-        {
-            _database = new SQLiteConnection(dbPath);
-        }
+        void DoQueries(string query, params DbParameter[] parameter);
 
-        public int DoNonQuery(string query,params object[] parameters)
-        {
-            try
-            {
-                return _database.Execute(query, parameters);
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return 0;
-        }
+        void DoQuery(string query, params DbParameter[] parameter);
 
-        public void DoQuery(string query)
-        {
+        int DoNonQuery(string query, params DbParameter[] parameter);
+    }
 
-        }
+    public class DbParameter
+    {
+        public int DbType { set; get; }
+
+        public string ParameterName { set; get; }
+
+        public object Value { set ; get; }
     }
 }

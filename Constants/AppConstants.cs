@@ -27,6 +27,8 @@ namespace ExpressBase.Mobile.Constants
         public const string APP_COLLECTION = "app_collection";
 
         public const string OBJ_COLLECTION = "obj_collection";
+
+        public const string ROOT_URL = "root_url";
     }
 
     public static class RegexConstants

@@ -8,6 +8,14 @@
              x:Class="ExpressBase.Mobile.Views.Login">
     <ContentPage.Content>
         <ScrollView>
+            
+            <ScrollView.VerticalOptions>
+                <OnIdiom
+                        x:TypeArguments="LayoutOptions"
+                        Default="CenterAndExpand"
+                        Phone="FillAndExpand" />
+            </ScrollView.VerticalOptions>
+            
             <StackLayout Margin="20" VerticalOptions="CenterAndExpand">
                 <StackLayout>
                     <Image x:Name="Logo" Aspect="AspectFill"></Image>

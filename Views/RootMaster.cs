@@ -43,6 +43,7 @@ namespace ExpressBase.Mobile.Views
             else if (item.LinkType == "sln_switch")
             {
                 Store.Remove(AppConst.SID);
+                Store.Remove(AppConst.ROOT_URL);
                 Store.Remove(AppConst.APPID);
                 Store.Remove(AppConst.USERNAME);
                 Store.Remove(AppConst.PASSWORD);

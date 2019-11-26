@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Linq;
-using SQLite;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -51,7 +50,7 @@ namespace ExpressBase.Mobile.Services
 
                 foreach (EbMobileControl Control in form.ChiledControls)
                 {
-                    if(Control is EbMobileTableLayout)
+                    if(Control is EbMobileTableLayout || Control is EbMobileFileUpload)
                     {
 
                     }

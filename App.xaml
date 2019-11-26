@@ -6,6 +6,10 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.App">
     <Application.Resources>
-
+        
+        <ResourceDictionary>
+            
+        </ResourceDictionary>
+        
     </Application.Resources>
 </Application>
