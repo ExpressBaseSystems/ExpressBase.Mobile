@@ -12,7 +12,7 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                return "https://" + Store.GetValue(AppConst.ROOT_URL);
+                return "https://" + Store.GetValue(AppConst.ROOT_URL) + "/";
             }
         }
 

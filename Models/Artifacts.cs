@@ -48,6 +48,11 @@ namespace ExpressBase.Mobile.Models
         public int LocationId { set; get; }
 
         public List<MobileTable> Tables {set;get;}
+
+        public MobileFormData()
+        {
+            Tables = new List<MobileTable>();
+        }
     }
 
     public class MobileTable : List<MobileTableRow>
@@ -62,6 +67,11 @@ namespace ExpressBase.Mobile.Models
         public bool IsUpdate { set; get; }
 
         public List<MobileTableColumn> Columns { set; get; }
+
+        public MobileTableRow()
+        {
+            Columns = new List<MobileTableColumn>();
+        }
     }
 
     public class MobileTableColumn

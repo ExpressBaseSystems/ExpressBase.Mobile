@@ -45,8 +45,7 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendFormat("CREATE TABLE IF NOT EXISTS {0} (", form.TableName);
+                List<string> cols = new List<string>();
 
                 foreach (EbMobileControl Control in form.ChiledControls)
                 {
@@ -56,14 +55,12 @@ namespace ExpressBase.Mobile.Services
                     }
                     else
                     {
-                        sb.AppendFormat("{0} {1}", Control.Name, Control.SQLiteType);
-                        if (Control != form.ChiledControls.Last())
-                            sb.Append(",");
+                        cols.Add(string.Format("{0} {1}", Control.Name, Control.SQLiteType));
                     }
                 }
-                sb.Append(");");
+                string create_query = string.Format("CREATE TABLE IF NOT EXISTS {0} ({1});", form.TableName,string.Join(",", cols.ToArray()));
 
-                int status = App.DataDB.DoNonQuery(sb.ToString());
+                int status = App.DataDB.DoNonQuery(create_query);
             }
             catch(Exception e)
             {

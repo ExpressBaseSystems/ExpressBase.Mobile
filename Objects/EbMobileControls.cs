@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
@@ -32,16 +33,22 @@ namespace ExpressBase.Mobile
                     return "TEXT";
             }
         }
+
+        public virtual Type XControlType { get { return null; } }
     }
 
     public class EbMobileTextBox : EbMobileControl
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
+
+        public override Type XControlType { get { return typeof(TextBox); } }
     }
 
     public class EbMobileNumericBox : EbMobileControl
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.Decimal; } set { } }
+
+        public override Type XControlType { get { return typeof(NumericTextBox); } }
     }
 
     public class EbMobileDateTime : EbMobileControl
@@ -49,6 +56,8 @@ namespace ExpressBase.Mobile
         public EbDateType EbDateType { get; set; }
 
         public override EbDbTypes EbDbType { get { return (EbDbTypes)this.EbDateType; } set { } }
+
+        public override Type XControlType { get { return typeof(CustomDatePicker);} }
     }
 
     public class EbMobileSimpleSelect : EbMobileControl
@@ -56,6 +65,8 @@ namespace ExpressBase.Mobile
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
 
         public List<EbMobileSSOption> Options { set; get; }
+
+        public override Type XControlType { get { return typeof(CustomSelect); } }
     }
 
     public class EbMobileSSOption : EbMobilePageBase
@@ -81,6 +92,8 @@ namespace ExpressBase.Mobile
     public class EbMobileBoolean : EbMobileControl
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.BooleanOriginal; } set { } }
+
+        public override Type XControlType { get { return typeof(CustomCheckBox); } }
     }
 
     public class EbMobileTableLayout : EbMobileControl

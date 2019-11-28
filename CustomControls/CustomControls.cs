@@ -9,14 +9,55 @@ namespace ExpressBase.Mobile.CustomControls
 {
     public interface ICustomElement
     {
+        string Name { set; get; }
+
         EbDbTypes DbType { set; get; }
+
+        object GetValue();
     }
 
     public class TextBox : Entry, ICustomElement
     {
         public TextBox() { }
 
+        public TextBox(EbMobileTextBox EbTextBox)
+        {
+
+            this.Name = EbTextBox.Name;
+
+            this.DbType = EbTextBox.EbDbType;
+        }
+
         public EbDbTypes DbType { set; get; }
+
+        public string Name { set; get; }
+
+        public object GetValue()
+        {
+            return this.Text;
+        }
+    }
+
+    public class NumericTextBox : Entry, ICustomElement
+    {
+        public NumericTextBox() { }
+
+        public NumericTextBox(EbMobileNumericBox EbTextBox)
+        {
+
+            this.Name = EbTextBox.Name;
+            this.DbType = EbTextBox.EbDbType;
+            Keyboard = Keyboard.Numeric;
+        }
+
+        public EbDbTypes DbType { set; get; }
+
+        public string Name { set; get; }
+
+        public object GetValue()
+        {
+            return this.Text;
+        }
     }
 
     public class XButton : Button
@@ -42,9 +83,21 @@ namespace ExpressBase.Mobile.CustomControls
     {
         public EbDbTypes DbType { set; get; }
 
-        public CustomDatePicker()
-        {
+        public string Name { set; get; }
 
+        public CustomDatePicker() { }
+
+        public CustomDatePicker(EbMobileDateTime EbDate)
+        {
+            Date = DateTime.Now;
+            Name = EbDate.Name;
+            DbType = EbDate.EbDbType;
+            Format = "yyyy-MM-dd";
+        }
+
+        public object GetValue()
+        {
+            return this.Date.ToString("yyyy-MM-dd");
         }
     }
 
@@ -52,9 +105,23 @@ namespace ExpressBase.Mobile.CustomControls
     {
         public EbDbTypes DbType { set; get; }
 
-        public CustomSelect()
-        {
+        public string Name { set; get; }
 
+        public CustomSelect() { }
+
+        public CustomSelect(EbMobileSimpleSelect EbSelect)
+        {
+            Title = "-select-";
+            TitleColor = Color.Red;
+            Name = EbSelect.Name;
+            DbType = EbSelect.EbDbType;
+            this.ItemsSource = EbSelect.Options;
+            this.ItemDisplayBinding = new Binding("DisplayName");
+        }
+
+        public object GetValue()
+        {
+            return (!(this.SelectedItem is EbMobileSSOption opt)) ? null : opt.Value;
         }
     }
 
@@ -111,7 +178,7 @@ namespace ExpressBase.Mobile.CustomControls
             FilesBtn.Clicked += OnFileClick;
         }
 
-        public async void OnCameraClick(object o,object e)
+        public async void OnCameraClick(object o, object e)
         {
             await CrossMedia.Current.Initialize();
 
@@ -152,6 +219,24 @@ namespace ExpressBase.Mobile.CustomControls
                 this._Grid.Children.Add(_img, 0, 1);
                 Grid.SetColumnSpan(_img, 2);
             }
+        }
+    }
+
+    public class CustomCheckBox : CheckBox, ICustomElement
+    {
+        public EbDbTypes DbType { set; get; }
+
+        public string Name { set; get; }
+
+        public CustomCheckBox() { }
+
+        public CustomCheckBox(EbMobileBoolean EbBool) {
+            Name = EbBool.Name;
+        }
+
+        public object GetValue()
+        {
+            return this.IsChecked;
         }
     }
 }
