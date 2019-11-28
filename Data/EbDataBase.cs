@@ -11,7 +11,7 @@ namespace ExpressBase.Mobile.Data
 
         void DoQueries(string query, params DbParameter[] parameter);
 
-        void DoQuery(string query, params DbParameter[] parameter);
+        EbDataTable DoQuery(string query, params DbParameter[] parameter);
 
         int DoNonQuery(string query, params DbParameter[] parameter);
     }

@@ -17,6 +17,10 @@ namespace ExpressBase.Mobile
 
         public virtual bool Unique { get; set; }
 
+        public virtual bool ReadOnly { get; set; }
+
+        public virtual bool DoNotPersist { get; set; }
+
         public string SQLiteType
         {
             get
@@ -42,6 +46,16 @@ namespace ExpressBase.Mobile
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
 
         public override Type XControlType { get { return typeof(TextBox); } }
+
+        public int MaxLength { get; set; }
+
+        public TextTransform TextTransform { get; set; }
+
+        public TextMode TextMode { get; set; }
+
+        public bool AutoCompleteOff { get; set; }
+
+        public bool AutoSuggestion { get; set; }
     }
 
     public class EbMobileNumericBox : EbMobileControl
@@ -49,6 +63,16 @@ namespace ExpressBase.Mobile
         public override EbDbTypes EbDbType { get { return EbDbTypes.Decimal; } set { } }
 
         public override Type XControlType { get { return typeof(NumericTextBox); } }
+
+        public int MaxLength { get; set; }
+
+        public int DecimalPlaces { get; set; }
+
+        public int MaxLimit { get; set; }
+
+        public int MinLimit { get; set; }
+
+        public bool IsCurrency { get; set; }
     }
 
     public class EbMobileDateTime : EbMobileControl
@@ -58,6 +82,12 @@ namespace ExpressBase.Mobile
         public override EbDbTypes EbDbType { get { return (EbDbTypes)this.EbDateType; } set { } }
 
         public override Type XControlType { get { return typeof(CustomDatePicker);} }
+
+        public bool IsNullable { get; set; }
+
+        public TimeShowFormat ShowTimeAs_ { get; set; }
+
+        public DateShowFormat ShowDateAs_ { get; set; }
     }
 
     public class EbMobileSimpleSelect : EbMobileControl
@@ -67,6 +97,8 @@ namespace ExpressBase.Mobile
         public List<EbMobileSSOption> Options { set; get; }
 
         public override Type XControlType { get { return typeof(CustomSelect); } }
+
+        public bool IsMultiSelect { get; set; }
     }
 
     public class EbMobileSSOption : EbMobilePageBase

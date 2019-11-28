@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Enums;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -39,5 +41,17 @@ namespace ExpressBase.Mobile
         public override string Status { get; set; }
 
         public EbMobileContainer Container { set; get; }
+    }
+
+    public class EbScript
+    {
+        public EbScript()
+        {
+            Code = Code ?? string.Empty;
+        }
+
+        public string Code { get; set; }
+
+        public ScriptingLanguage Lang { get; set; }
     }
 }
