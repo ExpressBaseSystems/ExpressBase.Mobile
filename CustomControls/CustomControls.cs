@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Structures;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Structures;
 using Plugin.Media;
 using System;
 using System.Collections.Generic;
@@ -237,6 +238,13 @@ namespace ExpressBase.Mobile.CustomControls
         public object GetValue()
         {
             return this.IsChecked;
+        }
+    }
+
+    public class CustomFrame : Frame
+    {
+        public CustomFrame(){
+           
         }
     }
 }

@@ -41,31 +41,87 @@ namespace ExpressBase.Mobile.Services
             //return Response;
         }
 
-        public void CreateLocalTable4Form(EbMobileForm form)
+        public void CreateLocalTable4Form(SQLiteTableSchema SQLSchema)
         {
             try
             {
-                List<string> cols = new List<string>();
+                var tableExist = App.DataDB.DoScalar(string.Format(StaticQueries.TABLE_EXIST, SQLSchema.TableName));
 
-                foreach (EbMobileControl Control in form.ChiledControls)
+                if (Convert.ToInt32(tableExist) >= 0)//table exist
                 {
-                    if(Control is EbMobileTableLayout || Control is EbMobileFileUpload)
-                    {
+                    EbDataTable dt = App.DataDB.DoQuery(string.Format(StaticQueries.COL_SCHEMA, SQLSchema.TableName));
 
-                    }
-                    else
+                    List<SQLiteColumSchema> Uncreated = this.GetNewControls(SQLSchema.Columns, dt.Columns);
+
+                    if (Uncreated.Count > 0)
                     {
-                        cols.Add(string.Format("{0} {1}", Control.Name, Control.SQLiteType));
+                        this.AlterTable(SQLSchema.TableName, Uncreated);
                     }
                 }
-                string create_query = string.Format("CREATE TABLE IF NOT EXISTS {0} ({1});", form.TableName,string.Join(",", cols.ToArray()));
+                else //table not exist
+                {
+                    this.CreateTable(SQLSchema.TableName, SQLSchema.Columns);
+                }
 
-                int status = App.DataDB.DoNonQuery(create_query);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        private void CreateTable(string TableName, List<SQLiteColumSchema> Columns)
+        {
+            try
+            {
+                List<string> name_type = new List<string>();
+
+                foreach (SQLiteColumSchema column in Columns)
+                {
+                    name_type.Add(string.Format("{0} {1}", column.ColumnName, column.ColumnType));
+                }
+                string create_query = string.Format(StaticQueries.CREATE_TABLE, TableName, string.Join(",", name_type.ToArray()));
+
+                int status = App.DataDB.DoNonQuery(create_query);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private void AlterTable(string TableName, List<SQLiteColumSchema> Columns)
+        {
+            try
+            {
+                List<string> name_type = new List<string>();
+
+                foreach (SQLiteColumSchema column in Columns)
+                {
+                    name_type.Add(string.Format("{0} {1}", column.ColumnName, column.ColumnType));
+                }
+                string alter_query = string.Format(StaticQueries.ALTER_TABLE, TableName, string.Join(",", name_type.ToArray()));
+
+                int status = App.DataDB.DoNonQuery(alter_query);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private List<SQLiteColumSchema> GetNewControls(List<SQLiteColumSchema> Columns, ColumnColletion NewCols)
+        {
+            List<SQLiteColumSchema> UnCreated = new List<SQLiteColumSchema>();
+
+            foreach (SQLiteColumSchema cols in Columns)
+            {
+                EbDataColumn data_col = NewCols.Find(x => x.ColumnName == cols.ColumnName);
+                if (data_col == null)
+                    UnCreated.Add(cols);
+            }
+
+            return UnCreated;
         }
     }
 }

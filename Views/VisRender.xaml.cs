@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,9 @@ namespace ExpressBase.Mobile.Views
             InitializeComponent();
             this.Page = page;
             this.Vis = this.Page.Container as EbMobileVisualization;
+
+            this.Title = this.Page.DisplayName;
+
             this.GetData();
             this.BuildView();
         }
@@ -36,7 +40,7 @@ namespace ExpressBase.Mobile.Views
             {
                 DataTable = App.DataDB.DoQuery(sql);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 DataTable = new EbDataTable();
                 Console.WriteLine(e.Message);
@@ -45,7 +49,19 @@ namespace ExpressBase.Mobile.Views
 
         void BuildView()
         {
-            
+            CustomListView lv = new CustomListView(this.DataTable, this.Vis.DataLayout);
+            ScrollView scroll = new ScrollView
+            {
+                Content = new StackLayout
+                {
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    Children = {
+                        lv
+                    }
+                }
+            };
+
+            Content = scroll;
         }
     }
 }

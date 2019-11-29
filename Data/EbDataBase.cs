@@ -14,6 +14,8 @@ namespace ExpressBase.Mobile.Data
         EbDataTable DoQuery(string query, params DbParameter[] parameter);
 
         int DoNonQuery(string query, params DbParameter[] parameter);
+
+        object DoScalar(string query, params DbParameter[] parameter);
     }
 
     public class DbParameter

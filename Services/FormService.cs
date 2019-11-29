@@ -43,7 +43,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
             }
             return false;
         }

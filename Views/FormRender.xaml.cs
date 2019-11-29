@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using Plugin.Media;
@@ -32,13 +33,44 @@ namespace ExpressBase.Mobile.Views
                 this.Form = (page.Container as EbMobileForm);
                 this.BuildUi();
 
+                SQLiteTableSchema Schema = this.GetSQLiteSchema(this.Form.ChiledControls);
+                Schema.TableName = this.Form.TableName;
+
                 CommonServices MyService = new CommonServices();
-                MyService.CreateLocalTable4Form(this.Form);
+                MyService.CreateLocalTable4Form(Schema);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        SQLiteTableSchema GetSQLiteSchema(List<EbMobileControl> Controls)
+        {
+            SQLiteTableSchema Schema = new SQLiteTableSchema();
+
+            foreach (EbMobileControl ctrl in Controls)
+            {
+                if (ctrl is EbMobileTableLayout || ctrl is EbMobileFileUpload)
+                {
+                    continue;
+                }
+                else
+                {
+                    Schema.Columns.Add(new SQLiteColumSchema
+                    {
+                        ColumnName = ctrl.Name,
+                        ColumnType = ctrl.SQLiteType
+                    });
+                }
+            }
+
+            //add eb_columns 
+            {
+
+            }
+
+            return Schema;
         }
 
         void BuildUi()
@@ -103,7 +135,7 @@ namespace ExpressBase.Mobile.Views
             }
             else
             {
-                var el = (View)Activator.CreateInstance(ctrl.XControlType,ctrl);
+                var el = (View)Activator.CreateInstance(ctrl.XControlType, ctrl);
                 tempstack.Children.Add(el);
                 this.Elements.Add(el);
             }
