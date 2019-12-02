@@ -33,6 +33,8 @@ namespace ExpressBase.Mobile
                     return "REAL";
                 else if (this.EbDbType == EbDbTypes.Date || this.EbDbType == EbDbTypes.DateTime)
                     return "DATETIME";
+                else if (this.EbDbType == EbDbTypes.Boolean)
+                    return "INT";
                 else
                     return "TEXT";
             }

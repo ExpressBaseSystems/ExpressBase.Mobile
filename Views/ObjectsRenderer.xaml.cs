@@ -15,6 +15,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ExpressBase.Mobile.Views.Shared;
 using ExpressBase.Mobile.Constants;
+using Xamarin.Essentials;
+using ExpressBase.Mobile.Data;
 
 namespace ExpressBase.Mobile.Views
 {
@@ -132,6 +134,29 @@ namespace ExpressBase.Mobile.Views
                 }
             });
             return true;
+        }
+
+        void OnSyncClick(object sender, EventArgs e)
+        {
+            var current = Connectivity.NetworkAccess;
+
+            if (current == NetworkAccess.Internet)
+            {
+                try
+                {
+                    EbSyncData syncdata = new EbSyncData();
+                    CommonServices services = new CommonServices();
+                    EbSyncData response = services.SyncDevice();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            else
+            {
+                DependencyService.Get<IToast>().Show("You are not connected to internet !");
+            }
         }
     }
 }

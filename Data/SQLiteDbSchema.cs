@@ -19,6 +19,19 @@ namespace ExpressBase.Mobile.Data
         {
             Columns = new List<SQLiteColumSchema>();
         }
+
+        public void AppendDefault()
+        {
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_created_by", ColumnType = "INT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_created_at", ColumnType = "DATETIME" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_lastmodified_by", ColumnType = "INT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_lastmodified_at", ColumnType = "DATETIME" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_del", ColumnType = "INT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_void", ColumnType = "INT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_loc_id", ColumnType = "INT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_synced", ColumnType = "INT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_synced_at", ColumnType = "INT" });
+        }
     }
 
     public class SQLiteColumSchema

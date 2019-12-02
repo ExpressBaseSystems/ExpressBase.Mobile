@@ -26,18 +26,18 @@ namespace ExpressBase.Mobile.CustomControls
 
         void BuildUI()
         {
-            foreach(EbDataRow _row in this.Table.Rows)
+            foreach (EbDataRow _row in this.Table.Rows)
             {
                 CustomFrame _Frame = new CustomFrame();
-                Grid _G = this.CreateGrid();
+                Grid _G = this.CreateGrid(this.TableLayout.CellCollection);
 
-                foreach(EbMobileTableCell _Cell in this.TableLayout.CellCollection)
+                foreach (EbMobileTableCell _Cell in this.TableLayout.CellCollection)
                 {
                     if (_Cell.ControlCollection.Count > 0)
                     {
                         EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
 
-                        _G.Children.Add(new Label { Text = _row[_col.ColumnName].ToString() }, _Cell.ColIndex,_Cell.RowIndex);
+                        _G.Children.Add(new Label { Text = _row[_col.ColumnName].ToString() }, _Cell.ColIndex, _Cell.RowIndex);
                     }
                 }
 
@@ -46,7 +46,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        Grid CreateGrid()
+        Grid CreateGrid(List<EbMobileTableCell> CellCollection)
         {
             Grid G = new Grid();
 
@@ -57,7 +57,9 @@ namespace ExpressBase.Mobile.CustomControls
 
             for (int c = 0; c < TableLayout.ColumCount; c++)
             {
-                G.ColumnDefinitions.Add(new ColumnDefinition());
+                EbMobileTableCell current = CellCollection.Find(li => li.ColIndex == c && li.RowIndex == 0);
+
+                G.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(current.Width,GridUnitType.Star) });
             }
 
             return G;

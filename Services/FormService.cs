@@ -82,6 +82,8 @@ namespace ExpressBase.Mobile.Services
                 }
             }
 
+            row.AppendEbColValues();//append ebcol values
+
             FormData.Tables.Add(Table);
             return FormData;
         }

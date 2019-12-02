@@ -6,6 +6,9 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.ObjectsRenderer"
              Title="{Binding AppName}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Sync" Order="Primary" Priority="0" Clicked="OnSyncClick"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout BackgroundColor="#f2f2f2">
             <ListView ItemsSource="{Binding ObjectList}" Margin="5" ItemTapped="OnObjectSelected">

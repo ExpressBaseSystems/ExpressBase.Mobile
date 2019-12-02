@@ -26,5 +26,13 @@ namespace ExpressBase.Mobile.Models
             {
             }
         }
+
+        public static int UserId
+        {
+            get
+            {
+                return Convert.ToInt32(Store.GetValue(AppConst.USER_ID));
+            }
+        }
     }
 }

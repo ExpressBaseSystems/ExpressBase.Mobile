@@ -38,5 +38,21 @@ namespace ExpressBase.Mobile.Data
                 return "ALTER TABLE {0} ADD COLUMN {1};";
             }
         }
+
+        public static string GET_ALL_TABLE
+        {
+            get
+            {
+                return "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY 1";
+            }
+        }
+
+        public static string STARFROM_TABLE
+        {
+            get
+            {
+                return "SELECT * FROM {0}";
+            }
+        }
     }
 }

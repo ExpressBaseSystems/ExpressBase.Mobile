@@ -72,6 +72,19 @@ namespace ExpressBase.Mobile.Models
         {
             Columns = new List<MobileTableColumn>();
         }
+
+        public void AppendEbColValues()
+        {
+            this.Columns.Add(new MobileTableColumn { Name = "eb_created_by", Type = EbDbTypes.Int32, Value = Settings.UserId });
+            this.Columns.Add(new MobileTableColumn { Name = "eb_created_at", Type = EbDbTypes.DateTime, Value = DateTime.Now });
+            this.Columns.Add(new MobileTableColumn { Name = "eb_lastmodified_by", Type = EbDbTypes.Int32, Value = Settings.UserId });
+            this.Columns.Add(new MobileTableColumn { Name = "eb_lastmodified_at", Type = EbDbTypes.DateTime, Value = DateTime.Now });
+            this.Columns.Add(new MobileTableColumn { Name = "eb_del", Type = EbDbTypes.Int32, Value = 0 });
+            this.Columns.Add(new MobileTableColumn { Name = "eb_void", Type = EbDbTypes.Int32, Value = 0 });
+            this.Columns.Add(new MobileTableColumn { Name = "eb_loc_id", Type = EbDbTypes.Int32, Value = Settings.LocationId });
+            this.Columns.Add(new MobileTableColumn { Name = "eb_synced", Type = EbDbTypes.Int32, Value = 0 });
+            //this.Columns.Add(new MobileTableColumn { Name = "eb_synced_at", Type = EbDbTypes.DateTime, Value = DateTime.Now });
+        }
     }
 
     public class MobileTableColumn

@@ -64,11 +64,7 @@ namespace ExpressBase.Mobile.Views
                     });
                 }
             }
-
-            //add eb_columns 
-            {
-
-            }
+            Schema.AppendDefault();//eb_colums
 
             return Schema;
         }

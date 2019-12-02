@@ -6,6 +6,10 @@ namespace ExpressBase.Mobile.Models
 {
     public interface INativeHelper
     {
+        string DeviceId { get; }
+
+        string AppVersion { get; }
+
         void CloseApp();
     }
 

@@ -47,7 +47,7 @@ namespace ExpressBase.Mobile.Services
             {
                 var tableExist = App.DataDB.DoScalar(string.Format(StaticQueries.TABLE_EXIST, SQLSchema.TableName));
 
-                if (Convert.ToInt32(tableExist) >= 0)//table exist
+                if (Convert.ToInt32(tableExist) > 0)//table exist
                 {
                     EbDataTable dt = App.DataDB.DoQuery(string.Format(StaticQueries.COL_SCHEMA, SQLSchema.TableName));
 
@@ -74,7 +74,7 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                List<string> name_type = new List<string>();
+                List<string> name_type = new List<string> { "id INTEGER AUTOINCREMENT" };
 
                 foreach (SQLiteColumSchema column in Columns)
                 {
@@ -122,6 +122,11 @@ namespace ExpressBase.Mobile.Services
             }
 
             return UnCreated;
+        }
+
+        public EbSyncData SyncDevice()
+        {
+            return null;
         }
     }
 }
