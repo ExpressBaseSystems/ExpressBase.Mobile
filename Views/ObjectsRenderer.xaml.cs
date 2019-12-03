@@ -144,9 +144,9 @@ namespace ExpressBase.Mobile.Views
             {
                 try
                 {
-                    EbSyncData syncdata = new EbSyncData();
+                    WebformData formdata = new WebformData();
                     CommonServices services = new CommonServices();
-                    EbSyncData response = services.SyncDevice();
+                    SyncResponse response = services.SyncDevice();
                 }
                 catch(Exception ex)
                 {

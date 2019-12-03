@@ -124,7 +124,7 @@ namespace ExpressBase.Mobile.Services
             return UnCreated;
         }
 
-        public EbSyncData SyncDevice()
+        public SyncResponse SyncDevice()
         {
             return null;
         }
