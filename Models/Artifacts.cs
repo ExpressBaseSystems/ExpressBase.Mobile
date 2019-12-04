@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,27 @@ namespace ExpressBase.Mobile.Models
         {
             this.Pages = new List<MobilePagesWraper>();
         }
+
+        public List<EbMobilePage> GetForms()
+        {
+            List<EbMobilePage> form_collection = new List<EbMobilePage>();
+            try
+            {
+                foreach (MobilePagesWraper pages in this.Pages)
+                {
+                    EbMobilePage mpage = pages.JsonToPage();
+                    if (mpage != null && mpage.Container is EbMobileForm)
+                    {
+                        form_collection.Add(mpage);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return form_collection;
+        }
     }
 
     public class MobilePagesWraper
@@ -39,6 +61,14 @@ namespace ExpressBase.Mobile.Models
         public string Version { set; get; }
 
         public string Json { set; get; }
+
+        public EbMobilePage JsonToPage()
+        {
+            if (string.IsNullOrEmpty(Json))
+                return null;
+            string regexed = EbSerializers.JsonToNETSTD(this.Json);
+            return EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
+        }
     }
 
     public class MobileFormData
@@ -47,7 +77,7 @@ namespace ExpressBase.Mobile.Models
 
         public int LocationId { set; get; }
 
-        public List<MobileTable> Tables {set;get;}
+        public List<MobileTable> Tables { set; get; }
 
         public MobileFormData()
         {

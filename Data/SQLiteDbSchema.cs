@@ -29,8 +29,30 @@ namespace ExpressBase.Mobile.Data
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_del", ColumnType = "INT" });
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_void", ColumnType = "INT" });
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_loc_id", ColumnType = "INT" });
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_synced", ColumnType = "INT" });
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_synced_at", ColumnType = "INT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_device_id", ColumnType = "TEXT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_appversion", ColumnType = "TEXT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_synced", ColumnType = "INT" });//only in mobile
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_created_at_device", ColumnType = "DATETIME" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_syncrecord_id", ColumnType = "INT" });
+        }
+
+        public static List<string> LocalColumsOnly
+        {
+            get
+            {
+                return new List<string>
+                {
+                    "eb_created_by",
+                    "eb_created_at",
+                    "eb_lastmodified_by",
+                    "eb_lastmodified_at",
+                    "eb_del",
+                    "eb_void",
+                    "eb_loc_id",
+                    "eb_synced",
+                    "eb_syncrecord_id"
+                };
+            }
         }
     }
 

@@ -41,6 +41,8 @@ namespace ExpressBase.Mobile
         }
 
         public virtual Type XControlType { get { return null; } }
+
+        public virtual object SQLiteToActual(object value) { return value; }
     }
 
     public class EbMobileTextBox : EbMobileControl
@@ -83,7 +85,7 @@ namespace ExpressBase.Mobile
 
         public override EbDbTypes EbDbType { get { return (EbDbTypes)this.EbDateType; } set { } }
 
-        public override Type XControlType { get { return typeof(CustomDatePicker);} }
+        public override Type XControlType { get { return typeof(CustomDatePicker); } }
 
         public bool IsNullable { get; set; }
 
@@ -128,6 +130,14 @@ namespace ExpressBase.Mobile
         public override EbDbTypes EbDbType { get { return EbDbTypes.BooleanOriginal; } set { } }
 
         public override Type XControlType { get { return typeof(CustomCheckBox); } }
+
+        public override object SQLiteToActual(object value)
+        {
+            if (Convert.ToInt32(value) == 0)
+                return false;
+            else
+                return true;
+        }
     }
 
     public class EbMobileTableLayout : EbMobileControl

@@ -51,7 +51,7 @@ namespace ExpressBase.Mobile.Data
         {
             get
             {
-                return "SELECT * FROM {0}";
+                return "SELECT * FROM {0} WHERE eb_synced = 0";
             }
         }
     }

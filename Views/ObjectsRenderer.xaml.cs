@@ -144,7 +144,6 @@ namespace ExpressBase.Mobile.Views
             {
                 try
                 {
-                    WebformData formdata = new WebformData();
                     CommonServices services = new CommonServices();
                     SyncResponse response = services.SyncDevice();
                 }
