@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 
-namespace ExpressBase.Mobile.Services
+namespace ExpressBase.Mobile.Helpers
 {
     public class Store{
 

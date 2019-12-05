@@ -1,15 +1,9 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
 using RestSharp;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
@@ -32,7 +26,7 @@ namespace ExpressBase.Mobile.Views
 
             if (!string.IsNullOrEmpty(url))
             {
-                if (this.ValidateSid(url))
+                if (Api.ValidateSid(url))
                 {
                     string _sid = url.Split('.')[0];
                     Store.SetValue(AppConst.SID, _sid);
@@ -47,22 +41,6 @@ namespace ExpressBase.Mobile.Views
                     });
                 }
             }
-        }
-
-        private bool ValidateSid(string url)
-        {
-            try
-            {
-                RestClient client = new RestClient("https://" + url);
-                IRestResponse response = client.Execute(new RestRequest(Method.GET));
-                if (response.StatusCode == HttpStatusCode.OK)
-                    return true;
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return false;
         }
 
         public void CreateDB(string sid)

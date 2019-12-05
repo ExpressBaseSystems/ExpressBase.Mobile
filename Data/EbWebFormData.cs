@@ -67,7 +67,7 @@ namespace ExpressBase.Mobile.Data
         public SingleColumn() { }
     }
 
-    public class SyncResponse 
+    public class PushResponse 
     {
         public int RowAffected { get; set; }
 

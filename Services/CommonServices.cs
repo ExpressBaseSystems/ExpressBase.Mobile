@@ -5,9 +5,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Linq;
+using ExpressBase.Mobile.Helpers;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -124,7 +122,7 @@ namespace ExpressBase.Mobile.Services
             return UnCreated;
         }
 
-        public SyncResponse SyncDevice()
+        public void PushFormData()
         {
             try
             {
@@ -137,95 +135,16 @@ namespace ExpressBase.Mobile.Services
 
                 foreach (EbMobilePage page in FormCollection)
                 {
-                    EbDataTable dt = App.DataDB.DoQuery(string.Format(StaticQueries.STARFROM_TABLE, (page.Container as EbMobileForm).TableName));
-                    if (dt.Rows.Count <= 0)
-                        continue;
-                    this.PushRecord(page, dt);
+                    if(!string.IsNullOrEmpty((page.Container as EbMobileForm).WebFormRefId))
+                    {
+                        (page.Container as EbMobileForm).PushRecords();
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            return null;
-        }
-
-        private void PushRecord(EbMobilePage page, EbDataTable dt)
-        {
-            EbMobileForm Form = page.Container as EbMobileForm;
-            WebformData FormData = new WebformData { MasterTable = Form.TableName };
-            try
-            {
-                SingleTable master_table = new SingleTable();
-
-                SingleRow _srow = new SingleRow { RowId = "0", IsUpdate = false };
-                master_table.Add(_srow);
-
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    _srow.Columns.Clear();
-                    FormData.MultipleTables.Clear();
-
-                    _srow.LocId = Convert.ToInt32(dt.Rows[i]["eb_loc_id"]);
-                    _srow.Columns.AddRange(this.GetDataColums(dt, i, Form));
-                    FormData.MultipleTables.Add(Form.TableName, master_table);
-
-                    SyncResponse response = this.Push(JsonConvert.SerializeObject(FormData), 0, Form.WebFormRefId, _srow.LocId);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        private SyncResponse Push(string webform, int rowid, string refid, int locid)
-        {
-            try
-            {
-                string url = Settings.RootUrl + "api/push_data";
-                RestClient client = new RestClient(url);
-
-                RestRequest request = new RestRequest(Method.POST);
-                request.AddParameter("webform_data", webform);
-                request.AddParameter("rowid", rowid);
-                request.AddParameter("refid", refid);
-                request.AddParameter("locid", locid);
-
-                // auth Headers for api
-                request.AddHeader(AppConst.BTOKEN, Store.GetValue(AppConst.BTOKEN));
-                request.AddHeader(AppConst.RTOKEN, Store.GetValue(AppConst.RTOKEN));
-
-                IRestResponse response = client.Execute(request);
-                return JsonConvert.DeserializeObject<SyncResponse>(response.Content);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return null;
-        }
-
-        private List<SingleColumn> GetDataColums(EbDataTable dt, int rowindex, EbMobileForm form)
-        {
-            List<SingleColumn> SC = new List<SingleColumn>();
-
-            for (int i = 0; i < dt.Rows[rowindex].Count; i++)
-            {
-                EbDataColumn column = dt.Columns.Find(o => o.ColumnIndex == i);
-
-                if (!SQLiteTableSchema.LocalColumsOnly.Contains(column.ColumnName))
-                {
-                    DbTypedValue DTV = form.GetDbType(column.ColumnName, dt.Rows[rowindex][i]);
-                    SC.Add(new SingleColumn
-                    {
-                        Name = column.ColumnName,
-                        Type = (int)DTV.Type,
-                        Value = DTV.Value
-                    });
-                }
-            }
-            return SC;
         }
     }
 }

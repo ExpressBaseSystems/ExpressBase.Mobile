@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using Newtonsoft.Json;
@@ -27,7 +28,7 @@ namespace ExpressBase.Mobile.Views
             string _apps = Store.GetValue(AppConst.APP_COLLECTION);
             if (_apps == null)
             {
-                this.Applications = this.GetAppCollection();
+                this.Applications = Api.GetAppCollections();
                 Store.SetValue(AppConst.APP_COLLECTION, JsonConvert.SerializeObject(this.Applications));
             }
             else
@@ -36,35 +37,7 @@ namespace ExpressBase.Mobile.Views
             }
             BindingContext = this;
         }
-
-        //api call
-        private List<AppData> GetAppCollection()
-        {
-            List<AppData> _Apps = null;
-
-            HttpClient client = new HttpClient();
-            Uri uri = new Uri(Settings.RootUrl + "api/menu");
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uri.ToString());
-
-            requestMessage.Headers.Add(AppConst.BTOKEN, Store.GetValue(AppConst.BTOKEN));
-            requestMessage.Headers.Add(AppConst.RTOKEN, Store.GetValue(AppConst.RTOKEN));
-
-            try
-            {
-                var response = client.SendAsync(requestMessage).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = response.Content.ReadAsStringAsync();
-                    _Apps = JsonConvert.DeserializeObject<AppCollection>(responseContent.Result).Applications;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-            return _Apps;
-        }
-
+        
         void OnListViewItemSelected(ListView sender, EventArgs e)
         {
             AppData App = (sender.SelectedItem as AppData);

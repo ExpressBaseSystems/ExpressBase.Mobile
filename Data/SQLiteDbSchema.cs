@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Structures;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -22,37 +23,15 @@ namespace ExpressBase.Mobile.Data
 
         public void AppendDefault()
         {
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_created_by", ColumnType = "INT" });
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_created_at", ColumnType = "DATETIME" });
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_lastmodified_by", ColumnType = "INT" });
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_lastmodified_at", ColumnType = "DATETIME" });
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_del", ColumnType = "INT" });
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_void", ColumnType = "INT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "id", ColumnType = "INTEGER PRIMARY KEY AUTOINCREMENT" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_created_at_device", ColumnType = "DATETIME" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_del", ColumnType = "INT DEFAULT 0 NOT NULL" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_void", ColumnType = "INT DEFAULT 0 NOT NULL" });
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_loc_id", ColumnType = "INT" });
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_device_id", ColumnType = "TEXT" });
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_appversion", ColumnType = "TEXT" });
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_synced", ColumnType = "INT" });//only in mobile
-            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_created_at_device", ColumnType = "DATETIME" });
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_synced", ColumnType = "INT DEFAULT 0 NOT NULL" });//only in mobile
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_syncrecord_id", ColumnType = "INT" });
-        }
-
-        public static List<string> LocalColumsOnly
-        {
-            get
-            {
-                return new List<string>
-                {
-                    "eb_created_by",
-                    "eb_created_at",
-                    "eb_lastmodified_by",
-                    "eb_lastmodified_at",
-                    "eb_del",
-                    "eb_void",
-                    "eb_loc_id",
-                    "eb_synced",
-                    "eb_syncrecord_id"
-                };
-            }
         }
     }
 

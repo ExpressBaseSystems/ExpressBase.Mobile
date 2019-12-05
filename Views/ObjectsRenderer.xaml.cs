@@ -1,22 +1,14 @@
-﻿using ExpressBase.Mobile;
-using ExpressBase.Mobile.Structures;
-using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Extensions;
-using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using ExpressBase.Mobile.Views.Shared;
 using ExpressBase.Mobile.Constants;
 using Xamarin.Essentials;
-using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
 
 namespace ExpressBase.Mobile.Views
 {
@@ -56,7 +48,7 @@ namespace ExpressBase.Mobile.Views
             string _objlist = Store.GetValue(AppConst.OBJ_COLLECTION);
             if(_objlist == null)
             {
-                this.ObjectList = this.GetObjectList();
+                this.ObjectList = Api.GetEbObjects(this.AppId,this.LocationId);
                 Store.SetValue(AppConst.OBJ_COLLECTION,JsonConvert.SerializeObject(this.ObjectList));
             }
             else
@@ -64,39 +56,6 @@ namespace ExpressBase.Mobile.Views
                 this.ObjectList = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
             }
             BindingContext = this;
-        }
-
-        private List<MobilePagesWraper> GetObjectList()
-        {
-            List<MobilePagesWraper> _objlist = new List<MobilePagesWraper>();
-
-            HttpClient client = new HttpClient();
-            string content = string.Format("?appid={0}&locid={1}", this.AppId, this.LocationId);
-            string uri = Settings.RootUrl + "api/objects_by_app" + content;
-
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-            requestMessage.Headers.Add(AppConst.BTOKEN, Store.GetValue(AppConst.BTOKEN));
-            requestMessage.Headers.Add(AppConst.RTOKEN, Store.GetValue(AppConst.RTOKEN));
-
-            try
-            {
-                var response = client.SendAsync(requestMessage).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = response.Content.ReadAsStringAsync();
-                    MobilePageCollection collection = JsonConvert.DeserializeObject<MobilePageCollection>(responseContent.Result);
-
-                    foreach (MobilePagesWraper _page in collection.Pages)
-                    {
-                        _objlist.Add(_page);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-            return _objlist;
         }
 
         void OnObjectSelected(ListView sender, EventArgs e)
@@ -145,7 +104,7 @@ namespace ExpressBase.Mobile.Views
                 try
                 {
                     CommonServices services = new CommonServices();
-                    SyncResponse response = services.SyncDevice();
+                    services.PushFormData();
                 }
                 catch(Exception ex)
                 {

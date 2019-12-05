@@ -1,9 +1,12 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -24,26 +27,19 @@ namespace ExpressBase.Mobile.Services
 
         public static ApiAuthResponse TryAuthenticate(string username,string password)
         {
-            HttpClient client = new HttpClient();
-            Uri uri = new Uri(Settings.RootUrl + "api/auth");
             ApiAuthResponse resp = null;
-
-            username = username.Trim();
-            password = password.Trim();
-
-            var formContent = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "username", username.Trim() },
-                { "password", ToMD5Hash(string.Concat(password,username)) }
-            });
-
             try
             {
-                var response = client.PostAsync(uri.ToString(), formContent).Result;
-                if (response.IsSuccessStatusCode)
+                RestClient client = new RestClient(Settings.RootUrl);
+                RestRequest request = new RestRequest("api/auth", Method.GET);
+
+                request.AddParameter("username", username.Trim());
+                request.AddParameter("password", ToMD5Hash(string.Concat(password, username)));
+
+                var response = client.Execute(request);
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    var responseContent = response.Content.ReadAsStringAsync();
-                    resp = JsonConvert.DeserializeObject<ApiAuthResponse>(responseContent.Result);
+                    resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
                 }
                 else
                     resp = new ApiAuthResponse { IsValid = false };

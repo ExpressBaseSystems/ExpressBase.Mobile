@@ -1,11 +1,7 @@
-﻿using ExpressBase.Mobile.Structures;
-using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views.Shared;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views

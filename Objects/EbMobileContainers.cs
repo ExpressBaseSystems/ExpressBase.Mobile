@@ -1,13 +1,14 @@
-﻿using ExpressBase.Mobile.Structures;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ExpressBase.Mobile
 {
     public class DbTypedValue
     {
-        public EbDbTypes Type { set; get; } = EbDbTypes.String;
+        public EbDbTypes Type { set; get; }
 
         public object Value { set; get; }
     }
@@ -31,9 +32,38 @@ namespace ExpressBase.Mobile
 
         public string WebFormRefId { set; get; }
 
-        public DbTypedValue GetDbType(string name, object value)
+        public string SelectQuery
         {
-            DbTypedValue TV = new DbTypedValue();
+            get
+            {
+                List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_loc_id" };
+
+                foreach (EbMobileControl ctrl in ChiledControls)
+                {
+                    if (ctrl is EbMobileTableLayout)
+                    {
+                        foreach (EbMobileTableCell cell in (ctrl as EbMobileTableLayout).CellCollection)
+                        {
+                            foreach (EbMobileControl tctrl in cell.ControlCollection)
+                            {
+                                colums.Add(ctrl.Name);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        colums.Add(ctrl.Name);
+                    }
+                }
+                colums.Reverse();
+                return string.Join(",", colums.ToArray());
+            }
+        }
+
+
+        public DbTypedValue GetDbType(string name, object value, EbDbTypes type)
+        {
+            DbTypedValue TV = new DbTypedValue { Type = type, Value = value };
 
             foreach (EbMobileControl ctrl in ChiledControls)
             {
@@ -59,6 +89,75 @@ namespace ExpressBase.Mobile
                 }
             }
             return TV;
+        }
+
+        public void PushRecords()
+        {
+            try
+            {
+                EbDataTable dt = App.DataDB.DoQuery(string.Format(StaticQueries.STARFROM_TABLE, this.SelectQuery, this.TableName));
+                WebformData FormData = new WebformData { MasterTable = this.TableName };
+
+                //start pushing
+                this.InitPush(FormData, dt);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void InitPush(WebformData WebFormData, EbDataTable LocalData)
+        {
+            SingleTable SingleTable = new SingleTable();
+            try
+            {
+                SingleRow row = new SingleRow { RowId = "0", IsUpdate = false };
+                SingleTable.Add(row);
+
+                for (int i = 0; i < LocalData.Rows.Count; i++)
+                {
+                    row.Columns.Clear();
+                    WebFormData.MultipleTables.Clear();
+
+                    row.LocId = Convert.ToInt32(LocalData.Rows[i]["eb_loc_id"]);
+                    row.Columns.AddRange(this.GetColumnValues(LocalData, i));
+                    WebFormData.MultipleTables.Add(this.TableName, SingleTable);
+
+                    PushResponse response = Api.Push(WebFormData, 0, this.WebFormRefId, row.LocId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private List<SingleColumn> GetColumnValues(EbDataTable LocalData, int RowIndex)
+        {
+            List<SingleColumn> SC = new List<SingleColumn>();
+
+            for (int i = 0; i < LocalData.Rows[RowIndex].Count; i++)
+            {
+                EbDataColumn column = LocalData.Columns.Find(o => o.ColumnIndex == i);
+
+                if (column != null && column.ColumnName != "eb_loc_id")
+                {
+                    DbTypedValue DTV = this.GetDbType(column.ColumnName, LocalData.Rows[RowIndex][i], column.Type);
+                    SC.Add(new SingleColumn
+                    {
+                        Name = column.ColumnName,
+                        Type = (int)DTV.Type,
+                        Value = DTV.Value
+                    });
+                }
+            }
+            return SC;
+        }
+
+        private void UpdateRowFlag()
+        {
+
         }
     }
 

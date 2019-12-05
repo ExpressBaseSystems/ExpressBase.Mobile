@@ -1,14 +1,10 @@
 ﻿using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
-using System;
-using System.IdentityModel.Tokens.Jwt;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
-using System.IO;
+using ExpressBase.Mobile.Helpers;
 
 namespace ExpressBase.Mobile
 {

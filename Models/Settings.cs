@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
@@ -6,13 +7,13 @@ using System.Text;
 
 namespace ExpressBase.Mobile.Models
 {
-    public static class Settings
+    public class Settings
     {
         public static string RootUrl
         {
             get
             {
-                return "https://" + Store.GetValue(AppConst.ROOT_URL) + "/";
+                return "https://" + Store.GetValue(AppConst.ROOT_URL);
             }
         }
 

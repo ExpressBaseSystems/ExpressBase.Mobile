@@ -1,8 +1,6 @@
 ﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Models;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,6 +16,8 @@ namespace ExpressBase.Mobile.Services
         public EbMobileForm Form { set; get; }
 
         public bool Status { set; get; }
+
+        public FormService() { }
 
         public FormService(IList<Element> Elements, EbMobileForm form)
         {

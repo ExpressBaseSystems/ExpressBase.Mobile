@@ -10,7 +10,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 
-namespace ExpressBase.Mobile.Services
+namespace ExpressBase.Mobile.Helpers
 {
     public class EbSerializers
     {
