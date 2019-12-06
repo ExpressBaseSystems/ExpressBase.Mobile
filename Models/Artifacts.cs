@@ -28,6 +28,10 @@ namespace ExpressBase.Mobile.Models
     {
         public List<MobilePagesWraper> Pages { set; get; }
 
+        public EbDataSet Data { set; get; }
+
+        public List<string> TableNames { set; get; }
+
         public MobilePageCollection()
         {
             this.Pages = new List<MobilePagesWraper>();

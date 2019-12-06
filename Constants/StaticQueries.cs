@@ -54,5 +54,13 @@ namespace ExpressBase.Mobile.Data
                 return "SELECT {0} FROM {1} WHERE eb_synced = 0";
             }
         }
+
+        public static string DELETE_FROM_TABLE
+        {
+            get
+            {
+                return "DELETE * FROM {0}";
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ using Xamarin.Forms.Xaml;
 using ExpressBase.Mobile.Constants;
 using Xamarin.Essentials;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Data;
 
 namespace ExpressBase.Mobile.Views
 {
@@ -44,18 +45,59 @@ namespace ExpressBase.Mobile.Views
         public ObjectsRenderer()
         {
             InitializeComponent();
-
             string _objlist = Store.GetValue(AppConst.OBJ_COLLECTION);
-            if(_objlist == null)
+            if (_objlist == null)
             {
-                this.ObjectList = Api.GetEbObjects(this.AppId,this.LocationId);
-                Store.SetValue(AppConst.OBJ_COLLECTION,JsonConvert.SerializeObject(this.ObjectList));
+                bool _pull = this.PulledTableExist() ? false : true;
+
+                MobilePageCollection Coll = Api.GetEbObjects(this.AppId, this.LocationId, _pull);
+                this.ObjectList = Coll.Pages;
+
+                Store.SetValue(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(this.ObjectList));
+
+                if(Coll.TableNames != null)
+                {
+                    Store.SetValue(string.Format(AppConst.APP_PULL_TABLE, this.AppId), string.Join(",", Coll.TableNames.ToArray()));
+
+                    if (_pull == true && Coll.TableNames.Count > 0)
+                    {
+                        LoadLocalData(Coll.Data);
+                    }
+                }
             }
             else
             {
                 this.ObjectList = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
             }
             BindingContext = this;
+        }
+
+        private bool PulledTableExist()
+        {
+            string sv = Store.GetValue(string.Format(AppConst.APP_PULL_TABLE, this.AppId));
+
+            string[] Tables = (sv == null) ? new string[0] : sv.Split(',');
+
+            if (Tables.Length <= 0)
+                return false;
+
+            foreach (string s in Tables)
+            {
+                var status = App.DataDB.DoScalar(string.Format(StaticQueries.TABLE_EXIST, s));
+                if (Convert.ToInt32(status) <= 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private async void LoadLocalData(EbDataSet DS)
+        {
+            foreach (EbDataTable dt in DS.Tables)
+            {
+
+            }
         }
 
         void OnObjectSelected(ListView sender, EventArgs e)
@@ -83,7 +125,8 @@ namespace ExpressBase.Mobile.Views
 
         protected override bool OnBackButtonPressed()
         {
-            Device.BeginInvokeOnMainThread(async () => {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
                 bool status = await this.DisplayAlert("Alert!", "Do you really want to exit?", "Yes", "No");
                 if (status)
                 {
@@ -106,7 +149,7 @@ namespace ExpressBase.Mobile.Views
                     CommonServices services = new CommonServices();
                     services.PushFormData();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }

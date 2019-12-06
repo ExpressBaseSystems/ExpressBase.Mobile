@@ -78,9 +78,8 @@ namespace ExpressBase.Mobile.Services
             return _Apps;
         }
 
-        public static List<MobilePagesWraper> GetEbObjects(int AppId,int LocationId)
+        public static MobilePageCollection GetEbObjects(int AppId,int LocationId,bool PullData = false)
         {
-            List<MobilePagesWraper> _objlist = new List<MobilePagesWraper>();
             try
             {
                 RestClient client = new RestClient(Settings.RootUrl);
@@ -90,22 +89,20 @@ namespace ExpressBase.Mobile.Services
 
                 request.AddParameter("appid", AppId);
                 request.AddParameter("locid", LocationId);
+                request.AddParameter("pull_data", PullData);
 
                 var response = client.Execute(request);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    MobilePageCollection collection = JsonConvert.DeserializeObject<MobilePageCollection>(response.Content);
-                    foreach (MobilePagesWraper _page in collection.Pages)
-                    {
-                        _objlist.Add(_page);
-                    }
+                    return JsonConvert.DeserializeObject<MobilePageCollection>(response.Content);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+                return new MobilePageCollection();
             }
-            return _objlist;
+            return new MobilePageCollection();
         }
     }
 }
