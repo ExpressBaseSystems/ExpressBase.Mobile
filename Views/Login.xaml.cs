@@ -19,6 +19,11 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Login : ContentPage
     {
+        public Login()
+        {
+            InitializeComponent();
+        }
+
         public Login(bool ShowBackButton = false)
         {
             InitializeComponent();
@@ -29,7 +34,7 @@ namespace ExpressBase.Mobile.Views
                 NavigationPage.SetHasBackButton(this, true);
             }
             string url = Settings.RootUrl + "images/logo/" + Store.GetValue(AppConst.SID) + ".jpg";
-            this.Logo.Source = ImageSource.FromUri(new Uri(url));
+            //this.Logo.Source = ImageSource.FromUri(new Uri(url));
         }
 
         public Login(string username)

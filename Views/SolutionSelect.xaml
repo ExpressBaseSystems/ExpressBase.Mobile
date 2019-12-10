@@ -7,12 +7,23 @@
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.SolutionSelect">
     <ContentPage.Content>
-        <StackLayout>
-            <StackLayout VerticalOptions="CenterAndExpand" Margin="20">
-                <Label Text="Solution Url" VerticalOptions="Center" FontSize="16"/>
-                <local:TextBox x:Name="Sid" VerticalOptions="Center"/>
-            </StackLayout>
-            <StackLayout Orientation="Horizontal" VerticalOptions="End">
+        <Grid RowSpacing="0" ColumnSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <ScrollView Grid.Row="0">
+                <StackLayout  VerticalOptions="CenterAndExpand" Margin="20">
+                    <Label Text="Solution Url" VerticalOptions="Center" FontSize="16"/>
+                    <local:TextBox x:Name="Sid" 
+                               VerticalOptions="Center" 
+                               Keyboard="Url"
+                               ReturnType="Next"/>
+                </StackLayout>
+            </ScrollView>
+            
+            <StackLayout Grid.Row="1" Orientation="Horizontal" VerticalOptions="End">
                 <Button Text="Next"
                 VerticalOptions="EndAndExpand"
                 HorizontalOptions="FillAndExpand"
@@ -20,6 +31,6 @@
                 TextColor="White"
                 Clicked="StoreSidVal"/>
             </StackLayout>
-        </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage> 

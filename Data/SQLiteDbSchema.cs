@@ -21,6 +21,22 @@ namespace ExpressBase.Mobile.Data
             Columns = new List<SQLiteColumSchema>();
         }
 
+        public static string SQLiteType(EbDbTypes EbDbType)
+        {
+            if (EbDbType == EbDbTypes.String)
+                return "TEXT";
+            else if (EbDbType == EbDbTypes.Int16 || EbDbType == EbDbTypes.Int32)
+                return "INT";
+            else if (EbDbType == EbDbTypes.Decimal || EbDbType == EbDbTypes.Double)
+                return "REAL";
+            else if (EbDbType == EbDbTypes.Date || EbDbType == EbDbTypes.DateTime)
+                return "DATETIME";
+            else if (EbDbType == EbDbTypes.Boolean)
+                return "INT";
+            else
+                return "TEXT";
+        }
+
         public void AppendDefault()
         {
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "id", ColumnType = "INTEGER PRIMARY KEY AUTOINCREMENT" });

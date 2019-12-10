@@ -62,5 +62,13 @@ namespace ExpressBase.Mobile.Data
                 return "DELETE * FROM {0}";
             }
         }
+
+        public static string FLAG_LOCALROW_SYNCED
+        {
+            get
+            {
+                return "UPDATE {0} SET eb_synced = 1,eb_syncrecord_id = @cloudrowid WHERE id = @rowid";
+            }
+        }
     }
 }

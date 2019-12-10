@@ -6,6 +6,8 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using ExpressBase.Mobile.Helpers;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -145,6 +147,34 @@ namespace ExpressBase.Mobile.Services
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        public async Task<int> LoadLocalData(EbDataSet DS)
+        {
+            try
+            {
+                if (DS.Tables.Count > 0)
+                {
+                    foreach (EbDataTable dt in DS.Tables)
+                    {
+                        List<SQLiteColumSchema> ColSchema = new List<SQLiteColumSchema>();
+
+                        foreach (EbDataColumn col in dt.Columns)
+                        {
+                            ColSchema.Add(new SQLiteColumSchema { ColumnName = col.ColumnName, ColumnType = SQLiteTableSchema.SQLiteType(col.Type) });
+                        }
+
+                        this.CreateTable(dt.TableName, ColSchema);
+
+                        App.DataDB.DoNonQueryBatch(dt);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return 0;
         }
     }
 }

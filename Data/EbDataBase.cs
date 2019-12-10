@@ -16,6 +16,8 @@ namespace ExpressBase.Mobile.Data
 
         int DoNonQuery(string query, params DbParameter[] parameter);
 
+        void DoNonQueryBatch(EbDataTable Table);
+
         object DoScalar(string query, params DbParameter[] parameter);
     }
 

@@ -26,7 +26,7 @@
                 </StackLayout>
                 <StackLayout Margin="0,5,0,20">
                     <Label Text="Password" />
-                    <local:TextBox x:Name="PassWord" />
+                    <local:TextBox x:Name="PassWord" IsPassword="True"/>
                 </StackLayout>
                 <Button Text="Login" 
                     BackgroundColor="#508bf9"

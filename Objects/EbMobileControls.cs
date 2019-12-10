@@ -92,6 +92,15 @@ namespace ExpressBase.Mobile
         public TimeShowFormat ShowTimeAs_ { get; set; }
 
         public DateShowFormat ShowDateAs_ { get; set; }
+
+        public override object SQLiteToActual(object value)
+        {
+            if (this.EbDbType == EbDbTypes.Date)
+            {
+                return Convert.ToDateTime(value).Date.ToString("yyyy-MM-dd");
+            }
+            return value.ToString();
+        }
     }
 
     public class EbMobileSimpleSelect : EbMobileControl

@@ -36,7 +36,7 @@ namespace ExpressBase.Mobile
         {
             get
             {
-                List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_loc_id" };
+                List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_loc_id", "id" };
 
                 foreach (EbMobileControl ctrl in ChiledControls)
                 {
@@ -63,7 +63,7 @@ namespace ExpressBase.Mobile
 
         public DbTypedValue GetDbType(string name, object value, EbDbTypes type)
         {
-            DbTypedValue TV = new DbTypedValue { Type = type, Value = value };
+            DbTypedValue TV = new DbTypedValue { Type = type, Value = (type == EbDbTypes.DateTime || type == EbDbTypes.Date) ? value.ToString() : value };
 
             foreach (EbMobileControl ctrl in ChiledControls)
             {
@@ -119,12 +119,35 @@ namespace ExpressBase.Mobile
                 {
                     row.Columns.Clear();
                     WebFormData.MultipleTables.Clear();
+                    int rowid = Convert.ToInt32(LocalData.Rows[i]["id"]);
 
                     row.LocId = Convert.ToInt32(LocalData.Rows[i]["eb_loc_id"]);
                     row.Columns.AddRange(this.GetColumnValues(LocalData, i));
                     WebFormData.MultipleTables.Add(this.TableName, SingleTable);
 
                     PushResponse response = Api.Push(WebFormData, 0, this.WebFormRefId, row.LocId);
+                    this.FlagLocalRow(response, rowid, this.TableName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void FlagLocalRow(PushResponse Response, int RowId, string TableName)
+        {
+            try
+            {
+                if (Response.RowAffected > 0)
+                {
+                    DbParameter[] parameter = new DbParameter[]
+                    {
+                        new DbParameter{ParameterName="@rowid",Value = RowId},
+                        new DbParameter{ParameterName="@cloudrowid",Value = Response.RowId}
+                    };
+
+                    int rowAffected = App.DataDB.DoNonQuery(string.Format(StaticQueries.FLAG_LOCALROW_SYNCED, TableName), parameter);
                 }
             }
             catch (Exception ex)
@@ -141,7 +164,7 @@ namespace ExpressBase.Mobile
             {
                 EbDataColumn column = LocalData.Columns.Find(o => o.ColumnIndex == i);
 
-                if (column != null && column.ColumnName != "eb_loc_id")
+                if (column != null && column.ColumnName != "eb_loc_id" && column.ColumnName != "id")
                 {
                     DbTypedValue DTV = this.GetDbType(column.ColumnName, LocalData.Rows[RowIndex][i], column.Type);
                     SC.Add(new SingleColumn

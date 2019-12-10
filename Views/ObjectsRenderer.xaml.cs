@@ -55,13 +55,13 @@ namespace ExpressBase.Mobile.Views
 
                 Store.SetValue(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(this.ObjectList));
 
-                if(Coll.TableNames != null)
+                if (Coll.TableNames != null)
                 {
                     Store.SetValue(string.Format(AppConst.APP_PULL_TABLE, this.AppId), string.Join(",", Coll.TableNames.ToArray()));
 
                     if (_pull == true && Coll.TableNames.Count > 0)
                     {
-                        LoadLocalData(Coll.Data);
+                        this.LoadDTAsync(Coll.Data);
                     }
                 }
             }
@@ -70,6 +70,15 @@ namespace ExpressBase.Mobile.Views
                 this.ObjectList = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
             }
             BindingContext = this;
+        }
+
+        private async void LoadDTAsync(EbDataSet DS)
+        {
+            if (DS.Tables.Count > 0)
+            {
+                CommonServices _service = new CommonServices();
+                int st = await _service.LoadLocalData(DS);
+            }
         }
 
         private bool PulledTableExist()
@@ -90,14 +99,6 @@ namespace ExpressBase.Mobile.Views
                 }
             }
             return true;
-        }
-
-        private async void LoadLocalData(EbDataSet DS)
-        {
-            foreach (EbDataTable dt in DS.Tables)
-            {
-
-            }
         }
 
         void OnObjectSelected(ListView sender, EventArgs e)
