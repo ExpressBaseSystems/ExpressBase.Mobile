@@ -4,12 +4,13 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.App">
+             x:Class="ExpressBase.Mobile.App"
+             xmlns:themes="clr-namespace:ExpressBase.Mobile.Themes;assembly=ExpressBase.Mobile">
     <Application.Resources>
-        
         <ResourceDictionary>
-            
+            <ResourceDictionary.MergedDictionaries>
+                <themes:LightTheme />
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-        
     </Application.Resources>
 </Application>

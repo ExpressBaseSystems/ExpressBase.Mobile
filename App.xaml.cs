@@ -60,7 +60,7 @@ namespace ExpressBase.Mobile
                         }
                         else
                         {
-                            MainPage.Navigation.PushAsync(new Login(username));
+                            MainPage.Navigation.PushAsync(new Login());
                         }
                     }
                     else

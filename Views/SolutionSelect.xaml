@@ -5,32 +5,72 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
-             x:Class="ExpressBase.Mobile.Views.SolutionSelect">
+             x:Class="ExpressBase.Mobile.Views.SolutionSelect"
+             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
+             NavigationPage.HasNavigationBar="False">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <!--  Binding context for page  -->
+    <ContentPage.BindingContext>
+        <viewModel:SolutionSelectViewModel />
+    </ContentPage.BindingContext>
+    
     <ContentPage.Content>
-        <Grid RowSpacing="0" ColumnSpacing="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            
-            <ScrollView Grid.Row="0">
-                <StackLayout  VerticalOptions="CenterAndExpand" Margin="20">
-                    <Label Text="Solution Url" VerticalOptions="Center" FontSize="16"/>
-                    <local:TextBox x:Name="Sid" 
+        <Grid>
+            <ScrollView>
+                <ScrollView.VerticalOptions>
+                    <OnIdiom
+                        x:TypeArguments="LayoutOptions"
+                        Default="CenterAndExpand"
+                        Phone="FillAndExpand" />
+                </ScrollView.VerticalOptions>
+
+                <StackLayout 
+                    Margin="20" 
+                    VerticalOptions="FillAndExpand" 
+                    WidthRequest="{OnPlatform Default='-1',
+                                              UWP='350'}">
+                    <Grid RowSpacing="0" VerticalOptions="CenterAndExpand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                    </Grid>
+
+                    <StackLayout Grid.Row="2">
+                        <Label
+                            Text="Solution Url" 
+                            VerticalOptions="Center"
+                            FontFamily="{StaticResource Montserrat-Medium}"
+                            Style="{StaticResource LabelStyle}"/>
+
+                        <local:TextBox  
+                               x:Name="SolutionUrl" 
                                VerticalOptions="Center" 
                                Keyboard="Url"
-                               ReturnType="Next"/>
+                               ReturnType="Next"
+                               Text="{Binding SolutionUrl}"/>
+                    </StackLayout>
+
+                    <!--  next button  -->
+                    <Button Grid.Row="3"
+                            Text="Next"
+                            VerticalOptions="EndAndExpand"
+                            HorizontalOptions="FillAndExpand"
+                            BackgroundColor="#508bf9"
+                            TextColor="White"
+                            Command="{Binding StoreSolutionUrl}"/>   
                 </StackLayout>
+                
             </ScrollView>
-            
-            <StackLayout Grid.Row="1" Orientation="Horizontal" VerticalOptions="End">
-                <Button Text="Next"
-                VerticalOptions="EndAndExpand"
-                HorizontalOptions="FillAndExpand"
-                BackgroundColor="#508bf9"
-                TextColor="White"
-                Clicked="StoreSidVal"/>
-            </StackLayout>
         </Grid>
     </ContentPage.Content>
 </ContentPage> 

@@ -5,35 +5,105 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              mc:Ignorable="d"
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
-             x:Class="ExpressBase.Mobile.Views.Login">
+             x:Class="ExpressBase.Mobile.Views.Login"
+             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#ffffff">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <!--  Binding context for page  -->
+    <ContentPage.BindingContext>
+        <viewModel:LoginViewModel />
+    </ContentPage.BindingContext>
+    
     <ContentPage.Content>
-        <ScrollView>
-            
-            <ScrollView.VerticalOptions>
-                <OnIdiom
+        <Grid>
+            <ScrollView>
+                <ScrollView.VerticalOptions>
+                    <OnIdiom
                         x:TypeArguments="LayoutOptions"
                         Default="CenterAndExpand"
                         Phone="FillAndExpand" />
-            </ScrollView.VerticalOptions>
-            
-            <StackLayout Margin="20" VerticalOptions="CenterAndExpand">
-                <StackLayout>
-                    <Image x:Name="Logo" Aspect="AspectFill"></Image>
+                </ScrollView.VerticalOptions>
+
+                <StackLayout 
+                    Margin="20" 
+                    VerticalOptions="FillAndExpand" 
+                    WidthRequest="{OnPlatform Default='-1',
+                                              UWP='350'}">
+                    <Grid RowSpacing="0" VerticalOptions="CenterAndExpand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!--  Label to display the title of this page  -->
+                        <Label
+                            FontFamily="{StaticResource Montserrat-SemiBold}"
+                            FontSize="20"
+                            HorizontalTextAlignment="Center"
+                            Style="{StaticResource LabelStyle}"
+                            Text="Log In" />
+
+                        <!--  Label to display the description of this page  -->
+                        <Label
+                            Grid.Row="1"
+                            Margin="0,8"
+                            FontFamily="{StaticResource Montserrat-Medium}"
+                            HorizontalTextAlignment="Center"
+                            Style="{StaticResource LabelStyle}"
+                            Text="login to your solution first" />
+
+                        <Image Grid.Row="2" 
+                               Source="eblogo.png" 
+                               Margin="20" 
+                               HorizontalOptions="Center" 
+                               HeightRequest="60"/>
+
+                        <StackLayout Grid.Row="3">
+                            <StackLayout Margin="0,5,0,5">
+                                
+                                <Label Text="Username" 
+                                       VerticalOptions="Center"
+                                       FontFamily="{StaticResource Montserrat-Medium}"
+                                       Style="{StaticResource LabelStyle}"/>   
+                                
+                                <local:TextBox x:Name="Email" Text="{Binding Email}"/>
+                            </StackLayout>
+                            <StackLayout Margin="0,5,0,20">
+                                
+                                <Label Text="Password" 
+                                       VerticalOptions="Center"
+                                       FontFamily="{StaticResource Montserrat-Medium}"
+                                       Style="{StaticResource LabelStyle}"/>
+                                
+                                <local:TextBox x:Name="PassWord" IsPassword="True" Text="{Binding PassWord}"/>
+                            </StackLayout>
+                        </StackLayout>
+
+                        <!--  next button  -->
+                        <Button Grid.Row="4"
+                            Text="Login"
+                            VerticalOptions="EndAndExpand"
+                            HorizontalOptions="FillAndExpand"
+                            BackgroundColor="#508bf9"
+                            TextColor="White"
+                            Command="{Binding LoginCommand}"/>
+
+                    </Grid>
                 </StackLayout>
-                <StackLayout Margin="0,5,0,5">
-                    <Label Text="Username" />
-                    <local:TextBox x:Name="UserName" Text="{Binding UserName}"/>
-                </StackLayout>
-                <StackLayout Margin="0,5,0,20">
-                    <Label Text="Password" />
-                    <local:TextBox x:Name="PassWord" IsPassword="True"/>
-                </StackLayout>
-                <Button Text="Login" 
-                    BackgroundColor="#508bf9"
-                    TextColor="White"
-                    HeightRequest="40"
-                    Clicked="OnLoginClick" />
-            </StackLayout>
-        </ScrollView>
+
+            </ScrollView>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

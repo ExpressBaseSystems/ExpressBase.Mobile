@@ -3,45 +3,112 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.AppSelect">
-    <NavigationPage.TitleView>
-        <Label Text="Choose Application" TextColor="White" FontSize="Subtitle"/>
-    </NavigationPage.TitleView>
+             x:Class="ExpressBase.Mobile.Views.AppSelect"
+             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
+             Title="{Binding PageTitle}"
+             BackgroundColor="{DynamicResource Gray-100}"
+             NavigationPage.HasNavigationBar="True">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <!--  Binding context for page  -->
+    <ContentPage.BindingContext>
+        <viewModel:AppSelectViewModel />
+    </ContentPage.BindingContext>
+
     <ContentPage.Content>
-        <StackLayout>
-            <StackLayout>
-                <ListView ItemsSource="{Binding Applications}"
-                  ItemSelected="OnListViewItemSelected">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <Grid Padding="10">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="1"
-                           Text="{Binding AppName}"
-                           FontAttributes="Bold" />
-                                </Grid>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+
+        <ScrollView>
+    
+            <StackLayout
+                x:Name="applicationList"
+                Padding="16"
+                BindableLayout.ItemsSource="{Binding Applications}"
+                Spacing="16">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <control:CustomShadowFrame
+                            Margin="0"
+                            Padding="0"
+                            BackgroundColor="{DynamicResource Gray-White}"
+                            BorderColor="{DynamicResource Gray-White}"
+                            CornerRadius="4"
+                            HasShadow="True"
+                            HeightRequest="80">
+                            <control:CustomShadowFrame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.AppSelectedCommand, Source={x:Reference applicationList}}" CommandParameter="{Binding .}" />
+                            </control:CustomShadowFrame.GestureRecognizers>
+
+                            <Grid ColumnSpacing="0" RowSpacing="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!--  app icon  -->
+                                <Image
+                                        Grid.RowSpan="2"
+                                        Margin="16"
+                                        BackgroundColor="{DynamicResource Gray-200}"
+                                        HeightRequest="48"
+                                        WidthRequest="48" >
+                                    <Image.Source>
+                                        <UriImageSource Uri="" 
+			                                 CacheValidity="14" 
+			                                 CachingEnabled="true"/>
+                                    </Image.Source>
+                                </Image>
+
+                                <!--  app name  -->
+                                <StackLayout
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Padding="0"
+                                    Margin="0,16,16,4"
+                                    Orientation="Horizontal"
+                                    Spacing="0">
+                                    <Label
+                                        FontFamily="{StaticResource Montserrat-SemiBold}"
+                                        FontSize="14"
+                                        HorizontalOptions="StartAndExpand"
+                                        Text="{Binding AppName}"
+                                        TextColor="{DynamicResource Gray-900}" />
+                                </StackLayout>
+
+                                <!--  app description -->
+                                <StackLayout
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Padding="0"
+                                    Margin="0,0,16,0"
+                                    Orientation="Horizontal"
+                                    Spacing="0">
+                                    <Label
+                                        FontFamily="{StaticResource Montserrat-Medium}"
+                                        FontSize="12"
+                                        HorizontalOptions="StartAndExpand"
+                                        Text="{Binding Description}"
+                                        TextColor="{DynamicResource Gray-700}" />
+                                </StackLayout>
+                            </Grid>
+                        </control:CustomShadowFrame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
             </StackLayout>
-            <StackLayout Orientation="Horizontal" VerticalOptions="End">
-                <Button Text="Finish"
-                VerticalOptions="EndAndExpand"
-                HorizontalOptions="FillAndExpand"
-                BackgroundColor="#508bf9"
-                TextColor="White"
-                Clicked="AppSelectFinish"/>
-            </StackLayout>
-        </StackLayout>
+        </ScrollView>
+
     </ContentPage.Content>
+
 </ContentPage>

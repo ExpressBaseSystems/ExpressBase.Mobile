@@ -22,6 +22,8 @@ namespace ExpressBase.Mobile.Models
         public string AppName { set; get; }
 
         public string AppIcon { set; get; }
+
+        public string Description { set; get; } = "No description";
     }
 
     public class MobilePageCollection
@@ -59,8 +61,34 @@ namespace ExpressBase.Mobile.Models
         }
     }
 
+    public class PageTypeGroup : List<MobilePagesWraper>
+    { 
+        public string GroupHeader { get; set; }
+
+        public IList<MobilePagesWraper> Pages => this;
+    }
+
     public class MobilePagesWraper
     {
+        public string ObjectIcon
+        {
+            get
+            {
+                if (this.JsonToPage().Container is EbMobileForm)
+                {
+                    return "form.png";
+                }
+                else if (this.JsonToPage().Container is EbMobileVisualization)
+                {
+                    return "list.png";
+                }
+                else
+                {
+                    return "list.png";
+                }
+            }
+        }
+
         public string DisplayName { set; get; }
 
         public string Name { set; get; }
@@ -119,7 +147,7 @@ namespace ExpressBase.Mobile.Models
 
             this.Columns.Add(new MobileTableColumn { Name = "eb_device_id", Type = EbDbTypes.String, Value = helper.DeviceId });
             //<manufacturer>(<model> <platform>:<osversion>)-<appversion>
-            string appversion = string.Format("{0}({1} {2}:{3})-{4}", DeviceInfo.Manufacturer, DeviceInfo.Model, DeviceInfo.Platform, DeviceInfo.VersionString,helper.AppVersion);
+            string appversion = string.Format("{0}({1} {2}:{3})-{4}", DeviceInfo.Manufacturer, DeviceInfo.Model, DeviceInfo.Platform, DeviceInfo.VersionString, helper.AppVersion);
             this.Columns.Add(new MobileTableColumn { Name = "eb_appversion", Type = EbDbTypes.String, Value = appversion });
         }
     }
