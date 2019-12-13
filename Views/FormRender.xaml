@@ -6,4 +6,13 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.FormRender"
              BackgroundColor="#f2f2f2">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
 </ContentPage>
