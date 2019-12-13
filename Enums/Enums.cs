@@ -56,4 +56,10 @@ namespace ExpressBase.Mobile.Enums
         Year_Month,
         Year,
     }
+
+    public enum SysContentType
+    {
+        File = 0,
+        Directory = 1
+    }
 }

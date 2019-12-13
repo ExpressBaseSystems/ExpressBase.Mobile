@@ -1,6 +1,9 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Enums;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Models
 {
@@ -11,6 +14,14 @@ namespace ExpressBase.Mobile.Models
         string AppVersion { get; }
 
         void CloseApp();
+
+        string NativeRoot { get; }
+
+        bool DirectoryOrFileExist(string Path, SysContentType Type);
+
+        string CreateDirectoryOrFile(string DirectoryPath, SysContentType Type);
+
+        byte[] GetPhoto(string url);
     }
 
     public interface IToast

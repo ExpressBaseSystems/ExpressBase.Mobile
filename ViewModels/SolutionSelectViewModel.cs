@@ -1,5 +1,7 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
 using System;
@@ -51,6 +53,7 @@ namespace ExpressBase.Mobile.ViewModels
                     Store.SetValue(AppConst.ROOT_URL, url);
                     Application.Current.MainPage.Navigation.PushAsync(new Login());
                     this.CreateDB(_sid);
+                    this.CreateDir(_sid);
                 }
                 else
                 {
@@ -65,6 +68,28 @@ namespace ExpressBase.Mobile.ViewModels
         private void CreateDB(string sid)
         {
             App.DataDB.CreateDB(sid);
+        }
+
+        private void CreateDir(string sid)
+        {
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+
+            if (helper.DirectoryOrFileExist("ExpressBase", SysContentType.Directory))
+            {
+                if (!helper.DirectoryOrFileExist($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory))
+                {
+                    string SolDirPath = helper.CreateDirectoryOrFile($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory);
+                }
+            }
+            else
+            {
+                string path = helper.CreateDirectoryOrFile("ExpressBase",SysContentType.Directory);
+
+                if (!helper.DirectoryOrFileExist($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory))
+                {
+                    string SolDirPath = helper.CreateDirectoryOrFile($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory);
+                }
+            }
         }
     }
 }

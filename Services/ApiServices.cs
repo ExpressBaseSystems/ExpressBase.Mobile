@@ -55,6 +55,22 @@ namespace ExpressBase.Mobile.Services
             return false;
         }
 
+        public static byte[] GetSolutionLogo(string url)
+        {
+            try
+            {
+                RestClient client = new RestClient(Settings.RootUrl);
+                RestRequest request = new RestRequest(url);
+                byte[] imagebyte = client.DownloadData(request);
+                return imagebyte;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return null;
+        }
+
         public static List<AppData> GetAppCollections()
         {
             List<AppData> _Apps = null;

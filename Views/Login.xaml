@@ -54,21 +54,12 @@
                             HorizontalTextAlignment="Center"
                             Style="{StaticResource LabelStyle}"
                             Text="Log In" />
-
-                        <!--  Label to display the description of this page  -->
-                        <Label
-                            Grid.Row="1"
-                            Margin="0,8"
-                            FontFamily="{StaticResource Montserrat-Medium}"
-                            HorizontalTextAlignment="Center"
-                            Style="{StaticResource LabelStyle}"
-                            Text="login to your solution first" />
-
-                        <Image Grid.Row="2" 
-                               Source="eblogo.png" 
+                        
+                        <Image x:Name="LogoUrl"
+                               Grid.Row="2" 
+                               Source="{Binding LogoUrl}" 
                                Margin="20" 
-                               HorizontalOptions="Center" 
-                               HeightRequest="60"/>
+                               HorizontalOptions="Center" HeightRequest="100"/>
 
                         <StackLayout Grid.Row="3">
                             <StackLayout Margin="0,5,0,5">
