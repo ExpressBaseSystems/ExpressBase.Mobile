@@ -7,6 +7,7 @@
              x:Class="ExpressBase.Mobile.Views.ObjectsRenderer"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              Title="{Binding PageTitle}"
+             Style="{StaticResource ContentPageStyle}"
              xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels">
 
     <ContentPage.Resources>

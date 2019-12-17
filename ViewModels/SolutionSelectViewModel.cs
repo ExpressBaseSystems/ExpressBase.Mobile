@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace ExpressBase.Mobile.ViewModels
 {
@@ -73,22 +74,28 @@ namespace ExpressBase.Mobile.ViewModels
         private void CreateDir(string sid)
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
-
-            if (helper.DirectoryOrFileExist("ExpressBase", SysContentType.Directory))
+            try
             {
-                if (!helper.DirectoryOrFileExist($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory))
+                if (helper.DirectoryOrFileExist("ExpressBase", SysContentType.Directory))
                 {
-                    string SolDirPath = helper.CreateDirectoryOrFile($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory);
+                    if (!helper.DirectoryOrFileExist($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory))
+                    {
+                        string SolDirPath = helper.CreateDirectoryOrFile($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory);
+                    }
+                }
+                else
+                {
+                    string path = helper.CreateDirectoryOrFile("ExpressBase", SysContentType.Directory);
+
+                    if (!helper.DirectoryOrFileExist($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory))
+                    {
+                        string SolDirPath = helper.CreateDirectoryOrFile($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory);
+                    }
                 }
             }
-            else
+            catch(Exception ex)
             {
-                string path = helper.CreateDirectoryOrFile("ExpressBase",SysContentType.Directory);
-
-                if (!helper.DirectoryOrFileExist($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory))
-                {
-                    string SolDirPath = helper.CreateDirectoryOrFile($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory);
-                }
+                Console.WriteLine(ex.Message);
             }
         }
     }

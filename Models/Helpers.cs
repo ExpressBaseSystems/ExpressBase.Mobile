@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
 {
@@ -27,6 +28,15 @@ namespace ExpressBase.Mobile.Models
     public interface IToast
     {
         void Show(string message);
+    }
+
+    public interface ILodingIndicator
+    {
+        void InitLoader(ContentPage loadingIndicatorPage = null);
+
+        void ShowLoader();
+
+        void HideLoader();
     }
 }
 

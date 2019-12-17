@@ -10,9 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views.Shared
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class ModalLoader : ContentView
-	{
-		public ModalLoader ()
+	public partial class LoadingIndicator : ContentPage
+    {
+		public LoadingIndicator()
 		{
 			InitializeComponent ();
 		}

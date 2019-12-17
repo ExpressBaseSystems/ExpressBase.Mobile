@@ -25,27 +25,24 @@
     </ContentPage.BindingContext>
 
     <ContentPage.Content>
-
         <ScrollView>
-    
             <StackLayout
                 x:Name="applicationList"
-                Padding="16"
                 BindableLayout.ItemsSource="{Binding Applications}"
-                Spacing="16">
+                Spacing="0">
                 <BindableLayout.ItemTemplate>
                     <DataTemplate>
-                        <control:CustomShadowFrame
+                        <Frame
                             Margin="0"
                             Padding="0"
                             BackgroundColor="{DynamicResource Gray-White}"
                             BorderColor="{DynamicResource Gray-White}"
-                            CornerRadius="4"
-                            HasShadow="True"
+                            CornerRadius="0"
+                            HasShadow="false"
                             HeightRequest="80">
-                            <control:CustomShadowFrame.GestureRecognizers>
+                            <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Path=BindingContext.AppSelectedCommand, Source={x:Reference applicationList}}" CommandParameter="{Binding .}" />
-                            </control:CustomShadowFrame.GestureRecognizers>
+                            </Frame.GestureRecognizers>
 
                             <Grid ColumnSpacing="0" RowSpacing="0">
                                 <Grid.RowDefinitions>
@@ -56,7 +53,7 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-
+                                
                                 <!--  app icon  -->
                                 <Image
                                         Grid.RowSpan="2"
@@ -103,7 +100,7 @@
                                         TextColor="{DynamicResource Gray-700}" />
                                 </StackLayout>
                             </Grid>
-                        </control:CustomShadowFrame>
+                        </Frame>
                     </DataTemplate>
                 </BindableLayout.ItemTemplate>
             </StackLayout>

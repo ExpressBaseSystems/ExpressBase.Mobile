@@ -7,7 +7,6 @@
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Login"
              xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
-             NavigationPage.HasNavigationBar="False"
              BackgroundColor="#ffffff">
 
     <ContentPage.Resources>
@@ -53,7 +52,7 @@
                             FontSize="20"
                             HorizontalTextAlignment="Center"
                             Style="{StaticResource LabelStyle}"
-                            Text="Log In" />
+                            Text="LOG IN" />
                         
                         <Image x:Name="LogoUrl"
                                Grid.Row="2" 
