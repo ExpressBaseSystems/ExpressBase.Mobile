@@ -7,7 +7,18 @@
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Login"
              xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
-             BackgroundColor="#ffffff">
+             Style="{StaticResource ContentPageStyle}">
+
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Command="{Binding ResetConfig}" Grid.Column="2"/>
+        </Grid>
+    </NavigationPage.TitleView>
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -24,7 +35,10 @@
     
     <ContentPage.Content>
         <Grid>
-            <ScrollView>
+            <ScrollView 
+                x:Name="scrollView" 
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All">
                 <ScrollView.VerticalOptions>
                     <OnIdiom
                         x:TypeArguments="LayoutOptions"
@@ -53,7 +67,7 @@
                             HorizontalTextAlignment="Center"
                             Style="{StaticResource LabelStyle}"
                             Text="LOG IN" />
-                        
+
                         <Image x:Name="LogoUrl"
                                Grid.Row="2" 
                                Source="{Binding LogoUrl}" 
@@ -62,21 +76,21 @@
 
                         <StackLayout Grid.Row="3">
                             <StackLayout Margin="0,5,0,5">
-                                
+
                                 <Label Text="Username" 
                                        VerticalOptions="Center"
                                        FontFamily="{StaticResource Montserrat-Medium}"
-                                       Style="{StaticResource LabelStyle}"/>   
-                                
+                                       Style="{StaticResource LabelStyle}"/>
+
                                 <local:TextBox x:Name="Email" Text="{Binding Email}"/>
                             </StackLayout>
                             <StackLayout Margin="0,5,0,20">
-                                
+
                                 <Label Text="Password" 
                                        VerticalOptions="Center"
                                        FontFamily="{StaticResource Montserrat-Medium}"
                                        Style="{StaticResource LabelStyle}"/>
-                                
+
                                 <local:TextBox x:Name="PassWord" IsPassword="True" Text="{Binding PassWord}"/>
                             </StackLayout>
                         </StackLayout>
@@ -92,8 +106,53 @@
 
                     </Grid>
                 </StackLayout>
-
             </ScrollView>
+
+            <!--loader-->
+            <ContentView 
+                IsVisible="{Binding IsBusy}" 
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All">
+                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <BoxView
+                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                        AbsoluteLayout.LayoutFlags="All"
+                        BackgroundColor="#333333"
+                        Opacity=".5"/>
+
+                    <StackLayout 
+                        AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
+                        AbsoluteLayout.LayoutFlags="PositionProportional">
+                        <Frame 
+                            HasShadow="False"
+                            BackgroundColor="White"
+                            CornerRadius="6">
+                            <Frame.Content>
+                                <StackLayout 
+                                Orientation="Vertical" 
+                                HeightRequest="100" 
+                                WidthRequest="150">
+                                    <ActivityIndicator 
+                                        IsVisible="True" 
+                                        IsRunning="True" 
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center" 
+                                        Color="Black" 
+                                        WidthRequest="30" 
+                                        HeightRequest="30"/>
+                                    <Label 
+                                        TextColor="Black" 
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center" 
+                                        VerticalTextAlignment="Center" 
+                                        Text="Loading..."/>
+                                </StackLayout>
+                            </Frame.Content>
+                        </Frame>
+                    </StackLayout>
+                </AbsoluteLayout>
+            </ContentView>
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

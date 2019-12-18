@@ -30,7 +30,7 @@ namespace ExpressBase.Mobile.Views
         void GetData()
         {
             byte[] b = Convert.FromBase64String(Vis.OfflineQuery.Code);
-            string sql = System.Text.Encoding.UTF8.GetString(b);
+            string sql = WrapQuery(System.Text.Encoding.UTF8.GetString(b));
             try
             {
                 DataTable = App.DataDB.DoQuery(sql);
@@ -40,6 +40,11 @@ namespace ExpressBase.Mobile.Views
                 DataTable = new EbDataTable();
                 Console.WriteLine(e.Message);
             }
+        }
+
+        string WrapQuery(string sql)
+        {
+            return string.Format("SELECT * FROM ({0}) AS WRAPER LIMIT 100;", sql.TrimEnd(';'));
         }
 
         void BuildView()

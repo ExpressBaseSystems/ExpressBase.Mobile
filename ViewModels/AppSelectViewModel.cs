@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
@@ -16,7 +17,8 @@ namespace ExpressBase.Mobile.ViewModels
         public AppSelectViewModel()
         {
             PullApplications();
-            AppSelectedCommand = new Command(ItemSelected);
+            this.AppSelectedCommand = new Command(ItemSelected);
+            this.ResetConfig = new Command(ResetClicked);//bind reset button
             PageTitle = "Choose Application";
         }
 
@@ -47,11 +49,27 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void ItemSelected(object selected)
         {
-            this.SelectedAppid = (selected as AppData).AppId;
-            this.SelectedAppName = (selected as AppData).AppName;
-            Store.SetValue(AppConst.APPID, this.SelectedAppid.ToString());
-            Store.SetValue(AppConst.APPNAME, this.SelectedAppName.ToString());
-            Application.Current.MainPage = new RootMaster(typeof(ObjectsRenderer));
+            Task.Run(() =>
+            {
+                Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                try
+                {
+                    this.SelectedAppid = (selected as AppData).AppId;
+                    this.SelectedAppName = (selected as AppData).AppName;
+                    Store.SetValue(AppConst.APPID, this.SelectedAppid.ToString());
+                    Store.SetValue(AppConst.APPNAME, this.SelectedAppName.ToString());
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        IsBusy = false;
+                        Application.Current.MainPage = new RootMaster(typeof(ObjectsRenderer));
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Device.BeginInvokeOnMainThread(() => IsBusy = false);
+                }
+            });
         }
     }
 }

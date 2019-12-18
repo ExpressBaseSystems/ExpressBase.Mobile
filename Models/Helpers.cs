@@ -29,15 +29,6 @@ namespace ExpressBase.Mobile.Models
     {
         void Show(string message);
     }
-
-    public interface ILodingIndicator
-    {
-        void InitLoader(ContentPage loadingIndicatorPage = null);
-
-        void ShowLoader();
-
-        void HideLoader();
-    }
 }
 
 namespace ExpressBase.Mobile.Views

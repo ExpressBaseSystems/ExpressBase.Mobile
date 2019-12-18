@@ -12,61 +12,27 @@
 
     <!--  Common style for content page  -->
     <Style x:Key="ContentPageStyle" TargetType="ContentPage">
-        <Setter Property="NavigationPage.HasNavigationBar" Value="False" />
-        <Setter Property="NavigationPage.HasBackButton" Value="False" />
+        <Setter Property="NavigationPage.HasNavigationBar" Value="True" />
+        <Setter Property="NavigationPage.HasBackButton" Value="True" />
         <Setter Property="NavigationPage.BarBackgroundColor" Value="#508bf9" />
     </Style>
 
-    <!--  Common style for action bar icons  -->
-    <Style x:Key="ActionBarSettingIconStyle" TargetType="Button">
-        <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />
-        <Setter Property="FontFamily" Value="{StaticResource FontIcons}" />
-        <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="Text" Value="&#xe72b;" />
-        <Setter Property="Padding" Value="{OnPlatform Default=8, UWP=6}" />
-        <Setter Property="Margin" Value="8" />
-        <Setter Property="HeightRequest" Value="{OnPlatform Default=32, UWP=40}" />
-        <Setter Property="WidthRequest" Value="{OnPlatform Default=32, UWP=40}" />
-    </Style>
-
-    <!--  Common style for action bar labels  -->
-    <Style x:Key="ActionBarLabelStyle" TargetType="Label">
+    <!--  Common style for toolbar labels  -->
+    <Style x:Key="ToolBarLabelStyle" TargetType="Label">
         <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />
         <Setter Property="FontFamily" Value="{StaticResource Montserrat-Regular}" />
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontSize" Value="18" />
     </Style>
 
-    <!--  Common style for action bar back button  -->
-    <Style x:Key="ActionBarBackButtonStyle" TargetType="Button">
+    <!--  Common style for toolbar button  -->
+    <Style x:Key="ToolBarButtonStyle" TargetType="Button">
         <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />
-        <Setter Property="FontFamily" Value="{StaticResource FontIcons}" />
-        <Setter Property="Text" Value="&#xe709;" />
+        <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="HorizontalOptions" Value="Start" />
         <Setter Property="HeightRequest" Value="34" />
         <Setter Property="WidthRequest" Value="34" />
         <Setter Property="Margin" Value="8" />
-        <Setter Property="Padding" Value="8" />
-    </Style>
-
-    <!--  Common style for list view item title  -->
-    <Style x:Key="ItemTitleStyle" TargetType="Label">
-        <Setter Property="TextColor" Value="{DynamicResource Gray-900}" />
-        <Setter Property="Text" Value="{Binding Name}" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="FontFamily" Value="{StaticResource Montserrat-SemiBold}" />
-        <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="VerticalTextAlignment" Value="Center" />
-        <Setter Property="VerticalOptions" Value="Center" />
-    </Style>
-
-    <!--  Common style for header icon  -->
-    <Style x:Key="HeaderIconStyle" TargetType="Image">
-        <Setter Property="HorizontalOptions" Value="EndAndExpand" />
-        <Setter Property="HeightRequest" Value="35" />
-        <Setter Property="Margin" Value="0,0,8,0" />
-        <Setter Property="Aspect" Value="AspectFit" />
-        <Setter Property="Source" Value="HeaderIcon.png" />
+        <Setter Property="FontSize" Value="18" />
     </Style>
 
 </ResourceDictionary>

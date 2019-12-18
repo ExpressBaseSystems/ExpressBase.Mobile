@@ -18,9 +18,6 @@
     <Compile Update="Views\AppSelect.xaml.cs">
       <DependentUpon>AppSelect.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Shared\LoadingIndicator.xaml.cs">
-      <DependentUpon>LoadingIndicator.xaml</DependentUpon>
-    </Compile>
     <Compile Update="Views\SolutionSelect.xaml.cs">
       <DependentUpon>SolutionSelect.xaml</DependentUpon>
     </Compile>
@@ -31,9 +28,6 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ReportRender.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Views\Shared\LoadingIndicator.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\Shared\SideBar.xaml">

@@ -8,6 +8,8 @@
              x:Class="ExpressBase.Mobile.Views.SolutionSelect"
              xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
              Title="Solution URL"
+             NavigationPage.HasNavigationBar="False"
+             NavigationPage.HasBackButton="False"
              Style="{StaticResource ContentPageStyle}">
 
     <ContentPage.Resources>
@@ -25,14 +27,14 @@
     
     <ContentPage.Content>
         <Grid>
-            <ScrollView x:Name="scrollView">
+            <ScrollView x:Name="scrollView" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" AbsoluteLayout.LayoutFlags="All">
                 <ScrollView.VerticalOptions>
                     <OnIdiom
                         x:TypeArguments="LayoutOptions"
                         Default="CenterAndExpand"
                         Phone="FillAndExpand" />
                 </ScrollView.VerticalOptions>
-
+                
                 <StackLayout
                     BackgroundColor="#508bf9"
                     VerticalOptions="FillAndExpand" 
@@ -135,6 +137,52 @@
                     </StackLayout>
                 </StackLayout>
             </ScrollView>
+
+            <!--loader-->
+            <ContentView 
+                IsVisible="{Binding IsBusy}" 
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All">
+                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <BoxView
+                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                        AbsoluteLayout.LayoutFlags="All"
+                        BackgroundColor="#333333"
+                        Opacity=".5"/>
+
+                    <StackLayout 
+                        AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
+                        AbsoluteLayout.LayoutFlags="PositionProportional">
+                        <Frame 
+                            HasShadow="False"
+                            BackgroundColor="White"
+                            CornerRadius="6">
+                            <Frame.Content>
+                                <StackLayout 
+                                Orientation="Vertical" 
+                                HeightRequest="100" 
+                                WidthRequest="150">
+                                    <ActivityIndicator 
+                                        IsVisible="True" 
+                                        IsRunning="True" 
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center" 
+                                        Color="Black" 
+                                        WidthRequest="30" 
+                                        HeightRequest="30"/>
+                                    <Label 
+                                        TextColor="Black" 
+                                        VerticalOptions="Center" 
+                                        HorizontalOptions="Center" 
+                                        VerticalTextAlignment="Center" 
+                                        Text="Loading..."/>
+                                </StackLayout>
+                            </Frame.Content>
+                        </Frame>
+                    </StackLayout>
+                </AbsoluteLayout>
+            </ContentView>
+            
         </Grid>
     </ContentPage.Content>
 </ContentPage> 

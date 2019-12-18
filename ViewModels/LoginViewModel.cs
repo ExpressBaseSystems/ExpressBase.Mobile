@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
@@ -64,10 +65,10 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-
         public LoginViewModel()
         {
             this.LoginCommand = new Command(LoginAction);
+            this.ResetConfig = new Command(ResetClicked);//bind reset button
             SetLogo();
         }
 
@@ -77,16 +78,40 @@ namespace ExpressBase.Mobile.ViewModels
         {
             string _username = this.Email.Trim();
             string _password = this.PassWord.Trim();
-
-            if (CanLogin())
+            Task.Run(() =>
             {
-                ApiAuthResponse response = Auth.TryAuthenticate(_username, _password);
-                if (response.IsValid)
+                if (CanLogin())
                 {
-                    Auth.UpdateStore(response, _username, password);
-                    Application.Current.MainPage.Navigation.PushAsync(new AppSelect());
+                    Device.BeginInvokeOnMainThread(() => IsBusy = true);
+
+                    ApiAuthResponse response = Auth.TryAuthenticate(_username, _password);
+                    if (response.IsValid)
+                    {
+                        Auth.UpdateStore(response, _username, password);
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            Application.Current.MainPage.Navigation.PushAsync(new AppSelect());
+                        });
+                    }
+                    else
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            Application.Current.MainPage.DisplayAlert("Alert!", "User does not exist", "Ok");
+                        });
+                    }
                 }
-            }
+                else
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        IsBusy = false;
+                        Application.Current.MainPage.DisplayAlert("Alert!", "Email/Password cannot be empty", "Ok");
+                    });
+                }
+            });
         }
 
         private bool CanLogin()
@@ -119,7 +144,7 @@ namespace ExpressBase.Mobile.ViewModels
                 else
                 {
                     var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
-                    LogoUrl = (bytes == null) ? ImageSource.FromResource("eblogo.png"): ImageSource.FromStream(() => new MemoryStream(bytes));                    
+                    LogoUrl = (bytes == null) ? ImageSource.FromResource("eblogo.png") : ImageSource.FromStream(() => new MemoryStream(bytes));
                 }
             }
             catch (Exception ex)

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -40,6 +41,24 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        private string _loaderMessage;
+        public string LoaderMessage
+        {
+            get
+            {
+                return this._loaderMessage;
+            }
+            set
+            {
+                if (this._loaderMessage == value)
+                {
+                    return;
+                }
+                this._loaderMessage = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
         public List<MobilePagesWraper> ObjectList { set; get; }
 
         public Command SyncButtonCommand { set; get; }
@@ -48,6 +67,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public ObjectsRenderViewModel()
         {
+            LoaderMessage = "Loading...";
             SetUpData();
             SyncButtonCommand = new Command(OnSyncClick);
             ObjectSelectCommand = new Command(OnObjectClick);
@@ -133,27 +153,40 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private async void OnObjectClick(object obj)
+        private void OnObjectClick(object obj)
         {
             MobilePagesWraper item = (obj as MobilePagesWraper);
-            try
+            Task.Run(() =>
             {
-                string regexed = EbSerializers.JsonToNETSTD(item.Json);
-                EbMobilePage page = EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
+                Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                try
+                {
+                    string regexed = EbSerializers.JsonToNETSTD(item.Json);
+                    EbMobilePage page = EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
 
-                if (page.Container is EbMobileForm)
-                {
-                    await(Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
+                    if (page.Container is EbMobileForm)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
+                        });
+                    }
+                    else if (page.Container is EbMobileVisualization)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new VisRender(page));
+                        });
+                    }
                 }
-                else if (page.Container is EbMobileVisualization)
+                catch (Exception ex)
                 {
-                    await(Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new VisRender(page));
+                    Device.BeginInvokeOnMainThread(() => IsBusy = false);
+                    Console.WriteLine(ex.StackTrace);
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.StackTrace);
-            }
+            });
         }
     }
 }

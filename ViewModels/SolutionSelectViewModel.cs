@@ -7,6 +7,7 @@ using ExpressBase.Mobile.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
@@ -44,26 +45,46 @@ namespace ExpressBase.Mobile.ViewModels
         private void SolutionUrlSet(object obj)
         {
             string url = this.SolutionUrl.Trim();
-
-            if (!string.IsNullOrEmpty(url))
+            Task.Run(() =>
             {
-                if (Api.ValidateSid(url))
+                try
                 {
-                    string _sid = url.Split('.')[0];
-                    Store.SetValue(AppConst.SID, _sid);
-                    Store.SetValue(AppConst.ROOT_URL, url);
-                    Application.Current.MainPage.Navigation.PushAsync(new Login());
-                    this.CreateDB(_sid);
-                    this.CreateDir(_sid);
-                }
-                else
-                {
-                    Device.BeginInvokeOnMainThread(async () =>
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        await Application.Current.MainPage.DisplayAlert("Alert!", "Invalid solution URL", "Ok");
+                        Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                        if (Api.ValidateSid(url))
+                        {
+                            string _sid = url.Split('.')[0];
+                            Store.SetValue(AppConst.SID, _sid);
+                            Store.SetValue(AppConst.ROOT_URL, url);
+                            this.CreateDB(_sid);
+                            this.CreateDir(_sid);
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                IsBusy = false;
+                                Application.Current.MainPage.Navigation.PushAsync(new Login());
+                            });
+                        }
+                        else
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                IsBusy = false;
+                                Application.Current.MainPage.DisplayAlert("Alert!", "Invalid solution URL", "Ok");
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        IsBusy = false;
+                        Application.Current.MainPage.DisplayAlert("Alert!", "Something went wrong", "Ok");
                     });
                 }
-            }
+            });
         }
 
         private void CreateDB(string sid)
@@ -93,7 +114,7 @@ namespace ExpressBase.Mobile.ViewModels
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
