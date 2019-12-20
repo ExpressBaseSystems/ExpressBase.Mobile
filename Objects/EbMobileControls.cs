@@ -198,5 +198,7 @@ namespace ExpressBase.Mobile
         public EbDbTypes Type { get; set; }
 
         public override bool Hidden { set; get; }
+
+        public EbFont Font { get; set; }
     }
 }

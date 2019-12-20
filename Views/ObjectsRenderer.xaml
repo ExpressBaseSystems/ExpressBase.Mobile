@@ -12,11 +12,15 @@
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+            <Button 
+                Text="&#xf002;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="1"/>
             <Button 
                 Text="&#xf021;" 
                 Style="{StaticResource ToolBarButtonStyle}" 

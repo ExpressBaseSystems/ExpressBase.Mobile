@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using System;
@@ -191,5 +192,9 @@ namespace ExpressBase.Mobile
         public EbScript OfflineQuery { set; get; }
 
         public EbMobileTableLayout DataLayout { set; get; }
+
+        public MobVisRenderType RenderAs { get; set; }
+
+        public string LinkRefId { get; set; }
     }
 }

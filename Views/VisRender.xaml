@@ -1,6 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ExpressBase.Mobile.Views.VisRender"
-             BackgroundColor="#f2f2f2">
+             x:Class="ExpressBase.Mobile.Views.VisRender">
+    
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+            <Button 
+                Text="&#xf002;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="1"/>
+            <Button 
+                Text="&#xf021;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="2"
+                Command="{Binding SyncButtonCommand}"/>
+        </Grid>
+    </NavigationPage.TitleView>
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
 </ContentPage>

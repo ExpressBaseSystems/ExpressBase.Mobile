@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 using System.Linq;
+using ExpressBase.Mobile.Structures;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -25,9 +26,9 @@ namespace ExpressBase.Mobile.Services
             this.Form = form;
         }
 
-        public bool Save()
+        public bool Save(int RowId)
         {
-            MobileFormData data = this.GetFormData();
+            MobileFormData data = this.GetFormData(RowId);
             string query = string.Empty;
             try
             {
@@ -35,8 +36,9 @@ namespace ExpressBase.Mobile.Services
                 {
                     List<DbParameter> _params = new List<DbParameter>();
                     foreach (MobileTable _table in data.Tables)
-                        query += this.GetTQndDbP(_table, _params);
-
+                    {
+                        query += this.GetQuery(_table, _params);
+                    }
                     int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
                     return (rowAffected > 0);
                 }
@@ -48,18 +50,17 @@ namespace ExpressBase.Mobile.Services
             return false;
         }
 
-        private MobileFormData GetFormData()
+        private MobileFormData GetFormData(int RowId)
         {
             MobileFormData FormData = new MobileFormData
             {
                 MasterTable = this.Form.TableName
             };
-
             MobileTable Table = new MobileTable { TableName = this.Form.TableName };
             MobileTableRow row = new MobileTableRow
             {
-                RowId = 0,
-                IsUpdate = false
+                RowId = RowId,
+                IsUpdate = (RowId > 0)
             };
 
             Table.Add(row);
@@ -72,44 +73,71 @@ namespace ExpressBase.Mobile.Services
                 else
                 {
                     ICustomElement xctrl = el as ICustomElement;
+                    var value = xctrl.GetValue();
+                    if (value == null)
+                        continue;
 
                     row.Columns.Add(new MobileTableColumn
                     {
                         Name = xctrl.Name,
                         Type = xctrl.DbType,
-                        Value = xctrl.GetValue()
+                        Value = value
                     });
                 }
             }
-
-            row.AppendEbColValues();//append ebcol values
-
+            if (RowId <= 0)
+                row.AppendEbColValues();//append ebcol values
             FormData.Tables.Add(Table);
             return FormData;
         }
 
-        private string GetTQndDbP(MobileTable Table, List<DbParameter> Parameters)
+        private string GetQuery(MobileTable Rows, List<DbParameter> Parameters)
         {
             StringBuilder sb = new StringBuilder();
-            List<string> _vals = new List<string>();
-            string[] _cols = (Table.Count > 0) ? Table[0].Columns.Select(en => en.Name).ToArray() : new string[0];
-
-            for (int i = 0; i < Table.Count; i++)
+            for (int i = 0; i < Rows.Count; i++)
             {
-                foreach (MobileTableColumn col in Table[i].Columns)
+                if (Rows[i].IsUpdate)//update
                 {
-                    string _prm = string.Format("@{0}_{1}", col.Name, i);
+                    List<string> _colstrings = new List<string>();
+                    foreach (MobileTableColumn col in Rows[i].Columns)
+                    {
+                        _colstrings.Add(string.Format("{0} = @{1}_{2}", col.Name, col.Name, i));
 
-                    _vals.Add(_prm);
+                        Parameters.Add(new DbParameter
+                        {
+                            ParameterName = string.Format("@{0}_{1}", col.Name, i),
+                            DbType = (int)col.Type,
+                            Value = col.Value
+                        });
+                    }
+                    sb.AppendFormat("UPDATE {0} SET {1} WHERE id = {2};", Rows.TableName, string.Join(",", _colstrings), ("@rowid" + i));
 
                     Parameters.Add(new DbParameter
                     {
-                        ParameterName = _prm,
-                        DbType = (int)col.Type,
-                        Value = col.Value
+                        ParameterName = ("@rowid" + i),
+                        DbType = (int)EbDbTypes.Int32,
+                        Value = Rows[i].RowId
                     });
                 }
-                sb.AppendFormat("INSERT INTO {0}({1}) VALUES ({2});", Table.TableName, string.Join(",", _cols), string.Join(",", _vals.ToArray()));
+                else//insert
+                {
+                    string[] _cols = (Rows.Count > 0) ? Rows[i].Columns.Select(en => en.Name).ToArray() : new string[0];
+                    List<string> _vals = new List<string>();
+                    foreach (MobileTableColumn col in Rows[i].Columns)
+                    {
+                        string _prm = string.Format("@{0}_{1}", col.Name, i);
+
+                        _vals.Add(_prm);
+
+                        Parameters.Add(new DbParameter
+                        {
+                            ParameterName = _prm,
+                            DbType = (int)col.Type,
+                            Value = col.Value
+                        });
+                    }
+                    sb.AppendFormat("INSERT INTO {0}({1}) VALUES ({2});", Rows.TableName, string.Join(",", _cols), string.Join(",", _vals.ToArray()));
+                }
             }
             return sb.ToString();
         }

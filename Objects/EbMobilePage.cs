@@ -54,4 +54,21 @@ namespace ExpressBase.Mobile
 
         public ScriptingLanguage Lang { get; set; }
     }
+
+    public class EbFont
+    {
+        public string FontName { get; set; }
+
+        public int Size { get; set; }
+
+        public FontStyle Style { get; set; }
+
+        public string color { get; set; }
+
+        public bool Caps { get; set; }
+
+        public bool Strikethrough { get; set; }
+
+        public bool Underline { get; set; }
+    }
 }

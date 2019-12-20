@@ -97,6 +97,8 @@ namespace ExpressBase.Mobile.Models
 
         public string Json { set; get; }
 
+        public string RefId { set; get; }
+
         public EbMobilePage JsonToPage()
         {
             if (string.IsNullOrEmpty(Json))

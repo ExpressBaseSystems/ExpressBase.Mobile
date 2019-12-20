@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,9 +23,6 @@ namespace ExpressBase.Mobile.Models
             get
             {
                 return 1;
-            }
-            set
-            {
             }
         }
 

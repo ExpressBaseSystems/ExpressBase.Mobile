@@ -62,4 +62,27 @@ namespace ExpressBase.Mobile.Enums
         File = 0,
         Directory = 1
     }
+
+    //object enums
+    public enum MobVisRenderType
+    {
+        Normal = -1,
+        Link = 0,
+        Info = 1,
+        Referencing = 3
+    }
+
+    public enum FontStyle
+    {
+        NORMAL = 0,
+        ITALIC = 2,
+        BOLD = 1,
+        BOLDITALIC = 3
+    }
+
+    public enum FormMode
+    {
+        NEW = 0,
+        EDIT = 1
+    }
 }

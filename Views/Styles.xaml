@@ -29,9 +29,9 @@
         <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />
         <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="HeightRequest" Value="34" />
-        <Setter Property="WidthRequest" Value="34" />
-        <Setter Property="Margin" Value="8" />
+        <!--<Setter Property="HeightRequest" Value="34" />-->
+        <Setter Property="WidthRequest" Value="40" />
+        <!--<Setter Property="Margin" Value="8,0,8,0" />-->
         <Setter Property="FontSize" Value="18" />
     </Style>
 

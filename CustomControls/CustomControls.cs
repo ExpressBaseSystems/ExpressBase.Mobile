@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Structures;
 using Plugin.Media;
 using System;
@@ -15,6 +16,8 @@ namespace ExpressBase.Mobile.CustomControls
         EbDbTypes DbType { set; get; }
 
         object GetValue();
+
+        bool SetValue(object value);
     }
 
     public class TextBox : Entry, ICustomElement
@@ -37,6 +40,14 @@ namespace ExpressBase.Mobile.CustomControls
         {
             return this.Text;
         }
+
+        public bool SetValue(object value)
+        {
+            if (value == null)
+                return false;
+            this.Text = value.ToString();
+            return true;
+        }
     }
 
     public class NumericTextBox : Entry, ICustomElement
@@ -58,6 +69,14 @@ namespace ExpressBase.Mobile.CustomControls
         public object GetValue()
         {
             return this.Text;
+        }
+
+        public bool SetValue(object value)
+        {
+            if (value == null)
+                return false;
+            this.Text = value.ToString();
+            return true;
         }
     }
 
@@ -100,6 +119,14 @@ namespace ExpressBase.Mobile.CustomControls
         {
             return this.Date.ToString("yyyy-MM-dd");
         }
+
+        public bool SetValue(object value)
+        {
+            if (value == null)
+                return false;
+            this.Date = Convert.ToDateTime(value);
+            return true;
+        }
     }
 
     public class CustomSelect : Picker, ICustomElement
@@ -123,6 +150,11 @@ namespace ExpressBase.Mobile.CustomControls
         public object GetValue()
         {
             return (!(this.SelectedItem is EbMobileSSOption opt)) ? null : opt.Value;
+        }
+
+        public bool SetValue(object value)
+        {
+            return true;
         }
     }
 
@@ -231,7 +263,8 @@ namespace ExpressBase.Mobile.CustomControls
 
         public CustomCheckBox() { }
 
-        public CustomCheckBox(EbMobileBoolean EbBool) {
+        public CustomCheckBox(EbMobileBoolean EbBool)
+        {
             Name = EbBool.Name;
         }
 
@@ -239,12 +272,29 @@ namespace ExpressBase.Mobile.CustomControls
         {
             return this.IsChecked;
         }
+
+        public bool SetValue(object value)
+        {
+            if (value == null)
+                return false;
+            int val = Convert.ToInt32(value);
+            this.IsChecked = (val == 0) ? false : true;
+            return true;
+        }
     }
 
     public class CustomFrame : Frame
     {
-        public CustomFrame(){
-           
+        public EbDataRow DataRow { set; get; }
+
+        public CustomFrame()
+        {
+
+        }
+
+        public CustomFrame(EbDataRow _row)
+        {
+            this.DataRow = _row;
         }
     }
 }
