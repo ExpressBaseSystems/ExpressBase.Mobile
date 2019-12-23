@@ -6,32 +6,203 @@
              mc:Ignorable="d"
              xmlns:local="clr-namespace:ExpressBase.Mobile.Views"
              x:Class="ExpressBase.Mobile.Views.Shared.SideBar"
+             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels.Shared"
              Title="SideBar">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <!--  Binding context for page  -->
+    <ContentPage.BindingContext>
+        <viewModel:SideBarViewModel />
+    </ContentPage.BindingContext>
+
     <ContentPage.Content>
-        <StackLayout>
-            <ListView x:Name="listView" x:FieldModifier="public">
-                <ListView.ItemsSource>
-                    <x:Array Type="{x:Type local:MasterPageItem}">
-                        <local:MasterPageItem LinkType="app_switch" Title="Change Application" TargetType="{x:Type local:AppSelect}"/>
-                        <local:MasterPageItem LinkType="sln_switch" Title="Change Solution" TargetType="{x:Type local:SolutionSelect}" />
-                        <local:MasterPageItem LinkType="logout" Title="Logout" TargetType="{x:Type local:Login}"/>
-                    </x:Array>
-                </ListView.ItemsSource>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid Padding="5,10">
+        <Grid BackgroundColor="#ffffff">
+            <ScrollView 
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All">
+                <StackLayout 
+                    VerticalOptions="FillAndExpand"
+                    x:Name="SideBarLayout">
+                    <StackLayout VerticalOptions="Start" >
+                        <Frame 
+                            HasShadow="False" 
+                            BorderColor="#cccccc" 
+                            BackgroundColor="#ecf0f1" 
+                            CornerRadius="0"
+                            Padding="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <!--<Image Source="{Binding IconSource}" />-->
-                                <Label Grid.Column="1" Text="{Binding Title}" />
+
+                                <Image
+                                Grid.RowSpan="2"
+                                Margin="16"
+                                BackgroundColor="White"
+                                HeightRequest="48"
+                                WidthRequest="48" >
+                                    <Image.Source>
+                                        <UriImageSource Uri="{Binding UserDp}" 
+			                                 CacheValidity="14" 
+			                                 CachingEnabled="true"/>
+                                    </Image.Source>
+                                </Image>
+
+                                <StackLayout
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Padding="0"
+                                    Margin="0,16,16,4"
+                                    Orientation="Horizontal"
+                                    Spacing="0">
+                                    <Label
+                                        FontFamily="{StaticResource Montserrat-SemiBold}"
+                                        FontSize="16"
+                                        HorizontalOptions="StartAndExpand"
+                                        Text="{Binding UserName}"
+                                        TextColor="{DynamicResource Gray-900}" />
+                                </StackLayout>
+
+                                <StackLayout
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Padding="0"
+                                    Margin="0,0,16,0"
+                                    Orientation="Horizontal"
+                                    Spacing="0">
+                                    <Label
+                                        FontFamily="{StaticResource Montserrat-Medium}"
+                                        FontSize="12"
+                                        HorizontalOptions="StartAndExpand"
+                                        Text="{Binding UserEmail}"
+                                        TextColor="{DynamicResource Gray-700}" />
+                                </StackLayout>
+
                             </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </StackLayout>
+                        </Frame>
+                    </StackLayout>
+                    <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="16,10,10,10" Spacing="0">
+                        <Frame Style="{StaticResource SideBarFrame}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Path=BindingContext.ChangeSidCommand,Source={x:Reference SideBarLayout}}" 
+                                    CommandParameter="{Binding .}"/>
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="&#xf140;" Style="{StaticResource SideBarIconStyle}"/>
+                                <Label Grid.Column="1" Text="Change Solution" FontFamily="{StaticResource Montserrat-Medium}"/>
+                            </Grid>
+                        </Frame>
+                        <Frame Style="{StaticResource SideBarFrame}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Path=BindingContext.SwitchAppCommand,Source={x:Reference SideBarLayout}}"
+                                    CommandParameter="{Binding .}"/>
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="&#xf1e8;" Style="{StaticResource SideBarIconStyle}"/>
+                                <Label Grid.Column="1" Text="Switch Application" FontFamily="{StaticResource Montserrat-Medium}"/>
+                            </Grid>
+                        </Frame>
+                        <Frame Style="{StaticResource SideBarFrame}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Path=BindingContext.SwitchLocations,Source={x:Reference SideBarLayout}}"
+                                    CommandParameter="{Binding .}"/>
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="&#xf041;" Style="{StaticResource SideBarIconStyle}"/>
+                                <Label Grid.Column="1" Text="Locations" FontFamily="{StaticResource Montserrat-Medium}"/>
+                            </Grid>
+                        </Frame>
+                    </StackLayout>
+                    <StackLayout VerticalOptions="End" Padding="16,10,10,10">
+                        <Frame Style="{StaticResource SideBarFrame}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Path=BindingContext.LogOutCommand,Source={x:Reference SideBarLayout}}"
+                                    CommandParameter="{Binding .}"/>
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="&#xf08b;" Style="{StaticResource SideBarIconStyle}"/>
+                                <Label Grid.Column="1" Text="Logout" FontFamily="{StaticResource Montserrat-Medium}"/>
+                            </Grid>
+                        </Frame>
+                    </StackLayout>
+                </StackLayout>
+            </ScrollView>
+
+            <!--location list-->
+            <ContentView 
+                IsVisible="{Binding ShowLocWindow}" 
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All">
+                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <BoxView
+                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                        AbsoluteLayout.LayoutFlags="All"
+                        BackgroundColor="#333333"
+                        Opacity=".5"/>
+
+                    <StackLayout 
+                        AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
+                        AbsoluteLayout.LayoutFlags="PositionProportional">
+                        <ListView 
+                            BackgroundColor="White"
+                            ItemsSource="{Binding Locations}"
+                            HasUnevenRows="true">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <CheckBox Grid.RowSpan="2" IsChecked="True"></CheckBox>
+                                            <Label Grid.Row="0" Grid.Column="1" Text="{Binding LongName}"></Label>
+                                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding ShortName}"></Label>                                            
+                                        </Grid>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>
+                </AbsoluteLayout>
+            </ContentView>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

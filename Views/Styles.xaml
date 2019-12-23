@@ -24,6 +24,11 @@
         <Setter Property="FontSize" Value="18" />
     </Style>
 
+    <!--  Common style for sidebar labels  -->
+    <Style x:Key="SideBarIconStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+    </Style>
+
     <!--  Common style for toolbar button  -->
     <Style x:Key="ToolBarButtonStyle" TargetType="Button">
         <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />

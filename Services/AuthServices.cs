@@ -60,6 +60,8 @@ namespace ExpressBase.Mobile.Services
             Store.SetValue(AppConst.DISPLAY_NAME, resp.DisplayName);
             Store.SetValue(AppConst.USERNAME, username.Trim());
             Store.SetValue(AppConst.PASSWORD, password.Trim());
+            Store.SetValue(AppConst.USER_OBJECT, JsonConvert.SerializeObject(resp.User));
+            Store.SetValue(AppConst.USER_LOCATIONS, JsonConvert.SerializeObject(resp.Locations));
         }
 
         public static string ToMD5Hash(string str)

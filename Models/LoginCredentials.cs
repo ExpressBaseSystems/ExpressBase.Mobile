@@ -17,6 +17,8 @@ namespace ExpressBase.Mobile.Models
         public string DisplayName { set; get; }
 
         public User User { set; get; }
+
+        public List<EbLocation> Locations { get; set; }
     }
 
     public enum EbSystemRoles
@@ -113,6 +115,19 @@ namespace ExpressBase.Mobile.Models
         public string ShortTimePattern { set; get; }
        
         public string ShortTime { set; get; }
+    }
+
+    public class EbLocation
+    {
+        public int LocId { get; set; }
+
+        public string LongName { get; set; }
+
+        public string ShortName { get; set; }
+
+        public Dictionary<string, string> Meta { get; set; }
+
+        public string Logo { get; set; }
     }
 }
 
