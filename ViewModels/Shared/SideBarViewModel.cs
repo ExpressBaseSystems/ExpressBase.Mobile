@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views;
+using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -66,26 +67,6 @@ namespace ExpressBase.Mobile.ViewModels.Shared
             }
         }
 
-        private bool _showLocWindow;
-        public bool ShowLocWindow
-        {
-            get
-            {
-                return this._showLocWindow;
-            }
-            set
-            {
-                if (this._showLocWindow == value)
-                {
-                    return;
-                }
-                this._showLocWindow = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        public IList<EbLocation> Locations { get; private set; }
-
         public Command LogOutCommand { set; get; }
 
         public Command ChangeSidCommand { set; get; }
@@ -99,7 +80,6 @@ namespace ExpressBase.Mobile.ViewModels.Shared
             var _user = Settings.UserObject;
             this.UserEmail = _user.Email;
             this.UserName = _user.FullName;
-            Locations = Settings.Locations;
 
             LogOutCommand = new Command(LogoutClicked);
             ChangeSidCommand = new Command(ChangeSidClicked);
@@ -139,9 +119,8 @@ namespace ExpressBase.Mobile.ViewModels.Shared
 
         public void LocationSwitherClick(object sender)
         {
-            Task.Run(() => {
-                Device.BeginInvokeOnMainThread(() => ShowLocWindow = true);
-            });
+            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new LocationsView());
+            (Application.Current.MainPage as MasterDetailPage).IsPresented = false;
         }
     }
 }

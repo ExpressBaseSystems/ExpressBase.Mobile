@@ -22,7 +22,7 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                return 1;
+                return Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
             }
         }
 
@@ -30,7 +30,8 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                return Convert.ToInt32(Store.GetValue(AppConst.USER_ID));
+                string _id = Store.GetValue(AppConst.USER_ID);
+                return (_id == null) ? 1 : Convert.ToInt32(_id);
             }
         }
 

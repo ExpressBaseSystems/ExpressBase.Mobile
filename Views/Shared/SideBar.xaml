@@ -159,50 +159,6 @@
                     </StackLayout>
                 </StackLayout>
             </ScrollView>
-
-            <!--location list-->
-            <ContentView 
-                IsVisible="{Binding ShowLocWindow}" 
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                    <BoxView
-                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                        AbsoluteLayout.LayoutFlags="All"
-                        BackgroundColor="#333333"
-                        Opacity=".5"/>
-
-                    <StackLayout 
-                        AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
-                        AbsoluteLayout.LayoutFlags="PositionProportional">
-                        <ListView 
-                            BackgroundColor="White"
-                            ItemsSource="{Binding Locations}"
-                            HasUnevenRows="true">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <ViewCell>
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="*" />
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <CheckBox Grid.RowSpan="2" IsChecked="True"></CheckBox>
-                                            <Label Grid.Row="0" Grid.Column="1" Text="{Binding LongName}"></Label>
-                                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding ShortName}"></Label>                                            
-                                        </Grid>
-                                    </ViewCell>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </StackLayout>
-                </AbsoluteLayout>
-            </ContentView>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

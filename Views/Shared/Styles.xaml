@@ -3,6 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ExpressBase.Mobile.Views.Shared.Styles">
 
+    <!--  Common style for content page  -->
+    <Style x:Key="ContentPageStyle" TargetType="ContentPage">
+        <Setter Property="NavigationPage.HasNavigationBar" Value="True" />
+        <Setter Property="NavigationPage.HasBackButton" Value="True" />
+        <Setter Property="NavigationPage.BarBackgroundColor" Value="#508bf9" />
+    </Style>
+
     <!--  Common style for labels  -->
     <Style x:Key="LabelStyle" TargetType="Label">
         <Setter Property="TextColor" Value="{DynamicResource Gray-Black}" />

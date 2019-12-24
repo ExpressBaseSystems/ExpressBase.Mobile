@@ -35,6 +35,8 @@ namespace ExpressBase.Mobile.Constants
         public const string USER_OBJECT = "eb_userobject";
 
         public const string USER_LOCATIONS = "eb_userlocations";
+
+        public const string CURRENT_LOCATION = "current_loc";
     }
 
     public static class RegexConstants

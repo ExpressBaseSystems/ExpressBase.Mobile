@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels.Shared"
+             x:Class="ExpressBase.Mobile.Views.Shared.LocationsView"
+             Style="{StaticResource ContentPageStyle}"
+             Title="{Binding PageTitle}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <!--  Binding context for page  -->
+    <ContentPage.BindingContext>
+        <viewModel:LocationsViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <ListView 
+                ItemsSource="{Binding Locations}"
+                HasUnevenRows="true"
+                SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox 
+                                Grid.RowSpan="2" 
+                                IsChecked="{Binding Selected}"
+                                Margin="0,0,10,0"/>
+
+                            <Label 
+                                Grid.Row="0" 
+                                Grid.Column="1" 
+                                Text="{Binding LongName}"
+                                FontFamily="{StaticResource Montserrat-SemiBold}"
+                                FontSize="14"/>
+
+                            <Label 
+                                Grid.Row="1" 
+                                Grid.Column="1" 
+                                Text="{Binding ShortName}"
+                                FontFamily="{StaticResource Montserrat-Medium}"
+                                FontSize="12"
+                                TextColor="{DynamicResource Gray-700}"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</ContentPage>

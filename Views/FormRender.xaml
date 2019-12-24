@@ -12,12 +12,10 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
-            <Button 
-                Text="&#xf021;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1"
-                Command="{Binding SyncButtonCommand}"/>
+            <Label Text="{Binding PageTitle}" 
+                   VerticalOptions="Center" 
+                   Style="{StaticResource ToolBarLabelStyle}" 
+                   Grid.Column="0"/>
         </Grid>
     </NavigationPage.TitleView>
     

@@ -128,6 +128,8 @@ namespace ExpressBase.Mobile.Models
         public Dictionary<string, string> Meta { get; set; }
 
         public string Logo { get; set; }
+
+        public bool Selected { set; get; } = false;
     }
 }
 
