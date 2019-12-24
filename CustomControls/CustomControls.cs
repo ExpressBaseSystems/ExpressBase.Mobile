@@ -18,6 +18,8 @@ namespace ExpressBase.Mobile.CustomControls
         object GetValue();
 
         bool SetValue(object value);
+
+        void SetAsReadOnly(bool Enable);
     }
 
     public class TextBox : Entry, ICustomElement
@@ -26,7 +28,6 @@ namespace ExpressBase.Mobile.CustomControls
 
         public TextBox(EbMobileTextBox EbTextBox)
         {
-
             this.Name = EbTextBox.Name;
 
             this.DbType = EbTextBox.EbDbType;
@@ -47,6 +48,14 @@ namespace ExpressBase.Mobile.CustomControls
                 return false;
             this.Text = value.ToString();
             return true;
+        }
+
+        public void SetAsReadOnly(bool Enable)
+        {
+            if (Enable == true)
+                this.IsReadOnly = true;
+            else
+                this.IsReadOnly = false;
         }
     }
 
@@ -77,6 +86,14 @@ namespace ExpressBase.Mobile.CustomControls
                 return false;
             this.Text = value.ToString();
             return true;
+        }
+
+        public void SetAsReadOnly(bool Enable)
+        {
+            if (Enable == true)
+                this.IsReadOnly = true;
+            else
+                this.IsReadOnly = false;
         }
     }
 
@@ -127,6 +144,14 @@ namespace ExpressBase.Mobile.CustomControls
             this.Date = Convert.ToDateTime(value);
             return true;
         }
+
+        public void SetAsReadOnly(bool Enable)
+        {
+            if (Enable == true)
+                this.IsEnabled = false;
+            else
+                this.IsEnabled = true;
+        }
     }
 
     public class CustomSelect : Picker, ICustomElement
@@ -155,6 +180,14 @@ namespace ExpressBase.Mobile.CustomControls
         public bool SetValue(object value)
         {
             return true;
+        }
+
+        public void SetAsReadOnly(bool Enable)
+        {
+            if (Enable == true)
+                this.IsEnabled = false;
+            else
+                this.IsEnabled = true;
         }
     }
 
@@ -280,6 +313,14 @@ namespace ExpressBase.Mobile.CustomControls
             int val = Convert.ToInt32(value);
             this.IsChecked = (val == 0) ? false : true;
             return true;
+        }
+
+        public void SetAsReadOnly(bool Enable)
+        {
+            if (Enable == true)
+                this.IsEnabled = false;
+            else
+                this.IsEnabled = true;
         }
     }
 

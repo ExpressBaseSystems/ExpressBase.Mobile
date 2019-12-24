@@ -107,14 +107,20 @@ namespace ExpressBase.Mobile.DynamicRenders
 
         void VisNodeCommand(object Frame, EventArgs args)
         {
-            if(this.Visualization.RenderAs != MobVisRenderType.Info)
+            if (!string.IsNullOrEmpty(this.Visualization.LinkRefId))
             {
-                FormRender Renderer = new FormRender(this.Visualization, (Frame as CustomFrame).DataRow,this.DataTable.Columns);
-                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
-            }
-            else
-            {
+                EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
 
+                if (_page.Container is EbMobileForm)
+                {
+                    FormRender Renderer = new FormRender(_page, (Frame as CustomFrame).DataRow, this.DataTable.Columns);
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                }
+                else if (_page.Container is EbMobileVisualization)
+                {
+                    VisRender Renderer = new VisRender(_page,true);
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                }
             }
         }
     }

@@ -29,12 +29,12 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        public FormRender(EbMobileVisualization Visualization,EbDataRow CurrentRow,ColumnColletion Columns)
+        public FormRender(EbMobilePage Page,EbDataRow CurrentRow,ColumnColletion Columns)
         {
             InitializeComponent();
             try
             {
-                var Renderer = new FormRenderViewModel(Visualization, CurrentRow, Columns);
+                var Renderer = new FormRenderViewModel(Page, CurrentRow, Columns);
                 this.Content = Renderer.View;
                 BindingContext = Renderer;
             }

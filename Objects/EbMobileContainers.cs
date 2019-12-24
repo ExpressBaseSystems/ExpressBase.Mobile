@@ -193,8 +193,6 @@ namespace ExpressBase.Mobile
 
         public EbMobileTableLayout DataLayout { set; get; }
 
-        public MobVisRenderType RenderAs { get; set; }
-
         public string LinkRefId { get; set; }
     }
 }

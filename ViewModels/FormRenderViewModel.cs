@@ -8,6 +8,7 @@ using ExpressBase.Mobile.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.DynamicRenders
@@ -34,7 +35,41 @@ namespace ExpressBase.Mobile.DynamicRenders
             }
         }
 
-        private MobVisRenderType RenderType { set; get; } = MobVisRenderType.Normal;
+        private bool _saveButtonVisible;
+        public bool SaveButtonVisible
+        {
+            get
+            {
+                return this._saveButtonVisible;
+            }
+            set
+            {
+                if (this._saveButtonVisible == value)
+                {
+                    return;
+                }
+                this._saveButtonVisible = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
+        private bool _editButtonVisible;
+        public bool EditButtonVisible
+        {
+            get
+            {
+                return this._editButtonVisible;
+            }
+            set
+            {
+                if (this._editButtonVisible == value)
+                {
+                    return;
+                }
+                this._editButtonVisible = value;
+                this.NotifyPropertyChanged();
+            }
+        }
 
         private EbDataRow RowOnEdit { set; get; }
 
@@ -42,9 +77,12 @@ namespace ExpressBase.Mobile.DynamicRenders
 
         private int RowId { set; get; } = 0;
 
+        public Command EnableEditCommand { set; get; }
+
         //new mode
         public FormRenderViewModel(EbMobilePage Page)
         {
+            SaveButtonVisible = true;
             PageTitle = Page.DisplayName;
             Form = (Page.Container as EbMobileForm);
             this.Elements = new List<Element>();
@@ -55,33 +93,25 @@ namespace ExpressBase.Mobile.DynamicRenders
         }
 
         //edit mode
-        public FormRenderViewModel(EbMobileVisualization Visualization, EbDataRow CurrentRow, ColumnColletion Columns)
+        public FormRenderViewModel(EbMobilePage Page, EbDataRow CurrentRow, ColumnColletion Columns)
         {
-            this.RenderType = Visualization.RenderAs;
+            SaveButtonVisible = false;
+            EditButtonVisible = true;
+
             this.RowOnEdit = CurrentRow;
             this.ColumnsOnEdit = Columns;
             try
             {
                 this.Elements = new List<Element>();
-                EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
-                this.Form = (_page.Container as EbMobileForm);
-                PageTitle = _page.DisplayName;
+                this.Form = (Page.Container as EbMobileForm);
+                PageTitle = Page.DisplayName;
 
-                if (RenderType == MobVisRenderType.Link)
-                {
-                    this.Mode = FormMode.EDIT;
-                    this.RowId = Convert.ToInt32(this.RowOnEdit["id"]);
-                    this.CreateView();
-                    this.CreateSchema();
-                }
-                else if (RenderType == MobVisRenderType.Referencing)
-                {
+                this.Mode = FormMode.EDIT;
+                this.RowId = Convert.ToInt32(this.RowOnEdit["id"]);
+                this.CreateView();
+                this.CreateSchema();
 
-                }
-                else
-                {
-                    throw new Exception("link settings not defined");
-                }
+                EnableEditCommand = new Command(EnableEditClick);
             }
             catch (Exception ex)
             {
@@ -116,6 +146,7 @@ namespace ExpressBase.Mobile.DynamicRenders
                 TextColor = Color.White,
                 Command = new Command(OnSaveClicked)
             };
+            btn.SetBinding(Button.IsVisibleProperty, new Binding("SaveButtonVisible"));
 
             View.Children.Add(btn);
             Grid.SetRow(btn, 1);
@@ -139,13 +170,14 @@ namespace ExpressBase.Mobile.DynamicRenders
             else
             {
                 var el = (View)Activator.CreateInstance(ctrl.XControlType, ctrl);
-                if (this.RenderType == MobVisRenderType.Link)
+                if (this.Mode == FormMode.EDIT)
                 {
                     EbDataColumn _col = this.ColumnsOnEdit.Find(item => item.ColumnName == ctrl.Name);
                     if (_col != null)
                     {
                         (el as ICustomElement).SetValue(this.RowOnEdit[_col.ColumnIndex]);
                     }
+                    (el as ICustomElement).SetAsReadOnly(true);
                 }
                 tempstack.Children.Add(el);
                 this.Elements.Add(el);
@@ -215,6 +247,18 @@ namespace ExpressBase.Mobile.DynamicRenders
             Schema.AppendDefault();//eb_colums
 
             return Schema;
+        }
+
+        private void EnableEditClick(object sender)
+        {
+            if (!SaveButtonVisible)
+            {
+                Task.Run(() => { Device.BeginInvokeOnMainThread(() => SaveButtonVisible = true); });
+                foreach (Element el in this.Elements)
+                {
+                    (el as ICustomElement).SetAsReadOnly(false);
+                }
+            }
         }
     }
 }

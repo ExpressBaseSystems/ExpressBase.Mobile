@@ -16,6 +16,12 @@
                    VerticalOptions="Center" 
                    Style="{StaticResource ToolBarLabelStyle}" 
                    Grid.Column="0"/>
+            <Button 
+                Text="&#xf040;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="1"
+                IsVisible="{Binding EditButtonVisible}"
+                Command="{Binding EnableEditCommand}"/>
         </Grid>
     </NavigationPage.TitleView>
     

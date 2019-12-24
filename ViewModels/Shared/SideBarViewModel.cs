@@ -119,8 +119,8 @@ namespace ExpressBase.Mobile.ViewModels.Shared
 
         public void LocationSwitherClick(object sender)
         {
-            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new LocationsView());
             (Application.Current.MainPage as MasterDetailPage).IsPresented = false;
+            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new LocationsView());
         }
     }
 }
