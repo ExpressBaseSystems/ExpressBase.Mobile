@@ -53,9 +53,9 @@ namespace ExpressBase.Mobile.CustomControls
         public void SetAsReadOnly(bool Enable)
         {
             if (Enable == true)
-                this.IsReadOnly = true;
+                this.IsEnabled = false;
             else
-                this.IsReadOnly = false;
+                this.IsEnabled = true;
         }
     }
 
@@ -91,9 +91,9 @@ namespace ExpressBase.Mobile.CustomControls
         public void SetAsReadOnly(bool Enable)
         {
             if (Enable == true)
-                this.IsReadOnly = true;
+                this.IsEnabled = false;
             else
-                this.IsReadOnly = false;
+                this.IsEnabled = true;
         }
     }
 
@@ -160,12 +160,16 @@ namespace ExpressBase.Mobile.CustomControls
 
         public string Name { set; get; }
 
+        public EbMobileSimpleSelect EbSimpleSelect { set; get; }
+
         public CustomSelect() { }
 
         public CustomSelect(EbMobileSimpleSelect EbSelect)
         {
-            Title = "-select-";
-            TitleColor = Color.Red;
+            EbSimpleSelect = EbSelect;
+
+            Title = "Select";
+            TitleColor = Color.DarkBlue;
             Name = EbSelect.Name;
             DbType = EbSelect.EbDbType;
             this.ItemsSource = EbSelect.Options;
@@ -179,6 +183,9 @@ namespace ExpressBase.Mobile.CustomControls
 
         public bool SetValue(object value)
         {
+            if (value == null)
+                return false;
+            this.SelectedItem = this.EbSimpleSelect.Options.Find(i => i.Value == value.ToString());
             return true;
         }
 
@@ -328,14 +335,36 @@ namespace ExpressBase.Mobile.CustomControls
     {
         public EbDataRow DataRow { set; get; }
 
+        private StackLayout OuterLayout { set; get; }
+
         public CustomFrame()
         {
 
         }
 
-        public CustomFrame(EbDataRow _row)
+        public CustomFrame(EbDataRow _row, Color BgColor)
         {
             this.DataRow = _row;
+            this.BackgroundColor = BgColor;
+            //this.OuterLayout = new StackLayout { Spacing = 0 };
+            ///SetSyncFlag();
+        }
+
+        public void SetSyncFlag()
+        {
+            var _label = new Label { Text = "&#xf013;",
+                TextColor = Color.FromHex("cccccc"),
+            };
+
+            _label.SetDynamicResource(Label.StyleProperty, "SyncFlag");
+
+            this.OuterLayout.Children.Add(_label);
+        }
+
+        public void SetContent(View _View)
+        {
+            //this.OuterLayout.Children.Add(_View);
+            this.Content = _View;
         }
     }
 }

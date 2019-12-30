@@ -40,4 +40,9 @@
         <Setter Property="FontSize" Value="18" />
     </Style>
 
+    <!--  style for sync flag in list  -->
+    <Style x:Key="SyncFlag" TargetType="Label">
+        <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+    </Style>
+
 </ResourceDictionary>

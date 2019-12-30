@@ -13,6 +13,10 @@ namespace ExpressBase.Mobile.DynamicRenders
 {
     public class VisRenderViewModel : BaseViewModel
     {
+        private Color OddColor = Color.FromHex("F2F2F2");
+
+        private Color EvenColor = Color.Default;
+
         public EbMobileVisualization Visualization { set; get; }
 
         public EbDataTable DataTable { set; get; }
@@ -56,14 +60,16 @@ namespace ExpressBase.Mobile.DynamicRenders
 
         private void CreateView()
         {
-            StackLayout StackL = new StackLayout();
+            StackLayout StackL = new StackLayout { Spacing = 0 };
 
             var tapGestureRecognizer = new TapGestureRecognizer();
             tapGestureRecognizer.Tapped += VisNodeCommand;
+            int _rowColCount = 1;
 
             foreach (EbDataRow _row in this.DataTable.Rows)
             {
-                CustomFrame _Frame = new CustomFrame(_row);
+                Color _color = ((_rowColCount % 2) == 0) ? EvenColor : OddColor;
+                CustomFrame _Frame = new CustomFrame(_row, _color);
 
                 _Frame.GestureRecognizers.Add(tapGestureRecognizer);
 
@@ -75,12 +81,16 @@ namespace ExpressBase.Mobile.DynamicRenders
                     {
                         EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
 
-                        _G.Children.Add(new Label { Text = _row[_col.ColumnName].ToString() }, _Cell.ColIndex, _Cell.RowIndex);
+                        Label _label = new Label { Text = _row[_col.ColumnName].ToString() };
+                        this.ApplyLabelStyle(_label, _col);
+
+                        _G.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
                     }
                 }
 
-                _Frame.Content = _G;
+                _Frame.SetContent(_G);
                 StackL.Children.Add(_Frame);
+                _rowColCount++;
             }
 
             this.View = new ScrollView { Content = StackL };
@@ -88,7 +98,7 @@ namespace ExpressBase.Mobile.DynamicRenders
 
         Grid CreateGrid(List<EbMobileTableCell> CellCollection)
         {
-            Grid G = new Grid();
+            Grid G = new Grid { BackgroundColor = Color.Transparent };
 
             for (int r = 0; r < this.Visualization.DataLayout.RowCount; r++)
             {
@@ -118,9 +128,38 @@ namespace ExpressBase.Mobile.DynamicRenders
                 }
                 else if (_page.Container is EbMobileVisualization)
                 {
-                    VisRender Renderer = new VisRender(_page,true);
+                    VisRender Renderer = new VisRender(_page, true);
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
+            }
+        }
+
+        private void ApplyLabelStyle(Label Label, EbMobileDataColumn DataColumn)
+        {
+            EbFont _font = DataColumn.Font;
+            if (_font != null)
+            {
+                Label.FontSize = _font.Size;
+                
+                if(_font.Style == FontStyle.BOLD)
+                {
+                    Label.FontAttributes = FontAttributes.Bold;
+                    Label.FontFamily = "Montserrat-SemiBold";
+                }
+                else if (_font.Style == FontStyle.ITALIC)
+                    Label.FontAttributes = FontAttributes.Italic;
+                else 
+                    Label.FontAttributes = FontAttributes.None;
+
+                Label.TextColor = Color.FromHex(_font.color.TrimStart('#'));
+
+                if (_font.Caps)
+                    Label.Text = Label.Text.ToUpper();
+
+                if (_font.Underline)
+                    Label.TextDecorations = TextDecorations.Underline;
+                else if (_font.Strikethrough)
+                    Label.TextDecorations = TextDecorations.Strikethrough;
             }
         }
     }
