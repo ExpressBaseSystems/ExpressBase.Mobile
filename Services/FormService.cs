@@ -7,21 +7,27 @@ using System.Text;
 using Xamarin.Forms;
 using System.Linq;
 using ExpressBase.Mobile.Structures;
+using ExpressBase.Mobile.Enums;
 
 namespace ExpressBase.Mobile.Services
 {
     public class FormService
     {
+        private FormMode Mode { set; get; }
+
         protected IList<Element> Controls { set; get; }
 
         public EbMobileForm Form { set; get; }
 
-        public bool Status { set; get; }
+        private EbDataRow ParentRow { set; get; }
+
+        private string ParentTable { set; get; }
 
         public FormService() { }
 
-        public FormService(IList<Element> Elements, EbMobileForm form)
+        public FormService(IList<Element> Elements, EbMobileForm form, FormMode Mode)
         {
+            this.Mode = Mode;
             this.Controls = Elements;
             this.Form = form;
         }
@@ -29,6 +35,33 @@ namespace ExpressBase.Mobile.Services
         public bool Save(int RowId)
         {
             MobileFormData data = this.GetFormData(RowId);
+            string query = string.Empty;
+            try
+            {
+                if (data.Tables.Count > 0)
+                {
+                    List<DbParameter> _params = new List<DbParameter>();
+                    foreach (MobileTable _table in data.Tables)
+                    {
+                        query += this.GetQuery(_table, _params);
+                    }
+                    int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
+                    return (rowAffected > 0);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return false;
+        }
+
+        public bool Save(EbDataRow _ParentRow,string ParentTableName)
+        {
+            ParentRow = _ParentRow;
+            ParentTable = ParentTableName;
+
+            MobileFormData data = this.GetFormData(0);
             string query = string.Empty;
             try
             {
@@ -68,7 +101,7 @@ namespace ExpressBase.Mobile.Services
             {
                 if (el is FileInput)
                 {
-
+                    continue;
                 }
                 else
                 {
@@ -87,6 +120,17 @@ namespace ExpressBase.Mobile.Services
             }
             if (RowId <= 0)
                 row.AppendEbColValues();//append ebcol values
+
+            if(this.Mode == FormMode.REF)
+            {
+                row.Columns.Add(new MobileTableColumn
+                {
+                    Name = this.ParentTable + "_id",
+                    Type = EbDbTypes.Int32,
+                    Value = this.ParentRow["id"]
+                });
+            }
+
             FormData.Tables.Add(Table);
             return FormData;
         }

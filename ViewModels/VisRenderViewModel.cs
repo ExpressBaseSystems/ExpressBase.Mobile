@@ -57,7 +57,14 @@ namespace ExpressBase.Mobile.DynamicRenders
             AddCommand = new Command(AddButtonClicked);
             RenderType = VisRenderType.LIST2LIST;
             SourceVisualization = SourceVis;
-            this.HeaderFrame = CreateFrame(CustFrame.DataRow, CustFrame.Columns, SourceVis, Color.Transparent, true);
+
+            //list header
+            this.HeaderFrame = new CustomFrame(CustFrame.DataRow, CustFrame.Columns, SourceVis, true)
+            {
+                BackgroundColor = Color.Transparent,
+                Padding = new Thickness(20, 10, 20, 0),
+                Margin = 0
+            };
 
             PageTitle = LinkPage.DisplayName;
             this.Visualization = (LinkPage.Container as EbMobileVisualization);
@@ -95,66 +102,16 @@ namespace ExpressBase.Mobile.DynamicRenders
 
             foreach (EbDataRow _row in this.DataTable.Rows)
             {
-                Color _color = ((_rowColCount % 2) == 0) ? EvenColor : OddColor;
-
-                CustomFrame CustFrame = CreateFrame(_row, this.DataTable.Columns, this.Visualization, _color);
+                CustomFrame CustFrame = new CustomFrame(_row, this.DataTable.Columns, this.Visualization);
+                CustFrame.SetBackGroundColor(_rowColCount);
                 CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
+
                 StackL.Children.Add(CustFrame);
+
                 _rowColCount++;
             }
 
             this.View = new ScrollView { Content = StackL };
-        }
-
-        private CustomFrame CreateFrame(EbDataRow row, ColumnColletion Columns, EbMobileVisualization Vis, Color color, bool IsHeader = false)
-        {
-            CustomFrame _frame = new CustomFrame(row, Columns, color);
-
-            Grid _grid = this.CreateGrid(Vis.DataLayout.CellCollection, Vis.DataLayout.RowCount, Vis.DataLayout.ColumCount);
-
-            foreach (EbMobileTableCell _Cell in Vis.DataLayout.CellCollection)
-            {
-                if (_Cell.ControlCollection.Count > 0)
-                {
-                    EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
-
-                    string _text = string.Empty;
-                    if (!string.IsNullOrEmpty(_col.TextFormat))
-                    {
-                        _text = _col.TextFormat.Replace("{value}", row[_col.ColumnName].ToString());
-                    }
-                    else
-                    {
-                        _text = row[_col.ColumnName].ToString();
-                    }
-
-                    Label _label = new Label { Text = _text };
-                    this.ApplyLabelStyle(_label, _col, IsHeader);
-
-                    _grid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
-                }
-            }
-            _frame.SetContent(_grid);
-            return _frame;
-        }
-
-        Grid CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
-        {
-            Grid G = new Grid { BackgroundColor = Color.Transparent };
-
-            for (int r = 0; r < RowCount; r++)
-            {
-                G.RowDefinitions.Add(new RowDefinition());
-            }
-
-            for (int c = 0; c < ColumCount; c++)
-            {
-                EbMobileTableCell current = CellCollection.Find(li => li.ColIndex == c && li.RowIndex == 0);
-
-                G.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(current.Width, GridUnitType.Star) });
-            }
-
-            return G;
         }
 
         void VisNodeCommand(object Frame, EventArgs args)
@@ -172,40 +129,6 @@ namespace ExpressBase.Mobile.DynamicRenders
                 {
                     VisRender Renderer = new VisRender(_page, this.Visualization, (Frame as CustomFrame));
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
-                }
-            }
-        }
-
-        private void ApplyLabelStyle(Label Label, EbMobileDataColumn DataColumn, bool IsHeader)
-        {
-            EbFont _font = DataColumn.Font;
-
-            if (_font != null)
-            {
-                Label.FontSize = (IsHeader) ? (_font.Size + 4) : _font.Size;
-
-                if (_font.Style == FontStyle.BOLD)
-                    Label.FontAttributes = FontAttributes.Bold;
-                else if (_font.Style == FontStyle.ITALIC)
-                    Label.FontAttributes = FontAttributes.Italic;
-                else
-                    Label.FontAttributes = FontAttributes.None;
-
-                Label.TextColor = (IsHeader) ? Color.White : Color.FromHex(_font.color.TrimStart('#'));
-
-                if (_font.Caps)
-                    Label.Text = Label.Text.ToUpper();
-
-                if (_font.Underline)
-                    Label.TextDecorations = TextDecorations.Underline;
-                else if (_font.Strikethrough)
-                    Label.TextDecorations = TextDecorations.Strikethrough;
-            }
-            else
-            {
-                if (IsHeader)
-                {
-                    Label.TextColor = Color.White;
                 }
             }
         }
@@ -243,8 +166,13 @@ namespace ExpressBase.Mobile.DynamicRenders
                 EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
                 if (_page.Container is EbMobileForm)
                 {
-                    FormRender Renderer = new FormRender(_page);
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    if (!string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
+                    {
+                        EbMobilePage ParentForm = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
+
+                        FormRender Renderer = new FormRender(_page, ParentForm, this.HeaderFrame.DataRow);
+                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    }
                 }
             }
         }

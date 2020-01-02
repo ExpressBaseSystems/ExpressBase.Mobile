@@ -79,6 +79,8 @@ namespace ExpressBase.Mobile.DynamicRenders
 
         public Command EnableEditCommand { set; get; }
 
+        public EbMobileForm ParentForm { set; get; }
+
         //new mode
         public FormRenderViewModel(EbMobilePage Page)
         {
@@ -119,6 +121,28 @@ namespace ExpressBase.Mobile.DynamicRenders
             }
         }
 
+        //referenced mode
+        public FormRenderViewModel(EbMobilePage CurrentForm, EbMobilePage ParentPage, EbDataRow CurrentRow)
+        {
+            SaveButtonVisible = true;
+            EditButtonVisible = false;
+            this.Mode = FormMode.REF;
+            ParentForm = (ParentPage.Container as EbMobileForm);
+            RowOnEdit = CurrentRow;
+            try
+            {
+                this.Elements = new List<Element>();
+                this.Form = (CurrentForm.Container as EbMobileForm);
+                PageTitle = CurrentForm.DisplayName;
+
+                this.CreateView();
+                this.CreateSchema();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
 
         private void CreateView()
         {
@@ -188,8 +212,13 @@ namespace ExpressBase.Mobile.DynamicRenders
 
         public void OnSaveClicked(object sender)
         {
-            FormService Form = new FormService(this.Elements, this.Form);
-            bool status = Form.Save(this.RowId);
+            FormService Form = new FormService(this.Elements, this.Form,this.Mode);
+            bool status = false;
+            if (this.Mode == FormMode.REF)
+                status = Form.Save(this.RowOnEdit,ParentForm.TableName);
+            else
+                status = Form.Save(this.RowId);
+
             if (status && this.RowId == 0)
             {
                 DependencyService.Get<IToast>().Show("Data pushed successfully :)");
@@ -221,6 +250,14 @@ namespace ExpressBase.Mobile.DynamicRenders
         private void CreateSchema()
         {
             SQLiteTableSchema Schema = this.GetSQLiteSchema(this.Form.ChiledControls);
+            if (this.Mode == FormMode.REF)
+            {
+                Schema.Columns.Add(new SQLiteColumSchema
+                {
+                    ColumnName = ParentForm.TableName + "_id",
+                    ColumnType = "INT"
+                });
+            }
             Schema.TableName = this.Form.TableName;
             new CommonServices().CreateLocalTable4Form(Schema);
         }

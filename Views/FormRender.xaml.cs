@@ -14,6 +14,7 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FormRender : ContentPage
     {
+        //new mode
         public FormRender(EbMobilePage page)
         {
             InitializeComponent();
@@ -29,12 +30,29 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        public FormRender(EbMobilePage Page,EbDataRow CurrentRow,ColumnColletion Columns)
+        //edit mode
+        public FormRender(EbMobilePage Page, EbDataRow CurrentRow, ColumnColletion Columns)
         {
             InitializeComponent();
             try
             {
                 var Renderer = new FormRenderViewModel(Page, CurrentRow, Columns);
+                this.Content = Renderer.View;
+                BindingContext = Renderer;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        //reference mode
+        public FormRender(EbMobilePage CurrentForm, EbMobilePage ParentForm, EbDataRow CurrentRow)
+        {
+            InitializeComponent();
+            try
+            {
+                var Renderer = new FormRenderViewModel(CurrentForm, ParentForm, CurrentRow);
                 this.Content = Renderer.View;
                 BindingContext = Renderer;
             }

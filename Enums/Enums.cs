@@ -74,7 +74,8 @@ namespace ExpressBase.Mobile.Enums
     public enum FormMode
     {
         NEW = 0,
-        EDIT = 1
+        EDIT = 1,
+        REF = 2
     }
 
     public enum VisRenderType
