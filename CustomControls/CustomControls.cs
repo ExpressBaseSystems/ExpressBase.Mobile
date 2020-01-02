@@ -330,41 +330,4 @@ namespace ExpressBase.Mobile.CustomControls
                 this.IsEnabled = true;
         }
     }
-
-    public class CustomFrame : Frame
-    {
-        public EbDataRow DataRow { set; get; }
-
-        private StackLayout OuterLayout { set; get; }
-
-        public CustomFrame()
-        {
-
-        }
-
-        public CustomFrame(EbDataRow _row, Color BgColor)
-        {
-            this.DataRow = _row;
-            this.BackgroundColor = BgColor;
-            //this.OuterLayout = new StackLayout { Spacing = 0 };
-            ///SetSyncFlag();
-        }
-
-        public void SetSyncFlag()
-        {
-            var _label = new Label { Text = "&#xf013;",
-                TextColor = Color.FromHex("cccccc"),
-            };
-
-            _label.SetDynamicResource(Label.StyleProperty, "SyncFlag");
-
-            this.OuterLayout.Children.Add(_label);
-        }
-
-        public void SetContent(View _View)
-        {
-            //this.OuterLayout.Children.Add(_View);
-            this.Content = _View;
-        }
-    }
 }

@@ -14,7 +14,11 @@ namespace ExpressBase.Mobile.Views
         {
             Sidebar = new SideBar();
             Master = Sidebar;
-            Detail = new NavigationPage();
+            Detail = new NavigationPage
+            {
+                BarBackgroundColor = Color.FromHex("315eff"),
+                BarTextColor = Color.White
+            };
 
             Detail.Navigation.PushAsync((Page)Activator.CreateInstance(pageType));
         }

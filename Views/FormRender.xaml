@@ -24,13 +24,4 @@
                 Command="{Binding EnableEditCommand}"/>
         </Grid>
     </NavigationPage.TitleView>
-    
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-    
 </ContentPage>

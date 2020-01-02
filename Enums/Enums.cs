@@ -76,4 +76,10 @@ namespace ExpressBase.Mobile.Enums
         NEW = 0,
         EDIT = 1
     }
+
+    public enum VisRenderType
+    {
+        OBJ2LIST = 0,
+        LIST2LIST = 1
+    }
 }

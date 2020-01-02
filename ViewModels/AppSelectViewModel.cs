@@ -6,6 +6,7 @@ using ExpressBase.Mobile.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -39,6 +40,7 @@ namespace ExpressBase.Mobile.ViewModels
             if (_apps == null)
             {
                 this.Applications = Api.GetAppCollections();
+                this.Applications.OrderBy(x => x.AppName);
                 Store.SetValue(AppConst.APP_COLLECTION, JsonConvert.SerializeObject(this.Applications));
             }
             else

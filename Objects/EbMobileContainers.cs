@@ -189,6 +189,8 @@ namespace ExpressBase.Mobile
     {
         public string DataSourceRefId { set; get; }
 
+        public string SourceFormRefId { set; get; }
+
         public EbScript OfflineQuery { set; get; }
 
         public EbMobileTableLayout DataLayout { set; get; }

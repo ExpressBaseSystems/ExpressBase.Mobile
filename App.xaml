@@ -11,6 +11,57 @@
             <ResourceDictionary.MergedDictionaries>
                 <themes:LightTheme />
             </ResourceDictionary.MergedDictionaries>
+
+            <!--  Common style for labels  -->
+            <Style x:Key="LabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource Gray-Black}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="LineHeight" Value="1.25" />
+            </Style>
+
+            <!--  Common style for content page  -->
+            <Style x:Key="ContentPageStyle" TargetType="ContentPage">
+                <Setter Property="NavigationPage.HasNavigationBar" Value="True" />
+                <Setter Property="NavigationPage.HasBackButton" Value="True" />
+            </Style>
+
+            <!--  Common style for toolbar labels  -->
+            <Style x:Key="ToolBarLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
+                <Setter Property="FontSize" Value="18" />
+            </Style>
+
+            <!--  Common style for sidebar labels  -->
+            <Style x:Key="SideBarIconStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+            </Style>
+
+            <!--  Common style for toolbar button  -->
+            <Style x:Key="ToolBarButtonStyle" TargetType="Button">
+                <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />
+                <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <!--<Setter Property="HeightRequest" Value="34" />-->
+                <Setter Property="WidthRequest" Value="40" />
+                <!--<Setter Property="Margin" Value="8,0,8,0" />-->
+                <Setter Property="FontSize" Value="18" />
+            </Style>
+
+            <!--  style for sync flag in list  -->
+            <Style x:Key="SyncFlag" TargetType="Label">
+                <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+            </Style>
+
+            <Style x:Key="IconedRoundButton" TargetType="Button">
+                <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="WidthRequest" Value="40" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="TextColor" Value="#315eff" />
+                <Setter Property="BackgroundColor" Value="White" />
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

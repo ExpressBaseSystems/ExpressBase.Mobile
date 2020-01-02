@@ -29,14 +29,6 @@
         </Grid>
     </NavigationPage.TitleView>
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-    
     <!--  Binding context for page  -->
     <ContentPage.BindingContext>
         <viewModel:ObjectsRenderViewModel />
@@ -56,6 +48,7 @@
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
                             <control:CustomShadowFrame
+                            IsVisible="{Binding IsVisble}"
                             Margin="0"
                             Padding="0"
                             BackgroundColor="{DynamicResource Gray-White}"
@@ -93,7 +86,7 @@
                                     Orientation="Horizontal"
                                     Spacing="0">
                                         <Label
-                                        FontFamily="{StaticResource Montserrat-SemiBold}"
+                                        FontFamily="{StaticResource Roboto-Medium}"
                                         FontSize="14"
                                         HorizontalOptions="StartAndExpand"
                                         Text="{Binding DisplayName}"
@@ -109,7 +102,7 @@
                                     Orientation="Horizontal"
                                     Spacing="0">
                                         <Label
-                                        FontFamily="{StaticResource Montserrat-Medium}"
+                                        FontFamily="{StaticResource Roboto-Regular}"
                                         FontSize="12"
                                         HorizontalOptions="StartAndExpand"
                                         Text="{Binding Version}"

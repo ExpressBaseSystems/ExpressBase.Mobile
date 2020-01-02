@@ -70,15 +70,20 @@ namespace ExpressBase.Mobile.Models
 
     public class MobilePagesWraper
     {
+        private EbMobilePage _page;
+
         public string ObjectIcon
         {
             get
             {
-                if (this.JsonToPage().Container is EbMobileForm)
+                if (_page == null)
+                    _page = this.JsonToPage();
+
+                if (_page.Container is EbMobileForm)
                 {
                     return "form.png";
                 }
-                else if (this.JsonToPage().Container is EbMobileVisualization)
+                else if (_page.Container is EbMobileVisualization)
                 {
                     return "list.png";
                 }
@@ -86,6 +91,16 @@ namespace ExpressBase.Mobile.Models
                 {
                     return "list.png";
                 }
+            }
+        }
+
+        public bool IsVisble
+        {
+            get
+            {
+                if (_page == null)
+                    _page = this.JsonToPage();
+                return !(_page.HideFromMenu);
             }
         }
 

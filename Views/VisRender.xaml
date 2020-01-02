@@ -2,7 +2,13 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ExpressBase.Mobile.Views.VisRender">
-    
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
             <Grid.ColumnDefinitions>
@@ -16,13 +22,4 @@
                 Grid.Column="1"/>
         </Grid>
     </NavigationPage.TitleView>
-    
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-    
 </ContentPage>

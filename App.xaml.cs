@@ -37,7 +37,11 @@ namespace ExpressBase.Mobile
 
         void InitNavigation()
         {
-            MainPage = new NavigationPage();
+            MainPage = new NavigationPage
+            {
+                BarBackgroundColor = Color.FromHex("315eff"),
+                BarTextColor = Color.White
+            };
 
             string sid = Store.GetValue(AppConst.SID);
             if (sid == null)
@@ -80,7 +84,7 @@ namespace ExpressBase.Mobile
 
         protected override void OnStart()
         {
-            
+
         }
 
         protected override void OnSleep()

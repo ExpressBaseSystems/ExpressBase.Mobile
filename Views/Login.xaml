@@ -19,14 +19,6 @@
             <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Command="{Binding ResetConfig}" Grid.Column="2"/>
         </Grid>
     </NavigationPage.TitleView>
-
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </ContentPage.Resources>
     
     <!--  Binding context for page  -->
     <ContentPage.BindingContext>
@@ -62,7 +54,7 @@
 
                         <!--  Label to display the title of this page  -->
                         <Label
-                            FontFamily="{StaticResource Montserrat-SemiBold}"
+                            FontFamily="{StaticResource Roboto-Medium}"
                             FontSize="20"
                             HorizontalTextAlignment="Center"
                             Style="{StaticResource LabelStyle}"
@@ -79,7 +71,7 @@
 
                                 <Label Text="Username" 
                                        VerticalOptions="Center"
-                                       FontFamily="{StaticResource Montserrat-Medium}"
+                                       FontFamily="{StaticResource Roboto-Regular}"
                                        Style="{StaticResource LabelStyle}"/>
 
                                 <local:TextBox x:Name="Email" Text="{Binding Email}"/>
@@ -88,7 +80,7 @@
 
                                 <Label Text="Password" 
                                        VerticalOptions="Center"
-                                       FontFamily="{StaticResource Montserrat-Medium}"
+                                       FontFamily="{StaticResource Roboto-Regular}"
                                        Style="{StaticResource LabelStyle}"/>
 
                                 <local:TextBox x:Name="PassWord" IsPassword="True" Text="{Binding PassWord}"/>

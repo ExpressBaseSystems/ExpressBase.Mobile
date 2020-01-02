@@ -11,14 +11,6 @@
              NavigationPage.HasNavigationBar="False"
              NavigationPage.HasBackButton="False"
              Style="{StaticResource ContentPageStyle}">
-
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </ContentPage.Resources>
     
     <!--  Binding context for page  -->
     <ContentPage.BindingContext>
@@ -78,7 +70,7 @@
                             x:Name="BrandName"
                             Margin="20,0,0,10"
                             Grid.Row="1"
-                            FontFamily="{StaticResource Montserrat-Regular}"
+                            FontFamily="{StaticResource Roboto-Regular}"
                             HorizontalOptions="StartAndExpand"
                             FontSize="32"
                             Text="Configure"
@@ -88,7 +80,7 @@
                             x:Name="HeaderText"
                             Margin="20,0,0,0"
                             Grid.Row="2"
-                            FontFamily="{StaticResource Montserrat-Regular}"
+                            FontFamily="{StaticResource Roboto-Regular}"
                             FontSize="22"
                             HorizontalOptions="StartAndExpand"
                             Text="Solution URL"

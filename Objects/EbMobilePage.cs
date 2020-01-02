@@ -41,7 +41,9 @@ namespace ExpressBase.Mobile
         public override string Status { get; set; }
 
         public EbMobileContainer Container { set; get; }
-    }
+
+        public bool HideFromMenu { set; get; }
+    } 
 
     public class EbScript
     {

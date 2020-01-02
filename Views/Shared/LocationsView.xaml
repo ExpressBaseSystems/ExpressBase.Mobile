@@ -9,14 +9,6 @@
              Style="{StaticResource ContentPageStyle}"
              Title="{Binding PageTitle}">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
     <!--  Binding context for page  -->
     <ContentPage.BindingContext>
         <viewModel:LocationsViewModel />
@@ -49,14 +41,14 @@
                                 Grid.Row="0" 
                                 Grid.Column="1" 
                                 Text="{Binding LongName}"
-                                FontFamily="{StaticResource Montserrat-SemiBold}"
+                                FontFamily="{StaticResource Roboto-Medium}"
                                 FontSize="14"/>
 
                             <Label 
                                 Grid.Row="1" 
                                 Grid.Column="1" 
                                 Text="{Binding ShortName}"
-                                FontFamily="{StaticResource Montserrat-Medium}"
+                                FontFamily="{StaticResource Roboto-Regular}"
                                 FontSize="12"
                                 TextColor="{DynamicResource Gray-700}"/>
                         </Grid>

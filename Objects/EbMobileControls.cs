@@ -112,6 +112,16 @@ namespace ExpressBase.Mobile
         public override Type XControlType { get { return typeof(CustomSelect); } }
 
         public bool IsMultiSelect { get; set; }
+
+        public string DataSourceRefId { get; set; }
+
+        public List<EbMobileDataColumn> Columns { set; get; }
+
+        public EbMobileDataColumn DisplayMember { set; get; }
+
+        public EbMobileDataColumn ValueMember { set; get; }
+
+        public EbScript OfflineQuery { set; get; }
     }
 
     public class EbMobileSSOption : EbMobilePageBase
@@ -185,9 +195,7 @@ namespace ExpressBase.Mobile
 
     public class EbMobileDataColumn : EbMobileControl
     {
-        public override string Label { set; get; }
-
-        public override bool Unique { get; set; }
+        public string TextFormat { get; set; }
 
         public int TableIndex { get; set; }
 
@@ -196,8 +204,6 @@ namespace ExpressBase.Mobile
         public string ColumnName { get; set; }
 
         public EbDbTypes Type { get; set; }
-
-        public override bool Hidden { set; get; }
 
         public EbFont Font { get; set; }
     }

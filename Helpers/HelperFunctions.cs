@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
 {
@@ -22,6 +23,13 @@ namespace ExpressBase.Mobile.Helpers
         public static string WrapSelectQuery(string sql)
         {
             return string.Format("SELECT * FROM ({0}) AS WRAPER LIMIT 100;", sql.TrimEnd(';'));
+        }
+
+        public static object GetResourceValue(string keyName)
+        {
+            // Search all dictionaries
+            if (Application.Current.Resources.TryGetValue(keyName, out var retVal)) { }
+            return retVal;
         }
     }
 }
