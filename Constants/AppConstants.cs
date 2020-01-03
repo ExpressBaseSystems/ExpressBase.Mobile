@@ -52,5 +52,7 @@ namespace ExpressBase.Mobile.Constants
         public const string MS_LIB = "mscorlib";
 
         public const string EB_MOB = "ExpressBase.Mobile";
+
+        public const string EB_PARAM = "ExpressBase.Common.Data";
     }
 }

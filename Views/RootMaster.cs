@@ -8,19 +8,23 @@ namespace ExpressBase.Mobile.Views
 {
     class RootMaster : MasterDetailPage
     {
-        SideBar Sidebar;
-
         public RootMaster(Type pageType)
         {
-            Sidebar = new SideBar();
-            Master = Sidebar;
-            Detail = new NavigationPage
+            try
             {
-                BarBackgroundColor = Color.FromHex("315eff"),
-                BarTextColor = Color.White
-            };
+                Master = new SideBar(); 
+                Detail = new NavigationPage
+                {
+                    BarBackgroundColor = Color.FromHex("315eff"),
+                    BarTextColor = Color.White
+                };
 
-            Detail.Navigation.PushAsync((Page)Activator.CreateInstance(pageType));
+                Detail.Navigation.PushAsync((Page)Activator.CreateInstance(pageType));
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

@@ -11,6 +11,8 @@ namespace ExpressBase.Mobile.CustomControls
 {
     public interface ICustomElement
     {
+        EbMobileControl EbControl { set; get; }
+
         string Name { set; get; }
 
         EbDbTypes DbType { set; get; }
@@ -24,13 +26,16 @@ namespace ExpressBase.Mobile.CustomControls
 
     public class TextBox : Entry, ICustomElement
     {
+        public EbMobileControl EbControl { set; get; }
+
         public TextBox() { }
 
         public TextBox(EbMobileTextBox EbTextBox)
         {
+            this.EbControl = EbTextBox;
             this.Name = EbTextBox.Name;
-
             this.DbType = EbTextBox.EbDbType;
+            this.IsVisible = !(this.EbControl.Hidden);
         }
 
         public EbDbTypes DbType { set; get; }
@@ -61,14 +66,17 @@ namespace ExpressBase.Mobile.CustomControls
 
     public class NumericTextBox : Entry, ICustomElement
     {
+        public EbMobileControl EbControl { set; get; }
+
         public NumericTextBox() { }
 
         public NumericTextBox(EbMobileNumericBox EbTextBox)
         {
-
+            this.EbControl = EbTextBox;
             this.Name = EbTextBox.Name;
             this.DbType = EbTextBox.EbDbType;
             Keyboard = Keyboard.Numeric;
+            this.IsVisible = !(this.EbControl.Hidden);
         }
 
         public EbDbTypes DbType { set; get; }
@@ -118,6 +126,8 @@ namespace ExpressBase.Mobile.CustomControls
 
     public class CustomDatePicker : DatePicker, ICustomElement
     {
+        public EbMobileControl EbControl { set; get; }
+
         public EbDbTypes DbType { set; get; }
 
         public string Name { set; get; }
@@ -126,10 +136,12 @@ namespace ExpressBase.Mobile.CustomControls
 
         public CustomDatePicker(EbMobileDateTime EbDate)
         {
+            EbControl = EbDate;
             Date = DateTime.Now;
             Name = EbDate.Name;
             DbType = EbDate.EbDbType;
             Format = "yyyy-MM-dd";
+            this.IsVisible = !(this.EbControl.Hidden);
         }
 
         public object GetValue()
@@ -156,17 +168,17 @@ namespace ExpressBase.Mobile.CustomControls
 
     public class CustomSelect : Picker, ICustomElement
     {
+        public EbMobileControl EbControl { set; get; }
+
         public EbDbTypes DbType { set; get; }
 
         public string Name { set; get; }
-
-        public EbMobileSimpleSelect EbSimpleSelect { set; get; }
 
         public CustomSelect() { }
 
         public CustomSelect(EbMobileSimpleSelect EbSelect)
         {
-            EbSimpleSelect = EbSelect;
+            EbControl = EbSelect;
 
             Title = "Select";
             TitleColor = Color.DarkBlue;
@@ -174,6 +186,7 @@ namespace ExpressBase.Mobile.CustomControls
             DbType = EbSelect.EbDbType;
             this.ItemsSource = EbSelect.Options;
             this.ItemDisplayBinding = new Binding("DisplayName");
+            this.IsVisible = !(this.EbControl.Hidden);
         }
 
         public object GetValue()
@@ -185,7 +198,7 @@ namespace ExpressBase.Mobile.CustomControls
         {
             if (value == null)
                 return false;
-            this.SelectedItem = this.EbSimpleSelect.Options.Find(i => i.Value == value.ToString());
+            this.SelectedItem = (this.EbControl as EbMobileSimpleSelect).Options.Find(i => i.Value == value.ToString());
             return true;
         }
 
@@ -211,7 +224,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         public List<int> Source { set; get; }
 
-        private EbMobileFileUpload Control { set; get; }
+        public EbMobileControl EbControl { set; get; }
 
         private Page Page { set; get; }
 
@@ -219,7 +232,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         public FileInput(EbMobileFileUpload Control, Page CurrentPage)
         {
-            this.Control = Control;
+            this.EbControl = Control;
             this.Page = CurrentPage;
             this.Source = new List<int>();
 
@@ -297,6 +310,8 @@ namespace ExpressBase.Mobile.CustomControls
 
     public class CustomCheckBox : CheckBox, ICustomElement
     {
+        public EbMobileControl EbControl { set; get; }
+
         public EbDbTypes DbType { set; get; }
 
         public string Name { set; get; }
@@ -305,7 +320,9 @@ namespace ExpressBase.Mobile.CustomControls
 
         public CustomCheckBox(EbMobileBoolean EbBool)
         {
+            EbControl = EbBool;
             Name = EbBool.Name;
+            this.IsVisible = !(this.EbControl.Hidden);
         }
 
         public object GetValue()

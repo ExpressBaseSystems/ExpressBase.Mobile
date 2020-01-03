@@ -1,7 +1,7 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.DynamicRenders;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.ViewModels;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -63,6 +63,22 @@ namespace ExpressBase.Mobile.Views
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            var vm = this.BindingContext as VisRenderViewModel;
+            if (vm != null)
+            {
+                if (vm.IsRedirect)
+                {
+                    vm.RefreshPage();
+                    this.Content = vm.View;
+                    vm.IsRedirect = false;
+                }
             }
         }
     }

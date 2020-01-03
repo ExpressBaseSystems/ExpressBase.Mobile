@@ -58,6 +58,7 @@ namespace ExpressBase.Mobile.Helpers
                 .Replace(RegexConstants.COR_LIB, RegexConstants.MS_LIB)
                 .Replace(RegexConstants.EB_COM_OBJ, RegexConstants.EB_MOB)
                 .Replace(RegexConstants.EB_OBJ, RegexConstants.EB_MOB)
+                .Replace(RegexConstants.EB_PARAM, RegexConstants.EB_MOB)
                 .Replace(RegexConstants.EB_COM, RegexConstants.EB_MOB);
         }
     }

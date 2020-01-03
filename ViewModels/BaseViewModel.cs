@@ -61,5 +61,10 @@ namespace ExpressBase.Mobile.ViewModels
             Store.Remove(AppConst.APP_COLLECTION);
             Application.Current.MainPage = new NavigationPage(new SolutionSelect());
         }
+
+        public virtual void RefreshPage()
+        {
+
+        }
     }
 }

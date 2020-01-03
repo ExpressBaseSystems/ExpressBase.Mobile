@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.DynamicRenders
+namespace ExpressBase.Mobile.ViewModels
 {
     public class FormRenderViewModel : BaseViewModel
     {
@@ -178,7 +178,7 @@ namespace ExpressBase.Mobile.DynamicRenders
 
         private void EbCtrlToXamCtrl(EbMobileControl ctrl, StackLayout ContentStackTop, int Margin = 10)
         {
-            var tempstack = new StackLayout { Margin = Margin };
+            var tempstack = new StackLayout { Margin = Margin, IsVisible = !(ctrl.Hidden) };
             tempstack.Children.Add(new Label { Text = ctrl.Label });
 
             if (ctrl is EbMobileTableLayout)
@@ -212,10 +212,10 @@ namespace ExpressBase.Mobile.DynamicRenders
 
         public void OnSaveClicked(object sender)
         {
-            FormService Form = new FormService(this.Elements, this.Form,this.Mode);
+            FormService Form = new FormService(this.Elements, this.Form, this.Mode);
             bool status = false;
             if (this.Mode == FormMode.REF)
-                status = Form.Save(this.RowOnEdit,ParentForm.TableName);
+                status = Form.Save(this.RowOnEdit, ParentForm.TableName);
             else
                 status = Form.Save(this.RowId);
 
@@ -250,14 +250,14 @@ namespace ExpressBase.Mobile.DynamicRenders
         private void CreateSchema()
         {
             SQLiteTableSchema Schema = this.GetSQLiteSchema(this.Form.ChiledControls);
-            if (this.Mode == FormMode.REF)
-            {
-                Schema.Columns.Add(new SQLiteColumSchema
-                {
-                    ColumnName = ParentForm.TableName + "_id",
-                    ColumnType = "INT"
-                });
-            }
+            //if (this.Mode == FormMode.REF)
+            //{
+            //    Schema.Columns.Add(new SQLiteColumSchema
+            //    {
+            //        ColumnName = ParentForm.TableName + "_id",
+            //        ColumnType = "INT"
+            //    });
+            //}
             Schema.TableName = this.Form.TableName;
             new CommonServices().CreateLocalTable4Form(Schema);
         }

@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -72,5 +73,39 @@ namespace ExpressBase.Mobile
         public bool Strikethrough { get; set; }
 
         public bool Underline { get; set; }
+    }
+
+    public class Param
+    {
+        public Param() { }
+
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public string Value { get; set; }
+
+        public dynamic ValueTo
+        {
+            get
+            {
+                if (Type == ((int)EbDbTypes.Decimal).ToString())
+                    return Convert.ToDecimal(Value);
+                else if (Type == ((int)EbDbTypes.Int16).ToString())
+                    return Convert.ToInt16(Value);
+                else if (Type == ((int)EbDbTypes.Int32).ToString())
+                    return Convert.ToInt32(Value);
+                else if (Type == ((int)EbDbTypes.Int64).ToString())
+                    return Convert.ToInt64(Value);
+                else if (Type == ((int)EbDbTypes.Date).ToString())
+                    return Convert.ToDateTime(Value);
+                else if (Type == ((int)EbDbTypes.DateTime).ToString())
+                    return Convert.ToDateTime(Value);
+                else if (Type == ((int)EbDbTypes.Boolean).ToString())
+                    return Convert.ToBoolean(Value);
+                else
+                    return Value;
+            }
+        }
     }
 }

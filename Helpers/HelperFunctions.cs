@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
@@ -30,6 +31,22 @@ namespace ExpressBase.Mobile.Helpers
             // Search all dictionaries
             if (Application.Current.Resources.TryGetValue(keyName, out var retVal)) { }
             return retVal;
+        }
+
+        public static List<string> GetSqlParams(string sql)
+        {
+            List<string> Params = new List<string>();
+            sql = Regex.Replace(sql, @"'([^']*)'", string.Empty);
+            Regex r = new Regex(@"((?<=:(?<!::))\w+|(?<=@(?<!::))\w+)");
+
+            foreach (Match match in r.Matches(sql))
+            {
+                if (!Params.Contains(match.Value))
+                {
+                    Params.Add(match.Value);
+                }
+            }
+            return Params;
         }
     }
 }

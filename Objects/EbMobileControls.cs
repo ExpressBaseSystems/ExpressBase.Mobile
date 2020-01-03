@@ -105,7 +105,27 @@ namespace ExpressBase.Mobile
 
     public class EbMobileSimpleSelect : EbMobileControl
     {
-        public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
+        public override EbDbTypes EbDbType
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(DataSourceRefId)) { 
+                    if(this.ValueMember != null)
+                    {
+                        return this.ValueMember.EbDbType;
+                    }
+                    else
+                    {
+                        return EbDbTypes.String;
+                    }
+                }
+                else
+                {
+                    return EbDbTypes.String;
+                }
+            }
+            set { }
+        }
 
         public List<EbMobileSSOption> Options { set; get; }
 
@@ -122,6 +142,8 @@ namespace ExpressBase.Mobile
         public EbMobileDataColumn ValueMember { set; get; }
 
         public EbScript OfflineQuery { set; get; }
+
+        public List<Param> Parameters { set; get; }
     }
 
     public class EbMobileSSOption : EbMobilePageBase

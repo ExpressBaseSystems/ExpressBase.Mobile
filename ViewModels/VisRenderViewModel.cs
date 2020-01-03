@@ -9,13 +9,11 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.DynamicRenders
+namespace ExpressBase.Mobile.ViewModels
 {
     public class VisRenderViewModel : BaseViewModel
     {
-        private Color OddColor = Color.FromHex("F2F2F2");
-
-        private Color EvenColor = Color.Default;
+        public bool IsRedirect { set; get; } = false;
 
         public EbMobileVisualization SourceVisualization { set; get; }
 
@@ -76,14 +74,44 @@ namespace ExpressBase.Mobile.DynamicRenders
         {
             byte[] b = Convert.FromBase64String(this.Visualization.OfflineQuery.Code);
             string sql = HelperFunctions.WrapSelectQuery(System.Text.Encoding.UTF8.GetString(b));
+            List<DbParameter> _DbParams = new List<DbParameter>();
             try
             {
-                DataTable = App.DataDB.DoQuery(sql);
+                if (RenderType == VisRenderType.LIST2LIST)
+                {
+                    List<string> _Params = HelperFunctions.GetSqlParams(sql);
+                    if (_Params.Count > 0)
+                    {
+                        this.GetParameterValues(_DbParams, _Params);
+                    }
+                }
+
+                DataTable = App.DataDB.DoQuery(sql, _DbParams.ToArray());
             }
             catch (Exception e)
             {
                 DataTable = new EbDataTable();
                 Console.WriteLine(e.Message);
+            }
+        }
+
+        private void GetParameterValues(List<DbParameter> _DbParams, List<string> _Params)
+        {
+            try
+            {
+                foreach (string _p in _Params)
+                {
+                    _DbParams.Add(new DbParameter
+                    {
+                        ParameterName = _p,
+                        Value = this.HeaderFrame.DataRow[_p] ?? null,
+                        DbType = (int)this.HeaderFrame.Columns[_p].Type
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -168,6 +196,7 @@ namespace ExpressBase.Mobile.DynamicRenders
                 {
                     if (!string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
                     {
+                        this.IsRedirect = true;
                         EbMobilePage ParentForm = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
 
                         FormRender Renderer = new FormRender(_page, ParentForm, this.HeaderFrame.DataRow);
@@ -181,10 +210,18 @@ namespace ExpressBase.Mobile.DynamicRenders
         {
             if (!string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
             {
+                this.IsRedirect = true;
                 EbMobilePage _page = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
                 FormRender Renderer = new FormRender(_page, this.HeaderFrame.DataRow, this.HeaderFrame.Columns);
                 (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
             }
+        }
+
+        public override void RefreshPage()
+        {
+            this.View = null;
+            this.GetData();
+            this.CreateView();
         }
     }
 }
