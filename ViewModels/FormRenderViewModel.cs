@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class FormRenderViewModel : BaseViewModel
     {
-        public IList<Element> Elements { set; get; }
+        public IList<View> Elements { set; get; }
 
         private EbMobileForm Form { set; get; }
 
@@ -87,7 +87,7 @@ namespace ExpressBase.Mobile.ViewModels
             SaveButtonVisible = true;
             PageTitle = Page.DisplayName;
             Form = (Page.Container as EbMobileForm);
-            this.Elements = new List<Element>();
+            this.Elements = new List<View>();
             CreateView();
 
             //create tables or alter table
@@ -104,7 +104,7 @@ namespace ExpressBase.Mobile.ViewModels
             this.ColumnsOnEdit = Columns;
             try
             {
-                this.Elements = new List<Element>();
+                this.Elements = new List<View>();
                 this.Form = (Page.Container as EbMobileForm);
                 PageTitle = Page.DisplayName;
 
@@ -131,7 +131,7 @@ namespace ExpressBase.Mobile.ViewModels
             RowOnEdit = CurrentRow;
             try
             {
-                this.Elements = new List<Element>();
+                this.Elements = new List<View>();
                 this.Form = (CurrentForm.Container as EbMobileForm);
                 PageTitle = CurrentForm.DisplayName;
 
@@ -178,36 +178,48 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void EbCtrlToXamCtrl(EbMobileControl ctrl, StackLayout ContentStackTop, int Margin = 10)
         {
-            var tempstack = new StackLayout { Margin = Margin, IsVisible = !(ctrl.Hidden) };
-            tempstack.Children.Add(new Label { Text = ctrl.Label });
+            try
+            {
+                var tempstack = new StackLayout { Margin = Margin, IsVisible = !(ctrl.Hidden) };
+                tempstack.Children.Add(new Label { Text = ctrl.Label });
 
-            if (ctrl is EbMobileTableLayout)
-            {
-                this.PushFromTableLayout((ctrl as EbMobileTableLayout), ContentStackTop);
-            }
-            else if (ctrl is EbMobileFileUpload)
-            {
-                //FileInput uploader = new FileInput((ctrl as EbMobileFileUpload));
-                //tempstack.Children.Add(uploader.Html);
-                //this.Elements.Add(uploader);
-            }
-            else
-            {
-                var el = (View)Activator.CreateInstance(ctrl.XControlType, ctrl);
-                if (this.Mode == FormMode.EDIT)
+                if (ctrl is EbMobileTableLayout)
                 {
-                    EbDataColumn _col = this.ColumnsOnEdit.Find(item => item.ColumnName == ctrl.Name);
-                    if (_col != null)
-                    {
-                        (el as ICustomElement).SetValue(this.RowOnEdit[_col.ColumnIndex]);
-                    }
-                    (el as ICustomElement).SetAsReadOnly(true);
+                    this.PushFromTableLayout((ctrl as EbMobileTableLayout), ContentStackTop);
                 }
-                tempstack.Children.Add(el);
-                this.Elements.Add(el);
+                else if (ctrl is EbMobileFileUpload)
+                {
+                    FileInput uploader = new FileInput((ctrl as EbMobileFileUpload));
+                    tempstack.Children.Add(uploader.Html);
+                    this.Elements.Add(uploader);
+                }
+                else if (ctrl is EbMobileSimpleSelect)
+                {
+                    PowerSelect Select = new PowerSelect(ctrl);
+                    tempstack.Children.Add(Select);
+                    this.Elements.Add(Select);
+                }
+                else
+                {
+                    var el = (View)Activator.CreateInstance(ctrl.XControlType, ctrl);
+                    if (this.Mode == FormMode.EDIT)
+                    {
+                        EbDataColumn _col = this.ColumnsOnEdit.Find(item => item.ColumnName == ctrl.Name);
+                        if (_col != null)
+                        {
+                            (el as ICustomElement).SetValue(this.RowOnEdit[_col.ColumnIndex]);
+                        }
+                        (el as ICustomElement).SetAsReadOnly(true);
+                    }
+                    tempstack.Children.Add(el);
+                    this.Elements.Add(el);
+                }
+                ContentStackTop.Children.Add(tempstack);
             }
-
-            ContentStackTop.Children.Add(tempstack);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public void OnSaveClicked(object sender)
@@ -250,14 +262,6 @@ namespace ExpressBase.Mobile.ViewModels
         private void CreateSchema()
         {
             SQLiteTableSchema Schema = this.GetSQLiteSchema(this.Form.ChiledControls);
-            //if (this.Mode == FormMode.REF)
-            //{
-            //    Schema.Columns.Add(new SQLiteColumSchema
-            //    {
-            //        ColumnName = ParentForm.TableName + "_id",
-            //        ColumnType = "INT"
-            //    });
-            //}
             Schema.TableName = this.Form.TableName;
             new CommonServices().CreateLocalTable4Form(Schema);
         }

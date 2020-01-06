@@ -109,8 +109,9 @@ namespace ExpressBase.Mobile
         {
             get
             {
-                if (!string.IsNullOrEmpty(DataSourceRefId)) { 
-                    if(this.ValueMember != null)
+                if (!string.IsNullOrEmpty(DataSourceRefId))
+                {
+                    if (this.ValueMember != null)
                     {
                         return this.ValueMember.EbDbType;
                     }
@@ -129,7 +130,7 @@ namespace ExpressBase.Mobile
 
         public List<EbMobileSSOption> Options { set; get; }
 
-        public override Type XControlType { get { return typeof(CustomSelect); } }
+        public override Type XControlType { get { return typeof(PowerSelect); } }
 
         public bool IsMultiSelect { get; set; }
 

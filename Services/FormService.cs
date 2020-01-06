@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.Services
     {
         private FormMode Mode { set; get; }
 
-        protected IList<Element> Controls { set; get; }
+        protected IList<View> Controls { set; get; }
 
         public EbMobileForm Form { set; get; }
 
@@ -25,7 +25,7 @@ namespace ExpressBase.Mobile.Services
 
         public FormService() { }
 
-        public FormService(IList<Element> Elements, EbMobileForm form, FormMode Mode)
+        public FormService(IList<View> Elements, EbMobileForm form, FormMode Mode)
         {
             this.Mode = Mode;
             this.Controls = Elements;
@@ -97,15 +97,19 @@ namespace ExpressBase.Mobile.Services
             };
 
             Table.Add(row);
-            foreach (Element el in this.Controls)
+            foreach (View el in this.Controls)
             {
                 if (el is FileInput)
-                {
                     continue;
-                }
                 else
                 {
-                    ICustomElement xctrl = el as ICustomElement;
+                    ICustomElement xctrl;
+
+                    if (el is PowerSelect)
+                        xctrl = (el as PowerSelect).XControl as ICustomElement;
+                    else
+                        xctrl = el as ICustomElement;
+
                     var value = xctrl.GetValue();
                     if (value == null)
                         continue;
