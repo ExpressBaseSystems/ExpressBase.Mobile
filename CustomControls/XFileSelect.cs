@@ -7,29 +7,13 @@ using Xamarin.Forms;
 namespace ExpressBase.Mobile.CustomControls
 {
 
-    public class FileInput : View
+    public class XFileSelect : XCustomControl
     {
-        public Grid Html
-        {
-            set { }
-            get
-            {
-                return this._Grid;
-            }
-        }
-
-        public List<int> Source { set; get; }
-
-        public EbMobileControl EbControl { set; get; }
-
-        private Page Page { set; get; }
-
         private Grid _Grid { set; get; }
 
-        public FileInput(EbMobileFileUpload Control)
+        public XFileSelect(EbMobileFileUpload Control)
         {
             this.EbControl = Control;
-            this.Source = new List<int>();
 
             this.BuildHtml();
             this.AppendButtons();
@@ -40,19 +24,21 @@ namespace ExpressBase.Mobile.CustomControls
             this._Grid = new Grid();
 
             this._Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            this.Html.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            this._Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
             this._Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) });
             this._Grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(5, GridUnitType.Star) });
+
+            this.XControl = this._Grid;
         }
 
         public void AppendButtons()
         {
             var FilesBtn = new Button() { Text = "Choose File" };
-            this._Grid.Children.Add(FilesBtn, 0, 0);
+            (this.XControl as Grid).Children.Add(FilesBtn, 0, 0);
 
             var CameraBtn = new Button() { Text = "Take pic" };
-            this._Grid.Children.Add(CameraBtn, 1, 0);
+            (this.XControl as Grid).Children.Add(CameraBtn, 1, 0);
 
             //bind events
             CameraBtn.Clicked += OnCameraClick;
@@ -65,7 +51,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
             {
-                await this.Page.DisplayAlert("No Camera", ":( No camera available.", "OK");
+                await Application.Current.MainPage.DisplayAlert("No Camera", ":( No camera available.", "OK");
                 return;
             }
 
@@ -80,7 +66,6 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     Source = ImageSource.FromStream(() => { return photo.GetStream(); })
                 };
-                this._Grid.Children.Add(_img);
                 this._Grid.Children.Add(_img, 0, 1);
                 Grid.SetColumnSpan(_img, 2);
             }

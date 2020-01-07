@@ -62,6 +62,10 @@
                 <Setter Property="BackgroundColor" Value="White" />
             </Style>
 
+            <Style x:Key="IconedLabel" TargetType="Label">
+                <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -19,6 +19,10 @@ namespace ExpressBase.Mobile.CustomControls
 
         public CustomFrame(EbDataRow Row, ColumnColletion Columns, EbMobileVisualization Visualization,bool IsHeader = false)
         {
+            if (!IsHeader)
+            {
+                this.Padding = new Thickness(10);
+            }
             this.IsHeader = IsHeader;
             this.DataRow = Row;
             this.Columns = Columns;

@@ -104,14 +104,14 @@
                             </Grid>
                         </Frame>
                     </StackLayout>
-                    <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="16,10,10,10" Spacing="0">
+                    <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="10,10,10,10" Spacing="0">
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer 
                                     Command="{Binding Path=BindingContext.ChangeSidCommand,Source={x:Reference SideBarLayout}}" 
                                     CommandParameter="{Binding .}"/>
                             </Frame.GestureRecognizers>
-                            <Grid Padding="5,10">
+                            <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />
@@ -126,7 +126,7 @@
                                     Command="{Binding Path=BindingContext.SwitchAppCommand,Source={x:Reference SideBarLayout}}"
                                     CommandParameter="{Binding .}"/>
                             </Frame.GestureRecognizers>
-                            <Grid Padding="5,10">
+                            <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />
@@ -141,7 +141,7 @@
                                     Command="{Binding Path=BindingContext.SwitchLocations,Source={x:Reference SideBarLayout}}"
                                     CommandParameter="{Binding .}"/>
                             </Frame.GestureRecognizers>
-                            <Grid Padding="5,10">
+                            <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />
@@ -151,14 +151,14 @@
                             </Grid>
                         </Frame>
                     </StackLayout>
-                    <StackLayout VerticalOptions="End" Padding="16,10,10,10">
+                    <StackLayout VerticalOptions="End" Padding="10,10,10,10">
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer 
                                     Command="{Binding Path=BindingContext.LogOutCommand,Source={x:Reference SideBarLayout}}"
                                     CommandParameter="{Binding .}"/>
                             </Frame.GestureRecognizers>
-                            <Grid Padding="5,10">
+                            <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />

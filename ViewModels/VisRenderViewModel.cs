@@ -169,8 +169,8 @@ namespace ExpressBase.Mobile.ViewModels
             _Gd.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             _Gd.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-            _Gd.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
             _Gd.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            _Gd.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
 
             _Gd.Children.Add(this.HeaderFrame, 0, 0);
             Grid.SetColumnSpan(this.HeaderFrame, 2);
@@ -179,9 +179,9 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 Text = "\uf040",
                 Command = new Command(EditButtonClicked),
-                Margin = 10,
+                Margin = new Thickness(20,10,0,10),
                 Style = (Style)Application.Current.Resources["IconedRoundButton"]
-            }, 1, 1);
+            }, 0, 1);
 
             Sl.Children.Add(_Gd);
             _Stack.Children.Add(Sl);

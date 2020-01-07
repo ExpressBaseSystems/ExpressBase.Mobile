@@ -76,7 +76,10 @@ namespace ExpressBase.Mobile.Views
                 if (vm.IsRedirect)
                 {
                     vm.RefreshPage();
-                    this.Content = vm.View;
+                    if (this.Content is AbsoluteLayout)
+                        (this.Content as AbsoluteLayout).Children[0] = vm.View;
+                    else
+                        this.Content = vm.View;
                     vm.IsRedirect = false;
                 }
             }

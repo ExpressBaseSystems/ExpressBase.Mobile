@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class FormRenderViewModel : BaseViewModel
     {
-        public IList<View> Elements { set; get; }
+        public IList<XCustomControl> XControls { set; get; }
 
         private EbMobileForm Form { set; get; }
 
@@ -87,7 +87,7 @@ namespace ExpressBase.Mobile.ViewModels
             SaveButtonVisible = true;
             PageTitle = Page.DisplayName;
             Form = (Page.Container as EbMobileForm);
-            this.Elements = new List<View>();
+            this.XControls = new List<XCustomControl>();
             CreateView();
 
             //create tables or alter table
@@ -104,7 +104,7 @@ namespace ExpressBase.Mobile.ViewModels
             this.ColumnsOnEdit = Columns;
             try
             {
-                this.Elements = new List<View>();
+                this.XControls = new List<XCustomControl>();
                 this.Form = (Page.Container as EbMobileForm);
                 PageTitle = Page.DisplayName;
 
@@ -131,7 +131,7 @@ namespace ExpressBase.Mobile.ViewModels
             RowOnEdit = CurrentRow;
             try
             {
-                this.Elements = new List<View>();
+                this.XControls = new List<XCustomControl>();
                 this.Form = (CurrentForm.Container as EbMobileForm);
                 PageTitle = CurrentForm.DisplayName;
 
@@ -176,45 +176,31 @@ namespace ExpressBase.Mobile.ViewModels
             Grid.SetRow(btn, 1);
         }
 
-        private void EbCtrlToXamCtrl(EbMobileControl ctrl, StackLayout ContentStackTop, int Margin = 10)
+        private void EbCtrlToXamCtrl(EbMobileControl ctrl, StackLayout ContentStackTop)
         {
             try
             {
-                var tempstack = new StackLayout { Margin = Margin, IsVisible = !(ctrl.Hidden) };
-                tempstack.Children.Add(new Label { Text = ctrl.Label });
-
                 if (ctrl is EbMobileTableLayout)
                 {
                     this.PushFromTableLayout((ctrl as EbMobileTableLayout), ContentStackTop);
                 }
-                else if (ctrl is EbMobileFileUpload)
-                {
-                    FileInput uploader = new FileInput((ctrl as EbMobileFileUpload));
-                    tempstack.Children.Add(uploader.Html);
-                    this.Elements.Add(uploader);
-                }
-                else if (ctrl is EbMobileSimpleSelect)
-                {
-                    PowerSelect Select = new PowerSelect(ctrl);
-                    tempstack.Children.Add(Select);
-                    this.Elements.Add(Select);
-                }
                 else
                 {
-                    var el = (View)Activator.CreateInstance(ctrl.XControlType, ctrl);
+                    XCustomControl XCtrl = (XCustomControl)Activator.CreateInstance(ctrl.XControlType, ctrl);
+
                     if (this.Mode == FormMode.EDIT)
                     {
                         EbDataColumn _col = this.ColumnsOnEdit.Find(item => item.ColumnName == ctrl.Name);
                         if (_col != null)
                         {
-                            (el as ICustomElement).SetValue(this.RowOnEdit[_col.ColumnIndex]);
+                            XCtrl.SetValue(this.RowOnEdit[_col.ColumnIndex]);
                         }
-                        (el as ICustomElement).SetAsReadOnly(true);
+                        XCtrl.SetAsReadOnly(true);
                     }
-                    tempstack.Children.Add(el);
-                    this.Elements.Add(el);
+
+                    this.XControls.Add(XCtrl);
+                    ContentStackTop.Children.Add(XCtrl.XView);
                 }
-                ContentStackTop.Children.Add(tempstack);
             }
             catch (Exception ex)
             {
@@ -224,7 +210,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public void OnSaveClicked(object sender)
         {
-            FormService Form = new FormService(this.Elements, this.Form, this.Mode);
+            FormService Form = new FormService(this.XControls, this.Form, this.Mode);
             bool status = false;
             if (this.Mode == FormMode.REF)
                 status = Form.Save(this.RowOnEdit, ParentForm.TableName);
@@ -295,9 +281,9 @@ namespace ExpressBase.Mobile.ViewModels
             if (!SaveButtonVisible)
             {
                 Task.Run(() => { Device.BeginInvokeOnMainThread(() => SaveButtonVisible = true); });
-                foreach (Element el in this.Elements)
+                foreach (XCustomControl XCtrl in this.XControls)
                 {
-                    (el as ICustomElement).SetAsReadOnly(false);
+                    XCtrl.SetAsReadOnly(false);
                 }
             }
         }

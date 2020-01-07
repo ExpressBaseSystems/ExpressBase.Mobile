@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.Services
     {
         private FormMode Mode { set; get; }
 
-        protected IList<View> Controls { set; get; }
+        protected IList<XCustomControl> XControls { set; get; }
 
         public EbMobileForm Form { set; get; }
 
@@ -25,10 +25,10 @@ namespace ExpressBase.Mobile.Services
 
         public FormService() { }
 
-        public FormService(IList<View> Elements, EbMobileForm form, FormMode Mode)
+        public FormService(IList<XCustomControl> XControls, EbMobileForm form, FormMode Mode)
         {
             this.Mode = Mode;
-            this.Controls = Elements;
+            this.XControls = XControls;
             this.Form = form;
         }
 
@@ -97,27 +97,20 @@ namespace ExpressBase.Mobile.Services
             };
 
             Table.Add(row);
-            foreach (View el in this.Controls)
+            foreach (XCustomControl XCtrl in this.XControls)
             {
-                if (el is FileInput)
+                if (XCtrl is XFileSelect)
                     continue;
                 else
                 {
-                    ICustomElement xctrl;
-
-                    if (el is PowerSelect)
-                        xctrl = (el as PowerSelect).XControl as ICustomElement;
-                    else
-                        xctrl = el as ICustomElement;
-
-                    var value = xctrl.GetValue();
+                    var value = XCtrl.GetValue();
                     if (value == null)
                         continue;
 
                     row.Columns.Add(new MobileTableColumn
                     {
-                        Name = xctrl.Name,
-                        Type = xctrl.DbType,
+                        Name = XCtrl.Name,
+                        Type = XCtrl.DbType,
                         Value = value
                     });
                 }

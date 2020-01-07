@@ -49,7 +49,7 @@ namespace ExpressBase.Mobile
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
 
-        public override Type XControlType { get { return typeof(TextBox); } }
+        public override Type XControlType { get { return typeof(XEntry); } }
 
         public int MaxLength { get; set; }
 
@@ -66,7 +66,7 @@ namespace ExpressBase.Mobile
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.Decimal; } set { } }
 
-        public override Type XControlType { get { return typeof(NumericTextBox); } }
+        public override Type XControlType { get { return typeof(XNumericEntry); } }
 
         public int MaxLength { get; set; }
 
@@ -85,7 +85,7 @@ namespace ExpressBase.Mobile
 
         public override EbDbTypes EbDbType { get { return (EbDbTypes)this.EbDateType; } set { } }
 
-        public override Type XControlType { get { return typeof(CustomDatePicker); } }
+        public override Type XControlType { get { return typeof(XDatePicker); } }
 
         public bool IsNullable { get; set; }
 
@@ -130,7 +130,7 @@ namespace ExpressBase.Mobile
 
         public List<EbMobileSSOption> Options { set; get; }
 
-        public override Type XControlType { get { return typeof(PowerSelect); } }
+        public override Type XControlType { get { return typeof(XPowerSelect); } }
 
         public bool IsMultiSelect { get; set; }
 
@@ -165,13 +165,15 @@ namespace ExpressBase.Mobile
         public bool MultiSelect { set; get; }
 
         public bool EnableEdit { set; get; }
+
+        public override Type XControlType { get { return typeof(XFileSelect); } }
     }
 
     public class EbMobileBoolean : EbMobileControl
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.BooleanOriginal; } set { } }
 
-        public override Type XControlType { get { return typeof(CustomCheckBox); } }
+        public override Type XControlType { get { return typeof(XCheckBox); } }
 
         public override object SQLiteToActual(object value)
         {

@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using Xamarin.Forms;
@@ -25,6 +26,11 @@ namespace ExpressBase.Mobile.Views
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return base.OnBackButtonPressed();
         }
     }
 }
