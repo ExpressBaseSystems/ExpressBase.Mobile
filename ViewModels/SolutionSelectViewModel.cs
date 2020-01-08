@@ -6,9 +6,11 @@ using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
@@ -45,6 +47,13 @@ namespace ExpressBase.Mobile.ViewModels
         private void SolutionUrlSet(object obj)
         {
             string url = this.SolutionUrl.Trim();
+
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                DependencyService.Get<IToast>().Show("Not connected to internet!");
+                return;
+            }
+
             Task.Run(() =>
             {
                 try
@@ -52,13 +61,18 @@ namespace ExpressBase.Mobile.ViewModels
                     if (!string.IsNullOrEmpty(url))
                     {
                         Device.BeginInvokeOnMainThread(() => IsBusy = true);
-                        if (Api.ValidateSid(url))
+                        ValidateSidResponse Response = Api.ValidateSid(url);
+                        if (Response.IsValid)
                         {
                             string _sid = url.Split('.')[0];
                             Store.SetValue(AppConst.SID, _sid);
                             Store.SetValue(AppConst.ROOT_URL, url);
                             this.CreateDB(_sid);
                             this.CreateDir(_sid);
+                            if(Response.Logo != null)
+                            {
+                                this.SaveLogo(Response.Logo);
+                            }
                             Device.BeginInvokeOnMainThread(() =>
                             {
                                 IsBusy = false;
@@ -112,6 +126,23 @@ namespace ExpressBase.Mobile.ViewModels
                     {
                         string SolDirPath = helper.CreateDirectoryOrFile($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory);
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void SaveLogo(byte[] imageByte)
+        {
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+            string sid = Settings.SolutionId;
+            try
+            {
+                if (!helper.DirectoryOrFileExist($"ExpressBase/{sid}/logo.png", SysContentType.File))
+                {
+                    File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{sid}/logo.png", imageByte);
                 }
             }
             catch (Exception ex)

@@ -11,6 +11,10 @@ namespace ExpressBase.Mobile.CustomControls
     {
         private Grid _Grid { set; get; }
 
+        private int CurrentRow { set; get; } = 1;
+
+        private int CurrentColumn { set; get; } = 0;
+
         public XFileSelect(EbMobileFileUpload Control)
         {
             this.EbControl = Control;
@@ -21,7 +25,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         public void BuildHtml()
         {
-            this._Grid = new Grid();
+            this._Grid = new Grid() { RowSpacing = 0 };
 
             this._Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             this._Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
@@ -66,8 +70,7 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     Source = ImageSource.FromStream(() => { return photo.GetStream(); })
                 };
-                this._Grid.Children.Add(_img, 0, 1);
-                Grid.SetColumnSpan(_img, 2);
+                AddImageToGallery(_img);
             }
         }
 
@@ -84,6 +87,22 @@ namespace ExpressBase.Mobile.CustomControls
                 this._Grid.Children.Add(_img);
                 this._Grid.Children.Add(_img, 0, 1);
                 Grid.SetColumnSpan(_img, 2);
+            }
+        }
+
+        public void AddImageToGallery(Image _img)
+        {
+            if (CurrentColumn == 1)
+            {
+                this._Grid.Children.Add(_img, CurrentColumn, CurrentRow);
+                this._Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                CurrentRow++;
+                CurrentColumn = 0;
+            }
+            else
+            {
+                this._Grid.Children.Add(_img, CurrentColumn, CurrentRow);
+                CurrentColumn = 1;
             }
         }
     }

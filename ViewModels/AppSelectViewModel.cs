@@ -7,8 +7,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
@@ -51,6 +51,12 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void ItemSelected(object selected)
         {
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                DependencyService.Get<IToast>().Show("Not connected to internet!");
+                return;
+            }
+
             Task.Run(() =>
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);

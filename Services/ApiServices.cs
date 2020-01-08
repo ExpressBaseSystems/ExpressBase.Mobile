@@ -19,7 +19,7 @@ namespace ExpressBase.Mobile.Services
             {
                 RestClient client = new RestClient(Settings.RootUrl);
 
-                RestRequest request = new RestRequest("api/push_data",Method.POST);
+                RestRequest request = new RestRequest("api/push_data", Method.POST);
                 request.AddParameter("webform_data", JsonConvert.SerializeObject(WebFormData));
                 request.AddParameter("rowid", RowId);
                 request.AddParameter("refid", WebFormRefId);
@@ -39,36 +39,23 @@ namespace ExpressBase.Mobile.Services
             return null;
         }
 
-        public static bool ValidateSid(string url)
+        public static ValidateSidResponse ValidateSid(string url)
         {
+            ValidateSidResponse Vresp = new ValidateSidResponse();
             try
             {
                 RestClient client = new RestClient("https://" + url);
-                IRestResponse response = client.Execute(new RestRequest(Method.GET));
+                RestRequest request = new RestRequest("api/validate_solution", Method.GET);
+                IRestResponse response = client.Execute(request);
                 if (response.StatusCode == HttpStatusCode.OK)
-                    return true;
+                    Vresp = JsonConvert.DeserializeObject<ValidateSidResponse>(response.Content);
             }
             catch (Exception e)
             {
+                Vresp.IsValid = false;
                 Console.WriteLine(e.Message);
             }
-            return false;
-        }
-
-        public static byte[] GetSolutionLogo(string url)
-        {
-            try
-            {
-                RestClient client = new RestClient(Settings.RootUrl);
-                RestRequest request = new RestRequest(url);
-                byte[] imagebyte = client.DownloadData(request);
-                return imagebyte;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return null;
+            return Vresp;
         }
 
         public static List<AppData> GetAppCollections()
@@ -94,7 +81,7 @@ namespace ExpressBase.Mobile.Services
             return _Apps;
         }
 
-        public static MobilePageCollection GetEbObjects(int AppId,int LocationId,bool PullData = false)
+        public static MobilePageCollection GetEbObjects(int AppId, int LocationId, bool PullData = false)
         {
             try
             {

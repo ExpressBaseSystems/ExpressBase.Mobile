@@ -1,13 +1,10 @@
-﻿using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
@@ -76,6 +73,12 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void LoginAction(object obj)
         {
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                DependencyService.Get<IToast>().Show("Not connected to internet!");
+                return;
+            }
+
             string _username = this.Email.Trim();
             string _password = this.PassWord.Trim();
             Task.Run(() =>
@@ -128,23 +131,15 @@ namespace ExpressBase.Mobile.ViewModels
             string sid = Settings.SolutionId;
             try
             {
-                if (!helper.DirectoryOrFileExist($"ExpressBase/{sid}/logo.png", SysContentType.File))
+                var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
+
+                if(bytes== null)
                 {
-                    byte[] imageByte = Api.GetSolutionLogo($"images/logo/{sid}.png");
-                    if (imageByte != null)
-                    {
-                        File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{sid}/logo.png", imageByte);
-                        LogoUrl = ImageSource.FromStream(() => new MemoryStream(imageByte));
-                    }
-                    else
-                    {
-                        LogoUrl = ImageSource.FromResource("eblogo.png");
-                    }
+                    LogoUrl = ImageSource.FromResource("eblogo.png");
                 }
                 else
                 {
-                    var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
-                    LogoUrl = (bytes == null) ? ImageSource.FromResource("eblogo.png") : ImageSource.FromStream(() => new MemoryStream(bytes));
+                    LogoUrl = ImageSource.FromStream(() => new MemoryStream(bytes));
                 }
             }
             catch (Exception ex)

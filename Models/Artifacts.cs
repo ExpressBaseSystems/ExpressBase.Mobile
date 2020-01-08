@@ -179,4 +179,18 @@ namespace ExpressBase.Mobile.Models
 
         public EbMobileControl Control { set; get; }
     }
+
+    public class ValidateSidResponse
+    {
+        public bool IsValid { set; get; }
+
+        public byte[] Logo { set; get; }
+    }
+
+    public class VisualizationLiveData
+    {
+        public string Message { set; get; }
+
+        public EbDataSet Data { set; get; }
+    }
 }
