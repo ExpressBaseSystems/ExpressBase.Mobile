@@ -23,6 +23,8 @@ namespace ExpressBase.Mobile.Models
         string CreateDirectoryOrFile(string DirectoryPath, SysContentType Type);
 
         byte[] GetPhoto(string url);
+
+        string[] GetFiles(string Url, string Pattern);
     }
 
     public interface IToast

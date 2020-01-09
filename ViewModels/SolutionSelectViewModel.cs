@@ -68,7 +68,7 @@ namespace ExpressBase.Mobile.ViewModels
                             Store.SetValue(AppConst.SID, _sid);
                             Store.SetValue(AppConst.ROOT_URL, url);
                             this.CreateDB(_sid);
-                            this.CreateDir(_sid);
+                            this.CreateDir();
                             if(Response.Logo != null)
                             {
                                 this.SaveLogo(Response.Logo);
@@ -106,26 +106,14 @@ namespace ExpressBase.Mobile.ViewModels
             App.DataDB.CreateDB(sid);
         }
 
-        private void CreateDir(string sid)
+        private void CreateDir()
         {
-            INativeHelper helper = DependencyService.Get<INativeHelper>();
             try
             {
-                if (helper.DirectoryOrFileExist("ExpressBase", SysContentType.Directory))
+                string path = HelperFunctions.CreatePlatFormDir();
+                if (!String.IsNullOrEmpty(path))
                 {
-                    if (!helper.DirectoryOrFileExist($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory))
-                    {
-                        string SolDirPath = helper.CreateDirectoryOrFile($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory);
-                    }
-                }
-                else
-                {
-                    string path = helper.CreateDirectoryOrFile("ExpressBase", SysContentType.Directory);
-
-                    if (!helper.DirectoryOrFileExist($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory))
-                    {
-                        string SolDirPath = helper.CreateDirectoryOrFile($"ExpressBase/{sid.ToUpper()}", SysContentType.Directory);
-                    }
+                    //folder created
                 }
             }
             catch (Exception ex)

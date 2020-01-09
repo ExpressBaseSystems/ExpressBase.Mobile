@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using System.Linq;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Enums;
+using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -22,6 +23,8 @@ namespace ExpressBase.Mobile.Services
         private EbDataRow ParentRow { set; get; }
 
         private string ParentTable { set; get; }
+
+        private bool HasFileSelect { set; get; } = false;
 
         public FormService() { }
 
@@ -46,6 +49,13 @@ namespace ExpressBase.Mobile.Services
                         query += this.GetQuery(_table, _params);
                     }
                     int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
+
+                    if (this.HasFileSelect)
+                    {
+                        object lastRowId = (RowId != 0) ? RowId : App.DataDB.DoScalar(string.Format(StaticQueries.CURRVAL, this.Form.TableName));
+                        this.PushFiles(lastRowId);
+                    }
+
                     return (rowAffected > 0);
                 }
             }
@@ -56,7 +66,7 @@ namespace ExpressBase.Mobile.Services
             return false;
         }
 
-        public bool Save(EbDataRow _ParentRow,string ParentTableName)
+        public bool Save(EbDataRow _ParentRow, string ParentTableName)
         {
             ParentRow = _ParentRow;
             ParentTable = ParentTableName;
@@ -73,6 +83,13 @@ namespace ExpressBase.Mobile.Services
                         query += this.GetQuery(_table, _params);
                     }
                     int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
+
+                    if (this.HasFileSelect)
+                    {
+                        object lastRowId = App.DataDB.DoScalar(string.Format(StaticQueries.CURRVAL, this.Form.TableName));
+                        this.PushFiles(lastRowId);
+                    }
+
                     return (rowAffected > 0);
                 }
             }
@@ -100,7 +117,10 @@ namespace ExpressBase.Mobile.Services
             foreach (XCustomControl XCtrl in this.XControls)
             {
                 if (XCtrl is XFileSelect)
+                {
+                    this.HasFileSelect = true;
                     continue;
+                }
                 else
                 {
                     var value = XCtrl.GetValue();
@@ -118,7 +138,7 @@ namespace ExpressBase.Mobile.Services
             if (RowId <= 0)
                 row.AppendEbColValues();//append ebcol values
 
-            if(this.Mode == FormMode.REF)
+            if (this.Mode == FormMode.REF)
             {
                 row.Columns.Add(new MobileTableColumn
                 {
@@ -181,6 +201,22 @@ namespace ExpressBase.Mobile.Services
                 }
             }
             return sb.ToString();
+        }
+
+        private void PushFiles(object LastRowId)
+        {
+            int rowid = Convert.ToInt32(LastRowId);
+
+            Task.Run(() =>
+            {
+                foreach (XCustomControl ctrl in this.XControls)
+                {
+                    if (ctrl is XFileSelect)
+                    {
+                        (ctrl as XFileSelect).PushFilesToDir(this.Form.TableName, rowid);
+                    }
+                }
+            });
         }
     }
 }

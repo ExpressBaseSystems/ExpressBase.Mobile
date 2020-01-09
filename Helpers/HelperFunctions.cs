@@ -1,8 +1,10 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Xamarin.Forms;
@@ -47,6 +49,59 @@ namespace ExpressBase.Mobile.Helpers
                 }
             }
             return Params;
+        }
+
+        public static string CreatePlatFormDir(string FolderName = null)
+        {
+            string sid = Settings.SolutionId.ToUpper();
+            try
+            {
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+
+                if (helper.DirectoryOrFileExist("ExpressBase", SysContentType.Directory))
+                {
+                    if (!helper.DirectoryOrFileExist($"ExpressBase/{sid}", SysContentType.Directory))
+                    {
+                        helper.CreateDirectoryOrFile($"ExpressBase/{sid}", SysContentType.Directory);
+
+                        if(FolderName != null)
+                        {
+                            return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
+                        }
+                    }
+                    else
+                    {
+                        if (FolderName != null)
+                        {
+                            return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
+                        }
+                    }
+                }
+                else
+                {
+                    helper.CreateDirectoryOrFile("ExpressBase", SysContentType.Directory);
+                    helper.CreateDirectoryOrFile($"ExpressBase/{sid}", SysContentType.Directory);
+
+                    if(FolderName != null)
+                    {
+                        return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return null;
+        }
+
+        public static byte[] StreamToBytea(Stream input)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                input.CopyTo(ms);
+                return ms.ToArray();
+            }
         }
     }
 }

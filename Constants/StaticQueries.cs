@@ -70,5 +70,13 @@ namespace ExpressBase.Mobile.Data
                 return "UPDATE {0} SET eb_synced = 1,eb_syncrecord_id = @cloudrowid WHERE id = @rowid";
             }
         }
+
+        public static string CURRVAL
+        {
+            get
+            {
+                return "SELECT id from {0} order by id DESC limit 1;";
+            }
+        }
     }
 }

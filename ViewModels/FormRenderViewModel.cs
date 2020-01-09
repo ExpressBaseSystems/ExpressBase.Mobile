@@ -146,9 +146,14 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void CreateView()
         {
-            View = new Grid();
-            View.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-            View.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            View = new Grid()
+            {
+                RowDefinitions =
+                {
+                    new RowDefinition { Height = GridLength.Star },
+                    new RowDefinition { Height = GridLength.Auto }
+                }
+            };
 
             ScrollView InnerScroll = new ScrollView { Orientation = ScrollOrientation.Vertical };
             StackLayout ScrollStack = new StackLayout { Spacing = 0 };
@@ -194,6 +199,10 @@ namespace ExpressBase.Mobile.ViewModels
                         if (_col != null)
                         {
                             XCtrl.SetValue(this.RowOnEdit[_col.ColumnIndex]);
+                        }
+                        else if (XCtrl is XFileSelect)
+                        {
+                            (XCtrl as XFileSelect).RenderOnEdit(this.Form.TableName, Convert.ToInt32(this.RowOnEdit["id"]));
                         }
                         XCtrl.SetAsReadOnly(true);
                     }
