@@ -17,27 +17,23 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class ObjectsRenderViewModel : BaseViewModel
     {
-        public int AppId
-        {
-            get
-            {
-                return Convert.ToInt32(Store.GetValue(AppConst.APPID));
-            }
-        }
+        const int RefreshDuration = 2;
 
-        public string AppName
+        private bool _isRefreshing;
+        public bool IsRefreshing
         {
             get
             {
-                return Store.GetValue(AppConst.APPNAME);
+                return this._isRefreshing;
             }
-        }
-
-        public int LocationId
-        {
-            get
+            set
             {
-                return 1;
+                if (this._isRefreshing == value)
+                {
+                    return;
+                }
+                this._isRefreshing = value;
+                this.NotifyPropertyChanged();
             }
         }
 
@@ -59,19 +55,20 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public List<MobilePagesWraper> ObjectList { set; get; }
+        public List<MobilePagesWraper> ObjectList { private set; get; }
 
-        public Command SyncButtonCommand { set; get; }
+        public Command SyncButtonCommand => new Command(OnSyncClick);
 
-        public Command ObjectSelectCommand { set; get; }
+        public Command ObjectSelectCommand => new Command(OnObjectClick);
+
+        public Command RefreshCommand => new Command(async () => await OnRefreshPulled());
 
         public ObjectsRenderViewModel()
         {
             LoaderMessage = "Loading...";
+            PageTitle = Settings.AppName;
+
             SetUpData();
-            SyncButtonCommand = new Command(OnSyncClick);
-            ObjectSelectCommand = new Command(OnObjectClick);
-            PageTitle = AppName;
         }
 
         private void SetUpData()
@@ -82,14 +79,14 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 bool _pull = this.PulledTableExist() ? false : true;
 
-                MobilePageCollection Coll = Api.GetEbObjects(this.AppId, this.LocationId, _pull);
+                MobilePageCollection Coll = Api.GetEbObjects(Settings.AppId, Settings.LocationId, _pull);
                 this.ObjectList = Coll.Pages;
 
                 Store.SetValue(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(Coll.Pages));
 
                 if (Coll.TableNames != null)
                 {
-                    Store.SetValue(string.Format(AppConst.APP_PULL_TABLE, this.AppId), string.Join(",", Coll.TableNames.ToArray()));
+                    Store.SetValue(string.Format(AppConst.APP_PULL_TABLE, Settings.AppId), string.Join(",", Coll.TableNames.ToArray()));
 
                     if (_pull == true && Coll.TableNames.Count > 0)
                     {
@@ -106,7 +103,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         private bool PulledTableExist()
         {
-            string sv = Store.GetValue(string.Format(AppConst.APP_PULL_TABLE, this.AppId));
+            string sv = Store.GetValue(string.Format(AppConst.APP_PULL_TABLE, Settings.AppId));
 
             string[] Tables = (sv == null) ? new string[0] : sv.Split(',');
 
@@ -128,8 +125,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             if (DS.Tables.Count > 0)
             {
-                CommonServices _service = new CommonServices();
-                int st = await _service.LoadLocalData(DS);
+                int st = await CommonServices.Instance.LoadLocalData(DS);
             }
         }
 
@@ -161,8 +157,7 @@ namespace ExpressBase.Mobile.ViewModels
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
                 try
                 {
-                    string regexed = EbSerializers.JsonToNETSTD(item.Json);
-                    EbMobilePage page = EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
+                    EbMobilePage page = HelperFunctions.GetPage(item.RefId);
 
                     if (page.Container is EbMobileForm)
                     {
@@ -187,6 +182,23 @@ namespace ExpressBase.Mobile.ViewModels
                     Console.WriteLine(ex.StackTrace);
                 }
             });
+        }
+
+        private async Task OnRefreshPulled()
+        {
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            {
+                DependencyService.Get<IToast>().Show("Not connected to internet!");
+                return;
+            }
+
+            IsRefreshing = true;
+            await Task.Delay(TimeSpan.FromSeconds(RefreshDuration));
+
+            Store.Remove(AppConst.OBJ_COLLECTION);
+            SetUpData();
+            this.IsRefreshing = false;
+            DependencyService.Get<IToast>().Show("Pulled successfully");
         }
     }
 }

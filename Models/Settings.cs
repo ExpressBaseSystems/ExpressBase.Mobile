@@ -58,5 +58,21 @@ namespace ExpressBase.Mobile.Models
                 return JsonConvert.DeserializeObject<List<EbLocation>>(Store.GetValue(AppConst.USER_LOCATIONS));
             }
         }
+
+        public static int AppId
+        {
+            get
+            {
+                return Convert.ToInt32(Store.GetValue(AppConst.APPID));
+            }
+        }
+
+        public static string AppName
+        {
+            get
+            {
+                return Store.GetValue(AppConst.APPNAME);
+            }
+        }
     }
 }

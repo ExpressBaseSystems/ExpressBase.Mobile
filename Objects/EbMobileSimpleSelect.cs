@@ -1,64 +1,88 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.CustomControls
+namespace ExpressBase.Mobile
 {
-    public class XPowerSelect : XCustomControl
+    public class EbMobileSimpleSelect : EbMobileControl
     {
+        public override EbDbTypes EbDbType
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(DataSourceRefId))
+                {
+                    if (this.ValueMember != null)
+                    {
+                        return this.ValueMember.EbDbType;
+                    }
+                    else
+                    {
+                        return EbDbTypes.String;
+                    }
+                }
+                else
+                {
+                    return EbDbTypes.String;
+                }
+            }
+            set { }
+        }
+
+        public List<EbMobileSSOption> Options { set; get; }
+
+        public bool IsMultiSelect { get; set; }
+
+        public string DataSourceRefId { get; set; }
+
+        public List<EbMobileDataColumn> Columns { set; get; }
+
+        public EbMobileDataColumn DisplayMember { set; get; }
+
+        public EbMobileDataColumn ValueMember { set; get; }
+
+        public EbScript OfflineQuery { set; get; }
+
+        public List<Param> Parameters { set; get; }
+
+        //mobile props
         public CustomSearchBar SearchBox { set; get; }
 
         public StackLayout ResultStack { set; get; }
 
         public Frame ResultFrame { set; get; }
 
-        public int Mode { set; get; }
-
         public ComboBoxLabel Selected { set; get; }
 
-        public XPowerSelect() { }
-
-        public XPowerSelect(EbMobileControl Ctrl)
+        public override void InitXControl()
         {
-            this.Name = Ctrl.Name;
-            this.DbType = Ctrl.EbDbType;
-            this.EbControl = Ctrl;
-
-            var _Select = Ctrl as EbMobileSimpleSelect;
-
-            if (string.IsNullOrEmpty(_Select.DataSourceRefId))
+            if (string.IsNullOrEmpty(this.DataSourceRefId))
             {
-                Mode = 0;//static
-                XControl = this.GetPicker(_Select);
+                XControl = this.GetPicker();
             }
             else
             {
-                Mode = 1;//dynamic
                 XControl = this.GetComboBox();
             }
         }
 
         public override object GetValue()
         {
-            if (Mode == 0)
+            if (string.IsNullOrEmpty(this.DataSourceRefId))
             {
-                if((this.XControl as CustomPicker).SelectedItem != null)
+                if ((this.XControl as CustomPicker).SelectedItem != null)
                 {
                     return ((this.XControl as CustomPicker).SelectedItem as EbMobileSSOption).Value;
                 }
                 else
-                {
                     return null;
-                }
             }
             else
-            {
-                return (Selected == null) ? null : Selected.Value;
-            }
+                return (this.Selected == null) ? null : this.Selected.Value;
         }
 
         public override bool SetValue(object value)
@@ -66,15 +90,14 @@ namespace ExpressBase.Mobile.CustomControls
             if (value == null)
                 return false;
 
-            if (Mode == 0)
+            if (string.IsNullOrEmpty(this.DataSourceRefId))
             {
-                (this.XControl as CustomPicker).SelectedItem = (this.EbControl as EbMobileSimpleSelect).Options.Find(i => i.Value == value.ToString());
+                (this.XControl as CustomPicker).SelectedItem = this.Options.Find(i => i.Value == value.ToString());
             }
             else
             {
 
             }
-
             return true;
         }
 
@@ -91,7 +114,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             SearchBox = new CustomSearchBar
             {
-                Placeholder = "Seach " + EbControl.Label + "...",
+                Placeholder = "Seach " + this.Label + "...",
                 FontSize = 14
             };
             SearchBox.TextChanged += SearchBox_TextChanged;
@@ -112,16 +135,15 @@ namespace ExpressBase.Mobile.CustomControls
             return Stack;
         }
 
-        public CustomPicker GetPicker(EbMobileSimpleSelect EbSelect)
+        public CustomPicker GetPicker()
         {
             CustomPicker Picker = new CustomPicker
             {
                 Title = "Select",
                 TitleColor = Color.DarkBlue,
-                ItemsSource = EbSelect.Options,
+                ItemsSource = this.Options,
                 ItemDisplayBinding = new Binding("DisplayName")
             };
-
             return Picker;
         }
 
@@ -142,8 +164,8 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     ComboBoxLabel lbl = new ComboBoxLabel(c)
                     {
-                        Text = row[(EbControl as EbMobileSimpleSelect).DisplayMember.ColumnName].ToString(),
-                        Value = row[(EbControl as EbMobileSimpleSelect).ValueMember.ColumnName],
+                        Text = row[this.DisplayMember.ColumnName].ToString(),
+                        Value = row[this.ValueMember.ColumnName],
                     };
 
                     var labelTaped = new TapGestureRecognizer();
@@ -173,13 +195,13 @@ namespace ExpressBase.Mobile.CustomControls
         {
             try
             {
-                EbMobileDataColumn DisplayMember = (EbControl as EbMobileSimpleSelect).DisplayMember;
+                EbMobileDataColumn DisplayMember = this.DisplayMember;
                 if (DisplayMember == null)
                 {
                     throw new Exception();
                 }
 
-                byte[] b = Convert.FromBase64String((this.EbControl as EbMobileSimpleSelect).OfflineQuery.Code);
+                byte[] b = Convert.FromBase64String(this.OfflineQuery.Code);
                 string sql = System.Text.Encoding.UTF8.GetString(b).TrimEnd(';');
 
                 string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{DisplayMember.ColumnName} LIKE '%{text}%';";
@@ -194,20 +216,12 @@ namespace ExpressBase.Mobile.CustomControls
         }
     }
 
-    public class ComboBoxLabel : Label
+    public class EbMobileSSOption : EbMobilePageBase
     {
-        public object Value { set; get; }
+        public string EbSid { get; set; }
 
-        public ComboBoxLabel() { }
+        public override string DisplayName { get; set; }
 
-        public ComboBoxLabel(int index)
-        {
-            this.Padding = new Thickness(5);
-
-            if (index % 2 == 0)
-            {
-                this.BackgroundColor = Color.FromHex("ecf0f1");
-            }
-        }
+        public string Value { get; set; }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Xamarin.Forms;
@@ -44,9 +47,7 @@ namespace ExpressBase.Mobile.Helpers
             foreach (Match match in r.Matches(sql))
             {
                 if (!Params.Contains(match.Value))
-                {
                     Params.Add(match.Value);
-                }
             }
             return Params;
         }
@@ -65,16 +66,12 @@ namespace ExpressBase.Mobile.Helpers
                         helper.CreateDirectoryOrFile($"ExpressBase/{sid}", SysContentType.Directory);
 
                         if(FolderName != null)
-                        {
                             return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
-                        }
                     }
                     else
                     {
                         if (FolderName != null)
-                        {
                             return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
-                        }
                     }
                 }
                 else
@@ -83,9 +80,7 @@ namespace ExpressBase.Mobile.Helpers
                     helper.CreateDirectoryOrFile($"ExpressBase/{sid}", SysContentType.Directory);
 
                     if(FolderName != null)
-                    {
                         return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
-                    }
                 }
             }
             catch (Exception ex)
@@ -102,6 +97,57 @@ namespace ExpressBase.Mobile.Helpers
                 input.CopyTo(ms);
                 return ms.ToArray();
             }
+        }
+
+        public static string GetQuery(MobileTable Rows, List<DbParameter> Parameters)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < Rows.Count; i++)
+            {
+                if (Rows[i].IsUpdate)//update
+                {
+                    List<string> _colstrings = new List<string>();
+                    foreach (MobileTableColumn col in Rows[i].Columns)
+                    {
+                        _colstrings.Add(string.Format("{0} = @{1}_{2}", col.Name, col.Name, i));
+
+                        Parameters.Add(new DbParameter
+                        {
+                            ParameterName = string.Format("@{0}_{1}", col.Name, i),
+                            DbType = (int)col.Type,
+                            Value = col.Value
+                        });
+                    }
+                    sb.AppendFormat("UPDATE {0} SET {1} WHERE id = {2};", Rows.TableName, string.Join(",", _colstrings), ("@rowid" + i));
+
+                    Parameters.Add(new DbParameter
+                    {
+                        ParameterName = ("@rowid" + i),
+                        DbType = (int)EbDbTypes.Int32,
+                        Value = Rows[i].RowId
+                    });
+                }
+                else//insert
+                {
+                    string[] _cols = (Rows.Count > 0) ? Rows[i].Columns.Select(en => en.Name).ToArray() : new string[0];
+                    List<string> _vals = new List<string>();
+                    foreach (MobileTableColumn col in Rows[i].Columns)
+                    {
+                        string _prm = string.Format("@{0}_{1}", col.Name, i);
+
+                        _vals.Add(_prm);
+
+                        Parameters.Add(new DbParameter
+                        {
+                            ParameterName = _prm,
+                            DbType = (int)col.Type,
+                            Value = col.Value
+                        });
+                    }
+                    sb.AppendFormat("INSERT INTO {0}({1}) VALUES ({2});", Rows.TableName, string.Join(",", _cols), string.Join(",", _vals.ToArray()));
+                }
+            }
+            return sb.ToString();
         }
     }
 }

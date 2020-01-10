@@ -35,19 +35,22 @@
     </ContentPage.BindingContext>
 
     <ContentPage.Content>
-        <Grid>
-            <ScrollView 
+        <RefreshView 
+                IsRefreshing="{Binding IsRefreshing}" 
+                Command="{Binding RefreshCommand}">
+            <Grid>
+                <ScrollView 
                 x:Name="scrollView" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
-                <StackLayout
+                    <StackLayout
                 x:Name="objectsList"
                 Padding="10"
                 BindableLayout.ItemsSource="{Binding ObjectList}"
                 Spacing="10">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <control:CustomShadowFrame
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <control:CustomShadowFrame
                             IsVisible="{Binding IsVisble}"
                             Margin="0"
                             Padding="0"
@@ -56,90 +59,90 @@
                             CornerRadius="4"
                             HasShadow="True"
                             HeightRequest="80">
-                                <control:CustomShadowFrame.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ObjectSelectCommand, Source={x:Reference objectsList}}" CommandParameter="{Binding .}" />
-                                </control:CustomShadowFrame.GestureRecognizers>
+                                    <control:CustomShadowFrame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ObjectSelectCommand, Source={x:Reference objectsList}}" CommandParameter="{Binding .}" />
+                                    </control:CustomShadowFrame.GestureRecognizers>
 
-                                <Grid ColumnSpacing="0" RowSpacing="0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
+                                    <Grid ColumnSpacing="0" RowSpacing="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <!--  obj icon  -->
-                                    <Image
+                                        <!--  obj icon  -->
+                                        <Image
                                         Grid.RowSpan="2"
                                         Margin="16"
                                         HeightRequest="48"
                                         WidthRequest="48" Source="{Binding ObjectIcon}"/>
 
-                                    <!--  obj name  -->
-                                    <StackLayout
+                                        <!--  obj name  -->
+                                        <StackLayout
                                     Grid.Row="0"
                                     Grid.Column="1"
                                     Padding="0"
                                     Margin="0,16,16,4"
                                     Orientation="Horizontal"
                                     Spacing="0">
-                                        <Label
+                                            <Label
                                         FontFamily="{StaticResource Roboto-Medium}"
                                         FontSize="14"
                                         HorizontalOptions="StartAndExpand"
                                         Text="{Binding DisplayName}"
                                         TextColor="{DynamicResource Gray-900}" />
-                                    </StackLayout>
+                                        </StackLayout>
 
-                                    <!--  obj version -->
-                                    <StackLayout
+                                        <!--  obj version -->
+                                        <StackLayout
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     Padding="0"
                                     Margin="0,0,16,0"
                                     Orientation="Horizontal"
                                     Spacing="0">
-                                        <Label
+                                            <Label
                                         FontFamily="{StaticResource Roboto-Regular}"
                                         FontSize="12"
                                         HorizontalOptions="StartAndExpand"
                                         Text="{Binding Version}"
                                         TextColor="{DynamicResource Gray-700}" />
-                                    </StackLayout>
-                                </Grid>
-                            </control:CustomShadowFrame>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </StackLayout>
-            </ScrollView>
+                                        </StackLayout>
+                                    </Grid>
+                                </control:CustomShadowFrame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
 
-            <!--loader-->
-            <ContentView 
+                <!--loader-->
+                <ContentView 
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
-                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                    <BoxView
+                    <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <BoxView
                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                         AbsoluteLayout.LayoutFlags="All"
                         BackgroundColor="#333333"
                         Opacity=".5"/>
 
-                    <StackLayout 
+                        <StackLayout 
                         AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
                         AbsoluteLayout.LayoutFlags="PositionProportional">
-                        <Frame 
+                            <Frame 
                             HasShadow="False"
                             BackgroundColor="White"
                             CornerRadius="6">
-                            <Frame.Content>
-                                <StackLayout 
+                                <Frame.Content>
+                                    <StackLayout 
                                 Orientation="Vertical" 
                                 HeightRequest="100" 
                                 WidthRequest="150">
-                                    <ActivityIndicator 
+                                        <ActivityIndicator 
                                         IsVisible="True" 
                                         IsRunning="True" 
                                         VerticalOptions="Center" 
@@ -147,19 +150,19 @@
                                         Color="Black" 
                                         WidthRequest="30" 
                                         HeightRequest="30"/>
-                                    <Label 
+                                        <Label 
                                         TextColor="Black" 
                                         VerticalOptions="Center" 
                                         HorizontalOptions="Center" 
                                         VerticalTextAlignment="Center" 
                                         Text="{Binding LoaderMessage}"/>
-                                </StackLayout>
-                            </Frame.Content>
-                        </Frame>
-                    </StackLayout>
-                </AbsoluteLayout>
-            </ContentView>
-
-        </Grid>
+                                    </StackLayout>
+                                </Frame.Content>
+                            </Frame>
+                        </StackLayout>
+                    </AbsoluteLayout>
+                </ContentView>
+            </Grid>
+        </RefreshView>
     </ContentPage.Content>
 </ContentPage>

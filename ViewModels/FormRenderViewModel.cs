@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class FormRenderViewModel : BaseViewModel
     {
-        public IList<XCustomControl> XControls { set; get; }
+        public IList<EbMobileControl> Controls { set; get; }
 
         private EbMobileForm Form { set; get; }
 
@@ -86,12 +86,17 @@ namespace ExpressBase.Mobile.ViewModels
         {
             SaveButtonVisible = true;
             PageTitle = Page.DisplayName;
-            Form = (Page.Container as EbMobileForm);
-            this.XControls = new List<XCustomControl>();
-            CreateView();
-
-            //create tables or alter table
-            this.CreateSchema();
+            try
+            {
+                Form = (Page.Container as EbMobileForm);
+                this.Controls = new List<EbMobileControl>();
+                CreateView();
+                this.Form.CreateTableSchema();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         //edit mode
@@ -104,14 +109,14 @@ namespace ExpressBase.Mobile.ViewModels
             this.ColumnsOnEdit = Columns;
             try
             {
-                this.XControls = new List<XCustomControl>();
+                this.Controls = new List<EbMobileControl>();
                 this.Form = (Page.Container as EbMobileForm);
                 PageTitle = Page.DisplayName;
 
                 this.Mode = FormMode.EDIT;
                 this.RowId = Convert.ToInt32(this.RowOnEdit["id"]);
                 this.CreateView();
-                this.CreateSchema();
+                this.Form.CreateTableSchema();
 
                 EnableEditCommand = new Command(EnableEditClick);
             }
@@ -131,12 +136,12 @@ namespace ExpressBase.Mobile.ViewModels
             RowOnEdit = CurrentRow;
             try
             {
-                this.XControls = new List<XCustomControl>();
+                this.Controls = new List<EbMobileControl>();
                 this.Form = (CurrentForm.Container as EbMobileForm);
                 PageTitle = CurrentForm.DisplayName;
 
                 this.CreateView();
-                this.CreateSchema();
+                this.Form.CreateTableSchema();
             }
             catch (Exception ex)
             {
@@ -191,24 +196,25 @@ namespace ExpressBase.Mobile.ViewModels
                 }
                 else
                 {
-                    XCustomControl XCtrl = (XCustomControl)Activator.CreateInstance(ctrl.XControlType, ctrl);
+                    ctrl.InitXControl();
 
                     if (this.Mode == FormMode.EDIT)
                     {
-                        EbDataColumn _col = this.ColumnsOnEdit.Find(item => item.ColumnName == ctrl.Name);
+                        EbDataColumn _col = this.ColumnsOnEdit[ctrl.Name];
                         if (_col != null)
                         {
-                            XCtrl.SetValue(this.RowOnEdit[_col.ColumnIndex]);
+                            ctrl.SetValue(this.RowOnEdit[_col.ColumnIndex]);
                         }
-                        else if (XCtrl is XFileSelect)
+                        else if (ctrl is EbMobileFileUpload)
                         {
-                            (XCtrl as XFileSelect).RenderOnEdit(this.Form.TableName, Convert.ToInt32(this.RowOnEdit["id"]));
+                            (ctrl as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, Convert.ToInt32(this.RowOnEdit["id"]));
                         }
-                        XCtrl.SetAsReadOnly(true);
+                        ctrl.SetAsReadOnly(true);
                     }
 
-                    this.XControls.Add(XCtrl);
-                    ContentStackTop.Children.Add(XCtrl.XView);
+                    this.Form.FlatControls.Add(ctrl);
+                    this.Controls.Add(ctrl);
+                    ContentStackTop.Children.Add(ctrl.XView);
                 }
             }
             catch (Exception ex)
@@ -219,12 +225,12 @@ namespace ExpressBase.Mobile.ViewModels
 
         public void OnSaveClicked(object sender)
         {
-            FormService Form = new FormService(this.XControls, this.Form, this.Mode);
-            bool status = false;
+            bool status;
+
             if (this.Mode == FormMode.REF)
-                status = Form.Save(this.RowOnEdit, ParentForm.TableName);
+                status = this.Form.SaveWithParentId(this.RowOnEdit, ParentForm.TableName);
             else
-                status = Form.Save(this.RowId);
+                status = this.Form.Save(this.RowId);
 
             if (status && this.RowId == 0)
             {
@@ -254,45 +260,14 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private void CreateSchema()
-        {
-            SQLiteTableSchema Schema = this.GetSQLiteSchema(this.Form.ChiledControls);
-            Schema.TableName = this.Form.TableName;
-            new CommonServices().CreateLocalTable4Form(Schema);
-        }
-
-        SQLiteTableSchema GetSQLiteSchema(List<EbMobileControl> Controls)
-        {
-            SQLiteTableSchema Schema = new SQLiteTableSchema();
-
-            foreach (EbMobileControl ctrl in Controls)
-            {
-                if (ctrl is EbMobileTableLayout || ctrl is EbMobileFileUpload)
-                {
-                    continue;
-                }
-                else
-                {
-                    Schema.Columns.Add(new SQLiteColumSchema
-                    {
-                        ColumnName = ctrl.Name,
-                        ColumnType = ctrl.SQLiteType
-                    });
-                }
-            }
-            Schema.AppendDefault();//eb_colums
-
-            return Schema;
-        }
-
         private void EnableEditClick(object sender)
         {
             if (!SaveButtonVisible)
             {
                 Task.Run(() => { Device.BeginInvokeOnMainThread(() => SaveButtonVisible = true); });
-                foreach (XCustomControl XCtrl in this.XControls)
+                foreach (EbMobileControl Ctrl in this.Controls)
                 {
-                    XCtrl.SetAsReadOnly(false);
+                    Ctrl.SetAsReadOnly(false);
                 }
             }
         }

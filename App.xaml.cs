@@ -8,7 +8,7 @@ using ExpressBase.Mobile.Helpers;
 
 namespace ExpressBase.Mobile
 {
-    public partial class App : Xamarin.Forms.Application
+    public partial class App : Application
     {
         public static string DbPath { set; get; }
 

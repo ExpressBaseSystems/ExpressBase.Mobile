@@ -1,31 +1,27 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.CustomControls
+namespace ExpressBase.Mobile
 {
-    public class CustomImageWraper : StackLayout
+    public class EbMobileFileUpload : EbMobileControl
     {
-        public string Name { set; get; }
+        public bool EnableCameraSelect { set; get; }
 
-        public CustomImageWraper()
-        {
+        public bool EnableFileSelect { set; get; }
 
-        }
+        public bool MultiSelect { set; get; }
 
-        public CustomImageWraper(string name)
-        {
-            Name = name;
-        }
-    }
+        public bool EnableEdit { set; get; }
 
-    public class XFileSelect : XCustomControl
-    {
+        //mobile prop
         private Grid _Grid { set; get; }
 
         private int CurrentRow { set; get; } = 1;
@@ -36,16 +32,23 @@ namespace ExpressBase.Mobile.CustomControls
 
         public Dictionary<string, byte[]> Gallery { set; get; }
 
-        public XFileSelect(EbMobileFileUpload Control)
+        public EbMobileFileUpload()
         {
-            this.EbControl = Control;
             this.Gallery = new Dictionary<string, byte[]>();
+        }
 
+        public override void InitXControl()
+        {
             this.BuildHtml();
             this.AppendButtons();
 
             //this will create a folder FILES in platform dir 
             HelperFunctions.CreatePlatFormDir("FILES");
+        }
+
+        public override MobileTableColumn GetMobileTableColumn()
+        {
+            return null;
         }
 
         public void BuildHtml()
@@ -70,9 +73,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         public void AppendButtons()
         {
-            var ctrl = this.EbControl as EbMobileFileUpload;
-
-            if (ctrl.EnableCameraSelect)
+            if (this.EnableCameraSelect)
             {
                 var CameraBtn = new Button()
                 {
@@ -84,11 +85,11 @@ namespace ExpressBase.Mobile.CustomControls
                 };
                 (this.XControl as Grid).Children.Add(CameraBtn, 1, 0);
                 CameraBtn.Clicked += OnCameraClick;
-                if (!ctrl.EnableFileSelect)
+                if (!this.EnableFileSelect)
                     Grid.SetColumnSpan(CameraBtn, 2);
             }
 
-            if (ctrl.EnableFileSelect)
+            if (this.EnableFileSelect)
             {
                 var FilesBtn = new Button()
                 {
@@ -101,13 +102,13 @@ namespace ExpressBase.Mobile.CustomControls
                 };
                 (this.XControl as Grid).Children.Add(FilesBtn, 0, 0);
                 FilesBtn.Clicked += OnFileClick;
-                if (!ctrl.EnableFileSelect)
+                if (!this.EnableFileSelect)
                     Grid.SetColumnSpan(FilesBtn, 2);
             }
 
-            if (!ctrl.EnableCameraSelect && !ctrl.EnableFileSelect)
+            if (!this.EnableCameraSelect && !this.EnableFileSelect)
             {
-                ctrl.Hidden = true;
+                this.Hidden = true;
             }
         }
 
@@ -123,6 +124,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             var photo = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions()
             {
+                PhotoSize = PhotoSize.Small,
                 AllowCropping = true
             });
 
@@ -134,7 +136,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         public async void OnFileClick(object o, object e)
         {
-            var photo = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions() { });
+            var photo = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions() { PhotoSize = PhotoSize.Small });
 
             if (photo != null)
             {
@@ -182,7 +184,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             foreach (KeyValuePair<string, byte[]> kp in this.Gallery)
             {
-                string filename = $"{TableName}-{RowId}-{Guid.NewGuid().ToString("n").Substring(0, 10)}.jpg";
+                string filename = $"{TableName}-{RowId}-{this.Name}-{Guid.NewGuid().ToString("n").Substring(0, 10)}.jpg";
                 File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{Settings.SolutionId.ToUpper()}/FILES/{filename}", kp.Value);
             }
         }
@@ -192,7 +194,7 @@ namespace ExpressBase.Mobile.CustomControls
             string sid = Settings.SolutionId.ToUpper();
             INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-            string pattern = $"{TableName}-{RowId}*";
+            string pattern = $"{TableName}-{RowId}-{this.Name}*";
             string[] filenames = helper.GetFiles($"ExpressBase/{sid}/FILES", pattern);
 
             foreach (string filepath in filenames)

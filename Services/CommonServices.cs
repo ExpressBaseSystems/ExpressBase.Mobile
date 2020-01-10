@@ -13,6 +13,10 @@ namespace ExpressBase.Mobile.Services
 {
     public class CommonServices
     {
+        private static CommonServices instance;
+
+        public static CommonServices Instance => instance ?? (instance = new CommonServices());
+
         public static void PushWebFormData(string Form, string RefId, int Locid, int RowId)
         {
             string uri = Settings.RootUrl + "api/webform_save";
@@ -41,7 +45,32 @@ namespace ExpressBase.Mobile.Services
             //return Response;
         }
 
-        public void CreateLocalTable4Form(SQLiteTableSchema SQLSchema)
+        public void PushFormData()
+        {
+            try
+            {
+                MobilePageCollection Collection = new MobilePageCollection
+                {
+                    Pages = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(Store.GetValue(AppConst.OBJ_COLLECTION))
+                };
+
+                List<EbMobilePage> FormCollection = Collection.GetForms();
+
+                foreach (EbMobilePage page in FormCollection)
+                {
+                    if(!string.IsNullOrEmpty((page.Container as EbMobileForm).WebFormRefId))
+                    {
+                        (page.Container as EbMobileForm).PushRecords();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public void CreateLocalTable(SQLiteTableSchema SQLSchema)
         {
             try
             {
@@ -54,15 +83,10 @@ namespace ExpressBase.Mobile.Services
                     List<SQLiteColumSchema> Uncreated = this.GetNewControls(SQLSchema.Columns, dt.Columns);
 
                     if (Uncreated.Count > 0)
-                    {
                         this.AlterTable(SQLSchema.TableName, Uncreated);
-                    }
                 }
                 else //table not exist
-                {
                     this.CreateTable(SQLSchema.TableName, SQLSchema.Columns);
-                }
-
             }
             catch (Exception e)
             {
@@ -120,33 +144,7 @@ namespace ExpressBase.Mobile.Services
                 if (data_col == null)
                     UnCreated.Add(cols);
             }
-
             return UnCreated;
-        }
-
-        public void PushFormData()
-        {
-            try
-            {
-                MobilePageCollection Collection = new MobilePageCollection
-                {
-                    Pages = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(Store.GetValue(AppConst.OBJ_COLLECTION))
-                };
-
-                List<EbMobilePage> FormCollection = Collection.GetForms();
-
-                foreach (EbMobilePage page in FormCollection)
-                {
-                    if(!string.IsNullOrEmpty((page.Container as EbMobileForm).WebFormRefId))
-                    {
-                        (page.Container as EbMobileForm).PushRecords();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
         }
 
         public async Task<int> LoadLocalData(EbDataSet DS)

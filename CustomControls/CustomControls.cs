@@ -57,4 +57,36 @@ namespace ExpressBase.Mobile.CustomControls
     {
         public CustomSearchBar() { }
     }
+
+    public class ComboBoxLabel : Label
+    {
+        public object Value { set; get; }
+
+        public ComboBoxLabel() { }
+
+        public ComboBoxLabel(int index)
+        {
+            this.Padding = new Thickness(5);
+
+            if (index % 2 == 0)
+            {
+                this.BackgroundColor = Color.FromHex("ecf0f1");
+            }
+        }
+    }
+
+    public class CustomImageWraper : StackLayout
+    {
+        public string Name { set; get; }
+
+        public CustomImageWraper()
+        {
+
+        }
+
+        public CustomImageWraper(string name)
+        {
+            Name = name;
+        }
+    }
 }

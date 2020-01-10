@@ -1,9 +1,11 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -40,16 +42,61 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public virtual Type XControlType { get { return null; } }
-
+        //mobile prop
         public virtual object SQLiteToActual(object value) { return value; }
+
+        //mobile prop
+        public View XControl { set; get; }
+
+        public virtual void InitXControl() { }
+
+        public virtual StackLayout XView
+        {
+            get
+            {
+                return new StackLayout
+                {
+                    Padding = new Thickness(15, 10, 15, 10),
+                    IsVisible = !(this.Hidden),
+                    Children =
+                    {
+                        new Label { Text = this.Label },
+                        XControl
+                    }
+                };
+            }
+        }
+
+        public virtual object GetValue() { return null; }
+
+        public virtual bool SetValue(object value) { return false; }
+
+        public virtual void SetAsReadOnly(bool Enable)
+        {
+            if (Enable == true)
+                this.XControl.IsEnabled = false;
+            else
+                this.XControl.IsEnabled = true;
+        }
+
+        public virtual MobileTableColumn GetMobileTableColumn()
+        {
+            object value = this.GetValue();
+            if (value == null)
+                return null;
+
+            return new MobileTableColumn
+            {
+                Name = this.Name,
+                Type = this.EbDbType,
+                Value = value
+            };
+        }
     }
 
     public class EbMobileTextBox : EbMobileControl
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
-
-        public override Type XControlType { get { return typeof(XEntry); } }
 
         public int MaxLength { get; set; }
 
@@ -60,13 +107,29 @@ namespace ExpressBase.Mobile
         public bool AutoCompleteOff { get; set; }
 
         public bool AutoSuggestion { get; set; }
+
+        public override void InitXControl()
+        {
+            XControl = new TextBox();
+        }
+
+        public override object GetValue()
+        {
+            return (this.XControl as TextBox).Text;
+        }
+
+        public override bool SetValue(object value)
+        {
+            if (value == null)
+                return false;
+            (this.XControl as TextBox).Text = value.ToString();
+            return true;
+        }
     }
 
     public class EbMobileNumericBox : EbMobileControl
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.Decimal; } set { } }
-
-        public override Type XControlType { get { return typeof(XNumericEntry); } }
 
         public int MaxLength { get; set; }
 
@@ -77,6 +140,25 @@ namespace ExpressBase.Mobile
         public int MinLimit { get; set; }
 
         public bool IsCurrency { get; set; }
+
+        public override void InitXControl()
+        {
+            XControl = new TextBox();
+            (XControl as TextBox).Keyboard = Keyboard.Numeric;
+        }
+
+        public override object GetValue()
+        {
+            return (this.XControl as TextBox).Text;
+        }
+
+        public override bool SetValue(object value)
+        {
+            if (value == null)
+                return false;
+            (this.XControl as TextBox).Text = value.ToString();
+            return true;
+        }
     }
 
     public class EbMobileDateTime : EbMobileControl
@@ -84,8 +166,6 @@ namespace ExpressBase.Mobile
         public EbDateType EbDateType { get; set; }
 
         public override EbDbTypes EbDbType { get { return (EbDbTypes)this.EbDateType; } set { } }
-
-        public override Type XControlType { get { return typeof(XDatePicker); } }
 
         public bool IsNullable { get; set; }
 
@@ -101,79 +181,32 @@ namespace ExpressBase.Mobile
             }
             return value.ToString();
         }
-    }
 
-    public class EbMobileSimpleSelect : EbMobileControl
-    {
-        public override EbDbTypes EbDbType
+        public override void InitXControl()
         {
-            get
-            {
-                if (!string.IsNullOrEmpty(DataSourceRefId))
-                {
-                    if (this.ValueMember != null)
-                    {
-                        return this.ValueMember.EbDbType;
-                    }
-                    else
-                    {
-                        return EbDbTypes.String;
-                    }
-                }
-                else
-                {
-                    return EbDbTypes.String;
-                }
-            }
-            set { }
+            this.XControl = new CustomDatePicker();
+
+            (this.XControl as CustomDatePicker).Date = DateTime.Now;
+            (this.XControl as CustomDatePicker).Format = "yyyy-MM-dd";
         }
 
-        public List<EbMobileSSOption> Options { set; get; }
+        public override object GetValue()
+        {
+            return (this.XControl as CustomDatePicker).Date.ToString("yyyy-MM-dd");
+        }
 
-        public override Type XControlType { get { return typeof(XPowerSelect); } }
-
-        public bool IsMultiSelect { get; set; }
-
-        public string DataSourceRefId { get; set; }
-
-        public List<EbMobileDataColumn> Columns { set; get; }
-
-        public EbMobileDataColumn DisplayMember { set; get; }
-
-        public EbMobileDataColumn ValueMember { set; get; }
-
-        public EbScript OfflineQuery { set; get; }
-
-        public List<Param> Parameters { set; get; }
-    }
-
-    public class EbMobileSSOption : EbMobilePageBase
-    {
-        public string EbSid { get; set; }
-
-        public override string DisplayName { get; set; }
-
-        public string Value { get; set; }
-    }
-
-    public class EbMobileFileUpload : EbMobileControl
-    {
-        public bool EnableCameraSelect { set; get; }
-
-        public bool EnableFileSelect { set; get; }
-
-        public bool MultiSelect { set; get; }
-
-        public bool EnableEdit { set; get; }
-
-        public override Type XControlType { get { return typeof(XFileSelect); } }
+        public override bool SetValue(object value)
+        {
+            if (value == null)
+                return false;
+            (this.XControl as CustomDatePicker).Date = Convert.ToDateTime(value);
+            return true;
+        }
     }
 
     public class EbMobileBoolean : EbMobileControl
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.BooleanOriginal; } set { } }
-
-        public override Type XControlType { get { return typeof(XCheckBox); } }
 
         public override object SQLiteToActual(object value)
         {
@@ -181,6 +214,26 @@ namespace ExpressBase.Mobile
                 return false;
             else
                 return true;
+        }
+
+        public override void InitXControl()
+        {
+            this.XControl = new CheckBox();
+        }
+
+        public override object GetValue()
+        {
+            return (this.XControl as CheckBox).IsChecked;
+        }
+
+        public override bool SetValue(object value)
+        {
+            if (value == null)
+                return false;
+
+            int val = Convert.ToInt32(value);
+            (this.XControl as CheckBox).IsChecked = (val == 0) ? false : true;
+            return true;
         }
     }
 
