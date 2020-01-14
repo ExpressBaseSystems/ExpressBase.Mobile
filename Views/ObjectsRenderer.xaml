@@ -136,16 +136,16 @@
                             <Frame 
                             HasShadow="False"
                             BackgroundColor="White"
-                            CornerRadius="6">
+                            CornerRadius="6"
+                            VerticalOptions="Center">
                                 <Frame.Content>
                                     <StackLayout 
-                                Orientation="Vertical" 
+                                Orientation="Vertical"
                                 HeightRequest="100" 
-                                WidthRequest="150">
+                                WidthRequest="200">
                                         <ActivityIndicator 
                                         IsVisible="True" 
                                         IsRunning="True" 
-                                        VerticalOptions="Center" 
                                         HorizontalOptions="Center" 
                                         Color="Black" 
                                         WidthRequest="30" 

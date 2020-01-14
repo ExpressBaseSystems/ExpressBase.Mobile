@@ -1,9 +1,13 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -30,39 +34,46 @@ namespace ExpressBase.Mobile.Models
     {
         public List<MobilePagesWraper> Pages { set; get; }
 
+        public List<EbMobilePage> FilteredList { set; get; }
+
         public EbDataSet Data { set; get; }
 
         public List<string> TableNames { set; get; }
 
         public MobilePageCollection()
         {
+            this.FilteredList = new List<EbMobilePage>();
             this.Pages = new List<MobilePagesWraper>();
         }
 
-        public List<EbMobilePage> GetForms()
+        public MobilePageCollection(Type FilterType)
         {
-            List<EbMobilePage> form_collection = new List<EbMobilePage>();
-            try
+            this.FilteredList = new List<EbMobilePage>();
+            this.Pages = Settings.Objects;
+
+            foreach (MobilePagesWraper pages in this.Pages)
             {
-                foreach (MobilePagesWraper pages in this.Pages)
+                EbMobilePage mpage = pages.JsonToPage();
+                if (mpage != null && mpage.Container.GetType() == FilterType)
                 {
-                    EbMobilePage mpage = pages.JsonToPage();
-                    if (mpage != null && mpage.Container is EbMobileForm)
-                    {
-                        form_collection.Add(mpage);
-                    }
+                    this.FilteredList.Add(mpage);
                 }
             }
-            catch (Exception ex)
+        }
+
+        public void SortByPushOrder()
+        {
+            List<string> TableNames = this.FilteredList.Select(i => (i.Container as EbMobileForm).TableName).ToList();
+
+            foreach (EbMobilePage page in this.FilteredList)
             {
-                Console.WriteLine(ex.Message);
+
             }
-            return form_collection;
         }
     }
 
     public class PageTypeGroup : List<MobilePagesWraper>
-    { 
+    {
         public string GroupHeader { get; set; }
 
         public IList<MobilePagesWraper> Pages => this;

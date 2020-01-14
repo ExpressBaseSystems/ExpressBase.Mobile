@@ -133,15 +133,30 @@ namespace ExpressBase.Mobile.ViewModels
         {
             if (Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
-                try
+                Task.Run(() =>
                 {
-                    CommonServices services = new CommonServices();
-                    services.PushFormData();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+                    try
+                    {
+                        Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Pushing from local data..."; });
+                        //service call to push (api push)
+                        CommonServices.Instance.PushFormData();
+
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            DependencyService.Get<IToast>().Show("Push Completed.");
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            DependencyService.Get<IToast>().Show("Push Completed.");
+                        });
+                    }
+                });
             }
             else
             {
@@ -154,10 +169,12 @@ namespace ExpressBase.Mobile.ViewModels
             MobilePagesWraper item = (obj as MobilePagesWraper);
             Task.Run(() =>
             {
-                Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Loading page..."; });
                 try
                 {
                     EbMobilePage page = HelperFunctions.GetPage(item.RefId);
+                    if (page == null)
+                        (Application.Current.MainPage as MasterDetailPage).Detail.DisplayAlert("Alert!", "This page is no longer available.", "Ok");
 
                     if (page.Container is EbMobileForm)
                     {

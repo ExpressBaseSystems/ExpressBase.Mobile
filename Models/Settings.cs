@@ -74,5 +74,13 @@ namespace ExpressBase.Mobile.Models
                 return Store.GetValue(AppConst.APPNAME);
             }
         }
+
+        public static List<MobilePagesWraper> Objects
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<List<MobilePagesWraper>>(Store.GetValue(AppConst.OBJ_COLLECTION));
+            }
+        }
     }
 }

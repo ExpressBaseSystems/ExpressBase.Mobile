@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using ExpressBase.Mobile.Helpers;
 using System.Threading.Tasks;
 using System.Linq;
+using ExpressBase.Mobile.Enums;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -17,46 +18,13 @@ namespace ExpressBase.Mobile.Services
 
         public static CommonServices Instance => instance ?? (instance = new CommonServices());
 
-        public static void PushWebFormData(string Form, string RefId, int Locid, int RowId)
-        {
-            string uri = Settings.RootUrl + "api/webform_save";
-            //WebFormSaveResponse Response = null;
-            try
-            {
-                RestClient client = new RestClient(uri);
-                RestRequest request = new RestRequest(Method.POST);
-
-                request.AddHeader(AppConst.BTOKEN, Store.GetValue(AppConst.BTOKEN));
-                request.AddHeader(AppConst.RTOKEN, Store.GetValue(AppConst.RTOKEN));
-
-                request.AddParameter("webform_data", Form);
-                request.AddParameter("refid", RefId);
-                request.AddParameter("locid", Locid);
-                request.AddParameter("rowid", RowId);
-
-                var resp = client.Execute(request);
-                //Response =  JsonConvert.DeserializeObject<WebFormSaveResponse>(resp.Content);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                // Response = new WebFormSaveResponse();
-            }
-            //return Response;
-        }
-
         public void PushFormData()
         {
             try
             {
-                MobilePageCollection Collection = new MobilePageCollection
-                {
-                    Pages = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(Store.GetValue(AppConst.OBJ_COLLECTION))
-                };
+                MobilePageCollection Collection = new MobilePageCollection(typeof(EbMobileForm));
 
-                List<EbMobilePage> FormCollection = Collection.GetForms();
-
-                foreach (EbMobilePage page in FormCollection)
+                foreach (EbMobilePage page in Collection.FilteredList)
                 {
                     if(!string.IsNullOrEmpty((page.Container as EbMobileForm).WebFormRefId))
                     {

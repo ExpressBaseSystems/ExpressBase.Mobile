@@ -22,6 +22,11 @@ namespace ExpressBase.Mobile.Helpers
             List<MobilePagesWraper> _list = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
             MobilePagesWraper Wrpr = _list.Find(item => item.RefId == Refid);
 
+            if (Wrpr == null)
+            {
+                return null;
+            }
+
             string regexed = EbSerializers.JsonToNETSTD(Wrpr.Json);
             return EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
         }

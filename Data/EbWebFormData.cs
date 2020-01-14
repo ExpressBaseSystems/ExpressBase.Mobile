@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 namespace ExpressBase.Mobile.Data
 {
     public class WebformData
@@ -67,13 +68,23 @@ namespace ExpressBase.Mobile.Data
         public SingleColumn() { }
     }
 
-    public class PushResponse 
+    public class PushResponse
     {
         public int RowAffected { get; set; }
 
         public int RowId { get; set; }
 
-        public WebformData FormData { get; set; }
+        public string FormData { get; set; }
+
+        public WebformData FormDataObject
+        {
+            get
+            {
+                if (FormData == null)
+                    return null;
+                return JsonConvert.DeserializeObject<WebformData>(this.FormData);
+            }
+        }
 
         public int Status { get; set; }
 
@@ -82,5 +93,7 @@ namespace ExpressBase.Mobile.Data
         public string MessageInt { get; set; }
 
         public string StackTraceInt { get; set; }
+
+        public string AffectedEntries { get; set; }
     }
 }

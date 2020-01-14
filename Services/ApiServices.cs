@@ -11,7 +11,7 @@ using System.Text;
 
 namespace ExpressBase.Mobile.Services
 {
-    class Api
+    public class Api
     {
         public static PushResponse Push(WebformData WebFormData, int RowId, string WebFormRefId, int LocId)
         {

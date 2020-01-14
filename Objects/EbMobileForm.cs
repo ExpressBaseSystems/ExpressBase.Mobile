@@ -18,7 +18,40 @@ namespace ExpressBase.Mobile
 
         public List<EbMobileControl> ChiledControls { get; set; }
 
-        public List<EbMobileControl> FlatControls { set; get; }
+        private List<EbMobileControl> _flatControls;
+
+        public List<EbMobileControl> FlatControls
+        {
+            set
+            {
+                _flatControls = value;
+            }
+            get
+            {
+                if (_flatControls != null)
+                    return _flatControls;
+
+                _flatControls = new List<EbMobileControl>();
+
+                foreach (EbMobileControl ctrl in ChiledControls)
+                {
+                    if (ctrl is EbMobileTableLayout)
+                    {
+                        foreach (EbMobileTableCell cell in (ctrl as EbMobileTableLayout).CellCollection)
+                        {
+                            foreach (EbMobileControl tctrl in cell.ControlCollection)
+                            {
+                                _flatControls.Add(tctrl);
+                            }
+                        }
+                    }
+                    else
+                        _flatControls.Add(ctrl);
+                }
+
+                return _flatControls;
+            }
+        }
 
         public string TableName { set; get; }
 
@@ -50,56 +83,31 @@ namespace ExpressBase.Mobile
             {
                 List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_loc_id", "id" };
 
-                foreach (EbMobileControl ctrl in ChiledControls)
+                foreach (EbMobileControl ctrl in FlatControls)
                 {
-                    if (ctrl is EbMobileTableLayout)
-                    {
-                        foreach (EbMobileTableCell cell in (ctrl as EbMobileTableLayout).CellCollection)
-                        {
-                            foreach (EbMobileControl tctrl in cell.ControlCollection)
-                            {
-                                colums.Add(tctrl.Name);
-                            }
-                        }
-                    }
+                    if (ctrl is EbMobileFileUpload)
+                        continue;
                     else
+                    {
                         colums.Add(ctrl.Name);
+                    }
                 }
                 colums.Reverse();
                 return string.Join(",", colums.ToArray());
             }
         }
 
-        public EbMobileForm()
-        {
-            FlatControls = new List<EbMobileControl>();
-        }
-
         public DbTypedValue GetDbType(string name, object value, EbDbTypes type)
         {
-            DbTypedValue TV = new DbTypedValue { Type = type, Value = (type == EbDbTypes.DateTime || type == EbDbTypes.Date) ? value.ToString() : value };
+            DbTypedValue TV = new DbTypedValue(name, value, type);
 
-            foreach (EbMobileControl ctrl in ChiledControls)
+            foreach (EbMobileControl ctrl in FlatControls)
             {
-                if (!(ctrl is EbMobileTableLayout) && ctrl.Name == name)
+                if (ctrl.Name == name)
                 {
                     TV.Type = ctrl.EbDbType;
                     TV.Value = ctrl.SQLiteToActual(value);
-                }
-                else if (ctrl is EbMobileTableLayout)
-                {
-                    foreach (EbMobileTableCell cell in (ctrl as EbMobileTableLayout).CellCollection)
-                    {
-                        foreach (EbMobileControl tctrl in cell.ControlCollection)
-                        {
-                            if (ctrl.Name == name)
-                            {
-                                TV.Type = ctrl.EbDbType;
-                                TV.Value = ctrl.SQLiteToActual(value);
-                                return TV;
-                            }
-                        }
-                    }
+                    return TV;
                 }
             }
             return TV;
@@ -110,9 +118,12 @@ namespace ExpressBase.Mobile
             try
             {
                 EbDataTable dt = App.DataDB.DoQuery(string.Format(StaticQueries.STARFROM_TABLE, this.SelectQuery, this.TableName));
-                WebformData FormData = new WebformData { MasterTable = this.TableName };
-                //start pushing
-                this.InitPush(FormData, dt);
+                if (dt.Rows.Any())
+                {
+                    WebformData FormData = new WebformData { MasterTable = this.TableName };
+                    //start pushing
+                    this.InitPush(FormData, dt);
+                }
             }
             catch (Exception ex)
             {

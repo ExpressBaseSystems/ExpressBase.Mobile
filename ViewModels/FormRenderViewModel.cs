@@ -1,13 +1,7 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
-using ExpressBase.Mobile.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -15,8 +9,6 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class FormRenderViewModel : BaseViewModel
     {
-        public IList<EbMobileControl> Controls { set; get; }
-
         private EbMobileForm Form { set; get; }
 
         private Grid _dyView { set; get; }
@@ -89,7 +81,6 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 Form = (Page.Container as EbMobileForm);
-                this.Controls = new List<EbMobileControl>();
                 CreateView();
                 this.Form.CreateTableSchema();
             }
@@ -109,7 +100,6 @@ namespace ExpressBase.Mobile.ViewModels
             this.ColumnsOnEdit = Columns;
             try
             {
-                this.Controls = new List<EbMobileControl>();
                 this.Form = (Page.Container as EbMobileForm);
                 PageTitle = Page.DisplayName;
 
@@ -136,7 +126,6 @@ namespace ExpressBase.Mobile.ViewModels
             RowOnEdit = CurrentRow;
             try
             {
-                this.Controls = new List<EbMobileControl>();
                 this.Form = (CurrentForm.Container as EbMobileForm);
                 PageTitle = CurrentForm.DisplayName;
 
@@ -212,8 +201,6 @@ namespace ExpressBase.Mobile.ViewModels
                         ctrl.SetAsReadOnly(true);
                     }
 
-                    this.Form.FlatControls.Add(ctrl);
-                    this.Controls.Add(ctrl);
                     ContentStackTop.Children.Add(ctrl.XView);
                 }
             }
@@ -265,7 +252,7 @@ namespace ExpressBase.Mobile.ViewModels
             if (!SaveButtonVisible)
             {
                 Task.Run(() => { Device.BeginInvokeOnMainThread(() => SaveButtonVisible = true); });
-                foreach (EbMobileControl Ctrl in this.Controls)
+                foreach (EbMobileControl Ctrl in this.Form.FlatControls)
                 {
                     Ctrl.SetAsReadOnly(false);
                 }
