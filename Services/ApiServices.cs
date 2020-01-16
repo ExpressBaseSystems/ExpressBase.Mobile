@@ -39,6 +39,34 @@ namespace ExpressBase.Mobile.Services
             return null;
         }
 
+        public static List<ApiFileData> PushFiles(List<FileWrapper> Files)
+        {
+            List<ApiFileData> FileData = null;
+            try
+            {
+                RestClient client = new RestClient(Settings.RootUrl);
+                RestRequest request = new RestRequest("api/files/upload", Method.POST);
+
+                foreach(FileWrapper file in Files)
+                {
+                    request.AddFileBytes(file.Name, file.Bytea, file.FileName);
+                }
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Store.GetValue(AppConst.BTOKEN));
+                request.AddHeader(AppConst.RTOKEN, Store.GetValue(AppConst.RTOKEN));
+
+                IRestResponse response = client.Execute(request);
+                if (response.StatusCode == HttpStatusCode.OK)
+                    FileData = JsonConvert.DeserializeObject<List<ApiFileData>>(response.Content);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return FileData;
+        }
+
         public static ValidateSidResponse ValidateSid(string url)
         {
             ValidateSidResponse Vresp = new ValidateSidResponse();

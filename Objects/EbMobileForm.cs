@@ -1,14 +1,17 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -136,7 +139,7 @@ namespace ExpressBase.Mobile
             SingleTable SingleTable = new SingleTable();
             try
             {
-                SingleRow row = new SingleRow { RowId = "0", IsUpdate = false };
+                SingleRow row = new SingleRow { RowId = 0, IsUpdate = false };
                 SingleTable.Add(row);
 
                 for (int i = 0; i < LocalData.Rows.Count; i++)
@@ -144,6 +147,8 @@ namespace ExpressBase.Mobile
                     row.Columns.Clear();
                     WebFormData.MultipleTables.Clear();
                     int rowid = Convert.ToInt32(LocalData.Rows[i]["id"]);
+
+                    this.UploadFiles(rowid, WebFormData);
 
                     row.LocId = Convert.ToInt32(LocalData.Rows[i]["eb_loc_id"]);
                     row.Columns.AddRange(this.GetColumnValues(LocalData, i));
@@ -156,6 +161,29 @@ namespace ExpressBase.Mobile
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        private void UploadFiles(int RowId, WebformData WebFormData)
+        {
+            List<EbMobileControl> UploadCtrls = this.FlatControls.FindAll(ctrl => ctrl.GetType() == typeof(EbMobileFileUpload));
+
+            List<FileWrapper> Files = new List<FileWrapper>();
+
+            foreach (var ctrl in UploadCtrls)
+            {
+                string pattern = $"{this.TableName}-{RowId}-{ctrl.Name}*";
+                Files.AddRange(HelperFunctions.GetFilesByPattern(pattern, ctrl.Name));
+            }
+
+            if (Files.Count > 0)
+            {
+                var ApiFiles = Api.PushFiles(Files);
+                var ExtendedTable = Files.GroupByControl(ApiFiles);
+                if (ExtendedTable.Any())
+                {
+                    WebFormData.ExtendedTables = ExtendedTable;
+                }
             }
         }
 

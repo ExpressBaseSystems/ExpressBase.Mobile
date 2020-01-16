@@ -191,19 +191,12 @@ namespace ExpressBase.Mobile
 
         public void RenderOnEdit(string TableName, int RowId)
         {
-            string sid = Settings.SolutionId.ToUpper();
-            INativeHelper helper = DependencyService.Get<INativeHelper>();
-
             string pattern = $"{TableName}-{RowId}-{this.Name}*";
-            string[] filenames = helper.GetFiles($"ExpressBase/{sid}/FILES", pattern);
+            List<FileWrapper> Files = HelperFunctions.GetFilesByPattern(pattern);
 
-            foreach (string filepath in filenames)
+            foreach (FileWrapper file in Files)
             {
-                string filename = Path.GetFileName(filepath);
-
-                var bytes = helper.GetPhoto($"ExpressBase/{sid}/FILES/{filename}");
-
-                CustomImageWraper Wraper = new CustomImageWraper(filename)
+                CustomImageWraper Wraper = new CustomImageWraper(file.FileName)
                 {
                     BackgroundColor = Color.FromHex("eeeeee"),
                     Children =
@@ -212,11 +205,10 @@ namespace ExpressBase.Mobile
                         {
                             Aspect = Aspect.AspectFill,
                             HeightRequest = 160,
-                            Source = ImageSource.FromStream(() => new MemoryStream(bytes))
+                            Source = ImageSource.FromStream(() => new MemoryStream(file.Bytea))
                         }
                     }
                 };
-
                 AddImageToGallery(Wraper);
             }
         }

@@ -39,7 +39,7 @@ namespace ExpressBase.Mobile.Data
 
     public class SingleRow
     {
-        public string RowId { get; set; }
+        public int RowId { get; set; }
 
         public int LocId { get; set; }
 

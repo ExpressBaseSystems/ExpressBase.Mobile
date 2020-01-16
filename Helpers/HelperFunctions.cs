@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile.Helpers
                     {
                         helper.CreateDirectoryOrFile($"ExpressBase/{sid}", SysContentType.Directory);
 
-                        if(FolderName != null)
+                        if (FolderName != null)
                             return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
                     }
                     else
@@ -84,7 +84,7 @@ namespace ExpressBase.Mobile.Helpers
                     helper.CreateDirectoryOrFile("ExpressBase", SysContentType.Directory);
                     helper.CreateDirectoryOrFile($"ExpressBase/{sid}", SysContentType.Directory);
 
-                    if(FolderName != null)
+                    if (FolderName != null)
                         return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
                 }
             }
@@ -153,6 +153,39 @@ namespace ExpressBase.Mobile.Helpers
                 }
             }
             return sb.ToString();
+        }
+
+        public static List<FileWrapper> GetFilesByPattern(string Patten, string ControlName = null)
+        {
+            List<FileWrapper> Files = new List<FileWrapper>();
+            try
+            {
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                string sid = Settings.SolutionId.ToUpper();
+
+                string[] filenames = helper.GetFiles($"ExpressBase/{sid}/FILES", Patten);
+
+                foreach (string filepath in filenames)
+                {
+                    string filename = Path.GetFileName(filepath);
+
+                    var bytes = helper.GetPhoto($"ExpressBase/{sid}/FILES/{filename}");
+
+                    Files.Add(new FileWrapper
+                    {
+                        Name = Path.GetFileNameWithoutExtension(filename),
+                        Bytea = bytes,
+                        FileName = filename,
+                        ControlName = ControlName
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return Files;
         }
     }
 }
