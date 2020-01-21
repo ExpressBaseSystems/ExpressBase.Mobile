@@ -185,7 +185,7 @@ namespace ExpressBase.Mobile.ViewModels
                 }
                 else
                 {
-                    ctrl.InitXControl();
+                    ctrl.InitXControl(this.Mode);
 
                     if (this.Mode == FormMode.EDIT)
                     {
@@ -219,19 +219,20 @@ namespace ExpressBase.Mobile.ViewModels
             else
                 status = this.Form.Save(this.RowId);
 
+            IToast Toast = DependencyService.Get<IToast>();
             if (status && this.RowId == 0)
             {
-                DependencyService.Get<IToast>().Show("Data pushed successfully :)");
+                Toast.Show("Data pushed successfully :)");
                 (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
             }
             else if (status && this.RowId > 0)
             {
-                DependencyService.Get<IToast>().Show("Changes saved successfully :)");
+                Toast.Show("Changes saved successfully :)");
                 (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopToRootAsync(true);
             }
             else
             {
-                DependencyService.Get<IToast>().Show("Something went wrong!");
+                Toast.Show("Something went wrong!");
                 (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopToRootAsync(true);
             }
         }

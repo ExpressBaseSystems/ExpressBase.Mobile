@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
@@ -58,7 +59,7 @@ namespace ExpressBase.Mobile
 
         public ComboBoxLabel Selected { set; get; }
 
-        public override void InitXControl()
+        public override void InitXControl(FormMode Mode)
         {
             if (string.IsNullOrEmpty(this.DataSourceRefId))
             {

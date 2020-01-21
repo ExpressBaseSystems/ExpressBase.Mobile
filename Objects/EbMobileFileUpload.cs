@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Plugin.Media;
@@ -37,9 +38,9 @@ namespace ExpressBase.Mobile
             this.Gallery = new Dictionary<string, byte[]>();
         }
 
-        public override void InitXControl()
+        public override void InitXControl(FormMode Mode)
         {
-            this.BuildHtml();
+            this.BuildXControl();
             this.AppendButtons();
 
             //this will create a folder FILES in platform dir 
@@ -51,7 +52,7 @@ namespace ExpressBase.Mobile
             return null;
         }
 
-        public void BuildHtml()
+        public void BuildXControl()
         {
             this._Grid = new Grid()
             {

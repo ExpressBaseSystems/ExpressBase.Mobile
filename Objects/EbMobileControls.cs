@@ -5,6 +5,7 @@ using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -48,7 +49,7 @@ namespace ExpressBase.Mobile
         //mobile prop
         public View XControl { set; get; }
 
-        public virtual void InitXControl() { }
+        public virtual void InitXControl(FormMode Mode) { }
 
         public virtual StackLayout XView
         {
@@ -108,7 +109,7 @@ namespace ExpressBase.Mobile
 
         public bool AutoSuggestion { get; set; }
 
-        public override void InitXControl()
+        public override void InitXControl(FormMode Mode)
         {
             XControl = new TextBox();
         }
@@ -141,7 +142,7 @@ namespace ExpressBase.Mobile
 
         public bool IsCurrency { get; set; }
 
-        public override void InitXControl()
+        public override void InitXControl(FormMode Mode)
         {
             XControl = new TextBox();
             (XControl as TextBox).Keyboard = Keyboard.Numeric;
@@ -182,7 +183,7 @@ namespace ExpressBase.Mobile
             return value.ToString();
         }
 
-        public override void InitXControl()
+        public override void InitXControl(FormMode Mode)
         {
             this.XControl = new CustomDatePicker();
 
@@ -216,7 +217,7 @@ namespace ExpressBase.Mobile
                 return true;
         }
 
-        public override void InitXControl()
+        public override void InitXControl(FormMode Mode)
         {
             this.XControl = new CheckBox();
         }
