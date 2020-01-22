@@ -21,10 +21,16 @@
     <Compile Update="Views\SolutionSelect.xaml.cs">
       <DependentUpon>SolutionSelect.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ListViewRender.xaml.cs">
+      <DependentUpon>ListViewRender.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Themes\LightTheme.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\LinkedListViewRender.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ReportRender.xaml">
@@ -36,7 +42,7 @@
     <EmbeddedResource Update="Views\Shared\SideBar.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\VisRender.xaml">
+    <EmbeddedResource Update="Views\ListViewRender.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

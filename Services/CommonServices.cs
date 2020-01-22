@@ -24,11 +24,23 @@ namespace ExpressBase.Mobile.Services
             {
                 MobilePageCollection Collection = new MobilePageCollection(typeof(EbMobileForm));
 
+                List<string> _DependencyTables = new List<string>();
+
                 foreach (EbMobilePage page in Collection.FilteredList)
                 {
-                    if(!string.IsNullOrEmpty((page.Container as EbMobileForm).WebFormRefId))
+                    string webformRef = (page.Container as EbMobileForm).WebFormRefId;
+
+                    if (!string.IsNullOrEmpty(webformRef))
                     {
-                        (page.Container as EbMobileForm).PushRecords();
+                        EbMobileForm depedencyForm = Collection.ResolveDependency(page);
+
+                        if (!_DependencyTables.Contains(depedencyForm.TableName))
+                        {
+                            (page.Container as EbMobileForm).PushRecords(depedencyForm);
+
+                            if (depedencyForm != null)
+                                _DependencyTables.Add(depedencyForm.TableName);
+                        }
                     }
                 }
             }

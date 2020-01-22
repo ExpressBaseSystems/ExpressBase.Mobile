@@ -1,13 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ExpressBase.Mobile.Views.VisRender">
-
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            
-        </ResourceDictionary>
-    </ContentPage.Resources>
+             x:Class="ExpressBase.Mobile.Views.ListViewRender">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -22,4 +16,11 @@
                 Grid.Column="1"/>
         </Grid>
     </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <ScrollView x:Name="listContainer">
+            
+        </ScrollView>
+    </ContentPage.Content>
+    
 </ContentPage>

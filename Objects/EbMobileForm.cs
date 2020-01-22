@@ -116,8 +116,12 @@ namespace ExpressBase.Mobile
             return TV;
         }
 
-        public void PushRecords()
+        private EbMobileForm _DependantForm;
+
+        public void PushRecords(EbMobileForm depedencyForm)
         {
+            _DependantForm = depedencyForm;
+
             try
             {
                 EbDataTable dt = App.DataDB.DoQuery(string.Format(StaticQueries.STARFROM_TABLE, this.SelectQuery, this.TableName));
@@ -155,6 +159,10 @@ namespace ExpressBase.Mobile
                     WebFormData.MultipleTables.Add(this.TableName, SingleTable);
 
                     PushResponse response = Api.Push(WebFormData, 0, this.WebFormRefId, row.LocId);
+
+                    if (_DependantForm != null)
+                        this.PushDependencyForm(response.RowId, rowid);
+
                     this.FlagLocalRow(response, rowid, this.TableName);
                 }
             }
@@ -370,6 +378,52 @@ namespace ExpressBase.Mobile
                     }
                 }
             });
+        }
+
+        private void PushDependencyForm(int liveid, int rowid)
+        {
+            try
+            {
+                string query = string.Format(StaticQueries.STARFROM_TABLE_WDEP,
+                    _DependantForm.SelectQuery,
+                    _DependantForm.TableName,
+                    this.TableName + "_id",
+                    rowid);
+
+                EbDataTable dt = App.DataDB.DoQuery(query);
+                if (dt.Rows.Any())
+                {
+                    WebformData FormData = new WebformData { MasterTable = _DependantForm.TableName };
+                    SingleTable SingleTable = new SingleTable();
+                    SingleRow row = new SingleRow { RowId = 0, IsUpdate = false };
+                    SingleTable.Add(row);
+
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        row.Columns.Clear();
+                        FormData.MultipleTables.Clear();
+                        int id = Convert.ToInt32(dt.Rows[i]["id"]);
+
+                        this.UploadFiles(id, FormData);
+
+                        row.LocId = Convert.ToInt32(dt.Rows[i]["eb_loc_id"]);
+                        row.Columns.AddRange(this.GetColumnValues(dt, i));
+                        FormData.MultipleTables.Add(_DependantForm.TableName, SingleTable);
+
+                        SingleColumn sc = row.Columns.Find(item => item.Name == $"{this.TableName}_id");
+                        sc.Value = liveid;
+                        sc.Type = (int)EbDbTypes.Int32;
+
+                        PushResponse response = Api.Push(FormData, 0, _DependantForm.WebFormRefId, row.LocId);
+
+                        this.FlagLocalRow(response, id, _DependantForm.TableName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

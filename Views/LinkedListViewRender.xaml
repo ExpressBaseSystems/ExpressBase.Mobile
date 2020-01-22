@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.Views.LinkedListViewRender">
+
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+            <Button 
+                Text="&#xf002;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="1"/>
+        </Grid>
+    </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" BackgroundColor="#315eff" x:Name="HeaderContainer">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Button
+                    Grid.Row="1"
+                    Text="&#xf040;"
+                    HorizontalOptions="End"
+                    Margin="20,10,10,10"
+                    FontFamily="{StaticResource FontAwesome}"
+                    Command="{Binding EditCommand}"
+                    Style="{StaticResource IconedRoundButton}"/>
+            </Grid>
+
+            <ScrollView x:Name="ScrollContainer" Grid.Row="1">
+
+            </ScrollView>
+
+            <Button
+                Grid.Row="2"
+                Text="&#xf067;"
+                Margin="0,0,10,10"
+                HorizontalOptions="End"
+                TextColor="White"
+                BackgroundColor="#315eff"
+                HeightRequest="60"
+                WidthRequest="60"
+                CornerRadius="30"
+                FontFamily="{StaticResource FontAwesome}"
+                Command="{Binding AddCommand}"/>
+        </Grid>
+    </ContentPage.Content>
+
+</ContentPage>

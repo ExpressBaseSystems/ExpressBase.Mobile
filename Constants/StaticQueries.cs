@@ -55,6 +55,15 @@ namespace ExpressBase.Mobile.Data
             }
         }
 
+        public static string STARFROM_TABLE_WDEP
+        {
+            get
+            {
+                return "SELECT {0} FROM {1} WHERE eb_synced = 0 AND {2} = {3}";
+            }
+        }
+
+
         public static string DELETE_FROM_TABLE
         {
             get

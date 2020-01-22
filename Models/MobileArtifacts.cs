@@ -83,16 +83,4 @@ namespace ExpressBase.Mobile.Models
 
         public int FileRefId { set; get; }
     }
-
-    public class PushOrder : List<PushOrderTable>
-    {
-        
-    }
-
-    public class PushOrderTable
-    {
-        public string MasterTable { set; get; }
-
-        public List<PushOrderTable> ChildTables { set; get; }
-    }
 }

@@ -189,7 +189,7 @@ namespace ExpressBase.Mobile.ViewModels
                         Device.BeginInvokeOnMainThread(() =>
                         {
                             IsBusy = false;
-                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new VisRender(page));
+                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListViewRender(page));
                         });
                     }
                 }
