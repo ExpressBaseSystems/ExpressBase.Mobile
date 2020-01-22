@@ -74,6 +74,8 @@ namespace ExpressBase.Mobile.Data
 
         public int RowId { get; set; }
 
+        public int LocalRowId { get; set; }
+
         public string FormData { get; set; }
 
         public WebformData FormDataObject

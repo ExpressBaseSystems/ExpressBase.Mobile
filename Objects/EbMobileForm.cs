@@ -23,6 +23,8 @@ namespace ExpressBase.Mobile
 
         private List<EbMobileControl> _flatControls;
 
+        public EbMobileForm DependencyForm { set; get; }//for sync
+
         public List<EbMobileControl> FlatControls
         {
             set
@@ -118,6 +120,21 @@ namespace ExpressBase.Mobile
 
         private EbMobileForm _DependantForm;
 
+        public EbDataTable GetFormData()
+        {
+            EbDataTable dt;
+            try
+            {
+                dt = App.DataDB.DoQuery(string.Format(StaticQueries.STARFROM_TABLE, this.SelectQuery, this.TableName));
+            }
+            catch(Exception ex)
+            {
+                dt = new EbDataTable();
+                Console.WriteLine(ex.Message);
+            }
+            return dt;
+        }
+
         public void PushRecords(EbMobileForm depedencyForm)
         {
             _DependantForm = depedencyForm;
@@ -172,7 +189,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        private void UploadFiles(int RowId, WebformData WebFormData)
+        public void UploadFiles(int RowId, WebformData WebFormData)
         {
             List<EbMobileControl> UploadCtrls = this.FlatControls.FindAll(ctrl => ctrl.GetType() == typeof(EbMobileFileUpload));
 
@@ -195,7 +212,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        private void FlagLocalRow(PushResponse Response, int RowId, string TableName)
+        public void FlagLocalRow(PushResponse Response, int RowId, string TableName)
         {
             try
             {
@@ -216,7 +233,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        private List<SingleColumn> GetColumnValues(EbDataTable LocalData, int RowIndex)
+        public List<SingleColumn> GetColumnValues(EbDataTable LocalData, int RowIndex)
         {
             List<SingleColumn> SC = new List<SingleColumn>();
 

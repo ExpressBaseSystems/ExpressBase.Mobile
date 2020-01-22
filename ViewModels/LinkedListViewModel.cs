@@ -158,5 +158,12 @@ namespace ExpressBase.Mobile.ViewModels
                 }
             }
         }
+
+        public override void RefreshPage()
+        {
+            this.View = null;
+            this.GetData();
+            this.CreateView();
+        }
     }
 }

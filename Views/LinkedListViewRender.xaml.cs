@@ -39,5 +39,20 @@ namespace ExpressBase.Mobile.Views
                 Console.WriteLine(ex.Message);
             }
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (this.BindingContext is LinkedListViewModel vm)
+            {
+                if (vm.IsRedirect)
+                {
+                    vm.RefreshPage();
+                    ScrollContainer.Content = vm.View;
+                    vm.IsRedirect = false;
+                }
+            }
+        }
     }
 }

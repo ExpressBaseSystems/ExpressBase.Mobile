@@ -27,68 +27,13 @@ namespace ExpressBase.Mobile.Models
     {
         public List<MobilePagesWraper> Pages { set; get; }
 
-        public List<EbMobilePage> FilteredList { set; get; }
-
         public EbDataSet Data { set; get; }
 
         public List<string> TableNames { set; get; }
 
-        public List<string> DependencyTables { set; get; }
-
         public MobilePageCollection()
         {
-            this.FilteredList = new List<EbMobilePage>();
             this.Pages = new List<MobilePagesWraper>();
-        }
-
-        public MobilePageCollection(Type FilterType)
-        {
-            this.FilteredList = new List<EbMobilePage>();
-            this.Pages = Settings.Objects;
-
-            foreach (MobilePagesWraper pages in this.Pages)
-            {
-                EbMobilePage mpage = pages.JsonToPage();
-                if (mpage != null && mpage.Container.GetType() == FilterType)
-                {
-                    this.FilteredList.Add(mpage);
-                }
-            }
-        }
-
-        public EbMobileForm ResolveDependency(EbMobilePage CurrentForm)
-        {
-            if (DependencyTables == null)
-                DependencyTables = new List<string>();
-
-            EbMobileForm _Form = CurrentForm.Container as EbMobileForm;
-
-            if (!string.IsNullOrEmpty(_Form.AutoGenMVRefid))
-            {
-                var autogenvis = HelperFunctions.GetPage(_Form.AutoGenMVRefid);
-
-                string linkref = (autogenvis.Container as EbMobileVisualization).LinkRefId;
-
-                if (!string.IsNullOrEmpty(linkref))
-                {
-                    var linkpage = HelperFunctions.GetPage(linkref);
-
-                    if(linkpage.Container is EbMobileVisualization)
-                    {
-                        if(!string.IsNullOrEmpty((linkpage.Container as EbMobileVisualization).LinkRefId))
-                        {
-                            var innerlink = HelperFunctions.GetPage((linkpage.Container as EbMobileVisualization).LinkRefId);
-
-                            if(innerlink.Container is EbMobileForm)
-                            {
-                                DependencyTables.Add((innerlink.Container as EbMobileForm).TableName);
-                                return (innerlink.Container as EbMobileForm);
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
         }
     }
 

@@ -138,23 +138,31 @@ namespace ExpressBase.Mobile.ViewModels
                     try
                     {
                         Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Pushing from local data..."; });
-                        //service call to push (api push)
-                        CommonServices.Instance.PushFormData();
 
-                        Device.BeginInvokeOnMainThread(() =>
+                        IToast toast = DependencyService.Get<IToast>();
+
+                        bool status = SyncServices.Instance.Sync();
+
+                        if (status)
                         {
-                            IsBusy = false;
-                            DependencyService.Get<IToast>().Show("Push Completed.");
-                        });
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                IsBusy = false;
+                                toast.Show("Push Completed.");
+                            });
+                        }
+                        else
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                IsBusy = false;
+                                toast.Show(SyncServices.Instance.Message);
+                            });
+                        }
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            DependencyService.Get<IToast>().Show("Push Completed.");
-                        });
                     }
                 });
             }

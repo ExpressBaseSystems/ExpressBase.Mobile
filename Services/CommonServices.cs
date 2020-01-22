@@ -18,38 +18,6 @@ namespace ExpressBase.Mobile.Services
 
         public static CommonServices Instance => instance ?? (instance = new CommonServices());
 
-        public void PushFormData()
-        {
-            try
-            {
-                MobilePageCollection Collection = new MobilePageCollection(typeof(EbMobileForm));
-
-                List<string> _DependencyTables = new List<string>();
-
-                foreach (EbMobilePage page in Collection.FilteredList)
-                {
-                    string webformRef = (page.Container as EbMobileForm).WebFormRefId;
-
-                    if (!string.IsNullOrEmpty(webformRef))
-                    {
-                        EbMobileForm depedencyForm = Collection.ResolveDependency(page);
-
-                        if (!_DependencyTables.Contains(depedencyForm.TableName))
-                        {
-                            (page.Container as EbMobileForm).PushRecords(depedencyForm);
-
-                            if (depedencyForm != null)
-                                _DependencyTables.Add(depedencyForm.TableName);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
         public void CreateLocalTable(SQLiteTableSchema SQLSchema)
         {
             try
