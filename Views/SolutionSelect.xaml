@@ -107,25 +107,60 @@
                         WidthRequest="190" />
                     </Grid>
 
-                    <StackLayout Grid.Row="1" BackgroundColor="#ffffff" VerticalOptions="FillAndExpand" Padding="20">
-                        <local:TextBox  
+                    <StackLayout Grid.Row="1" BackgroundColor="White" VerticalOptions="FillAndExpand" Padding="0">
+
+                        <Grid VerticalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <local:TextBox 
+                                Margin="20,20,0,0"
+                               Grid.Column="0"
                                x:Name="SolutionUrl" 
                                VerticalOptions="Center" 
                                Keyboard="Url"
                                ReturnType="Next"
                                Placeholder="solution.expressbase.com"
                                BackgroundColor="#f5fbff"
-                               Text="{Binding SolutionUrl}"/>
-                        
-                        <!--  next button  -->
-                        <Button
-                            Margin="0,20,0,0"
+                               TextChanged="SolutionUrl_TextChanged"
+                               Text="{Binding SolutionUrl}"
+                               IsEnabled="{Binding IsEnabled}"/>
+
+                            <Button
+                            Grid.Column="1"
+                            Margin="0,20,20,0"
+                            Text="&#xf040;"
+                            BackgroundColor="#508bf9"
+                            BorderColor="#508bf9"
+                            BorderWidth="1"
+                            TextColor="White"
+                            CornerRadius="4"
+                            WidthRequest="50"
+                            Command="{Binding EditButtonCommand}"
+                            FontFamily="{StaticResource FontAwesome}"/>
+
+                            <!--  next button  -->
+                            <Button
+                            CornerRadius="0"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
                             Text="Save"
+                            VerticalOptions="End"
                             HorizontalOptions="FillAndExpand"
                             BackgroundColor="#508bf9"
                             TextColor="White"
-                            Command="{Binding StoreSolutionUrl}"/>
-
+                            Command="{Binding StoreSolutionUrl}"
+                            IsEnabled="{Binding IsSaveEnabled}"/>
+                            
+                        </Grid>
+                        
                     </StackLayout>
                 </StackLayout>
             </ScrollView>

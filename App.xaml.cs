@@ -14,6 +14,8 @@ namespace ExpressBase.Mobile
 
         public static IDataBase DataDB { get; set; }
 
+        public static MasterDetailPage RootMaster { set; get; }
+
         public App(string dbPath)
         {
             InitializeComponent();
@@ -60,7 +62,8 @@ namespace ExpressBase.Mobile
                         ApiAuthResponse authresponse = Auth.TryAuthenticate(username, password);
                         if (authresponse.IsValid)
                         {
-                            MainPage = new RootMaster(typeof(ObjectsRenderer));
+                            RootMaster = new RootMaster(typeof(ObjectsRenderer));
+                            MainPage = RootMaster;
                         }
                         else
                         {
@@ -74,7 +77,10 @@ namespace ExpressBase.Mobile
                         if (apid == null)
                             MainPage.Navigation.PushAsync(new AppSelect());
                         else
-                            MainPage = new RootMaster(typeof(ObjectsRenderer));
+                        {
+                            RootMaster = new RootMaster(typeof(ObjectsRenderer));
+                            MainPage = RootMaster;
+                        } 
                     }
                 }
                 else

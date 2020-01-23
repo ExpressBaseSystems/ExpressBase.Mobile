@@ -7,9 +7,7 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.AppSelect"
              xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
-             Title="{Binding PageTitle}"
-             BackgroundColor="{DynamicResource Gray-100}"
-             NavigationPage.HasNavigationBar="True">
+             Style="{StaticResource ContentPageStyle}">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -18,6 +16,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
             <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Command="{Binding ResetConfig}" Grid.Column="2"/>
         </Grid>
     </NavigationPage.TitleView>

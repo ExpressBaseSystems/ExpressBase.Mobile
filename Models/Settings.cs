@@ -18,6 +18,22 @@ namespace ExpressBase.Mobile.Models
             }
         }
 
+        public static string BToken
+        {
+            get
+            {
+                return Store.GetValue(AppConst.BTOKEN);
+            }
+        }
+
+        public static string RToken
+        {
+            get
+            {
+                return Store.GetValue(AppConst.RTOKEN);
+            }
+        }
+
         public static int LocationId
         {
             get

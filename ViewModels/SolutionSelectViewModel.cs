@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -20,11 +21,6 @@ namespace ExpressBase.Mobile.ViewModels
     {
         private string solutionurtl;
 
-        public SolutionSelectViewModel()
-        {
-            this.StoreSolutionUrl = new Command(SolutionUrlSet);
-        }
-
         public string SolutionUrl
         {
             get
@@ -42,9 +38,66 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        private bool isEnabled;
+
+        public bool IsEnabled
+        {
+            get
+            {
+                return this.isEnabled;
+            }
+            set
+            {
+                if (this.isEnabled == value)
+                {
+                    return;
+                }
+                this.isEnabled = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
+        private bool isSaveEnabled;
+
+        public bool IsSaveEnabled
+        {
+            get
+            {
+                return this.isSaveEnabled;
+            }
+            set
+            {
+                if (this.isSaveEnabled == value)
+                {
+                    return;
+                }
+                this.isSaveEnabled = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
         public Command StoreSolutionUrl { get; set; }
 
-        private void SolutionUrlSet(object obj)
+        public Command EditButtonCommand { get; set; }
+
+        public SolutionSelectViewModel()
+        {
+            SolutionUrl = (Settings.RootUrl != null) ? Settings.RootUrl.Replace("https://", string.Empty) : string.Empty;
+
+            if (string.IsNullOrEmpty(SolutionUrl))
+                IsEnabled = true;
+
+            StoreSolutionUrl = new Command(async () => await SolutionUrlSet());
+
+            EditButtonCommand = new Command(EditButtonClicked);
+        }
+
+        private void EditButtonClicked(object obj)
+        {
+            IsEnabled = true;
+        }
+
+        private async Task SolutionUrlSet()
         {
             string url = this.SolutionUrl.Trim();
 
@@ -54,51 +107,45 @@ namespace ExpressBase.Mobile.ViewModels
                 return;
             }
 
-            Task.Run(() =>
+            try
             {
-                try
+                Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                ValidateSidResponse Response = await RestServices.ValidateSid(url);
+                if (Response.IsValid)
                 {
-                    if (!string.IsNullOrEmpty(url))
+                    string _sid = url.Split('.')[0];
+                    Store.SetValue(AppConst.SID, _sid);
+                    Store.SetValue(AppConst.ROOT_URL, url);
+                    this.CreateDB(_sid);
+                    this.CreateDir();
+                    if (Response.Logo != null)
                     {
-                        Device.BeginInvokeOnMainThread(() => IsBusy = true);
-                        ValidateSidResponse Response = Api.ValidateSid(url);
-                        if (Response.IsValid)
-                        {
-                            string _sid = url.Split('.')[0];
-                            Store.SetValue(AppConst.SID, _sid);
-                            Store.SetValue(AppConst.ROOT_URL, url);
-                            this.CreateDB(_sid);
-                            this.CreateDir();
-                            if(Response.Logo != null)
-                            {
-                                this.SaveLogo(Response.Logo);
-                            }
-                            Device.BeginInvokeOnMainThread(() =>
-                            {
-                                IsBusy = false;
-                                Application.Current.MainPage.Navigation.PushAsync(new Login());
-                            });
-                        }
-                        else
-                        {
-                            Device.BeginInvokeOnMainThread(() =>
-                            {
-                                IsBusy = false;
-                                Application.Current.MainPage.DisplayAlert("Alert!", "Invalid solution URL", "Ok");
-                            });
-                        }
+                        this.SaveLogo(Response.Logo);
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
                     Device.BeginInvokeOnMainThread(() =>
                     {
                         IsBusy = false;
-                        Application.Current.MainPage.DisplayAlert("Alert!", "Something went wrong", "Ok");
+                        Application.Current.MainPage.Navigation.PushAsync(new Login());
                     });
                 }
-            });
+                else
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        IsBusy = false;
+                        Application.Current.MainPage.DisplayAlert("Alert!", "Invalid solution URL", "Ok");
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    IsBusy = false;
+                    Application.Current.MainPage.DisplayAlert("Alert!", "Something went wrong", "Ok");
+                });
+            }
         }
 
         private void CreateDB(string sid)

@@ -89,32 +89,42 @@ namespace ExpressBase.Mobile.ViewModels.Shared
 
         public void LogoutClicked(object sender)
         {
-            Store.Remove(AppConst.BTOKEN);
-            Store.Remove(AppConst.RTOKEN);
-            Store.Remove(AppConst.OBJ_COLLECTION);
-            Store.Remove(AppConst.APP_COLLECTION);
+            //Store.Remove(AppConst.BTOKEN);
+            //Store.Remove(AppConst.RTOKEN);
+            //Store.Remove(AppConst.OBJ_COLLECTION);
+            //Store.Remove(AppConst.APP_COLLECTION);
             Application.Current.MainPage = new NavigationPage(new Login());
         }
 
         public void ChangeSidClicked(object sender)
         {
-            Store.Remove(AppConst.SID);
-            Store.Remove(AppConst.ROOT_URL);
-            Store.Remove(AppConst.APPID);
-            Store.Remove(AppConst.USERNAME);
-            Store.Remove(AppConst.PASSWORD);
-            Store.Remove(AppConst.BTOKEN);
-            Store.Remove(AppConst.RTOKEN);
-            Store.Remove(AppConst.OBJ_COLLECTION);
-            Store.Remove(AppConst.APP_COLLECTION);
-            Application.Current.MainPage = new NavigationPage(new SolutionSelect());
+            //Store.Remove(AppConst.SID);
+            //Store.Remove(AppConst.ROOT_URL);
+            //Store.Remove(AppConst.APPID);
+            //Store.Remove(AppConst.USERNAME);
+            //Store.Remove(AppConst.PASSWORD);
+            //Store.Remove(AppConst.BTOKEN);
+            //Store.Remove(AppConst.RTOKEN);
+            //Store.Remove(AppConst.OBJ_COLLECTION);
+            //Store.Remove(AppConst.APP_COLLECTION);
+            Application.Current.MainPage = new NavigationPage(new SolutionSelect())
+            {
+                BarBackgroundColor = Color.FromHex("315eff"),
+                BarTextColor = Color.White
+            };
+            App.RootMaster.IsPresented = false;
         }
 
         public void ChangeAppClicked(object sender)
         {
-            Store.Remove(AppConst.APPID);
-            Store.Remove(AppConst.OBJ_COLLECTION);
-            Application.Current.MainPage = new NavigationPage(new AppSelect());
+            //Store.Remove(AppConst.APPID);
+            //Store.Remove(AppConst.OBJ_COLLECTION);
+            Application.Current.MainPage = new NavigationPage(new AppSelect())
+            {
+                BarBackgroundColor = Color.FromHex("315eff"),
+                BarTextColor = Color.White
+            };
+            App.RootMaster.IsPresented = false;
         }
 
         public void LocationSwitherClick(object sender)

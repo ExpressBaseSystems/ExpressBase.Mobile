@@ -69,7 +69,8 @@ namespace ExpressBase.Mobile.ViewModels
                     Device.BeginInvokeOnMainThread(() =>
                     {
                         IsBusy = false;
-                        Application.Current.MainPage = new RootMaster(typeof(ObjectsRenderer));
+                        App.RootMaster = new RootMaster(typeof(ObjectsRenderer));
+                        Application.Current.MainPage = App.RootMaster;
                     });
                 }
                 catch (Exception ex)
