@@ -66,6 +66,14 @@
                 <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
             </Style>
 
+            <Style x:Key="RegularLabel" TargetType="Label">
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
+            </Style>
+
+            <Style x:Key="MediumLabel" TargetType="Label">
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Medium}" />
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

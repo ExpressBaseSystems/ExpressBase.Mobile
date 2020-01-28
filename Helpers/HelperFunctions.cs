@@ -23,12 +23,9 @@ namespace ExpressBase.Mobile.Helpers
             MobilePagesWraper Wrpr = _list.Find(item => item.RefId == Refid);
 
             if (Wrpr == null)
-            {
                 return null;
-            }
 
-            string regexed = EbSerializers.JsonToNETSTD(Wrpr.Json);
-            return EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
+            return Wrpr.ToPage();
         }
 
         public static string WrapSelectQuery(string sql)

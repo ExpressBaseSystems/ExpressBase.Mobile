@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -8,7 +9,7 @@ using ExpressBase.Mobile.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -49,19 +50,16 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command SyncButtonCommand => new Command(OnSyncClick);
 
-        public Command ObjectSelectCommand => new Command(OnObjectClick);
-
-        public Command RefreshCommand => new Command(async () => await OnRefreshPulled());
-
         public ObjectsRenderViewModel()
         {
             LoaderMessage = "Opening page...";
             PageTitle = Settings.AppName;
 
             SetUpData();
+            BuildView();
         }
 
-        private void SetUpData()
+        public void SetUpData()
         {
             string _objlist = Store.GetValue(AppConst.OBJ_COLLECTION);
 
@@ -87,6 +85,84 @@ namespace ExpressBase.Mobile.ViewModels
                 List<MobilePagesWraper> _list = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
                 this.ObjectList = _list;
             }
+        }
+
+        public void BuildView()
+        {
+            var stack = new StackLayout();
+
+            var tapGesture = new TapGestureRecognizer();
+            tapGesture.Tapped += ObjFrame_Clicked;
+
+            var grouped = ObjectList.Group();
+
+            foreach (KeyValuePair<string, List<MobilePagesWraper>> pair in grouped)
+            {
+                var groupLayout = new StackLayout
+                {
+                    Children =
+                    {
+                        new Label
+                        {
+                            FontSize = 16, Text = pair.Key, Padding = 5,
+                            Style = (Style)HelperFunctions.GetResourceValue("MediumLabel")
+                        }
+                    }
+                };
+                AddGroupElement(groupLayout, pair.Value, tapGesture);
+                stack.Children.Add(groupLayout);
+            }
+            this.View = stack;
+        }
+
+        private void AddGroupElement(StackLayout groupLayout, List<MobilePagesWraper> pageWrapers, TapGestureRecognizer gesture)
+        {
+            Grid grid = new Grid
+            {
+                Padding = 5, RowSpacing = 10, ColumnSpacing = 10,
+                RowDefinitions =
+                {
+                    new RowDefinition{Height= GridLength.Auto}
+                },
+                ColumnDefinitions = {
+                     new ColumnDefinition{ Width = new GridLength(50, GridUnitType.Star) },
+                     new ColumnDefinition{ Width = new GridLength(50, GridUnitType.Star) }
+                }
+            };
+            int rownum = 0;
+            int colnum = 0;
+
+            foreach (MobilePagesWraper wrpr in pageWrapers)
+            {
+                if (wrpr.IsHidden)
+                    continue;
+
+                var frame = new CustomShadowFrame
+                {
+                    HasShadow = true, CornerRadius = 4, PageWraper = wrpr,
+                    Content = new Label
+                    {
+                        Text = wrpr.DisplayName,VerticalTextAlignment = TextAlignment.Center,
+                        HorizontalTextAlignment = TextAlignment.Center,
+                        LineHeight = 1.25
+                    }
+                };
+                frame.GestureRecognizers.Add(gesture);
+                grid.Children.Add(frame, colnum, rownum);
+
+                if(wrpr != pageWrapers.Last())
+                {
+                    if (colnum == 1)
+                    {
+                        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                        rownum++;
+                        colnum = 0;
+                    }
+                    else
+                        colnum = 1;
+                }
+            }
+            groupLayout.Children.Add(grid);
         }
 
         private bool PulledTableExist()
@@ -154,9 +230,9 @@ namespace ExpressBase.Mobile.ViewModels
                 toast.Show("You are not connected to internet !");
         }
 
-        private void OnObjectClick(object obj)
+        private void ObjFrame_Clicked(object obj,EventArgs e)
         {
-            MobilePagesWraper item = (obj as MobilePagesWraper);
+            MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
             Task.Run(() =>
             {
                 Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Loading page..."; });
@@ -189,23 +265,6 @@ namespace ExpressBase.Mobile.ViewModels
                     Console.WriteLine(ex.StackTrace);
                 }
             });
-        }
-
-        private async Task OnRefreshPulled()
-        {
-            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
-            {
-                DependencyService.Get<IToast>().Show("Not connected to internet!");
-                return;
-            }
-
-            IsRefreshing = true;
-            await Task.Delay(TimeSpan.FromSeconds(RefreshDuration));
-
-            Store.Remove(AppConst.OBJ_COLLECTION);
-            SetUpData();
-            this.IsRefreshing = false;
-            DependencyService.Get<IToast>().Show("Pulled successfully");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
@@ -7,6 +8,8 @@ namespace ExpressBase.Mobile.CustomControls
 {
     public class CustomShadowFrame : Frame
     {
+        public MobilePagesWraper PageWraper { set; get; }
+
         public static readonly BindableProperty RadiusProperty =
            BindableProperty.Create("Radius", typeof(float), typeof(CustomShadowFrame), 0f, BindingMode.Default);
 

@@ -42,7 +42,7 @@ namespace ExpressBase.Mobile.Services
 
             foreach (MobilePagesWraper _p in pages)
             {
-                EbMobilePage mpage = _p.JsonToPage();
+                EbMobilePage mpage = _p.ToPage();
                 if (mpage != null && mpage.Container.GetType() == typeof(EbMobileForm))
                 {
                     ls.Add(mpage.Container as EbMobileForm);

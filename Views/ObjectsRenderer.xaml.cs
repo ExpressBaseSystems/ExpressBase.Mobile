@@ -1,17 +1,9 @@
-﻿using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using ExpressBase.Mobile.Constants;
-using Xamarin.Essentials;
-using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Extensions;
-using ExpressBase.Mobile.Views.Shared;
 
 namespace ExpressBase.Mobile.Views
 {
@@ -21,6 +13,9 @@ namespace ExpressBase.Mobile.Views
         public ObjectsRenderer()
         {
             InitializeComponent();
+            ObjectsRenderViewModel model = new ObjectsRenderViewModel();
+            BindingContext = model;
+            scrollView.Content = model.View;
         }
 
         protected override bool OnBackButtonPressed()
@@ -36,6 +31,28 @@ namespace ExpressBase.Mobile.Views
                 }
             });
             return true;
+        }
+
+        public void RefreshComplete(View view)
+        {
+            scrollView.Content = view; 
+        }
+
+        private void RefreshView_Refreshing(object sender, System.EventArgs e)
+        {
+            if (!Settings.HasInternet)
+            {
+                DependencyService.Get<IToast>().Show("Not connected to internet!");
+                return;
+            }
+
+            RootRefreshView.IsRefreshing = true;
+            var vm = (BindingContext as ObjectsRenderViewModel);
+            vm.SetUpData();
+            Store.Remove(AppConst.OBJ_COLLECTION);
+            vm.BuildView();
+            scrollView.Content = vm.View;
+            RootRefreshView.IsRefreshing = false;
         }
     }
 }

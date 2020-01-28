@@ -7,7 +7,8 @@
              x:Class="ExpressBase.Mobile.Views.ObjectsRenderer"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              Style="{StaticResource ContentPageStyle}"
-             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels">
+             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
+             BackgroundColor="#eeeeee">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -29,95 +30,16 @@
         </Grid>
     </NavigationPage.TitleView>
 
-    <!--  Binding context for page  -->
-    <ContentPage.BindingContext>
-        <viewModel:ObjectsRenderViewModel />
-    </ContentPage.BindingContext>
-
     <ContentPage.Content>
         <RefreshView 
-                IsRefreshing="{Binding IsRefreshing}" 
-                Command="{Binding RefreshCommand}">
+                x:Name="RootRefreshView" 
+                Refreshing="RefreshView_Refreshing">
             <Grid>
                 <ScrollView 
                 x:Name="scrollView" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-                    <StackLayout
-                x:Name="objectsList"
-                Padding="10"
-                BindableLayout.ItemsSource="{Binding ObjectList}"
-                Spacing="10">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <control:CustomShadowFrame
-                            IsVisible="{Binding IsVisble}"
-                            Margin="0"
-                            Padding="0"
-                            BackgroundColor="{DynamicResource Gray-White}"
-                            BorderColor="{DynamicResource Gray-White}"
-                            CornerRadius="4"
-                            HasShadow="True"
-                            HeightRequest="80">
-                                    <control:CustomShadowFrame.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ObjectSelectCommand, Source={x:Reference objectsList}}" CommandParameter="{Binding .}" />
-                                    </control:CustomShadowFrame.GestureRecognizers>
-
-                                    <Grid ColumnSpacing="0" RowSpacing="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <!--  obj icon  -->
-                                        <Image
-                                        Grid.RowSpan="2"
-                                        Margin="16"
-                                        HeightRequest="48"
-                                        WidthRequest="48" Source="{Binding ObjectIcon}"/>
-
-                                        <!--  obj name  -->
-                                        <StackLayout
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Padding="0"
-                                    Margin="0,16,16,4"
-                                    Orientation="Horizontal"
-                                    Spacing="0">
-                                            <Label
-                                        FontFamily="{StaticResource Roboto-Medium}"
-                                        FontSize="14"
-                                        HorizontalOptions="StartAndExpand"
-                                        Text="{Binding DisplayName}"
-                                        TextColor="{DynamicResource Gray-900}" />
-                                        </StackLayout>
-
-                                        <!--  obj version -->
-                                        <StackLayout
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    Padding="0"
-                                    Margin="0,0,16,0"
-                                    Orientation="Horizontal"
-                                    Spacing="0">
-                                            <Label
-                                        FontFamily="{StaticResource Roboto-Regular}"
-                                        FontSize="12"
-                                        HorizontalOptions="StartAndExpand"
-                                        Text="{Binding Version}"
-                                        TextColor="{DynamicResource Gray-700}" />
-                                        </StackLayout>
-                                    </Grid>
-                                </control:CustomShadowFrame>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </StackLayout>
-                </ScrollView>
-
+                AbsoluteLayout.LayoutFlags="All"/>
+                
                 <!--loader-->
                 <ContentView 
                 IsVisible="{Binding IsBusy}" 

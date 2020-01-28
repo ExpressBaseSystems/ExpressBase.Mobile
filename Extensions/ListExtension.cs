@@ -8,27 +8,17 @@ namespace ExpressBase.Mobile.Extensions
 {
     public static class ListExtension
     {
-        public static List<PageTypeGroup> ToUIGroup(this IList<MobilePagesWraper> Pages)
+        public static Dictionary<string, List<MobilePagesWraper>> Group(this IList<MobilePagesWraper> Pages)
         {
-            List<PageTypeGroup> TypeList = new List<PageTypeGroup>();
+            Dictionary<string, List<MobilePagesWraper>> dict = new Dictionary<string, List<MobilePagesWraper>>();
 
-            //foreach (MobilePagesWraper wrpr in Pages)
-            //{
-            //    string _title = wrpr.Title;
-
-            //    PageTypeGroup grp = TypeList.Find(o => o.GroupHeader == _title);
-            //    if (grp == null)
-            //    {
-            //        var gr = new PageTypeGroup { GroupHeader = _title };
-            //        gr.Add(wrpr);
-            //        TypeList.Add(gr);
-            //    }
-            //    else
-            //    {
-            //        grp.Pages.Add(wrpr);
-            //    }
-            //}
-            return TypeList;
+            foreach (MobilePagesWraper wrpr in Pages)
+            {
+                if (!dict.ContainsKey(wrpr.ContainerType))
+                    dict.Add(wrpr.ContainerType, new List<MobilePagesWraper>());
+                dict[wrpr.ContainerType].Add(wrpr);
+            }
+            return dict;
         }
 
         public static Dictionary<string, SingleTable> GroupByControl(this IList<FileWrapper> Files, List<ApiFileData> ApiFiles)
