@@ -74,8 +74,12 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (_page.Container is EbMobileForm)
                 {
-                    FormRender Renderer = new FormRender(_page, (Frame as CustomFrame).DataRow, this.DataTable.Columns);
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    int id = Convert.ToInt32((Frame as CustomFrame).DataRow["id"]);
+                    if (id != 0)
+                    {
+                        FormRender Renderer = new FormRender(_page, id);//to form edit mode
+                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    }
                 }
                 else if (_page.Container is EbMobileVisualization)
                 {

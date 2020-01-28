@@ -20,40 +20,30 @@ namespace ExpressBase.Mobile.ViewModels
         const int RefreshDuration = 2;
 
         private bool _isRefreshing;
+
         public bool IsRefreshing
         {
-            get
-            {
-                return this._isRefreshing;
-            }
+            get { return this._isRefreshing; }
             set
             {
-                if (this._isRefreshing == value)
-                {
-                    return;
-                }
                 this._isRefreshing = value;
                 this.NotifyPropertyChanged();
             }
         }
 
         private string _loaderMessage;
+
         public string LoaderMessage
         {
-            get
-            {
-                return this._loaderMessage;
-            }
+            get { return this._loaderMessage; }
             set
             {
-                if (this._loaderMessage == value)
-                {
-                    return;
-                }
                 this._loaderMessage = value;
                 this.NotifyPropertyChanged();
             }
         }
+
+        public View View { set; get; }
 
         public List<MobilePagesWraper> ObjectList { private set; get; }
 
@@ -65,7 +55,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public ObjectsRenderViewModel()
         {
-            LoaderMessage = "Loading...";
+            LoaderMessage = "Opening page...";
             PageTitle = Settings.AppName;
 
             SetUpData();
@@ -89,9 +79,7 @@ namespace ExpressBase.Mobile.ViewModels
                     Store.SetValue(string.Format(AppConst.APP_PULL_TABLE, Settings.AppId), string.Join(",", Coll.TableNames.ToArray()));
 
                     if (_pull == true && Coll.TableNames.Count > 0)
-                    {
                         this.LoadDTAsync(Coll.Data);
-                    }
                 }
             }
             else
@@ -114,9 +102,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 var status = App.DataDB.DoScalar(string.Format(StaticQueries.TABLE_EXIST, s));
                 if (Convert.ToInt32(status) <= 0)
-                {
                     return false;
-                }
             }
             return true;
         }
@@ -124,22 +110,20 @@ namespace ExpressBase.Mobile.ViewModels
         private async void LoadDTAsync(EbDataSet DS)
         {
             if (DS.Tables.Count > 0)
-            {
-                int st = await CommonServices.Instance.LoadLocalData(DS);
-            }
+                await CommonServices.Instance.LoadLocalData(DS);
         }
 
         private void OnSyncClick(object sender)
         {
-            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
+            IToast toast = DependencyService.Get<IToast>();
+
+            if (Settings.HasInternet)
             {
                 Task.Run(() =>
                 {
                     try
                     {
                         Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Pushing from local data..."; });
-
-                        IToast toast = DependencyService.Get<IToast>();
 
                         bool status = SyncServices.Instance.Sync();
 
@@ -167,9 +151,7 @@ namespace ExpressBase.Mobile.ViewModels
                 });
             }
             else
-            {
-                DependencyService.Get<IToast>().Show("You are not connected to internet !");
-            }
+                toast.Show("You are not connected to internet !");
         }
 
         private void OnObjectClick(object obj)

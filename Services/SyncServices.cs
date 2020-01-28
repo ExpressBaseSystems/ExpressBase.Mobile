@@ -60,10 +60,13 @@ namespace ExpressBase.Mobile.Services
 
             foreach (EbMobileForm Form in this.FormCollection)
             {
+                if (DependencyTables.Contains(Form.TableName))
+                    continue;
+
                 EbMobileForm DependencyForm = ResolveDependency(Form);
 
-                if (DependencyTables.Contains(DependencyForm.TableName))
-                    continue;
+                if (DependencyForm != null)
+                    DependencyTables.Add(DependencyForm.TableName);
 
                 EbDataTable SourceData = Form.GetFormData();
 
@@ -79,7 +82,6 @@ namespace ExpressBase.Mobile.Services
                     if (DependencyForm != null)
                     {
                         PushDependencyData(Form, DependencyForm, resp.RowId, resp.LocalRowId);
-                        DependencyTables.Add(DependencyForm.TableName);
                     }
                 }
             }
@@ -183,12 +185,18 @@ namespace ExpressBase.Mobile.Services
 
             var autogenvis = HelperFunctions.GetPage(SourceForm.AutoGenMVRefid);
 
+            if (autogenvis == null)
+                return null;
+
             string linkref = (autogenvis.Container as EbMobileVisualization).LinkRefId;
 
             if (string.IsNullOrEmpty(linkref))
                 return null;
 
             var linkpage = HelperFunctions.GetPage(linkref);
+
+            if (linkpage == null)
+                return null;
 
             if (linkpage.Container is EbMobileVisualization)
             {

@@ -15,16 +15,9 @@ namespace ExpressBase.Mobile.ViewModels
         private string email;
         public string Email
         {
-            get
-            {
-                return this.email;
-            }
+            get { return this.email; }
             set
             {
-                if (this.email == value)
-                {
-                    return;
-                }
                 this.email = value;
                 this.NotifyPropertyChanged();
             }
@@ -33,16 +26,9 @@ namespace ExpressBase.Mobile.ViewModels
         private string password;
         public string PassWord
         {
-            get
-            {
-                return this.password;
-            }
+            get { return this.password; }
             set
             {
-                if (this.password == value)
-                {
-                    return;
-                }
                 this.password = value;
                 this.NotifyPropertyChanged();
             }
@@ -51,10 +37,7 @@ namespace ExpressBase.Mobile.ViewModels
         private ImageSource logourl;
         public ImageSource LogoUrl
         {
-            get
-            {
-                return logourl;
-            }
+            get { return logourl; }
             set
             {
                 logourl = value;
@@ -73,7 +56,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void LoginAction(object obj)
         {
-            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            if (!Settings.HasInternet)
             {
                 DependencyService.Get<IToast>().Show("Not connected to internet!");
                 return;
@@ -133,7 +116,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
 
-                if(bytes== null)
+                if (bytes == null)
                 {
                     LogoUrl = ImageSource.FromResource("eblogo.png");
                 }

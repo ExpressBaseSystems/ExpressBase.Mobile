@@ -47,15 +47,13 @@ namespace ExpressBase.Mobile
 
             string sid = Store.GetValue(AppConst.SID);
             if (sid == null)
-            {
                 MainPage.Navigation.PushAsync(new SolutionSelect());
-            }
             else
             {
                 string rtoken = Store.GetValue(AppConst.RTOKEN);
                 if (rtoken != null)
                 {
-                    if (Auth.IsTokenExpired(rtoken))
+                    if (Settings.HasInternet && Auth.IsTokenExpired(rtoken))
                     {
                         string username = Store.GetValue(AppConst.USERNAME);
                         string password = Store.GetValue(AppConst.PASSWORD);
@@ -66,9 +64,7 @@ namespace ExpressBase.Mobile
                             MainPage = RootMaster;
                         }
                         else
-                        {
                             MainPage.Navigation.PushAsync(new Login());
-                        }
                     }
                     else
                     {

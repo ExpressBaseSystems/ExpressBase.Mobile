@@ -16,6 +16,9 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
+            <Label Text="{Binding PageTitle}" Grid.Column="1" FontSize="16" TextColor="White" VerticalOptions="Center"/>
+
             <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Command="{Binding ResetConfig}" Grid.Column="2"/>
         </Grid>
     </NavigationPage.TitleView>
@@ -74,7 +77,7 @@
                                        FontFamily="{StaticResource Roboto-Regular}"
                                        Style="{StaticResource LabelStyle}"/>
 
-                                <local:TextBox x:Name="Email" Text="{Binding Email}"/>
+                                <local:TextBox x:Name="Email" Completed="Email_Completed" Text="{Binding Email}"/>
                             </StackLayout>
                             <StackLayout Margin="0,5,0,20">
 
@@ -92,7 +95,7 @@
                             Text="Login"
                             VerticalOptions="EndAndExpand"
                             HorizontalOptions="FillAndExpand"
-                            BackgroundColor="#508bf9"
+                            BackgroundColor="#315eff"
                             TextColor="White"
                             Command="{Binding LoginCommand}"/>
 
@@ -113,6 +116,7 @@
                         Opacity=".5"/>
 
                     <StackLayout 
+                        Padding="20"
                         AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
                         AbsoluteLayout.LayoutFlags="PositionProportional">
                         <Frame 
@@ -120,24 +124,28 @@
                             BackgroundColor="White"
                             CornerRadius="6">
                             <Frame.Content>
-                                <StackLayout 
-                                Orientation="Vertical" 
-                                HeightRequest="100" 
-                                WidthRequest="150">
-                                    <ActivityIndicator 
-                                        IsVisible="True" 
-                                        IsRunning="True" 
-                                        VerticalOptions="Center" 
-                                        HorizontalOptions="Center" 
-                                        Color="Black" 
-                                        WidthRequest="30" 
-                                        HeightRequest="30"/>
-                                    <Label 
+                                <StackLayout Orientation="Vertical">
+                                    <Grid Margin="0,10,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label
+                                        Grid.Row="0"
                                         TextColor="Black" 
                                         VerticalOptions="Center" 
-                                        HorizontalOptions="Center" 
-                                        VerticalTextAlignment="Center" 
-                                        Text="Loading..."/>
+                                        Text="Authenticating..."
+                                        FontSize="16"/>
+
+                                        <ActivityIndicator
+                                        HorizontalOptions="End"
+                                        IsRunning="true" 
+                                        Color="#508bf9"
+                                        Grid.Column="0"
+                                        WidthRequest="30"
+                                        HeightRequest="30"/>
+                                    </Grid>
                                 </StackLayout>
                             </Frame.Content>
                         </Frame>

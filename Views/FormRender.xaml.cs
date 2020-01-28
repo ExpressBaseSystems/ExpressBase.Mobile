@@ -1,11 +1,6 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.ViewModels;
 using System;
-using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -31,12 +26,12 @@ namespace ExpressBase.Mobile.Views
         }
 
         //edit mode
-        public FormRender(EbMobilePage Page, EbDataRow CurrentRow, ColumnColletion Columns)
+        public FormRender(EbMobilePage Page, int RowId)
         {
             InitializeComponent();
             try
             {
-                var Renderer = new FormRenderViewModel(Page, CurrentRow, Columns);
+                var Renderer = new FormRenderViewModel(Page, RowId);
                 this.Content = Renderer.View;
                 BindingContext = Renderer;
             }
@@ -47,12 +42,12 @@ namespace ExpressBase.Mobile.Views
         }
 
         //reference mode
-        public FormRender(EbMobilePage CurrentForm, EbMobilePage ParentForm, EbDataRow CurrentRow)
+        public FormRender(EbMobilePage CurrentForm, EbMobilePage ParentForm, int ParentId)
         {
             InitializeComponent();
             try
             {
-                var Renderer = new FormRenderViewModel(CurrentForm, ParentForm, CurrentRow);
+                var Renderer = new FormRenderViewModel(CurrentForm, ParentForm, ParentId);
                 this.Content = Renderer.View;
                 BindingContext = Renderer;
             }
@@ -60,6 +55,11 @@ namespace ExpressBase.Mobile.Views
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
         }
 
         protected override bool OnBackButtonPressed()

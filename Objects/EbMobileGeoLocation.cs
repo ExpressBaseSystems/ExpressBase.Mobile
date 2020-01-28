@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
@@ -27,7 +28,7 @@ namespace ExpressBase.Mobile
         {
             this.BuildXControl();
 
-            if(Mode != FormMode.EDIT)
+            if (Mode != FormMode.EDIT)
             {
                 this.SetCordinates();
             }
@@ -39,7 +40,6 @@ namespace ExpressBase.Mobile
             {
                 HasShadow = false,
                 Padding = new Thickness(0, 0, 0, 10),
-                BorderColor = Color.FromHex("cccccc"),
                 CornerRadius = 10.0f,
             };
 
@@ -51,17 +51,23 @@ namespace ExpressBase.Mobile
 
         private async void SetCordinates()
         {
-            Cordinates = await GetCurrentLocation();
-            if (Cordinates != null)
+            if (Cordinates == null)
             {
-                Placemark plc = await GetAddressByCordinates(Cordinates.Latitude, Cordinates.Longitude);
+                Cordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
 
-                if (plc != null)
+                if (Cordinates != null)
                 {
-                    Place = $"{plc.FeatureName},{plc.Locality},{plc.Locality}";
-
-                    SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
+                    Placemark plc = await GeoLocation.Instance.GetAddressByCordinates(Cordinates.Latitude, Cordinates.Longitude);
+                    if (plc != null)
+                    {
+                        Place = $"{plc.FeatureName},{plc.Locality},{plc.Locality}";
+                        SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
+                    }
                 }
+            }
+            else
+            {
+                SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
             }
         }
 
@@ -69,70 +75,7 @@ namespace ExpressBase.Mobile
         {
             string url = $"{Settings.RootUrl}/api/map?bToken={AppConst.BTOKEN}&rToken={AppConst.RTOKEN}&type=GOOGLEMAP&latitude={lat}&longitude={lon}&place={place}";
             this.WebView.Source = new UrlWebViewSource { Url = url };
-        }
-
-        private async Task<Location> GetLastKnownLocation()
-        {
-            Location _loc = null;
-            try
-            {
-                return await Geolocation.GetLastKnownLocationAsync();
-            }
-            catch (Exception ex)
-            {
-                AlertExeptionMessage(ex);
-            }
-            return _loc;
-        }
-
-        private async Task<Location> GetCurrentLocation()
-        {
-            Location _loc = null;
-            try
-            {
-                var request = new GeolocationRequest(GeolocationAccuracy.Best);
-                _loc = await Geolocation.GetLocationAsync(request);
-
-                if (_loc != null)
-                {
-                    _loc = await GetLastKnownLocation();
-                }
-            }
-            catch (Exception ex)
-            {
-                AlertExeptionMessage(ex);
-            }
-            return _loc;
-        }
-
-        private async Task<Placemark> GetAddressByCordinates(double lat, double lng)
-        {
-            Placemark placemark = null;
-            try
-            {
-                var placemarks = await Geocoding.GetPlacemarksAsync(lat, lng);
-
-                placemark = placemarks?.FirstOrDefault();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            return placemark;
-        }
-
-        private void AlertExeptionMessage(Exception _Exception)
-        {
-            IToast toast = DependencyService.Get<IToast>();
-
-            if (_Exception is FeatureNotSupportedException)
-                toast.Show("Feature not supproted");
-            else if (_Exception is FeatureNotEnabledException)
-                toast.Show("Feature not enabled");
-            else if (_Exception is PermissionException)
-                toast.Show("No permission");
-            else
-                toast.Show("Something went wrong");
+            WebView.Reload();
         }
 
         public override object GetValue()
@@ -145,10 +88,10 @@ namespace ExpressBase.Mobile
                 double lat = Convert.ToDouble(query.Get("latitude"));
                 double lon = Convert.ToDouble(query.Get("longitude"));
 
-                if (lat == Cordinates.Latitude && lon == Cordinates.Longitude)
-                    return $"{Cordinates.Latitude},{Cordinates.Longitude}";
-                else
-                    return $"{lat},{lon}";
+                if (Cordinates == null)
+                    Cordinates = new Location { Latitude = lat, Longitude = lon };
+
+                return $"{lat},{lon}";
             }
             catch (Exception ex)
             {
@@ -170,11 +113,10 @@ namespace ExpressBase.Mobile
 
                 Task.Run(async () =>
                 {
-                    Placemark plc = await GetAddressByCordinates(lat, lng);
+                    Placemark plc = await GeoLocation.Instance.GetAddressByCordinates(lat, lng);
                     this.Place = $"{plc.FeatureName},{plc.Locality},{plc.Locality}";
 
                     SetWebViewUrl(lat, lng, this.Place);
-                    WebView.Reload();
                 });
             }
             return true;

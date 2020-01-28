@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Essentials;
 
 namespace ExpressBase.Mobile.Models
 {
@@ -96,6 +97,14 @@ namespace ExpressBase.Mobile.Models
             get
             {
                 return JsonConvert.DeserializeObject<List<MobilePagesWraper>>(Store.GetValue(AppConst.OBJ_COLLECTION));
+            }
+        }
+
+        public static bool HasInternet
+        {
+            get
+            {
+                return (Connectivity.NetworkAccess == NetworkAccess.Internet);
             }
         }
     }

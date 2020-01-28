@@ -178,31 +178,70 @@
                         Opacity=".5"/>
 
                     <StackLayout 
-                        AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
-                        AbsoluteLayout.LayoutFlags="PositionProportional">
+                        Padding="20"
+                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                        AbsoluteLayout.LayoutFlags="All">
                         <Frame 
                             HasShadow="False"
                             BackgroundColor="White"
-                            CornerRadius="6">
+                            CornerRadius="6"
+                            VerticalOptions="CenterAndExpand">
                             <Frame.Content>
-                                <StackLayout 
-                                Orientation="Vertical" 
-                                HeightRequest="100" 
-                                WidthRequest="150">
-                                    <ActivityIndicator 
-                                        IsVisible="True" 
-                                        IsRunning="True" 
-                                        VerticalOptions="Center" 
-                                        HorizontalOptions="Center" 
-                                        Color="Black" 
-                                        WidthRequest="30" 
-                                        HeightRequest="30"/>
-                                    <Label 
+                                <StackLayout Orientation="Vertical" Padding="0,0,0,0">
+                                    <Grid IsVisible="{Binding ShowLoader}" Margin="0,10,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <Label
+                                        Grid.Row="0"
                                         TextColor="Black" 
                                         VerticalOptions="Center" 
-                                        HorizontalOptions="Center" 
-                                        VerticalTextAlignment="Center" 
-                                        Text="Loading..."/>
+                                        Text="Validating solution..."
+                                        FontSize="16"/>
+                                        
+                                        <ActivityIndicator
+                                        HorizontalOptions="End"
+                                        IsRunning="true" 
+                                        Color="#508bf9"
+                                        Grid.Column="0"
+                                        WidthRequest="30"
+                                        HeightRequest="30"/>
+                                    </Grid>
+
+                                    <Grid IsVisible="{Binding ShowMessage}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"></RowDefinition>
+                                            <RowDefinition Height="Auto"></RowDefinition>
+                                            <RowDefinition Height="Auto"></RowDefinition>
+                                            <RowDefinition Height="*"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Grid.Row="0" Margin="0,0,0,20" Grid.ColumnSpan="2" Text="{Binding Message}" TextColor="{Binding MessageColor}" FontSize="16"/>
+                                        
+                                        <Label Grid.Row="1" Grid.Column="0" Text="{Binding SolutionUrl}" FontSize="15" FontAttributes="Bold"/>
+
+                                        <Image 
+                                            Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="80" 
+                                            HorizontalOptions="Start" Source="{Binding SolutionLogo}"/>
+
+                                        <Button Text="Cancel" BackgroundColor="White" HorizontalOptions="End" Margin="0,10,0,0"
+                                                WidthRequest="60" HeightRequest="30" Padding="0"
+                                                Grid.Row="3" TextColor="#508bf9" BorderWidth="1" BorderColor="#cccccc"
+                                                Grid.Column="0" FontSize="12" CornerRadius="4" Command="{Binding CancelCommand}"/>
+
+                                        <Button Text="Confirm" BackgroundColor="#508bf9" Margin="0,10,0,0"
+                                                WidthRequest="70"  HorizontalOptions="End" HeightRequest="40"
+                                                TextColor="White" Grid.Row="3" Padding="0" Command="{Binding ConfirmButtonCommand}"
+                                                Grid.Column="1" FontSize="12" CornerRadius="4"/>
+
+                                    </Grid>
                                 </StackLayout>
                             </Frame.Content>
                         </Frame>

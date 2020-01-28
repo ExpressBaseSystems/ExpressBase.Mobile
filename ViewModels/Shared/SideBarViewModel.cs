@@ -89,11 +89,15 @@ namespace ExpressBase.Mobile.ViewModels.Shared
 
         public void LogoutClicked(object sender)
         {
-            //Store.Remove(AppConst.BTOKEN);
-            //Store.Remove(AppConst.RTOKEN);
-            //Store.Remove(AppConst.OBJ_COLLECTION);
-            //Store.Remove(AppConst.APP_COLLECTION);
-            Application.Current.MainPage = new NavigationPage(new Login());
+            Store.Remove(AppConst.BTOKEN);
+            Store.Remove(AppConst.RTOKEN);
+            Store.Remove(AppConst.OBJ_COLLECTION);
+            Store.Remove(AppConst.APP_COLLECTION);
+            Application.Current.MainPage = new NavigationPage(new Login())
+            {
+                BarBackgroundColor = Color.FromHex("315eff"),
+                BarTextColor = Color.White
+            };
         }
 
         public void ChangeSidClicked(object sender)
@@ -117,20 +121,17 @@ namespace ExpressBase.Mobile.ViewModels.Shared
 
         public void ChangeAppClicked(object sender)
         {
-            //Store.Remove(AppConst.APPID);
-            //Store.Remove(AppConst.OBJ_COLLECTION);
-            Application.Current.MainPage = new NavigationPage(new AppSelect())
-            {
-                BarBackgroundColor = Color.FromHex("315eff"),
-                BarTextColor = Color.White
-            };
+            Store.Remove(AppConst.APPID);
+            Store.Remove(AppConst.OBJ_COLLECTION);
+
             App.RootMaster.IsPresented = false;
+            App.RootMaster.Detail.Navigation.PushAsync(new AppSelect());
         }
 
         public void LocationSwitherClick(object sender)
         {
-            (Application.Current.MainPage as MasterDetailPage).IsPresented = false;
-            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new LocationsView());
+            App.RootMaster.IsPresented = false;
+            App.RootMaster.Detail.Navigation.PushAsync(new LocationsView());
         }
     }
 }

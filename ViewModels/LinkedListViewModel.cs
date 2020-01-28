@@ -117,43 +117,58 @@ namespace ExpressBase.Mobile.ViewModels
 
         void AddButtonClicked(object sender)
         {
-            if (!string.IsNullOrEmpty(Visualization.LinkRefId))
-            {
-                EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
-                if (_page.Container is EbMobileForm)
-                {
-                    if (!string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
-                    {
-                        this.IsRedirect = true;
-                        EbMobilePage ParentForm = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
+            if (string.IsNullOrEmpty(Visualization.LinkRefId))
+                return;
 
-                        FormRender Renderer = new FormRender(_page, ParentForm, this.HeaderFrame.DataRow);
-                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
-                    }
+            EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
+            if (_page.Container is EbMobileForm)
+            {
+                if (string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
+                    return;
+
+                this.IsRedirect = true;
+                EbMobilePage ParentForm = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
+
+                int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
+                if (id != 0)
+                {
+                    FormRender Renderer = new FormRender(_page, ParentForm, id);
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }
         }
 
         void EditButtonClicked(object sender)
         {
-            if (!string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
+            if (string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
+                return;
+            EbMobilePage _page = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
+
+            if(_page != null)
             {
-                this.IsRedirect = true;
-                EbMobilePage _page = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
-                FormRender Renderer = new FormRender(_page, this.HeaderFrame.DataRow, this.HeaderFrame.Columns);
-                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
+                if (id != 0)
+                {
+                    this.IsRedirect = true;
+                    FormRender Renderer = new FormRender(_page, id);
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                }
             }
         }
 
         void VisNodeCommand(object Frame, EventArgs args)
         {
-            if (!string.IsNullOrEmpty(this.Visualization.LinkRefId))
-            {
-                EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
+            if (string.IsNullOrEmpty(this.Visualization.LinkRefId))
+                return;
 
-                if (_page.Container is EbMobileForm)
+            EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
+
+            if (_page != null && _page.Container is EbMobileForm)
+            {
+                int id = Convert.ToInt32((Frame as CustomFrame).DataRow["id"]);
+                if (id != 0)
                 {
-                    FormRender Renderer = new FormRender(_page, (Frame as CustomFrame).DataRow, this.DataTable.Columns);
+                    FormRender Renderer = new FormRender(_page, id);//to form edit mode
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }

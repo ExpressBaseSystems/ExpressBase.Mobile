@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 
@@ -97,7 +98,14 @@ namespace ExpressBase.Mobile
             }
             else
             {
-
+                EbDataTable dt = GetDisplayFromValue(value.ToString());
+                if (dt.Rows.Any())
+                {
+                    var display_membertext = dt.Rows[0][DisplayMember.ColumnName].ToString();
+                    Selected = new ComboBoxLabel { Text = display_membertext, Value = value };
+                    SearchBox.Text = display_membertext;
+                    this.ResultFrame.IsVisible = false;
+                }
             }
             return true;
         }
@@ -190,6 +198,24 @@ namespace ExpressBase.Mobile
             this.Selected = sender as ComboBoxLabel;
             this.SearchBox.Text = this.Selected.Text;
             this.ResultFrame.IsVisible = false;
+        }
+
+        private EbDataTable GetDisplayFromValue(string value)
+        {
+            try
+            {
+                byte[] b = Convert.FromBase64String(this.OfflineQuery.Code);
+                string sql = System.Text.Encoding.UTF8.GetString(b).TrimEnd(';');
+
+                string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{ValueMember.ColumnName} = {value} LIMIT 1";
+
+                return App.DataDB.DoQuery(WrpdQuery);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new EbDataTable();
+            }
         }
 
         private EbDataTable GetData(string text)

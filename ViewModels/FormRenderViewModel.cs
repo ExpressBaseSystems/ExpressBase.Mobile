@@ -1,7 +1,10 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Structures;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -17,29 +20,16 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Grid View
         {
-            get
-            {
-                return _dyView;
-            }
-            set
-            {
-                _dyView = value;
-            }
+            get { return _dyView; }
+            set { _dyView = value; }
         }
 
         private bool _saveButtonVisible;
         public bool SaveButtonVisible
         {
-            get
-            {
-                return this._saveButtonVisible;
-            }
+            get { return this._saveButtonVisible; }
             set
             {
-                if (this._saveButtonVisible == value)
-                {
-                    return;
-                }
                 this._saveButtonVisible = value;
                 this.NotifyPropertyChanged();
             }
@@ -48,30 +38,21 @@ namespace ExpressBase.Mobile.ViewModels
         private bool _editButtonVisible;
         public bool EditButtonVisible
         {
-            get
-            {
-                return this._editButtonVisible;
-            }
+            get { return this._editButtonVisible; }
             set
             {
-                if (this._editButtonVisible == value)
-                {
-                    return;
-                }
                 this._editButtonVisible = value;
                 this.NotifyPropertyChanged();
             }
         }
-
-        private EbDataRow RowOnEdit { set; get; }
-
-        private ColumnColletion ColumnsOnEdit { set; get; }
 
         private int RowId { set; get; } = 0;
 
         public Command EnableEditCommand { set; get; }
 
         public EbMobileForm ParentForm { set; get; }
+
+        public EbDataTable DataOnEdit { set; get; }
 
         //new mode
         public FormRenderViewModel(EbMobilePage Page)
@@ -84,27 +65,26 @@ namespace ExpressBase.Mobile.ViewModels
                 CreateView();
                 this.Form.CreateTableSchema();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
         }
 
         //edit mode
-        public FormRenderViewModel(EbMobilePage Page, EbDataRow CurrentRow, ColumnColletion Columns)
+        public FormRenderViewModel(EbMobilePage Page, int RowIdLocal)
         {
+            this.Mode = FormMode.EDIT;
             SaveButtonVisible = false;
             EditButtonVisible = true;
-
-            this.RowOnEdit = CurrentRow;
-            this.ColumnsOnEdit = Columns;
             try
             {
+                this.RowId = RowIdLocal;
                 this.Form = (Page.Container as EbMobileForm);
                 PageTitle = Page.DisplayName;
 
-                this.Mode = FormMode.EDIT;
-                this.RowId = Convert.ToInt32(this.RowOnEdit["id"]);
+                this.DataOnEdit = GetDataOnEdit();
+
                 this.CreateView();
                 this.Form.CreateTableSchema();
 
@@ -117,17 +97,17 @@ namespace ExpressBase.Mobile.ViewModels
         }
 
         //referenced mode
-        public FormRenderViewModel(EbMobilePage CurrentForm, EbMobilePage ParentPage, EbDataRow CurrentRow)
+        public FormRenderViewModel(EbMobilePage Page, EbMobilePage ParentPage, int ParentId)
         {
             SaveButtonVisible = true;
             EditButtonVisible = false;
             this.Mode = FormMode.REF;
             ParentForm = (ParentPage.Container as EbMobileForm);
-            RowOnEdit = CurrentRow;
             try
             {
-                this.Form = (CurrentForm.Container as EbMobileForm);
-                PageTitle = CurrentForm.DisplayName;
+                this.RowId = ParentId;
+                this.Form = (Page.Container as EbMobileForm);
+                PageTitle = Page.DisplayName;
 
                 this.CreateView();
                 this.Form.CreateTableSchema();
@@ -136,6 +116,23 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        private EbDataTable GetDataOnEdit()
+        {
+            EbDataTable dt;
+            try
+            {
+                string sql = $"SELECT * FROM {this.Form.TableName} WHERE id = {this.RowId}";
+
+                dt = App.DataDB.DoQuery(sql);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                dt = new EbDataTable();
+            }
+            return dt;
         }
 
         private void CreateView()
@@ -189,14 +186,14 @@ namespace ExpressBase.Mobile.ViewModels
 
                     if (this.Mode == FormMode.EDIT)
                     {
-                        EbDataColumn _col = this.ColumnsOnEdit[ctrl.Name];
+                        EbDataColumn _col = this.DataOnEdit.Columns[ctrl.Name];
                         if (_col != null)
                         {
-                            ctrl.SetValue(this.RowOnEdit[_col.ColumnIndex]);
+                            ctrl.SetValue(this.DataOnEdit.Rows[0][_col.ColumnIndex]);
                         }
                         else if (ctrl is EbMobileFileUpload)
                         {
-                            (ctrl as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, Convert.ToInt32(this.RowOnEdit["id"]));
+                            (ctrl as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
                         }
                         ctrl.SetAsReadOnly(true);
                     }
@@ -215,7 +212,7 @@ namespace ExpressBase.Mobile.ViewModels
             bool status;
 
             if (this.Mode == FormMode.REF)
-                status = this.Form.SaveWithParentId(this.RowOnEdit, ParentForm.TableName);
+                status = this.Form.SaveWithParentId(this.RowId, ParentForm.TableName);
             else
                 status = this.Form.Save(this.RowId);
 

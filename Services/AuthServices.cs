@@ -4,10 +4,8 @@ using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -27,7 +25,7 @@ namespace ExpressBase.Mobile.Services
 
         public static ApiAuthResponse TryAuthenticate(string username,string password)
         {
-            ApiAuthResponse resp = null;
+            ApiAuthResponse resp;
             try
             {
                 RestClient client = new RestClient(Settings.RootUrl);

@@ -125,31 +125,39 @@
                         Opacity=".5"/>
 
                     <StackLayout 
-                        AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
-                        AbsoluteLayout.LayoutFlags="PositionProportional">
+                        Padding="30"
+                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                        AbsoluteLayout.LayoutFlags="All">
                         <Frame 
                             HasShadow="False"
                             BackgroundColor="White"
-                            CornerRadius="6">
+                            CornerRadius="6"
+                            VerticalOptions="CenterAndExpand">
                             <Frame.Content>
                                 <StackLayout 
-                                Orientation="Vertical" 
-                                HeightRequest="100" 
-                                WidthRequest="150">
-                                    <ActivityIndicator 
-                                        IsVisible="True" 
-                                        IsRunning="True" 
-                                        VerticalOptions="Center" 
-                                        HorizontalOptions="Center" 
-                                        Color="Black" 
-                                        WidthRequest="30" 
-                                        HeightRequest="30"/>
-                                    <Label 
+                                Orientation="Vertical" Padding="0">
+                                    <Grid IsVisible="{Binding ShowLoader}" Margin="0,10,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label
+                                        Grid.Row="0"
                                         TextColor="Black" 
                                         VerticalOptions="Center" 
-                                        HorizontalOptions="Center" 
-                                        VerticalTextAlignment="Center" 
-                                        Text="Loading..."/>
+                                        Text="Loading..."
+                                        FontSize="16"/>
+
+                                        <ActivityIndicator
+                                        HorizontalOptions="End"
+                                        IsRunning="true" 
+                                        Color="#508bf9"
+                                        Grid.Column="0"
+                                        WidthRequest="30"
+                                        HeightRequest="30"/>
+                                    </Grid>
+                                    
                                 </StackLayout>
                             </Frame.Content>
                         </Frame>

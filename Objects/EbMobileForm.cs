@@ -69,9 +69,10 @@ namespace ExpressBase.Mobile
         //mobile prop
         private FormMode Mode { set; get; }
 
-        //ref mode prop
-        private EbDataRow ParentRow;
+        ////mobile prop and ref mode prop
+        private int ParentId;
 
+        //mobile prop
         private string ParentTable;
 
         private bool HasFileSelect
@@ -306,10 +307,10 @@ namespace ExpressBase.Mobile
             return false;
         }
 
-        public bool SaveWithParentId(EbDataRow _ParentRow, string ParentTableName)
+        public bool SaveWithParentId(int ParentId, string ParentTableName)
         {
             this.Mode = FormMode.REF;
-            this.ParentRow = _ParentRow;
+            this.ParentId = ParentId;
             this.ParentTable = ParentTableName;
 
             MobileFormData data = this.GetFormData(0);
@@ -373,7 +374,7 @@ namespace ExpressBase.Mobile
                 {
                     Name = this.ParentTable + "_id",
                     Type = EbDbTypes.Int32,
-                    Value = this.ParentRow["id"]
+                    Value = ParentId
                 });
             }
 
