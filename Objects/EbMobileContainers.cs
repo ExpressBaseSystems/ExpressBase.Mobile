@@ -64,4 +64,9 @@ namespace ExpressBase.Mobile
 
         public string LinkRefId { get; set; }
     }
+
+    public class EbMobileDashBoard : EbMobileContainer
+    {
+        public List<EbMobileDashBoardControls> ChiledControls { set; get; }
+    }
 }

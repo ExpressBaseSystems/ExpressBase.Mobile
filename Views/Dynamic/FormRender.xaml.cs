@@ -1,10 +1,9 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.ViewModels;
+﻿using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace ExpressBase.Mobile.Views
+namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FormRender : ContentPage

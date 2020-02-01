@@ -4,7 +4,6 @@ using ExpressBase.Mobile.Views;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
@@ -47,14 +46,14 @@ namespace ExpressBase.Mobile.ViewModels
 
         public LoginViewModel()
         {
-            this.LoginCommand = new Command(LoginAction);
+            this.LoginCommand = new Command(async () => await LoginAction());
             this.ResetConfig = new Command(ResetClicked);//bind reset button
             SetLogo();
         }
 
         public Command LoginCommand { set; get; }
 
-        private void LoginAction(object obj)
+        private async Task LoginAction()
         {
             if (!Settings.HasInternet)
             {
@@ -64,40 +63,27 @@ namespace ExpressBase.Mobile.ViewModels
 
             string _username = this.Email.Trim();
             string _password = this.PassWord.Trim();
-            Task.Run(() =>
+            if (CanLogin())
             {
-                if (CanLogin())
+                IsBusy = true;
+                ApiAuthResponse response = await Auth.TryAuthenticateAsync(_username, _password);
+                if (response.IsValid)
                 {
-                    Device.BeginInvokeOnMainThread(() => IsBusy = true);
-
-                    ApiAuthResponse response = Auth.TryAuthenticate(_username, _password);
-                    if (response.IsValid)
-                    {
-                        Auth.UpdateStore(response, _username, password);
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            Application.Current.MainPage.Navigation.PushAsync(new AppSelect());
-                        });
-                    }
-                    else
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            Application.Current.MainPage.DisplayAlert("Alert!", "User does not exist", "Ok");
-                        });
-                    }
+                    Auth.UpdateStore(response, _username, password);
+                    IsBusy = false;
+                    await Application.Current.MainPage.Navigation.PushAsync(new AppSelect());
                 }
                 else
                 {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        IsBusy = false;
-                        Application.Current.MainPage.DisplayAlert("Alert!", "Email/Password cannot be empty", "Ok");
-                    });
+                    IsBusy = false;
+                    await Application.Current.MainPage.DisplayAlert("Alert!", "User does not exist", "Ok");
                 }
-            });
+            }
+            else
+            {
+                IsBusy = false;
+                await Application.Current.MainPage.DisplayAlert("Alert!", "Email/Password cannot be empty", "Ok");
+            }
         }
 
         private bool CanLogin()

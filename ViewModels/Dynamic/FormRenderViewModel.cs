@@ -1,14 +1,11 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Structures;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.ViewModels
+namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class FormRenderViewModel : BaseViewModel
     {
@@ -162,7 +159,7 @@ namespace ExpressBase.Mobile.ViewModels
                 Text = (this.Mode == FormMode.EDIT) ? "Save Changes" : "Save",
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.EndAndExpand,
-                BackgroundColor = Color.FromHex("#508bf9"),
+                BackgroundColor = Color.FromHex("#0046bb"),
                 TextColor = Color.White,
                 Command = new Command(OnSaveClicked)
             };

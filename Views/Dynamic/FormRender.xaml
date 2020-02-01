@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.FormRender">
+             x:Class="ExpressBase.Mobile.Views.Dynamic.FormRender">
     
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="0" Padding="0" BackgroundColor="Transparent">

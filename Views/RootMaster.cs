@@ -16,7 +16,7 @@ namespace ExpressBase.Mobile.Views
                 Master = new SideBar(); 
                 Detail = new NavigationPage
                 {
-                    BarBackgroundColor = Color.FromHex("315eff"),
+                    BarBackgroundColor = Color.FromHex("0046bb"),
                     BarTextColor = Color.White
                 };
 

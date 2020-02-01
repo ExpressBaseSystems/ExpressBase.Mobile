@@ -1,7 +1,11 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
+using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -10,6 +14,8 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ObjectsRenderer : ContentPage
     {
+        public int BackButtonCount { set; get; } = 0;
+
         public ObjectsRenderer()
         {
             InitializeComponent();
@@ -20,17 +26,20 @@ namespace ExpressBase.Mobile.Views
 
         protected override bool OnBackButtonPressed()
         {
-            Device.BeginInvokeOnMainThread(async () =>
+            BackButtonCount++;
+            if (BackButtonCount == 2)
             {
-                bool status = await this.DisplayAlert("Alert!", "Do you really want to exit?", "Yes", "No");
-                if (status)
+                BackButtonCount = 0;
+                return false;
+            }
+            else
+            {
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    INativeHelper nativeHelper = null;
-                    nativeHelper = DependencyService.Get<INativeHelper>();
-                    nativeHelper.CloseApp();
-                }
-            });
-            return true;
+                    DependencyService.Get<IToast>().Show("Press again to EXIT!");
+                });
+                return true;
+            }
         }
 
         public void RefreshComplete(View view)
@@ -38,21 +47,38 @@ namespace ExpressBase.Mobile.Views
             scrollView.Content = view; 
         }
 
-        private void RefreshView_Refreshing(object sender, System.EventArgs e)
+        private async void RefreshView_Refreshing(object sender, System.EventArgs e)
         {
-            if (!Settings.HasInternet)
+            IToast toast = DependencyService.Get<IToast>();
+            try
             {
-                DependencyService.Get<IToast>().Show("Not connected to internet!");
-                return;
-            }
+                if (!Settings.HasInternet)
+                {
+                    toast.Show("Not connected to Internet!");
+                    return;
+                }
 
-            RootRefreshView.IsRefreshing = true;
-            var vm = (BindingContext as ObjectsRenderViewModel);
-            vm.SetUpData();
-            Store.Remove(AppConst.OBJ_COLLECTION);
-            vm.BuildView();
-            scrollView.Content = vm.View;
-            RootRefreshView.IsRefreshing = false;
+                RootRefreshView.IsRefreshing = true;
+
+                var Coll = await RestServices.Instance.GetEbObjects(Settings.AppId, Settings.LocationId, false);
+
+                if(Coll != null)
+                {
+                    await Store.SetValueAsync(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(Coll.Pages));
+                    var vm = (BindingContext as ObjectsRenderViewModel);
+                    vm.ObjectList = Coll.Pages;
+                    vm.BuildView();
+                    scrollView.Content = vm.View;
+                }
+
+                RootRefreshView.IsRefreshing = false;
+                toast.Show("Refreshed");
+            }
+            catch(Exception ex)
+            {
+                toast.Show("Something went wrong. Please try again");
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

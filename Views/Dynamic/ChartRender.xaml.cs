@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace ExpressBase.Mobile.Views
+namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ReportRender : ContentPage
+    public partial class ChartRender : ContentPage
     {
-        public ReportRender()
+        public ChartRender()
         {
             InitializeComponent();
         }

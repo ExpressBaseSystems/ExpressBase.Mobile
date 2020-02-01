@@ -1,15 +1,12 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.ViewModels;
-using ExpressBase.Mobile.Views;
+using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.ViewModels
+namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class ListViewRenderViewModel : BaseViewModel
     {
@@ -84,6 +81,11 @@ namespace ExpressBase.Mobile.ViewModels
                 else if (_page.Container is EbMobileVisualization)
                 {
                     LinkedListViewRender Renderer = new LinkedListViewRender(_page, this.Visualization, (Frame as CustomFrame));
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                }
+                else if (_page.Container is EbMobileDashBoard)
+                {
+                    DashBoardRender Renderer = new DashBoardRender(_page, (Frame as CustomFrame).DataRow);
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }

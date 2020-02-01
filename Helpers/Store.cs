@@ -25,11 +25,40 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
+        public static async Task<string> GetValueAsync(string key)
+        {
+            try
+            {
+                string temp = await SecureStorage.GetAsync(key);
+                if (temp == null || temp == "null")
+                    return null;
+                else
+                    return temp;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
         public static void SetValue(string key,string val)
         {
             try
             {
                 SecureStorage.SetAsync(key,val);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public static async Task SetValueAsync(string key, string val)
+        {
+            try
+            {
+                await SecureStorage.SetAsync(key, val);
             }
             catch (Exception e)
             {

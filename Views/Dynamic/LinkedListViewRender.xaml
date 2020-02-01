@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.LinkedListViewRender">
+             x:Class="ExpressBase.Mobile.Views.Dynamic.LinkedListViewRender">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -21,14 +21,13 @@
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
-        <Grid>
+        <Grid BackgroundColor="Transparent">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" BackgroundColor="#315eff" x:Name="HeaderContainer">
+            <Grid Grid.Row="0" BackgroundColor="{StaticResource Blue-Dark}" x:Name="HeaderContainer">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*" />
@@ -49,12 +48,13 @@
             </ScrollView>
 
             <Button
-                Grid.Row="2"
+                Grid.Row="1"
                 Text="&#xf067;"
                 Margin="0,0,10,10"
+                VerticalOptions="End"
                 HorizontalOptions="End"
                 TextColor="White"
-                BackgroundColor="#315eff"
+                BackgroundColor="{StaticResource Blue-Dark}"
                 HeightRequest="60"
                 WidthRequest="60"
                 CornerRadius="30"

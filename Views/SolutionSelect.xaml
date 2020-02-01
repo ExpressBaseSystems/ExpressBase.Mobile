@@ -28,7 +28,7 @@
                 </ScrollView.VerticalOptions>
                 
                 <StackLayout
-                    BackgroundColor="#508bf9"
+                    BackgroundColor="{StaticResource Blue-Dark}"
                     VerticalOptions="FillAndExpand" 
                     WidthRequest="{OnPlatform Default='-1',
                                               UWP='350'}">
@@ -137,7 +137,7 @@
                             Grid.Column="1"
                             Margin="0,20,20,0"
                             Text="&#xf040;"
-                            BackgroundColor="#508bf9"
+                            BackgroundColor="{StaticResource Blue-Dark}"
                             BorderColor="#508bf9"
                             BorderWidth="1"
                             TextColor="White"
@@ -154,7 +154,7 @@
                             Text="Save"
                             VerticalOptions="End"
                             HorizontalOptions="FillAndExpand"
-                            BackgroundColor="#508bf9"
+                            BackgroundColor="{StaticResource Blue-Dark}"
                             TextColor="White"
                             Command="{Binding StoreSolutionUrl}"
                             IsEnabled="{Binding IsSaveEnabled}"/>

@@ -23,6 +23,8 @@
             <Style x:Key="ContentPageStyle" TargetType="ContentPage">
                 <Setter Property="NavigationPage.HasNavigationBar" Value="True" />
                 <Setter Property="NavigationPage.HasBackButton" Value="True" />
+                <Setter Property="NavigationPage.BarBackgroundColor" Value="{StaticResource Blue-Dark}"></Setter>
+                <Setter Property="NavigationPage.BarTextColor" Value="{StaticResource Gray-White}"></Setter>
             </Style>
 
             <!--  Common style for toolbar labels  -->

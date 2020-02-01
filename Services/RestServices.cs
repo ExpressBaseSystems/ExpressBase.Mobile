@@ -43,17 +43,16 @@ namespace ExpressBase.Mobile.Services
             return Vresp;
         }
 
-        public async Task<List<AppData>> GetAppCollections()
+        public List<AppData> GetAppCollections()
         {
             List<AppData> _Apps = null;
             try
             {
-                RestClient client = new RestClient(Settings.RootUrl);
                 RestRequest request = new RestRequest("api/menu", Method.GET);
-                request.AddHeader(AppConst.BTOKEN, Settings.RToken);
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, Settings.RToken);
 
-                var response = await client.ExecuteAsync(request);
+                var response = Client.Execute(request);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     _Apps = JsonConvert.DeserializeObject<AppCollection>(response.Content).Applications;
@@ -70,16 +69,15 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                RestClient client = new RestClient(Settings.RootUrl);
                 RestRequest request = new RestRequest("api/objects_by_app", Method.GET);
-                request.AddHeader(AppConst.BTOKEN, Settings.RToken);
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, Settings.RToken);
 
                 request.AddParameter("appid", AppId);
                 request.AddParameter("locid", LocationId);
                 request.AddParameter("pull_data", PullData);
 
-                var response = await client.ExecuteAsync(request);
+                var response = await Client.ExecuteAsync(request);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return JsonConvert.DeserializeObject<MobilePageCollection>(response.Content);
@@ -97,8 +95,6 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                RestClient client = new RestClient(Settings.RootUrl);
-
                 RestRequest request = new RestRequest("api/push_data", Method.POST);
                 request.AddParameter("webform_data", JsonConvert.SerializeObject(WebFormData));
                 request.AddParameter("rowid", RowId);
@@ -106,10 +102,10 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("locid", LocId);
 
                 // auth Headers for api
-                request.AddHeader(AppConst.BTOKEN, Settings.RToken);
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, Settings.RToken);
 
-                IRestResponse response = await client.ExecuteAsync(request);
+                IRestResponse response = await Client.ExecuteAsync(request);
                 return JsonConvert.DeserializeObject<PushResponse>(response.Content);
             }
             catch (Exception e)
@@ -124,7 +120,6 @@ namespace ExpressBase.Mobile.Services
             List<ApiFileData> FileData = null;
             try
             {
-                RestClient client = new RestClient(Settings.RootUrl);
                 RestRequest request = new RestRequest("api/files/upload", Method.POST);
 
                 foreach (FileWrapper file in Files)
@@ -133,10 +128,10 @@ namespace ExpressBase.Mobile.Services
                 }
 
                 // auth Headers for api
-                request.AddHeader(AppConst.BTOKEN, Settings.RToken);
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, Settings.RToken);
 
-                IRestResponse response = await client.ExecuteAsync(request);
+                IRestResponse response = await Client.ExecuteAsync(request);
                 if (response.StatusCode == HttpStatusCode.OK)
                     FileData = JsonConvert.DeserializeObject<List<ApiFileData>>(response.Content);
             }

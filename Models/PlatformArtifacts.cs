@@ -72,6 +72,8 @@ namespace ExpressBase.Mobile.Models
                     return "Forms";
                 else if (p.Container is EbMobileVisualization)
                     return "List";
+                else if (p.Container is EbMobileDashBoard)
+                    return "DashBoards";
                 else
                     return "Miscellaneous";
             }

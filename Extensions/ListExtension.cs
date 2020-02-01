@@ -14,6 +14,9 @@ namespace ExpressBase.Mobile.Extensions
 
             foreach (MobilePagesWraper wrpr in Pages)
             {
+                if (wrpr.IsHidden)
+                    continue;
+
                 if (!dict.ContainsKey(wrpr.ContainerType))
                     dict.Add(wrpr.ContainerType, new List<MobilePagesWraper>());
                 dict[wrpr.ContainerType].Add(wrpr);

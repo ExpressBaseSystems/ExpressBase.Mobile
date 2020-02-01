@@ -5,7 +5,7 @@ using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
-using ExpressBase.Mobile.Views;
+using ExpressBase.Mobile.Views.Dynamic;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,8 +18,6 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class ObjectsRenderViewModel : BaseViewModel
     {
-        const int RefreshDuration = 2;
-
         private bool _isRefreshing;
 
         public bool IsRefreshing
@@ -46,7 +44,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public View View { set; get; }
 
-        public List<MobilePagesWraper> ObjectList { private set; get; }
+        public List<MobilePagesWraper> ObjectList { set; get; }
 
         public Command SyncButtonCommand => new Command(OnSyncClick);
 
@@ -63,27 +61,14 @@ namespace ExpressBase.Mobile.ViewModels
         {
             string _objlist = Store.GetValue(AppConst.OBJ_COLLECTION);
 
-            if (_objlist == null)
-            {
-                bool _pull = this.PulledTableExist() ? false : true;
-
-                MobilePageCollection Coll = Api.GetEbObjects(Settings.AppId, Settings.LocationId, _pull);
-                this.ObjectList = Coll.Pages;
-
-                Store.SetValue(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(Coll.Pages));
-
-                if (Coll.TableNames != null)
-                {
-                    Store.SetValue(string.Format(AppConst.APP_PULL_TABLE, Settings.AppId), string.Join(",", Coll.TableNames.ToArray()));
-
-                    if (_pull == true && Coll.TableNames.Count > 0)
-                        this.LoadDTAsync(Coll.Data);
-                }
-            }
-            else
+            if(_objlist != null)
             {
                 List<MobilePagesWraper> _list = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
                 this.ObjectList = _list;
+            }
+            else
+            {
+                this.ObjectList = new List<MobilePagesWraper>();
             }
         }
 
@@ -98,6 +83,8 @@ namespace ExpressBase.Mobile.ViewModels
 
             foreach (KeyValuePair<string, List<MobilePagesWraper>> pair in grouped)
             {
+                if (!pair.Value.Any())
+                    continue;
                 var groupLayout = new StackLayout
                 {
                     Children =
@@ -165,30 +152,6 @@ namespace ExpressBase.Mobile.ViewModels
             groupLayout.Children.Add(grid);
         }
 
-        private bool PulledTableExist()
-        {
-            string sv = Store.GetValue(string.Format(AppConst.APP_PULL_TABLE, Settings.AppId));
-
-            string[] Tables = (sv == null) ? new string[0] : sv.Split(',');
-
-            if (Tables.Length <= 0)
-                return false;
-
-            foreach (string s in Tables)
-            {
-                var status = App.DataDB.DoScalar(string.Format(StaticQueries.TABLE_EXIST, s));
-                if (Convert.ToInt32(status) <= 0)
-                    return false;
-            }
-            return true;
-        }
-
-        private async void LoadDTAsync(EbDataSet DS)
-        {
-            if (DS.Tables.Count > 0)
-                await CommonServices.Instance.LoadLocalData(DS);
-        }
-
         private void OnSyncClick(object sender)
         {
             IToast toast = DependencyService.Get<IToast>();
@@ -233,6 +196,8 @@ namespace ExpressBase.Mobile.ViewModels
         private void ObjFrame_Clicked(object obj,EventArgs e)
         {
             MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
+            IToast toast = DependencyService.Get<IToast>();
+
             Task.Run(() =>
             {
                 Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Loading page..."; });
@@ -240,23 +205,24 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     EbMobilePage page = HelperFunctions.GetPage(item.RefId);
                     if (page == null)
-                        (Application.Current.MainPage as MasterDetailPage).Detail.DisplayAlert("Alert!", "This page is no longer available.", "Ok");
+                        toast.Show("This page is no longer available.");
 
                     if (page.Container is EbMobileForm)
                     {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
-                        });
+                        PushPageAsync(new FormRender(page));
                     }
                     else if (page.Container is EbMobileVisualization)
                     {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListViewRender(page));
-                        });
+                        PushPageAsync(new ListViewRender(page));
+                    }
+                    else if (page.Container is EbMobileDashBoard)
+                    {
+                        PushPageAsync(new DashBoardRender(page));
+                    }
+                    else
+                    {
+                        Device.BeginInvokeOnMainThread(() =>IsBusy = false);
+                        toast.Show("This page is no longer available.");
                     }
                 }
                 catch (Exception ex)
@@ -264,6 +230,15 @@ namespace ExpressBase.Mobile.ViewModels
                     Device.BeginInvokeOnMainThread(() => IsBusy = false);
                     Console.WriteLine(ex.StackTrace);
                 }
+            });
+        }
+
+        private void PushPageAsync(ContentPage page)
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsBusy = false;
+                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(page);
             });
         }
     }

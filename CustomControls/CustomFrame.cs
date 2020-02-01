@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,19 +18,21 @@ namespace ExpressBase.Mobile.CustomControls
 
         public CustomFrame() { }
 
-        public CustomFrame(EbDataRow Row, ColumnColletion Columns, EbMobileVisualization Visualization,bool IsHeader = false)
+        public CustomFrame(EbDataRow Row, ColumnColletion Columns, EbMobileVisualization Visualization, bool IsHeader = false)
         {
-            if (!IsHeader)
-            {
-                this.Padding = new Thickness(10);
-            }
             this.IsHeader = IsHeader;
             this.DataRow = Row;
             this.Columns = Columns;
-            this.CreateGrid(Visualization.DataLayout.CellCollection, Visualization.DataLayout.RowCount, Visualization.DataLayout.RowCount);
+            var grid = this.CreateGrid(Visualization.DataLayout.CellCollection, Visualization.DataLayout.RowCount, Visualization.DataLayout.RowCount);
+
+            if (!IsHeader)
+            {
+                this.Padding = new Thickness(10);
+                this.RenderSyncFlag(grid);
+            }
         }
 
-        void CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
+        Grid CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
         {
             Grid G = new Grid { BackgroundColor = Color.Transparent };
 
@@ -46,6 +49,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             FillData(CellCollection, G);
             this.Content = G;
+            return G;
         }
 
         private void FillData(List<EbMobileTableCell> CellCollection, Grid OuterGrid)
@@ -56,17 +60,14 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
 
-                    string _text = string.Empty;
+                    string _text;
                     if (!string.IsNullOrEmpty(_col.TextFormat))
-                    {
                         _text = _col.TextFormat.Replace("{value}", this.DataRow[_col.ColumnName].ToString());
-                    }
                     else
-                    {
                         _text = this.DataRow[_col.ColumnName].ToString();
-                    }
 
                     Label _label = new Label { Text = _text };
+
                     this.ApplyLabelStyle(_label, _col);
 
                     OuterGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
@@ -101,23 +102,38 @@ namespace ExpressBase.Mobile.CustomControls
             }
             else
             {
-                if (this.IsHeader)
-                {
-                    Label.TextColor = Color.White;
-                }
+                if (this.IsHeader) Label.TextColor = Color.White;
             }
         }
 
         public void SetBackGroundColor(int RowIndex)
         {
-            if(RowIndex % 2 == 0)
-            {
+            if (RowIndex % 2 == 0)
                 this.BackgroundColor = Color.Default;
-            }
             else
-            {
                 this.BackgroundColor = Color.FromHex("F2F2F2");
-            }
+        }
+
+        private void RenderSyncFlag(Grid grid)
+        {
+            EbDataColumn col = Columns.Find(item => item.ColumnName == "eb_synced");
+            if (col == null)
+                return;
+
+            int synced = Convert.ToInt32(DataRow["eb_synced"]);
+
+            var lbl = new Label
+            {
+                VerticalOptions = LayoutOptions.Start,
+                HorizontalOptions = LayoutOptions.End,
+                TextColor = (synced == 0) ? Color.FromHex("ff5f5f") : Color.Green,
+                Text = (synced == 0) ? "\uf06a" : "\uf058",
+                FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+            };
+
+            int colLength = grid.ColumnDefinitions.Count;
+
+            grid.Children.Add(lbl, colLength - 1, 0);
         }
     }
 }

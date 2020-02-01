@@ -95,7 +95,7 @@
                             Text="Login"
                             VerticalOptions="EndAndExpand"
                             HorizontalOptions="FillAndExpand"
-                            BackgroundColor="#315eff"
+                            BackgroundColor="{StaticResource Blue-Dark}"
                             TextColor="White"
                             Command="{Binding LoginCommand}"/>
 

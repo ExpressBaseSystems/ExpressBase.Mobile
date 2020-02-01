@@ -6,14 +6,10 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 
 namespace ExpressBase.Mobile.ViewModels
 {
@@ -111,8 +107,13 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 string _sid = this.SolutionUrl.Split('.')[0];
-                Store.SetValue(AppConst.SID, _sid);
-                Store.SetValue(AppConst.ROOT_URL, this.SolutionUrl);
+                await Store.SetValueAsync(AppConst.SID, _sid);
+                await Store.SetValueAsync(AppConst.ROOT_URL, this.SolutionUrl);
+
+                Store.Remove(AppConst.OBJ_COLLECTION);//remove obj collection
+                Store.Remove(AppConst.APP_COLLECTION);
+                Store.Remove(AppConst.APPID);
+
                 this.CreateDB(_sid);
                 this.CreateDir();
 

@@ -95,7 +95,7 @@ namespace ExpressBase.Mobile.ViewModels.Shared
             Store.Remove(AppConst.APP_COLLECTION);
             Application.Current.MainPage = new NavigationPage(new Login())
             {
-                BarBackgroundColor = Color.FromHex("315eff"),
+                BarBackgroundColor = Color.FromHex("0046bb"),
                 BarTextColor = Color.White
             };
         }
@@ -113,7 +113,7 @@ namespace ExpressBase.Mobile.ViewModels.Shared
             //Store.Remove(AppConst.APP_COLLECTION);
             Application.Current.MainPage = new NavigationPage(new SolutionSelect())
             {
-                BarBackgroundColor = Color.FromHex("315eff"),
+                BarBackgroundColor = Color.FromHex("0046bb"),
                 BarTextColor = Color.White
             };
             App.RootMaster.IsPresented = false;

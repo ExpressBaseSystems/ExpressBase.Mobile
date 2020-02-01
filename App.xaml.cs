@@ -41,7 +41,7 @@ namespace ExpressBase.Mobile
         {
             MainPage = new NavigationPage
             {
-                BarBackgroundColor = Color.FromHex("315eff"),
+                BarBackgroundColor = Color.FromHex("0046bb"),
                 BarTextColor = Color.White
             };
 

@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -35,6 +36,33 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("password", ToMD5Hash(string.Concat(password, username)));
 
                 var response = client.Execute(request);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
+                }
+                else
+                    resp = new ApiAuthResponse { IsValid = false };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                resp = new ApiAuthResponse { IsValid = false };
+            }
+            return resp;
+        }
+
+        public static async Task<ApiAuthResponse> TryAuthenticateAsync(string username, string password)
+        {
+            ApiAuthResponse resp;
+            try
+            {
+                RestClient client = new RestClient(Settings.RootUrl);
+                RestRequest request = new RestRequest("api/auth", Method.GET);
+
+                request.AddParameter("username", username.Trim());
+                request.AddParameter("password", ToMD5Hash(string.Concat(password, username)));
+
+                var response = await client.ExecuteAsync(request);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);

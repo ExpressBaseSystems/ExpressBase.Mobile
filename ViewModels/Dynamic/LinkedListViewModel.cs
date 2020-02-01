@@ -1,13 +1,13 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Views;
+using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.ViewModels
+namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class LinkedListViewModel : BaseViewModel
     {
