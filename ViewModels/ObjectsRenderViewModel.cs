@@ -196,11 +196,12 @@ namespace ExpressBase.Mobile.ViewModels
         private void ObjFrame_Clicked(object obj,EventArgs e)
         {
             MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
-            IToast toast = DependencyService.Get<IToast>();
-
             Task.Run(() =>
             {
+                IToast toast = DependencyService.Get<IToast>();
+
                 Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Loading page..."; });
+
                 try
                 {
                     EbMobilePage page = HelperFunctions.GetPage(item.RefId);
@@ -209,15 +210,27 @@ namespace ExpressBase.Mobile.ViewModels
 
                     if (page.Container is EbMobileForm)
                     {
-                        PushPageAsync(new FormRender(page));
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
+                        });
                     }
                     else if (page.Container is EbMobileVisualization)
                     {
-                        PushPageAsync(new ListViewRender(page));
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListViewRender(page));
+                        });
                     }
                     else if (page.Container is EbMobileDashBoard)
                     {
-                        PushPageAsync(new DashBoardRender(page));
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DashBoardRender(page));
+                        });
                     }
                     else
                     {
@@ -230,15 +243,6 @@ namespace ExpressBase.Mobile.ViewModels
                     Device.BeginInvokeOnMainThread(() => IsBusy = false);
                     Console.WriteLine(ex.StackTrace);
                 }
-            });
-        }
-
-        private void PushPageAsync(ContentPage page)
-        {
-            Device.BeginInvokeOnMainThread(async () =>
-            {
-                IsBusy = false;
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(page);
             });
         }
     }

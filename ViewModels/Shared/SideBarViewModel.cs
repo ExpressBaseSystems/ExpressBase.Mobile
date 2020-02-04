@@ -121,8 +121,8 @@ namespace ExpressBase.Mobile.ViewModels.Shared
 
         public void ChangeAppClicked(object sender)
         {
-            Store.Remove(AppConst.APPID);
-            Store.Remove(AppConst.OBJ_COLLECTION);
+        //    Store.Remove(AppConst.APPID);
+        //    Store.Remove(AppConst.OBJ_COLLECTION);
 
             App.RootMaster.IsPresented = false;
             App.RootMaster.Detail.Navigation.PushAsync(new AppSelect());

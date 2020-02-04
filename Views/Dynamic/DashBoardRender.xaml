@@ -6,9 +6,20 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Dynamic.DashBoardRender"
              BackgroundColor="#eeeeee">
+
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+        </Grid>
+    </NavigationPage.TitleView>
+
     <ContentPage.Content>
         <Grid>
-            <ScrollView x:Name="DashBoardContainer" Padding="15">
+            <ScrollView x:Name="DashBoardContainer" Padding="10">
                 
             </ScrollView>
         </Grid>

@@ -25,6 +25,8 @@ namespace ExpressBase.Mobile.Models
         byte[] GetPhoto(string url);
 
         string[] GetFiles(string Url, string Pattern);
+
+        string GetBaseURl();
     }
 
     public interface IToast

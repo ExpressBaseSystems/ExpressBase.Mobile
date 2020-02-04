@@ -16,10 +16,6 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class AppSelectViewModel : BaseViewModel
     {
-        private int SelectedAppid { set; get; }
-
-        private string SelectedAppName { set; get; }
-
         public IList<AppData> Applications { get; private set; }
 
         public Command AppSelectedCommand => new Command(async (obj) => await ItemSelected(obj));
@@ -56,26 +52,32 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 var apData = selected as AppData;
 
-                if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                if (Settings.AppId != apData.AppId)
                 {
-                    DependencyService.Get<IToast>().Show("Not connected to internet!");
-                    return;
+                    Store.Remove(AppConst.OBJ_COLLECTION);
+
+                    if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                    {
+                        DependencyService.Get<IToast>().Show("Not connected to internet!");
+                        return;
+                    }
+
+                    await Store.SetValueAsync(AppConst.APPID, apData.AppId.ToString());
+                    await Store.SetValueAsync(AppConst.APPNAME, apData.AppName);
+
+                    IsBusy = true;
+                    await PullObjectsByApp(apData.AppId);
+
+                    IsBusy = false;
+                    App.RootMaster = new RootMaster(typeof(ObjectsRenderer));
+                    Application.Current.MainPage = App.RootMaster;
                 }
-
-                this.SelectedAppid = apData.AppId;
-                this.SelectedAppName = apData.AppName;
-
-                await Store.SetValueAsync(AppConst.APPID, this.SelectedAppid.ToString());
-                await Store.SetValueAsync(AppConst.APPNAME, this.SelectedAppName.ToString());
-
-                IsBusy = true;
-                await PullObjectsByApp(this.SelectedAppid);
-
-                IsBusy = false;
-                App.RootMaster = new RootMaster(typeof(ObjectsRenderer));
-                Application.Current.MainPage = App.RootMaster;
+                else
+                {
+                    await App.RootMaster.Detail.Navigation.PopAsync(true);
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }

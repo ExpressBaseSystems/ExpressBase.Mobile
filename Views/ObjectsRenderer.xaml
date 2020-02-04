@@ -36,6 +36,7 @@
                 Refreshing="RefreshView_Refreshing">
             <Grid>
                 <ScrollView 
+                Padding="5"
                 x:Name="scrollView" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All"/>

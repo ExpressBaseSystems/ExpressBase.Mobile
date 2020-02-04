@@ -1,9 +1,12 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -39,18 +42,24 @@ namespace ExpressBase.Mobile
 
         private void InitXView()
         {
-            this.XView = new CustomShadowFrame
+            var wview = new WebView
             {
-                HasShadow = true,
-                CornerRadius = 4,
-                Content = new WebView
+                MinimumHeightRequest = 100,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Source = new UrlWebViewSource
                 {
-                    Source = new HtmlWebViewSource
-                    {
-                        Html = $"<html><body>{GetHtml()}</body></html>"
-                    }
+                    Url = DependencyService.Get<INativeHelper>().GetBaseURl() + "WebView/DataTable.html"
                 }
             };
+            wview.Navigated += Wview_Navigated;
+            this.XView = wview;
+        }
+
+        private void Wview_Navigated(object sender, WebNavigatedEventArgs e)
+        {
+            string dt_string = JsonConvert.SerializeObject(this.Data);
+            (sender as WebView).Eval($"drawTable({dt_string})");
         }
 
         private void SetData()
@@ -97,11 +106,11 @@ namespace ExpressBase.Mobile
 
         private string GetHtml()
         {
-            string Html = "<table><thead><tr>";
+            string Html = "<table style='border-collapse: collapse;width: 100%;'><thead><tr>";
 
             foreach (EbDataColumn col in this.Data.Columns)
             {
-                Html += $"<th style='border:1px solid #333'>{col.ColumnName}</th>";
+                Html += $"<th style='border:1px solid #ccc'>{col.ColumnName}</th>";
             }
 
             Html += $"</tr></thead><tbody>";
@@ -111,7 +120,7 @@ namespace ExpressBase.Mobile
                 Html += "<tr>";
                 foreach (object item in row)
                 {
-                    Html += $"<td style='border:1px solid #333'>{item.ToString()}</td>";
+                    Html += $"<td style='border:1px solid #ccc'>{item.ToString()}</td>";
                 }
                 Html += "</tr>";
             }
