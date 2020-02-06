@@ -1,9 +1,11 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
@@ -16,23 +18,32 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public StackLayout View { set; get; }
 
+        public StackLayout FilterDialog { set; get; }
+
+        public Dictionary<string, View> FilterControls { set; get; }
+
         public ListViewRenderViewModel(EbMobilePage Page)
         {
             PageTitle = Page.DisplayName;
             this.Visualization = (Page.Container as EbMobileVisualization);
             this.GetData();
             this.CreateView();
+
+            if (this.Visualization.Filters.Any())
+                CreateFilter();
         }
 
-        private void GetData()
+        private void GetData(List<DbParameter> Parameters = null)
         {
-            byte[] b = Convert.FromBase64String(this.Visualization.OfflineQuery.Code);
-            string sql = HelperFunctions.WrapSelectQuery(System.Text.Encoding.UTF8.GetString(b));
-
-            List<DbParameter> _DbParams = new List<DbParameter>();
             try
             {
-                DataTable = App.DataDB.DoQuery(sql, _DbParams.ToArray());
+                string sql = HelperFunctions.B64ToString(this.Visualization.OfflineQuery.Code);
+                string wrapedQuery = HelperFunctions.WrapSelectQuery(sql, Parameters);
+
+                if(Parameters!=null)
+                    DataTable = App.DataDB.DoQuery(wrapedQuery, Parameters.ToArray());
+                else
+                    DataTable = App.DataDB.DoQuery(wrapedQuery);
             }
             catch (Exception e)
             {
@@ -46,7 +57,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             StackLayout StackL = new StackLayout { Spacing = 0 };
 
             var tapGestureRecognizer = new TapGestureRecognizer();
-            tapGestureRecognizer.Tapped += VisNodeCommand;
+            tapGestureRecognizer.Tapped += ListItem_Clicked;
             int _rowColCount = 1;
 
             foreach (EbDataRow _row in this.DataTable.Rows)
@@ -56,14 +67,50 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
 
                 StackL.Children.Add(CustFrame);
-
                 _rowColCount++;
             }
-
             this.View = StackL;
         }
 
-        void VisNodeCommand(object Frame, EventArgs args)
+        private void CreateFilter()
+        {
+            FilterControls = new Dictionary<string, View>();
+
+            var stack = new StackLayout { Orientation = StackOrientation.Vertical };
+
+            foreach (EbMobileDataColumn col in this.Visualization.Filters)
+            {
+                stack.Children.Add(new Label
+                {
+                    Text = col.ColumnName,
+                    VerticalTextAlignment = TextAlignment.Center,
+                    FontSize = 15
+                });
+                var view = this.GetFilterControl(col);
+                view.Margin = new Thickness(0, 0, 0, 10);
+                stack.Children.Add(view);
+                FilterControls.Add(col.ColumnName, view);
+            }
+            this.FilterDialog = stack;
+        }
+
+        private View GetFilterControl(EbMobileDataColumn col)
+        {
+            if (col.Type == EbDbTypes.String)
+                return new TextBox();
+            else if (col.Type == EbDbTypes.Int16 || col.Type == EbDbTypes.Int32)
+                return new TextBox() { Keyboard = Keyboard.Numeric };
+            else if (col.Type == EbDbTypes.Decimal || col.Type == EbDbTypes.Double)
+                return new TextBox() { Keyboard = Keyboard.Numeric };
+            else if (col.Type == EbDbTypes.Date || col.Type == EbDbTypes.DateTime)
+                return new CustomDatePicker();
+            else if (col.Type == EbDbTypes.Boolean)
+                return new CustomCheckBox();
+            else
+                return new TextBox();
+        }
+
+        void ListItem_Clicked(object Frame, EventArgs args)
         {
             if (!string.IsNullOrEmpty(this.Visualization.LinkRefId))
             {
@@ -89,6 +136,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }
+        }
+
+        public void Refresh(List<DbParameter> parameters)
+        {
+            if (parameters != null)
+                this.GetData(parameters);
+            this.CreateView();
         }
     }
 }

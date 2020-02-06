@@ -87,48 +87,17 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                bool _pull = this.PulledTableExist() ? false : true;
-
-                MobilePageCollection Coll = await RestServices.Instance.GetEbObjects(appid, Settings.LocationId, _pull);
+                MobilePageCollection Coll = await RestServices.Instance.GetEbObjects(appid, Settings.LocationId, true);
 
                 await Store.SetValueAsync(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(Coll.Pages));
 
-                if (Coll.TableNames != null)
-                {
-                    Store.SetValue(string.Format(AppConst.APP_PULL_TABLE, Settings.AppId), string.Join(",", Coll.TableNames.ToArray()));
-
-                    if (_pull == true && Coll.TableNames.Count > 0)
-                        await this.LoadDTAsync(Coll.Data);
-                }
+                if (Coll.TableNames?.Count > 0)
+                    await CommonServices.Instance.LoadLocalData(Coll.Data);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-        }
-
-        private bool PulledTableExist()
-        {
-            string sv = Store.GetValue(string.Format(AppConst.APP_PULL_TABLE, Settings.AppId));
-
-            string[] Tables = (sv == null) ? new string[0] : sv.Split(',');
-
-            if (Tables.Length <= 0)
-                return false;
-
-            foreach (string s in Tables)
-            {
-                var status = App.DataDB.DoScalar(string.Format(StaticQueries.TABLE_EXIST, s));
-                if (Convert.ToInt32(status) <= 0)
-                    return false;
-            }
-            return true;
-        }
-
-        private async Task LoadDTAsync(EbDataSet DS)
-        {
-            if (DS.Tables.Count > 0)
-                await CommonServices.Instance.LoadLocalData(DS);
         }
     }
 }

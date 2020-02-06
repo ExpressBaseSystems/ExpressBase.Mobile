@@ -28,9 +28,21 @@ namespace ExpressBase.Mobile.Helpers
             return Wrpr.ToPage();
         }
 
-        public static string WrapSelectQuery(string sql)
+        public static string WrapSelectQuery(string sql, List<DbParameter> Parameters = null)
         {
-            return string.Format("SELECT * FROM ({0}) AS WRAPER LIMIT 100;", sql.TrimEnd(';'));
+            sql = string.Format("SELECT * FROM ({0}) AS WRAPER", sql.TrimEnd(';'));
+
+            if (Parameters != null)
+            {
+                List<string> conditions = new List<string>();
+                sql += " WHERE ";
+                foreach (DbParameter param in Parameters)
+                    conditions.Add($"WRAPER.{param.ParameterName} = @{param.ParameterName}");
+
+                sql += string.Join(" AND ", conditions.ToArray());
+            }
+
+            return sql + ";";
         }
 
         public static object GetResourceValue(string keyName)
@@ -183,6 +195,12 @@ namespace ExpressBase.Mobile.Helpers
                 Console.WriteLine(ex.Message);
             }
             return Files;
+        }
+
+        public static string B64ToString(string b64)
+        {
+            byte[] b = Convert.FromBase64String(b64);
+            return System.Text.Encoding.UTF8.GetString(b);
         }
     }
 }

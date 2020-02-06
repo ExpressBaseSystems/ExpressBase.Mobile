@@ -8,14 +8,16 @@ namespace ExpressBase.Mobile.Views.Dynamic
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FormRender : ContentPage
     {
+        public FormRenderViewModel Renderer { set; get; }
+
         //new mode
         public FormRender(EbMobilePage page)
         {
             InitializeComponent();
             try
             {
-                var Renderer = new FormRenderViewModel(page);
-                this.Content = Renderer.View;
+                Renderer = new FormRenderViewModel(page);
+                FormScrollView.Content = Renderer.View;
                 BindingContext = Renderer;
             }
             catch (Exception ex)
@@ -30,8 +32,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             try
             {
-                var Renderer = new FormRenderViewModel(Page, RowId);
-                this.Content = Renderer.View;
+                SaveButton.Text = "Save Changes";
+                SaveButton.IsVisible = false;
+                EditButton.IsVisible = true;
+
+                Renderer = new FormRenderViewModel(Page, RowId);
+                FormScrollView.Content = Renderer.View;
                 BindingContext = Renderer;
             }
             catch (Exception ex)
@@ -46,8 +52,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             try
             {
-                var Renderer = new FormRenderViewModel(CurrentForm, ParentForm, ParentId);
-                this.Content = Renderer.View;
+                Renderer = new FormRenderViewModel(CurrentForm, ParentForm, ParentId);
+                FormScrollView.Content = Renderer.View;
                 BindingContext = Renderer;
             }
             catch (Exception ex)
@@ -56,14 +62,18 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        protected override void OnAppearing()
+        private void EditButton_Clicked(object sender, EventArgs e)
         {
-            base.OnAppearing();
-        }
+            if(Renderer != null)
+            {
+                EditButton.IsVisible = false;
+                SaveButton.IsVisible = true;
 
-        protected override bool OnBackButtonPressed()
-        {
-            return false;
+                foreach (EbMobileControl Ctrl in Renderer.Form.FlatControls)
+                {
+                    Ctrl.SetAsReadOnly(false);
+                }
+            }
         }
     }
 }

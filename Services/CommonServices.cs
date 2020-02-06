@@ -99,7 +99,7 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                if (DS.Tables.Count > 0)
+                if (DS?.Tables.Count > 0)
                 {
                     foreach (EbDataTable dt in DS.Tables)
                     {
@@ -110,17 +110,32 @@ namespace ExpressBase.Mobile.Services
                             ColSchema.Add(new SQLiteColumSchema { ColumnName = col.ColumnName, ColumnType = SQLiteTableSchema.SQLiteType(col.Type) });
                         }
 
+                        await DropTable(dt.TableName);//droping existing table
+
                         this.CreateTable(dt.TableName, ColSchema);
 
                         App.DataDB.DoNonQueryBatch(dt);
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
             return 0;
+        }
+
+        private async Task DropTable(string tableName)
+        {
+            try
+            {
+                await Task.Delay(1);
+                App.DataDB.DoNonQuery($"DROP TABLE IF EXISTS {tableName};");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

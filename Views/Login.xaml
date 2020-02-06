@@ -31,9 +31,8 @@
     <ContentPage.Content>
         <Grid>
             <ScrollView 
-                x:Name="scrollView" 
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
+                x:Name="scrollView">
+                
                 <ScrollView.VerticalOptions>
                     <OnIdiom
                         x:TypeArguments="LayoutOptions"
@@ -41,14 +40,9 @@
                         Phone="FillAndExpand" />
                 </ScrollView.VerticalOptions>
 
-                <StackLayout 
-                    Margin="20" 
-                    VerticalOptions="FillAndExpand" 
-                    WidthRequest="{OnPlatform Default='-1',
-                                              UWP='350'}">
+                <StackLayout Margin="20" VerticalOptions="FillAndExpand">
                     <Grid RowSpacing="0" VerticalOptions="CenterAndExpand">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -57,19 +51,20 @@
 
                         <!--  Label to display the title of this page  -->
                         <Label
+                            Grid.Row="0"
                             FontFamily="{StaticResource Roboto-Medium}"
                             FontSize="20"
                             HorizontalTextAlignment="Center"
                             Style="{StaticResource LabelStyle}"
-                            Text="LOG IN" />
+                            Text="{Binding LoginTo}" />
 
                         <Image x:Name="LogoUrl"
-                               Grid.Row="2" 
+                               Grid.Row="1" 
                                Source="{Binding LogoUrl}" 
                                Margin="20" 
                                HorizontalOptions="Center" HeightRequest="100"/>
 
-                        <StackLayout Grid.Row="3">
+                        <StackLayout Grid.Row="2">
                             <StackLayout Margin="0,5,0,5">
 
                                 <Label Text="Username" 
@@ -91,7 +86,7 @@
                         </StackLayout>
 
                         <!--  next button  -->
-                        <Button Grid.Row="4"
+                        <Button Grid.Row="3"
                             Text="Login"
                             VerticalOptions="EndAndExpand"
                             HorizontalOptions="FillAndExpand"

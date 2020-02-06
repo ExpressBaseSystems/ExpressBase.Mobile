@@ -63,10 +63,14 @@ namespace ExpressBase.Mobile
         public EbMobileTableLayout DataLayout { set; get; }
 
         public string LinkRefId { get; set; }
+
+        public List<EbMobileDataColumn> Filters { set; get; }
     }
 
     public class EbMobileDashBoard : EbMobileContainer
     {
         public List<EbMobileDashBoardControls> ChiledControls { set; get; }
+
+        public List<EbMobileDashBoardControls> ChildControls { get { return ChiledControls; } set { } }
     }
 }

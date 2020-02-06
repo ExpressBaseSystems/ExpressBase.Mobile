@@ -26,29 +26,18 @@ namespace ExpressBase.Mobile.Views
                 return true;
             }
             else
-            {
                 return base.OnBackButtonPressed();
-            }
         }
 
-        private void SolutionUrl_TextChanged(object sender, TextChangedEventArgs e)
+        private void EditSolutionButton_Clicked(object sender, EventArgs e)
         {
-            string text = (sender as TextBox).Text;
+            SolutionUrl.IsEnabled = true;
+        }
 
-            if (string.IsNullOrEmpty(text))
-            {
-                (BindingContext as SolutionSelectViewModel).IsSaveEnabled = false;
-            }
-            else
-            {
-
-                string url = Settings.RootUrl ?? string.Empty;
-
-                if (text == url.Replace("https://", string.Empty))
-                    (BindingContext as SolutionSelectViewModel).IsSaveEnabled = false;
-                else
-                    (BindingContext as SolutionSelectViewModel).IsSaveEnabled = true;
-            }
+        private void PopupCancel_Clicked(object sender, EventArgs e)
+        {
+            SolutionMetaGrid.IsVisible = false;
+            PopupContainer.IsVisible = false;
         }
     }
 }

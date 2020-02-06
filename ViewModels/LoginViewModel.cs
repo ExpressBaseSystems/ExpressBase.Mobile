@@ -44,8 +44,13 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        public string LoginTo { set; get; }
+
         public LoginViewModel()
         {
+            LoginTo = "Login to " + Settings.SolutionId;
+            this.NotifyPropertyChanged("LoginTo");
+
             this.LoginCommand = new Command(async () => await LoginAction());
             this.ResetConfig = new Command(ResetClicked);//bind reset button
             SetLogo();
@@ -55,9 +60,11 @@ namespace ExpressBase.Mobile.ViewModels
 
         private async Task LoginAction()
         {
+            IToast toast = DependencyService.Get<IToast>();
+
             if (!Settings.HasInternet)
             {
-                DependencyService.Get<IToast>().Show("Not connected to internet!");
+                toast.Show("Not connected to internet!");
                 return;
             }
 
@@ -76,21 +83,17 @@ namespace ExpressBase.Mobile.ViewModels
                 else
                 {
                     IsBusy = false;
-                    await Application.Current.MainPage.DisplayAlert("Alert!", "User does not exist", "Ok");
+                    toast.Show("User does not exist");
                 }
             }
             else
-            {
-                IsBusy = false;
-                await Application.Current.MainPage.DisplayAlert("Alert!", "Email/Password cannot be empty", "Ok");
-            }
+                toast.Show("Email/Password cannot be empty");
         }
 
         private bool CanLogin()
         {
-            if (string.IsNullOrWhiteSpace(this.Email) || string.IsNullOrWhiteSpace(this.PassWord))
+            if ((string.IsNullOrEmpty(this.Email) || string.IsNullOrEmpty(this.PassWord)))
                 return false;
-
             return true;
         }
 
@@ -103,13 +106,9 @@ namespace ExpressBase.Mobile.ViewModels
                 var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
 
                 if (bytes == null)
-                {
                     LogoUrl = ImageSource.FromResource("eblogo.png");
-                }
                 else
-                {
                     LogoUrl = ImageSource.FromStream(() => new MemoryStream(bytes));
-                }
             }
             catch (Exception ex)
             {

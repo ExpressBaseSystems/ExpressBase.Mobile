@@ -21,16 +21,15 @@ namespace ExpressBase.Mobile
 
         public List<EbMobileControl> ChiledControls { get; set; }
 
+        public List<EbMobileControl> ChildControls { get { return ChiledControls; } set { } }
+
         private List<EbMobileControl> _flatControls;
 
         public EbMobileForm DependencyForm { set; get; }//for sync
 
         public List<EbMobileControl> FlatControls
         {
-            set
-            {
-                _flatControls = value;
-            }
+            set { _flatControls = value; }
             get
             {
                 if (_flatControls != null)
@@ -53,7 +52,6 @@ namespace ExpressBase.Mobile
                     else
                         _flatControls.Add(ctrl);
                 }
-
                 return _flatControls;
             }
         }
@@ -77,10 +75,7 @@ namespace ExpressBase.Mobile
 
         private bool HasFileSelect
         {
-            get
-            {
-                return FlatControls.Any(x => x.GetType() == typeof(EbMobileFileUpload));
-            }
+            get { return FlatControls.Any(x => x.GetType() == typeof(EbMobileFileUpload)); }
         }
 
         public string SelectQuery

@@ -9,43 +9,15 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class FormRenderViewModel : BaseViewModel
     {
-        private EbMobileForm Form { set; get; }
-
-        private Grid _dyView { set; get; }
+        public EbMobileForm Form { set; get; }
 
         private FormMode Mode { set; get; } = FormMode.NEW;
 
-        public Grid View
-        {
-            get { return _dyView; }
-            set { _dyView = value; }
-        }
-
-        private bool _saveButtonVisible;
-        public bool SaveButtonVisible
-        {
-            get { return this._saveButtonVisible; }
-            set
-            {
-                this._saveButtonVisible = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        private bool _editButtonVisible;
-        public bool EditButtonVisible
-        {
-            get { return this._editButtonVisible; }
-            set
-            {
-                this._editButtonVisible = value;
-                this.NotifyPropertyChanged();
-            }
-        }
+        public View View { set; get; }
 
         private int RowId { set; get; } = 0;
 
-        public Command EnableEditCommand { set; get; }
+        public Command SaveCommand => new Command(OnSaveClicked);
 
         public EbMobileForm ParentForm { set; get; }
 
@@ -54,7 +26,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         //new mode
         public FormRenderViewModel(EbMobilePage Page)
         {
-            SaveButtonVisible = true;
             PageTitle = Page.DisplayName;
             try
             {
@@ -72,8 +43,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public FormRenderViewModel(EbMobilePage Page, int RowIdLocal)
         {
             this.Mode = FormMode.EDIT;
-            SaveButtonVisible = false;
-            EditButtonVisible = true;
             try
             {
                 this.RowId = RowIdLocal;
@@ -84,8 +53,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 this.CreateView();
                 this.Form.CreateTableSchema();
-
-                EnableEditCommand = new Command(EnableEditClick);
             }
             catch (Exception ex)
             {
@@ -96,8 +63,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         //referenced mode
         public FormRenderViewModel(EbMobilePage Page, EbMobilePage ParentPage, int ParentId)
         {
-            SaveButtonVisible = true;
-            EditButtonVisible = false;
             this.Mode = FormMode.REF;
             ParentForm = (ParentPage.Container as EbMobileForm);
             try
@@ -134,39 +99,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private void CreateView()
         {
-            View = new Grid()
-            {
-                RowDefinitions =
-                {
-                    new RowDefinition { Height = GridLength.Star },
-                    new RowDefinition { Height = GridLength.Auto }
-                }
-            };
-
-            ScrollView InnerScroll = new ScrollView { Orientation = ScrollOrientation.Vertical };
             StackLayout ScrollStack = new StackLayout { Spacing = 0 };
 
             foreach (var ctrl in this.Form.ChiledControls)
-            {
                 this.EbCtrlToXamCtrl(ctrl, ScrollStack);
-            }
 
-            InnerScroll.Content = ScrollStack;
-            View.Children.Add(InnerScroll);
-
-            Button btn = new Button
-            {
-                Text = (this.Mode == FormMode.EDIT) ? "Save Changes" : "Save",
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.EndAndExpand,
-                BackgroundColor = Color.FromHex("#0046bb"),
-                TextColor = Color.White,
-                Command = new Command(OnSaveClicked)
-            };
-            btn.SetBinding(Button.IsVisibleProperty, new Binding("SaveButtonVisible"));
-
-            View.Children.Add(btn);
-            Grid.SetRow(btn, 1);
+            this.View = ScrollStack;
         }
 
         private void EbCtrlToXamCtrl(EbMobileControl ctrl, StackLayout ContentStackTop)
@@ -174,9 +112,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             try
             {
                 if (ctrl is EbMobileTableLayout)
-                {
                     this.PushFromTableLayout((ctrl as EbMobileTableLayout), ContentStackTop);
-                }
                 else
                 {
                     ctrl.InitXControl(this.Mode);
@@ -184,17 +120,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     if (this.Mode == FormMode.EDIT)
                     {
                         EbDataColumn _col = this.DataOnEdit.Columns[ctrl.Name];
+
                         if (_col != null)
-                        {
                             ctrl.SetValue(this.DataOnEdit.Rows[0][_col.ColumnIndex]);
-                        }
                         else if (ctrl is EbMobileFileUpload)
-                        {
                             (ctrl as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
-                        }
                         ctrl.SetAsReadOnly(true);
                     }
-
                     ContentStackTop.Children.Add(ctrl.XView);
                 }
             }
@@ -238,18 +170,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 foreach (var ctrl in Tc.ControlCollection)
                 {
                     this.EbCtrlToXamCtrl(ctrl, ContentStackTop);
-                }
-            }
-        }
-
-        private void EnableEditClick(object sender)
-        {
-            if (!SaveButtonVisible)
-            {
-                Task.Run(() => { Device.BeginInvokeOnMainThread(() => SaveButtonVisible = true); });
-                foreach (EbMobileControl Ctrl in this.Form.FlatControls)
-                {
-                    Ctrl.SetAsReadOnly(false);
                 }
             }
         }

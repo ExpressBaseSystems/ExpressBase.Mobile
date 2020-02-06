@@ -17,11 +17,36 @@
                    Style="{StaticResource ToolBarLabelStyle}" 
                    Grid.Column="0"/>
             <Button 
+                IsVisible="False"
+                x:Name="EditButton"
                 Text="&#xf040;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
                 Grid.Column="1"
-                IsVisible="{Binding EditButtonVisible}"
-                Command="{Binding EnableEditCommand}"/>
+                Clicked="EditButton_Clicked"/>
         </Grid>
     </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <ScrollView Grid.Row="0" Orientation="Vertical" x:Name="FormScrollView">
+                
+            </ScrollView>
+
+            <Button 
+                x:Name="SaveButton"
+                Grid.Row="1"
+                Text="Save"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="EndAndExpand"
+                BackgroundColor="{StaticResource Blue-Dark}"
+                TextColor="White"
+                Command="{Binding SaveCommand}"/>
+        </Grid>
+    </ContentPage.Content>
+    
 </ContentPage>

@@ -37,17 +37,6 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private bool isSaveEnabled;
-        public bool IsSaveEnabled
-        {
-            get { return this.isSaveEnabled; }
-            set
-            {
-                this.isSaveEnabled = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
         private bool showLoader;
         public bool ShowLoader
         {
@@ -78,11 +67,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command StoreSolutionUrl { get; set; }
 
-        public Command EditButtonCommand { get; set; }
-
         public Command ConfirmButtonCommand { get; set; }
-
-        public Command CancelCommand { get; set; }
 
         private ValidateSidResponse ValidateSIDResponse { set; get; }
 
@@ -93,13 +78,18 @@ namespace ExpressBase.Mobile.ViewModels
             if (string.IsNullOrEmpty(SolutionUrl))
                 IsEnabled = true;
 
-            StoreSolutionUrl = new Command(async () => await SolutionUrlSet());
+            StoreSolutionUrl = new Command(async () =>
+            {
+                if (string.IsNullOrEmpty(SolutionUrl))
+                    return;
 
-            EditButtonCommand = new Command(EditButtonClicked);
+                string url = Settings.RootUrl ?? string.Empty;
+
+                if(SolutionUrl != url.Replace("https://", string.Empty))
+                    await SolutionUrlSet();
+            });
 
             ConfirmButtonCommand = new Command(async () => await ConfirmClicked());
-
-            CancelCommand = new Command(CancelClicked);
         }
 
         private async Task ConfirmClicked()
@@ -114,13 +104,12 @@ namespace ExpressBase.Mobile.ViewModels
                 Store.Remove(AppConst.APP_COLLECTION);
                 Store.Remove(AppConst.APPID);
 
-                this.CreateDB(_sid);
+                App.DataDB.CreateDB(_sid);
                 this.CreateDir();
 
                 if (ValidateSIDResponse.Logo != null)
-                {
                     this.SaveLogo(ValidateSIDResponse.Logo);
-                }
+
                 await Application.Current.MainPage.Navigation.PushAsync(new Login());
 
                 ShowLoader = true;
@@ -130,28 +119,14 @@ namespace ExpressBase.Mobile.ViewModels
             catch (Exception ex) { Console.WriteLine(ex.Message); }
         }
 
-        private void CancelClicked()
-        {
-            try
-            {
-                ShowMessage = false;
-                IsBusy = false;
-            }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
-        }
-
-        private void EditButtonClicked(object obj)
-        {
-            IsEnabled = true;
-        }
-
         private async Task SolutionUrlSet()
         {
             string url = this.SolutionUrl.Trim();
+            IToast toast = DependencyService.Get<IToast>();
 
-            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            if (!Settings.HasInternet)
             {
-                DependencyService.Get<IToast>().Show("Not connected to internet!");
+                toast.Show("Not connected to internet!");
                 return;
             }
 
@@ -165,20 +140,20 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     ShowLoader = false;
                     SetMessage("Success :)", Color.Green);
-                    SolutionLogo = ImageSource.FromStream(() => new MemoryStream(ValidateSIDResponse.Logo)); 
+                    SolutionLogo = ImageSource.FromStream(() => new MemoryStream(ValidateSIDResponse.Logo));
                     NotifyPropertyChanged("SolutionLogo");
                     ShowMessage = true;
                 }
                 else
                 {
                     IsBusy = false;
-                    await Application.Current.MainPage.DisplayAlert("Alert!", "Invalid solution URL", "Ok");
+                    toast.Show("Invalid solution URL");
                 }
             }
             catch (Exception ex)
             {
                 IsBusy = false;
-                await Application.Current.MainPage.DisplayAlert("Alert!", "Something went wrong", "Ok");
+                toast.Show("Something went wrong");
             }
         }
 
@@ -189,11 +164,6 @@ namespace ExpressBase.Mobile.ViewModels
 
             MessageColor = color;
             NotifyPropertyChanged("MessageColor");
-        }
-
-        private void CreateDB(string sid)
-        {
-            App.DataDB.CreateDB(sid);
         }
 
         private void CreateDir()
@@ -219,9 +189,7 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 if (!helper.DirectoryOrFileExist($"ExpressBase/{sid}/logo.png", SysContentType.File))
-                {
                     File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{sid}/logo.png", imageByte);
-                }
             }
             catch (Exception ex)
             {

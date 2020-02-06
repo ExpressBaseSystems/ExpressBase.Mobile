@@ -24,6 +24,7 @@
                 <Setter Property="HorizontalTextAlignment" Value="Center"></Setter>
                 <Setter Property="Margin" Value="0,0,0,0"></Setter>
                 <Setter Property="WidthRequest" Value="25"></Setter>
+                <Setter Property="TextColor" Value="{StaticResource Blue-Dark}"></Setter>
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -44,8 +45,7 @@
                     <StackLayout VerticalOptions="Start" >
                         <Frame 
                             HasShadow="False" 
-                            BorderColor="#cccccc" 
-                            BackgroundColor="#ecf0f1" 
+                            BackgroundColor="{StaticResource Blue-Dark}" 
                             CornerRadius="0"
                             Padding="0">
                             <Grid>
@@ -83,7 +83,7 @@
                                         FontSize="16"
                                         HorizontalOptions="StartAndExpand"
                                         Text="{Binding UserName}"
-                                        TextColor="{DynamicResource Gray-900}" />
+                                        TextColor="White" />
                                 </StackLayout>
 
                                 <StackLayout
@@ -98,7 +98,7 @@
                                         FontSize="12"
                                         HorizontalOptions="StartAndExpand"
                                         Text="{Binding UserEmail}"
-                                        TextColor="{DynamicResource Gray-700}" />
+                                        TextColor="White" />
                                 </StackLayout>
 
                             </Grid>
