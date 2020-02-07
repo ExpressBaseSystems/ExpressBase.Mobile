@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.ViewModels.Dynamic;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -62,9 +63,25 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
+        //prefill new mode
+        public FormRender(EbMobilePage Page, EbDataRow dataRow, ColumnColletion dataColumns)
+        {
+            InitializeComponent();
+            try
+            {
+                Renderer = new FormRenderViewModel(Page, dataRow, dataColumns);
+                FormScrollView.Content = Renderer.View;
+                BindingContext = Renderer;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         private void EditButton_Clicked(object sender, EventArgs e)
         {
-            if(Renderer != null)
+            if (Renderer != null)
             {
                 EditButton.IsVisible = false;
                 SaveButton.IsVisible = true;

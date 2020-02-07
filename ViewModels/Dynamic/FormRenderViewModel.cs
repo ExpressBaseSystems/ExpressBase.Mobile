@@ -52,6 +52,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 this.DataOnEdit = GetDataOnEdit();
 
                 this.CreateView();
+                this.FillControls(this.DataOnEdit.Rows[0], this.DataOnEdit.Columns);
                 this.Form.CreateTableSchema();
             }
             catch (Exception ex)
@@ -72,6 +73,25 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 PageTitle = Page.DisplayName;
 
                 this.CreateView();
+                this.Form.CreateTableSchema();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        //prefill new mode
+        public FormRenderViewModel(EbMobilePage Page, EbDataRow dataRow, ColumnColletion dataColumns)
+        {
+            this.Mode = FormMode.NEW;
+            try
+            {
+                this.Form = (Page.Container as EbMobileForm);
+                PageTitle = Page.DisplayName;
+
+                this.CreateView();
+                this.FillControls(dataRow, dataColumns);
                 this.Form.CreateTableSchema();
             }
             catch (Exception ex)
@@ -117,16 +137,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     ctrl.InitXControl(this.Mode);
 
-                    if (this.Mode == FormMode.EDIT)
-                    {
-                        EbDataColumn _col = this.DataOnEdit.Columns[ctrl.Name];
+                    //if (this.Mode == FormMode.EDIT)
+                    //{
+                    //    EbDataColumn _col = this.DataOnEdit.Columns[ctrl.Name];
 
-                        if (_col != null)
-                            ctrl.SetValue(this.DataOnEdit.Rows[0][_col.ColumnIndex]);
-                        else if (ctrl is EbMobileFileUpload)
-                            (ctrl as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
-                        ctrl.SetAsReadOnly(true);
-                    }
+                    //    if (_col != null)
+                    //        ctrl.SetValue(this.DataOnEdit.Rows[0][_col.ColumnIndex]);
+                    //    else if (ctrl is EbMobileFileUpload)
+                    //        (ctrl as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
+                    //    ctrl.SetAsReadOnly(true);
+                    //}
                     ContentStackTop.Children.Add(ctrl.XView);
                 }
             }
@@ -170,6 +190,25 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 foreach (var ctrl in Tc.ControlCollection)
                 {
                     this.EbCtrlToXamCtrl(ctrl, ContentStackTop);
+                }
+            }
+        }
+
+        public void FillControls(EbDataRow row, ColumnColletion columns)
+        {
+            foreach(var ctrl in this.Form.FlatControls)
+            {
+                EbDataColumn _col = columns[ctrl.Name];
+
+                if (_col != null)
+                    ctrl.SetValue(row[_col.ColumnIndex]);
+
+                if (this.Mode == FormMode.EDIT)
+                {
+                    ctrl.SetAsReadOnly(true);
+
+                    if (ctrl is EbMobileFileUpload)
+                        (ctrl as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
                 }
             }
         }

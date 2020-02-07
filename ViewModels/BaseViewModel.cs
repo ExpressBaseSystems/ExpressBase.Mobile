@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views;
 using System;
@@ -16,19 +17,20 @@ namespace ExpressBase.Mobile.ViewModels
     {
         public string PageTitle { set; get; }
 
+        public EbDataTable ContextData { set; get; }
+
+        public int ContextRecordIndex { set; get; }
+
+        //public View View { set; get; }
+
+        //public EbMobilePage Page { set; get; }
+
         protected bool _isBusy;
         public bool IsBusy
         {
-            get
-            {
-                return this._isBusy;
-            }
+            get { return this._isBusy; }
             set
             {
-                if (this._isBusy == value)
-                {
-                    return;
-                }
                 this._isBusy = value;
                 this.NotifyPropertyChanged();
             }
@@ -62,9 +64,6 @@ namespace ExpressBase.Mobile.ViewModels
             Application.Current.MainPage = new NavigationPage(new SolutionSelect());
         }
 
-        public virtual void RefreshPage()
-        {
-
-        }
+        public virtual void RefreshPage() { }
     }
 }

@@ -77,4 +77,11 @@ namespace ExpressBase.Mobile.Enums
         EDIT = 1,
         REF = 2
     }
+
+    public enum WebFormDVModes
+    {
+        _SELECT_ = 0,
+        View_Mode = 1,
+        New_Mode = 2
+    }
 }

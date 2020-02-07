@@ -44,6 +44,8 @@ namespace ExpressBase.Mobile
         public EbMobileContainer Container { set; get; }
 
         public bool HideFromMenu { set; get; }
+
+        public string Icon { set; get; }
     } 
 
     public class EbScript

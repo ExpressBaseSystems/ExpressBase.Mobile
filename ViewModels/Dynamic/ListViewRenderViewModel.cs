@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Dynamic;
@@ -29,7 +30,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.GetData();
             this.CreateView();
 
-            if (this.Visualization.Filters.Any())
+            if (this.Visualization.Filters != null)
                 CreateFilter();
         }
 
@@ -112,27 +113,37 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         void ListItem_Clicked(object Frame, EventArgs args)
         {
+            var customFrame = Frame as CustomFrame;
+
             if (!string.IsNullOrEmpty(this.Visualization.LinkRefId))
             {
                 EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
 
                 if (_page.Container is EbMobileForm)
                 {
-                    int id = Convert.ToInt32((Frame as CustomFrame).DataRow["id"]);
-                    if (id != 0)
+                    if(this.Visualization.FormMode == WebFormDVModes.New_Mode)
                     {
-                        FormRender Renderer = new FormRender(_page, id);//to form edit mode
+                        FormRender Renderer = new FormRender(_page, customFrame.DataRow, customFrame.Columns);//to form newmode prefill
                         (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    }
+                    else
+                    {
+                        int id = Convert.ToInt32(customFrame.DataRow["id"]);
+                        if (id != 0)
+                        {
+                            FormRender Renderer = new FormRender(_page, id);//to form edit mode
+                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                        }
                     }
                 }
                 else if (_page.Container is EbMobileVisualization)
                 {
-                    LinkedListViewRender Renderer = new LinkedListViewRender(_page, this.Visualization, (Frame as CustomFrame));
+                    LinkedListViewRender Renderer = new LinkedListViewRender(_page, this.Visualization, customFrame);
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
                 else if (_page.Container is EbMobileDashBoard)
                 {
-                    DashBoardRender Renderer = new DashBoardRender(_page, (Frame as CustomFrame).DataRow);
+                    DashBoardRender Renderer = new DashBoardRender(_page, customFrame.DataRow);
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }

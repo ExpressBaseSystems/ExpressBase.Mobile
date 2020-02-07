@@ -65,6 +65,8 @@ namespace ExpressBase.Mobile
         public string LinkRefId { get; set; }
 
         public List<EbMobileDataColumn> Filters { set; get; }
+
+        public WebFormDVModes FormMode { set; get; }
     }
 
     public class EbMobileDashBoard : EbMobileContainer
