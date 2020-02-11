@@ -91,7 +91,33 @@ namespace ExpressBase.Mobile.Services
             return new MobilePageCollection();
         }
 
-        public async Task<PushResponse> Push(WebformData WebFormData, int RowId, string WebFormRefId, int LocId)
+        public PushResponse Push(WebformData WebFormData, int RowId, string WebFormRefId, int LocId)
+        {
+            try
+            {
+                RestClient client = new RestClient(Settings.RootUrl);
+
+                RestRequest request = new RestRequest("api/push_data", Method.POST);
+                request.AddParameter("webform_data", JsonConvert.SerializeObject(WebFormData));
+                request.AddParameter("rowid", RowId);
+                request.AddParameter("refid", WebFormRefId);
+                request.AddParameter("locid", LocId);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+
+                IRestResponse response = client.Execute(request);
+                return JsonConvert.DeserializeObject<PushResponse>(response.Content);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return null;
+        }
+
+        public async Task<PushResponse> PushAsync(WebformData WebFormData, int RowId, string WebFormRefId, int LocId)
         {
             try
             {
@@ -115,7 +141,34 @@ namespace ExpressBase.Mobile.Services
             return null;
         }
 
-        public async Task<List<ApiFileData>> PushFiles(List<FileWrapper> Files)
+        public List<ApiFileData> PushFiles(List<FileWrapper> Files)
+        {
+            List<ApiFileData> FileData = null;
+            try
+            {
+                RestRequest request = new RestRequest("api/files/upload", Method.POST);
+
+                foreach (FileWrapper file in Files)
+                {
+                    request.AddFileBytes(file.Name, file.Bytea, file.FileName);
+                }
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+
+                IRestResponse response = Client.Execute(request);
+                if (response.StatusCode == HttpStatusCode.OK)
+                    FileData = JsonConvert.DeserializeObject<List<ApiFileData>>(response.Content);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return FileData;
+        }
+
+        public async Task<List<ApiFileData>> PushFilesAsync(List<FileWrapper> Files)
         {
             List<ApiFileData> FileData = null;
             try

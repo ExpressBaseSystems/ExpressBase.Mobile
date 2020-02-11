@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
@@ -18,9 +19,7 @@ namespace ExpressBase.Mobile.Helpers
     {
         public static EbMobilePage GetPage(string Refid)
         {
-            string _objlist = Store.GetValue(AppConst.OBJ_COLLECTION);
-            List<MobilePagesWraper> _list = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
-            MobilePagesWraper Wrpr = _list.Find(item => item.RefId == Refid);
+            MobilePagesWraper Wrpr = Settings.Objects.Find(item => item.RefId == Refid);
 
             if (Wrpr == null)
                 return null;
@@ -32,7 +31,7 @@ namespace ExpressBase.Mobile.Helpers
         {
             sql = string.Format("SELECT * FROM ({0}) AS WRAPER", sql.TrimEnd(';'));
 
-            if (Parameters != null)
+            if (!Parameters.IsNullOrEmpty())
             {
                 List<string> conditions = new List<string>();
                 sql += " WHERE ";

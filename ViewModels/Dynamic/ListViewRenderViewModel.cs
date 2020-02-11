@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
@@ -27,29 +29,34 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             PageTitle = Page.DisplayName;
             this.Visualization = (Page.Container as EbMobileVisualization);
-            this.GetData();
+
+            this.SetData();//get query result
             this.CreateView();
 
-            if (this.Visualization.Filters != null)
+            if (!this.Visualization.Filters.IsNullOrEmpty())
                 CreateFilter();
         }
 
-        private void GetData(List<DbParameter> Parameters = null)
+        private void SetData()
         {
             try
             {
-                string sql = HelperFunctions.B64ToString(this.Visualization.OfflineQuery.Code);
-                string wrapedQuery = HelperFunctions.WrapSelectQuery(sql, Parameters);
+                var sqlParams = HelperFunctions.GetSqlParams(this.Visualization.GetQuery);
 
-                if(Parameters!=null)
-                    DataTable = App.DataDB.DoQuery(wrapedQuery, Parameters.ToArray());
+                if (sqlParams.Count > 0)
+                {
+                    List<DbParameter> dbParams = new List<DbParameter>();
+                    foreach (string s in sqlParams)
+                        dbParams.Add(new DbParameter { ParameterName = s });
+
+                    DataTable = this.Visualization.GetData(dbParams);
+                }
                 else
-                    DataTable = App.DataDB.DoQuery(wrapedQuery);
+                    DataTable = this.Visualization.GetData();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                DataTable = new EbDataTable();
-                Console.WriteLine(e.Message);
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -121,7 +128,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 if (_page.Container is EbMobileForm)
                 {
-                    if(this.Visualization.FormMode == WebFormDVModes.New_Mode)
+                    if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
                     {
                         FormRender Renderer = new FormRender(_page, customFrame.DataRow, customFrame.Columns);//to form newmode prefill
                         (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
@@ -152,7 +159,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public void Refresh(List<DbParameter> parameters)
         {
             if (parameters != null)
-                this.GetData(parameters);
+                DataTable = this.Visualization.GetData(parameters);
             this.CreateView();
         }
     }

@@ -15,17 +15,12 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
             <Button 
-                Text="&#xf002;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1"/>
-            <Button 
                 Text="&#xf021;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="2"
+                Grid.Column="1"
                 Command="{Binding SyncButtonCommand}"/>
         </Grid>
     </NavigationPage.TitleView>

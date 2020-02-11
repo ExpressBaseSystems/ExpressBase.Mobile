@@ -171,7 +171,7 @@ namespace ExpressBase.Mobile
                     row.Columns.AddRange(this.GetColumnValues(LocalData, i));
                     WebFormData.MultipleTables.Add(this.TableName, SingleTable);
 
-                    PushResponse response = Api.Push(WebFormData, 0, this.WebFormRefId, row.LocId);
+                    PushResponse response = RestServices.Instance.Push(WebFormData, 0, this.WebFormRefId, row.LocId);
 
                     if (_DependantForm != null)
                         this.PushDependencyForm(response.RowId, rowid);
@@ -199,7 +199,7 @@ namespace ExpressBase.Mobile
 
             if (Files.Count > 0)
             {
-                var ApiFiles = Api.PushFiles(Files);
+                var ApiFiles = RestServices.Instance.PushFiles(Files);
                 var ExtendedTable = Files.GroupByControl(ApiFiles);
                 if (ExtendedTable.Any())
                 {
@@ -427,7 +427,7 @@ namespace ExpressBase.Mobile
                         sc.Value = liveid;
                         sc.Type = (int)EbDbTypes.Int32;
 
-                        PushResponse response = Api.Push(FormData, 0, _DependantForm.WebFormRefId, row.LocId);
+                        PushResponse response = RestServices.Instance.Push(FormData, 0, _DependantForm.WebFormRefId, row.LocId);
 
                         this.FlagLocalRow(response, id, _DependantForm.TableName);
                     }

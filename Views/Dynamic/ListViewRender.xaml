@@ -24,7 +24,7 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Padding="15,0" BackgroundColor="{StaticResource Blue-Dark}">
+            <Grid x:Name="FilterActionBar" IsVisible="False" Grid.Row="0" Padding="15,0" BackgroundColor="{StaticResource Blue-Dark}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
@@ -51,77 +51,60 @@
             </Grid>
 
             <ScrollView x:Name="listContainer" Grid.Row="1">
-
+                <Label 
+                    IsVisible="False"
+                    x:Name="EmptyRecordLabel"                  
+                    Text="Empty list."
+                    VerticalOptions="Center"
+                    FontSize="16"
+                    HorizontalOptions="Center"/>
             </ScrollView>
 
             <ContentView 
                 IsVisible="False"
                 x:Name="FilterDialogView"
-                Grid.Row="1"
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                    <BoxView
-                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                        AbsoluteLayout.LayoutFlags="All"
-                        BackgroundColor="#333333"
-                        Opacity=".5"/>
+                BackgroundColor="Green"
+                Grid.Row="1">
+                <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
+                    <Grid VerticalOptions="FillAndExpand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
 
-                    <StackLayout 
-                        Margin="20"
-                        AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
-                        AbsoluteLayout.LayoutFlags="PositionProportional">
-                        <Frame 
-                            Padding="10"
-                            MinimumHeightRequest="200"
-                            HasShadow="False"
-                            BackgroundColor="White"
-                            CornerRadius="6"
-                            VerticalOptions="Center">
-                            <Frame.Content>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"></RowDefinition>
-                                        <RowDefinition Height="Auto"></RowDefinition>
-                                    </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
 
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"></ColumnDefinition>
-                                        <ColumnDefinition Width="*"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
+                        <ScrollView x:Name="FilterContainer" Padding="10" Grid.ColumnSpan="2" Grid.Row="0">
 
-                                    <ScrollView x:Name="FilterContainer" Grid.ColumnSpan="2" Grid.Row="0">
+                        </ScrollView>
 
-                                    </ScrollView>
+                        <Button 
+                            x:Name="FDCancel"
+                            Text="Cancel" 
+                            BackgroundColor="White" 
+                            TextColor="{StaticResource Blue-Dark}"
+                            Margin="10,0,0,10" 
+                            BorderColor="{StaticResource Blue-Dark}" 
+                            BorderWidth="1"
+                            Grid.Row="1" Grid.Column="0"
+                            Clicked="FDCancel_Clicked"/>
 
-                                    <Button 
-                                        x:Name="FDCancel"
-                                        Text="Cancel" 
-                                        BackgroundColor="White" 
-                                        TextColor="{StaticResource Blue-Dark}"
-                                        Margin="0,20,0,0" 
-                                        BorderColor="{StaticResource Blue-Dark}" 
-                                        BorderWidth="1"
-                                        Grid.Row="1" Grid.Column="0"
-                                        Clicked="FDCancel_Clicked"></Button>
+                        <Button 
+                            x:Name="FDApply"
+                            Text="Apply" 
+                            BackgroundColor="{StaticResource Blue-Dark}"
+                            Margin="0,0,10,10"
+                            TextColor="White"
+                            Grid.Row="1" 
+                            Grid.Column="1"
+                            Clicked="FDApply_Clicked"/>
 
-                                    <Button 
-                                        x:Name="FDApply"
-                                        Text="Apply" 
-                                        BackgroundColor="{StaticResource Blue-Dark}"
-                                        Margin="0,20,0,0"
-                                        TextColor="White"
-                                        Grid.Row="1" 
-                                        Grid.Column="1"
-                                        Clicked="FDApply_Clicked"></Button>
-
-                                </Grid>
-                            </Frame.Content>
-                        </Frame>
-                    </StackLayout>
-                </AbsoluteLayout>
+                    </Grid>
+                </StackLayout>
             </ContentView>
-
         </Grid>
     </ContentPage.Content>
 

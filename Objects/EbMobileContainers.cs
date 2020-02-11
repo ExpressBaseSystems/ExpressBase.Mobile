@@ -1,5 +1,8 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
+using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using System;
@@ -15,10 +18,7 @@ namespace ExpressBase.Mobile
 
         public object Value
         {
-            set
-            {
-                _value = value;
-            }
+            set { _value = value; }
             get
             {
                 if (Type == EbDbTypes.DateTime)
@@ -34,11 +34,8 @@ namespace ExpressBase.Mobile
 
         public DbTypedValue(string Name, object Value, EbDbTypes Type)
         {
-
             if (Name == "eb_created_at_device")
-            {
                 this.Type = EbDbTypes.DateTime;
-            }
             else
             {
                 this.Type = Type;
@@ -67,6 +64,47 @@ namespace ExpressBase.Mobile
         public List<EbMobileDataColumn> Filters { set; get; }
 
         public WebFormDVModes FormMode { set; get; }
+
+        //mobile property
+        public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
+
+        public EbDataTable GetData()
+        {
+            EbDataTable Data = new EbDataTable();
+            try
+            {
+                string sql = HelperFunctions.WrapSelectQuery(GetQuery);
+                Data = App.DataDB.DoQuery(sql);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return Data;
+        }
+
+        public EbDataTable GetData(List<DbParameter> dbParameters)
+        {
+            EbDataTable Data = new EbDataTable();
+            try
+            {
+                var userParam = dbParameters.Find(item => item.ParameterName == "current_userid");
+
+                if(userParam != null)
+                {
+                    userParam.Value = Settings.UserId;
+                    userParam.DbType = (int)EbDbTypes.Int32;
+                }
+
+                string sql = HelperFunctions.WrapSelectQuery(GetQuery, dbParameters);
+                Data = App.DataDB.DoQuery(sql, dbParameters.ToArray());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return Data;
+        }
     }
 
     public class EbMobileDashBoard : EbMobileContainer

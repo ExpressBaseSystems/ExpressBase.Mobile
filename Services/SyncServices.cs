@@ -43,10 +43,8 @@ namespace ExpressBase.Mobile.Services
             foreach (MobilePagesWraper _p in pages)
             {
                 EbMobilePage mpage = _p.ToPage();
-                if (mpage != null && mpage.Container.GetType() == typeof(EbMobileForm))
-                {
+                if (mpage != null && mpage.Container is EbMobileForm)
                     ls.Add(mpage.Container as EbMobileForm);
-                }
             }
 
             return ls;
@@ -103,7 +101,7 @@ namespace ExpressBase.Mobile.Services
 
                 Form.UploadFiles(localid, WebFormData);
 
-                response = Api.Push(WebFormData, 0, Form.WebFormRefId, row.LocId);
+                response = RestServices.Instance.Push(WebFormData, 0, Form.WebFormRefId, row.LocId);
                 response.LocalRowId = localid;
             }
             catch (Exception ex)

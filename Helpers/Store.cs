@@ -6,8 +6,8 @@ using Xamarin.Essentials;
 
 namespace ExpressBase.Mobile.Helpers
 {
-    public class Store{
-
+    public class Store
+    {
         public static string GetValue(string key)
         {
             try
@@ -18,7 +18,7 @@ namespace ExpressBase.Mobile.Helpers
                 else
                     return temp;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
@@ -42,11 +42,11 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public static void SetValue(string key,string val)
+        public static void SetValue(string key, string val)
         {
             try
             {
-                SecureStorage.SetAsync(key,val);
+                SecureStorage.SetAsync(key, val);
             }
             catch (Exception e)
             {

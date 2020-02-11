@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -55,21 +56,37 @@ namespace ExpressBase.Mobile.ViewModels
 
             SetUpData();
             BuildView();
+
+            //deploy tables for forms
+            DeployFormTables();
+        }
+
+        void DeployFormTables()
+        {
+            Task.Run(() =>
+            {
+                var pages = Settings.Objects;
+
+                foreach (MobilePagesWraper _p in pages)
+                {
+                    EbMobilePage mpage = _p.ToPage();
+                    if (mpage != null && mpage.Container is EbMobileForm)
+                        (mpage.Container as EbMobileForm).CreateTableSchema();
+                }
+            });
         }
 
         public void SetUpData()
         {
             string _objlist = Store.GetValue(AppConst.OBJ_COLLECTION);
 
-            if(_objlist != null)
+            if (_objlist != null)
             {
                 List<MobilePagesWraper> _list = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
                 this.ObjectList = _list;
             }
             else
-            {
                 this.ObjectList = new List<MobilePagesWraper>();
-            }
         }
 
         public void BuildView()
@@ -106,7 +123,9 @@ namespace ExpressBase.Mobile.ViewModels
         {
             Grid grid = new Grid
             {
-                Padding = 5, RowSpacing = 10, ColumnSpacing = 10,
+                Padding = 5,
+                RowSpacing = 10,
+                ColumnSpacing = 10,
                 RowDefinitions =
                 {
                     new RowDefinition{Height= GridLength.Auto}
@@ -126,18 +145,30 @@ namespace ExpressBase.Mobile.ViewModels
 
                 var frame = new CustomShadowFrame
                 {
-                    HasShadow = true, CornerRadius = 4, PageWraper = wrpr,
-                    Content = new Label
+                    HasShadow = true,
+                    CornerRadius = 4,
+                    PageWraper = wrpr,
+                    Content = new StackLayout
                     {
-                        Text = wrpr.DisplayName,VerticalTextAlignment = TextAlignment.Center,
-                        HorizontalTextAlignment = TextAlignment.Center,
-                        LineHeight = 1.25
+                        VerticalOptions = LayoutOptions.Center,
+                        Children =
+                        {
+                            new Label {
+                                Text = Regex.Unescape("\\u" + wrpr.ObjectIcon),
+                                FontSize = 30,
+                                TextColor = Color.FromHex("0046bb"),
+                                HorizontalTextAlignment = TextAlignment.Center,
+                                FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                            },
+                            new Label { Text = wrpr.DisplayName,HorizontalTextAlignment = TextAlignment.Center }
+                        }
                     }
                 };
+
                 frame.GestureRecognizers.Add(gesture);
                 grid.Children.Add(frame, colnum, rownum);
 
-                if(wrpr != pageWrapers.Last())
+                if (wrpr != pageWrapers.Last())
                 {
                     if (colnum == 1)
                     {
@@ -193,7 +224,7 @@ namespace ExpressBase.Mobile.ViewModels
                 toast.Show("You are not connected to internet !");
         }
 
-        private void ObjFrame_Clicked(object obj,EventArgs e)
+        private void ObjFrame_Clicked(object obj, EventArgs e)
         {
             MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
             Task.Run(() =>
@@ -234,7 +265,7 @@ namespace ExpressBase.Mobile.ViewModels
                     }
                     else
                     {
-                        Device.BeginInvokeOnMainThread(() =>IsBusy = false);
+                        Device.BeginInvokeOnMainThread(() => IsBusy = false);
                         toast.Show("This page is no longer available.");
                     }
                 }

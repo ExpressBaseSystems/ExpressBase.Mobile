@@ -43,49 +43,30 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Margin = 0
             };
 
-            this.GetData();
+            this.SetData();
+            //this.GetData();
             this.CreateView();
 
             AddCommand = new Command(AddButtonClicked);
             EditCommand = new Command(EditButtonClicked);
         }
 
-        private void GetData()
-        {
-            byte[] b = Convert.FromBase64String(this.Visualization.OfflineQuery.Code);
-            string sql = HelperFunctions.WrapSelectQuery(System.Text.Encoding.UTF8.GetString(b));
-
-            List<DbParameter> _DbParams = new List<DbParameter>();
-            try
-            {
-                List<string> _Params = HelperFunctions.GetSqlParams(sql);
-                if (_Params.Count > 0)
-                {
-                    this.GetParameterValues(_DbParams, _Params);
-                }
-
-                DataTable = App.DataDB.DoQuery(sql, _DbParams.ToArray());
-            }
-            catch (Exception e)
-            {
-                DataTable = new EbDataTable();
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        private void GetParameterValues(List<DbParameter> _DbParams, List<string> _Params)
+        private void SetData()
         {
             try
             {
-                foreach (string _p in _Params)
+                var sqlParams = HelperFunctions.GetSqlParams(this.Visualization.GetQuery);
+
+                if (sqlParams.Count > 0)
                 {
-                    _DbParams.Add(new DbParameter
-                    {
-                        ParameterName = _p,
-                        Value = this.HeaderFrame.DataRow[_p] ?? null,
-                        DbType = (int)this.HeaderFrame.Columns[_p].Type
-                    });
+                    List<DbParameter> dbParams = new List<DbParameter>();
+                    foreach (string s in sqlParams)
+                        dbParams.Add(new DbParameter { ParameterName = s, Value = this.HeaderFrame.DataRow?[s] });
+
+                    DataTable = this.Visualization.GetData(dbParams);
                 }
+                else
+                    DataTable = this.Visualization.GetData();
             }
             catch (Exception ex)
             {
@@ -144,7 +125,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 return;
             EbMobilePage _page = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
 
-            if(_page != null)
+            if (_page != null)
             {
                 int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
                 if (id != 0)
@@ -177,7 +158,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public override void RefreshPage()
         {
             this.View = null;
-            this.GetData();
+            this.SetData();
             this.CreateView();
         }
     }

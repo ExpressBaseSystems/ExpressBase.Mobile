@@ -52,5 +52,10 @@ namespace ExpressBase.Mobile.Extensions
             }
             return data;
         }
+
+        public static bool IsNullOrEmpty<T>(this List<T> source)
+        {
+            return source == null || source.Count < 1;
+        }
     }
 }

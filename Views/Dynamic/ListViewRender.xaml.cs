@@ -21,10 +21,19 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 Renderer = new ListViewRenderViewModel(Page);
 
-                listContainer.Content = Renderer.View;
+                if (Renderer.DataTable.Rows.Any())
+                {
+                    listContainer.Content = Renderer.View;
 
-                if (Renderer.FilterDialog != null)
-                    FilterContainer.Content = Renderer.FilterDialog;
+                    if (Renderer.FilterDialog != null)
+                    {
+                        FilterActionBar.IsVisible = true;
+                        FilterContainer.Content = Renderer.FilterDialog;
+                    }
+                }
+                else
+                    EmptyRecordLabel.IsVisible = true;
+
                 BindingContext = Renderer;
             }
             catch (Exception ex)
@@ -35,10 +44,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void FilterButton_Clicked(object sender, EventArgs e)
         {
-            if(Renderer != null)
-            {
-                FilterDialogView.IsVisible = Renderer.FilterDialog == null ? false : true;
-            }
+            FilterDialogView.IsVisible = true;
         }
 
         private void FDCancel_Clicked(object sender, EventArgs e)
@@ -70,7 +76,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                     listContainer.Content = Renderer.View;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }

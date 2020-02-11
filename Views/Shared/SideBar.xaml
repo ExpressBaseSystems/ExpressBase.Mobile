@@ -15,10 +15,12 @@
                 <Setter Property="Padding" Value="0" />
                 <Setter Property="HasShadow" Value="False" />
                 <Setter Property="CornerRadius" Value="0" />
+                <Setter Property="Padding" Value="10,0,0,0"/>
             </Style>
             
             <Style x:Key="SideBarIconStyle" TargetType="Label">
                 <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
+                <Setter Property="FontSize" Value="18" />
                 <Setter Property="VerticalOptions" Value="Center"></Setter>
                 <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
                 <Setter Property="HorizontalTextAlignment" Value="Center"></Setter>
@@ -40,6 +42,7 @@
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
                 <StackLayout 
+                    Spacing="0"
                     VerticalOptions="FillAndExpand"
                     x:Name="SideBarLayout">
                     <StackLayout VerticalOptions="Start" >
@@ -104,7 +107,8 @@
                             </Grid>
                         </Frame>
                     </StackLayout>
-                    <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="10,10,10,10" Spacing="0">
+                    <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="0" Spacing="0">
+                        <Label Text="Configurations" BackgroundColor="#eeeeee" Padding="10,10" FontAttributes="Bold"/>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer 
@@ -151,7 +155,7 @@
                             </Grid>
                         </Frame>
                     </StackLayout>
-                    <StackLayout VerticalOptions="End" Padding="10,10,10,10">
+                    <StackLayout VerticalOptions="End" Padding="0">
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer 

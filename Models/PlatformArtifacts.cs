@@ -39,6 +39,8 @@ namespace ExpressBase.Mobile.Models
 
     public class MobilePagesWraper
     {
+        private EbMobilePage _page;
+
         public string DisplayName { set; get; }
 
         public string Name { set; get; }
@@ -53,13 +55,22 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                var p = ToPage();
-                if (p.Container is EbMobileForm)
-                    return "form.png";
-                else if (p.Container is EbMobileVisualization)
-                    return "list.png";
-                else
-                    return "list.png";
+                if (_page == null) ToPage();
+
+                string icon = _page.Icon;
+
+                if (string.IsNullOrEmpty(icon))
+                {
+                    if (_page.Container is EbMobileForm)
+                        icon = "f298";
+                    else if (_page.Container is EbMobileVisualization)
+                        icon = "f022";
+                    else if (_page.Container is EbMobileDashBoard)
+                        icon = "f0e4";
+                    else
+                        icon = "f0e4";
+                }
+                return icon;
             }
         }
 
@@ -67,12 +78,13 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                var p = ToPage();
-                if (p.Container is EbMobileForm)
+                if (_page == null) ToPage();
+
+                if (_page.Container is EbMobileForm)
                     return "Forms";
-                else if (p.Container is EbMobileVisualization)
+                else if (_page.Container is EbMobileVisualization)
                     return "List";
-                else if (p.Container is EbMobileDashBoard)
+                else if (_page.Container is EbMobileDashBoard)
                     return "DashBoards";
                 else
                     return "Miscellaneous";
@@ -81,13 +93,19 @@ namespace ExpressBase.Mobile.Models
 
         public bool IsHidden
         {
-            get { return ToPage().HideFromMenu; }
+            get
+            {
+                if (_page == null) ToPage();
+
+                return _page.HideFromMenu;
+            }
         }
 
         public EbMobilePage ToPage()
         {
             string regexed = EbSerializers.JsonToNETSTD(this.Json);
-            return EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
+            _page = EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
+            return _page;
         }
     }
 

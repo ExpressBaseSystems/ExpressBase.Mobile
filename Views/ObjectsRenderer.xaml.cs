@@ -55,6 +55,7 @@ namespace ExpressBase.Mobile.Views
                 if (!Settings.HasInternet)
                 {
                     toast.Show("Not connected to Internet!");
+                    RootRefreshView.IsRefreshing = false;
                     return;
                 }
 
