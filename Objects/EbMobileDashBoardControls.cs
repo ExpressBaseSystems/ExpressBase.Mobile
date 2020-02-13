@@ -66,8 +66,7 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                byte[] b = Convert.FromBase64String(this.OfflineQuery.Code);
-                string sql = HelperFunctions.WrapSelectQuery(System.Text.Encoding.UTF8.GetString(b));
+                string sql = HelperFunctions.WrapSelectQueryUnPaged(HelperFunctions.B64ToString(this.OfflineQuery.Code));
 
                 List<DbParameter> _DbParams = new List<DbParameter>();
 

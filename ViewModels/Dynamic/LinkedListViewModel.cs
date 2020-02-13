@@ -1,10 +1,10 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
@@ -55,6 +55,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
+                EbDataSet ds;
                 var sqlParams = HelperFunctions.GetSqlParams(this.Visualization.GetQuery);
 
                 if (sqlParams.Count > 0)
@@ -63,14 +64,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     foreach (string s in sqlParams)
                         dbParams.Add(new DbParameter { ParameterName = s, Value = this.HeaderFrame.DataRow?[s] });
 
-                    DataTable = this.Visualization.GetData(dbParams);
+                    ds = this.Visualization.GetData(dbParams);
                 }
                 else
-                    DataTable = this.Visualization.GetData();
+                    ds = this.Visualization.GetData();
+
+                DataTable = ds.Tables[1];
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("LinkedList_SetData---" + ex.Message);
             }
         }
 

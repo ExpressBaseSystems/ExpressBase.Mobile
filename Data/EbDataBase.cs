@@ -10,7 +10,7 @@ namespace ExpressBase.Mobile.Data
     {
         int CreateDB(string sid);
 
-        void DoQueries(string query, params DbParameter[] parameter);
+        EbDataSet DoQueries(string query, params DbParameter[] parameter);
 
         EbDataTable DoQuery(string query, params DbParameter[] parameter);
 

@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("Form render new mode---" + ex.Message);
             }
         }
 
@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("Form render edit mode---" + ex.Message);
             }
         }
 
@@ -77,7 +77,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("Form render reference mode" + ex.Message);
             }
         }
 
@@ -96,7 +96,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("Form render prefill mode" + ex.Message);
             }
         }
 
@@ -111,7 +111,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("form_GetDataOnEdit---" + e.Message);
                 dt = new EbDataTable();
             }
             return dt;
@@ -136,23 +136,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 else
                 {
                     ctrl.InitXControl(this.Mode);
-
-                    //if (this.Mode == FormMode.EDIT)
-                    //{
-                    //    EbDataColumn _col = this.DataOnEdit.Columns[ctrl.Name];
-
-                    //    if (_col != null)
-                    //        ctrl.SetValue(this.DataOnEdit.Rows[0][_col.ColumnIndex]);
-                    //    else if (ctrl is EbMobileFileUpload)
-                    //        (ctrl as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
-                    //    ctrl.SetAsReadOnly(true);
-                    //}
                     ContentStackTop.Children.Add(ctrl.XView);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("Form_EbCtrlToXamCtrl---" + ex.Message); 
             }
         }
 
@@ -188,9 +177,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             foreach (EbMobileTableCell Tc in TL.CellCollection)
             {
                 foreach (var ctrl in Tc.ControlCollection)
-                {
                     this.EbCtrlToXamCtrl(ctrl, ContentStackTop);
-                }
             }
         }
 

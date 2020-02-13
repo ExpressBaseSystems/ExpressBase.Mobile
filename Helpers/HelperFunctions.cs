@@ -29,6 +29,23 @@ namespace ExpressBase.Mobile.Helpers
 
         public static string WrapSelectQuery(string sql, List<DbParameter> Parameters = null)
         {
+            sql = string.Format("SELECT COUNT(*) AS row_count FROM ({0}); SELECT * FROM ({0}) AS WRAPER", sql.TrimEnd(';'));
+
+            if (!Parameters.IsNullOrEmpty())
+            {
+                List<string> conditions = new List<string>();
+                sql += " WHERE ";
+                foreach (DbParameter param in Parameters)
+                    conditions.Add($"WRAPER.{param.ParameterName} = @{param.ParameterName}");
+
+                sql += string.Join(" AND ", conditions.ToArray());
+            }
+
+            return sql + " LIMIT @limit OFFSET @offset;";
+        }
+
+        public static string WrapSelectQueryUnPaged(string sql, List<DbParameter> Parameters = null)
+        {
             sql = string.Format("SELECT * FROM ({0}) AS WRAPER", sql.TrimEnd(';'));
 
             if (!Parameters.IsNullOrEmpty())

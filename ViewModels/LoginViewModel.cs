@@ -112,7 +112,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("Login_SetLogo" + ex.Message);
             }
         }
     }

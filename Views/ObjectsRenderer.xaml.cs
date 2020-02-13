@@ -80,7 +80,7 @@ namespace ExpressBase.Mobile.Views
             catch(Exception ex)
             {
                 toast.Show("Something went wrong. Please try again");
-                Console.WriteLine(ex.Message);
+                Log.Write("ROOT MENU REFRESH-" + ex.Message);
             }
         }
     }

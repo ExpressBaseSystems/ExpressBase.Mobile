@@ -38,7 +38,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("CommonServices.CreateLocalTable---" + e.Message);
             }
         }
 
@@ -58,7 +58,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("CommonServices.CreateTable---" + e.Message);
             }
         }
 
@@ -78,7 +78,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("CommonServices.AlterTable---" + e.Message);
             }
         }
 
@@ -106,10 +106,8 @@ namespace ExpressBase.Mobile.Services
                         List<SQLiteColumSchema> ColSchema = new List<SQLiteColumSchema>();
 
                         foreach (EbDataColumn col in dt.Columns)
-                        {
                             ColSchema.Add(new SQLiteColumSchema { ColumnName = col.ColumnName, ColumnType = SQLiteTableSchema.SQLiteType(col.Type) });
-                        }
-
+                       
                         await DropTable(dt.TableName);//droping existing table
 
                         this.CreateTable(dt.TableName, ColSchema);
@@ -120,7 +118,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("CommonServices.LoadLocalData---" + ex.Message);
             }
             return 0;
         }
@@ -132,9 +130,9 @@ namespace ExpressBase.Mobile.Services
                 await Task.Delay(1);
                 App.DataDB.DoNonQuery($"DROP TABLE IF EXISTS {tableName};");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("CommonServices.DropTable---" + ex.Message);
             }
         }
     }

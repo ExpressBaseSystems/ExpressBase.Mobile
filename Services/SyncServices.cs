@@ -30,7 +30,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("SyncServices.Sync---" + ex.Message);
             }
             return true;
         }
@@ -46,7 +46,6 @@ namespace ExpressBase.Mobile.Services
                 if (mpage != null && mpage.Container is EbMobileForm)
                     ls.Add(mpage.Container as EbMobileForm);
             }
-
             return ls;
         }
 
@@ -78,9 +77,7 @@ namespace ExpressBase.Mobile.Services
                     Form.FlagLocalRow(resp, resp.LocalRowId, Form.TableName);
 
                     if (DependencyForm != null)
-                    {
                         PushDependencyData(Form, DependencyForm, resp.RowId, resp.LocalRowId);
-                    }
                 }
             }
             return true;
@@ -106,7 +103,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("SyncServices.PushRow---" + ex.Message);
             }
             return response;
         }
@@ -142,7 +139,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("SyncServices.PushDependencyData---" + ex.Message);
             }
         }
 
@@ -151,9 +148,7 @@ namespace ExpressBase.Mobile.Services
             EbDataColumn col = dt.Columns[columName];
 
             if (col != null)
-            {
                 dr[col.ColumnIndex] = liveId;
-            }
         }
 
         private void ClearWebFormData()
@@ -178,37 +173,43 @@ namespace ExpressBase.Mobile.Services
 
         private EbMobileForm ResolveDependency(EbMobileForm SourceForm)
         {
-            if (string.IsNullOrEmpty(SourceForm.AutoGenMVRefid))
-                return null;
-
-            var autogenvis = HelperFunctions.GetPage(SourceForm.AutoGenMVRefid);
-
-            if (autogenvis == null)
-                return null;
-
-            string linkref = (autogenvis.Container as EbMobileVisualization).LinkRefId;
-
-            if (string.IsNullOrEmpty(linkref))
-                return null;
-
-            var linkpage = HelperFunctions.GetPage(linkref);
-
-            if (linkpage == null)
-                return null;
-
-            if (linkpage.Container is EbMobileVisualization)
+            try
             {
-                if (string.IsNullOrEmpty((linkpage.Container as EbMobileVisualization).LinkRefId))
+                if (string.IsNullOrEmpty(SourceForm.AutoGenMVRefid))
                     return null;
 
-                var innerlink = HelperFunctions.GetPage((linkpage.Container as EbMobileVisualization).LinkRefId);
+                var autogenvis = HelperFunctions.GetPage(SourceForm.AutoGenMVRefid);
 
-                if (innerlink.Container is EbMobileForm)
+                if (autogenvis == null)
+                    return null;
+
+                string linkref = (autogenvis.Container as EbMobileVisualization).LinkRefId;
+
+                if (string.IsNullOrEmpty(linkref))
+                    return null;
+
+                var linkpage = HelperFunctions.GetPage(linkref);
+
+                if (linkpage == null)
+                    return null;
+
+                if (linkpage.Container is EbMobileVisualization)
                 {
-                    return (innerlink.Container as EbMobileForm);
+                    if (string.IsNullOrEmpty((linkpage.Container as EbMobileVisualization).LinkRefId))
+                        return null;
+
+                    var innerlink = HelperFunctions.GetPage((linkpage.Container as EbMobileVisualization).LinkRefId);
+
+                    if (innerlink.Container is EbMobileForm)
+                    {
+                        return (innerlink.Container as EbMobileForm);
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                Log.Write("SyncServices.ResolveDependency---" + ex.Message);
+            }
             return null;
         }
     }

@@ -57,5 +57,10 @@ namespace ExpressBase.Mobile.Extensions
         {
             return source == null || source.Count < 1;
         }
+
+        public static bool HasIndex<T>(this List<T> source, int index)
+        {
+            return (source.Count >= index);
+        }
     }
 }

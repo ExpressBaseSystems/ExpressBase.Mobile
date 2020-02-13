@@ -84,4 +84,11 @@ namespace ExpressBase.Mobile.Enums
         View_Mode = 1,
         New_Mode = 2
     }
+
+    public enum LogTypes
+    {
+        EXCEPTION,
+        STACKTRACE,
+        MESSAGE
+    }
 }

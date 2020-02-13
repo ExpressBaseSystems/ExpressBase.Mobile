@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Shared;
 using System;
@@ -24,7 +25,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write(ex.Message);
             }
         }
 

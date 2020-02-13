@@ -16,16 +16,9 @@ namespace ExpressBase.Mobile.ViewModels.Shared
         private string useremail;
         public string UserEmail
         {
-            get
-            {
-                return this.useremail;
-            }
+            get { return this.useremail; }
             set
             {
-                if (this.useremail == value)
-                {
-                    return;
-                }
                 this.useremail = value;
                 this.NotifyPropertyChanged();
             }
@@ -34,16 +27,9 @@ namespace ExpressBase.Mobile.ViewModels.Shared
         private string username;
         public string UserName
         {
-            get
-            {
-                return this.username;
-            }
+            get { return this.username; }
             set
             {
-                if (this.username == value)
-                {
-                    return;
-                }
                 this.username = value;
                 this.NotifyPropertyChanged();
             }
@@ -52,16 +38,9 @@ namespace ExpressBase.Mobile.ViewModels.Shared
         private string userdp;
         public string UserDp
         {
-            get
-            {
-                return this.userdp;
-            }
+            get { return this.userdp; }
             set
             {
-                if (this.userdp == value)
-                {
-                    return;
-                }
                 this.userdp = value;
                 this.NotifyPropertyChanged();
             }

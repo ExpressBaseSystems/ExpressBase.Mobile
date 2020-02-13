@@ -216,7 +216,7 @@ namespace ExpressBase.Mobile.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex.Message);
+                        Log.Write("ObjectRender_OnSyncClick" + ex.Message);
                     }
                 });
             }
@@ -272,7 +272,7 @@ namespace ExpressBase.Mobile.ViewModels
                 catch (Exception ex)
                 {
                     Device.BeginInvokeOnMainThread(() => IsBusy = false);
-                    Console.WriteLine(ex.StackTrace);
+                    Log.Write("ObjectRender_ObjFrame_Clicked" + ex.Message);
                 }
             });
         }

@@ -85,7 +85,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 string url = Settings.RootUrl ?? string.Empty;
 
-                if(SolutionUrl != url.Replace("https://", string.Empty))
+                if (SolutionUrl != url.Replace("https://", string.Empty))
                     await SolutionUrlSet();
             });
 
@@ -105,7 +105,7 @@ namespace ExpressBase.Mobile.ViewModels
                 Store.Remove(AppConst.APPID);
 
                 App.DataDB.CreateDB(_sid);
-                this.CreateDir();
+                HelperFunctions.CreatePlatFormDir();
 
                 if (ValidateSIDResponse.Logo != null)
                     this.SaveLogo(ValidateSIDResponse.Logo);
@@ -116,7 +116,7 @@ namespace ExpressBase.Mobile.ViewModels
                 ShowMessage = false;
                 IsBusy = false;
             }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
+            catch (Exception ex) { Log.Write("SolutionSelect_ConfirmClicked" + ex.Message); }
         }
 
         private async Task SolutionUrlSet()
@@ -152,6 +152,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
+                Log.Write("SolutionSelect_SolutionUrlSet" + ex.Message);
                 IsBusy = false;
                 toast.Show("Something went wrong");
             }
@@ -166,22 +167,6 @@ namespace ExpressBase.Mobile.ViewModels
             NotifyPropertyChanged("MessageColor");
         }
 
-        private void CreateDir()
-        {
-            try
-            {
-                string path = HelperFunctions.CreatePlatFormDir();
-                if (!String.IsNullOrEmpty(path))
-                {
-                    //folder created
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
         private void SaveLogo(byte[] imageByte)
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
@@ -193,7 +178,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("SolutionSelect_SaveLogo" + ex.Message);
             }
         }
     }

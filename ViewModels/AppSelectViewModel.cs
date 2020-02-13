@@ -41,9 +41,7 @@ namespace ExpressBase.Mobile.ViewModels
                 Store.SetValue(AppConst.APP_COLLECTION, JsonConvert.SerializeObject(this.Applications));
             }
             else
-            {
                 this.Applications = JsonConvert.DeserializeObject<List<AppData>>(_apps);
-            }
         }
 
         private async Task ItemSelected(object selected)
@@ -73,13 +71,11 @@ namespace ExpressBase.Mobile.ViewModels
                     Application.Current.MainPage = App.RootMaster;
                 }
                 else
-                {
                     await App.RootMaster.Detail.Navigation.PopAsync(true);
-                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("AppSelect_ItemSelected---" + ex.Message);
             }
         }
 
@@ -96,7 +92,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("AppSelect_PullObjectsByApp---" + ex.Message);
             }
         }
     }

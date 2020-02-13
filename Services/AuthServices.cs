@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Log.Write("Auth.TryAuthenticate---"+ex.Message);
                 resp = new ApiAuthResponse { IsValid = false };
             }
             return resp;
@@ -72,7 +72,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Log.Write("Auth.TryAuthenticateAsync---" + ex.Message);
                 resp = new ApiAuthResponse { IsValid = false };
             }
             return resp;
@@ -102,7 +102,6 @@ namespace ExpressBase.Mobile.Services
             {
                 strBuilder.Append(result[i].ToString("x2"));
             }
-
             return strBuilder.ToString();
         }
     }

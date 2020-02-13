@@ -8,13 +8,14 @@ using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class ListViewRenderViewModel : BaseViewModel
     {
+        public int DataCount { set; get; }
+
         public EbMobileVisualization Visualization { set; get; }
 
         public EbDataTable DataTable { set; get; }
@@ -37,10 +38,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 CreateFilter();
         }
 
-        private void SetData()
+        public void SetData(int offset = 0)
         {
             try
             {
+                EbDataSet ds;
                 var sqlParams = HelperFunctions.GetSqlParams(this.Visualization.GetQuery);
 
                 if (sqlParams.Count > 0)
@@ -49,18 +51,26 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     foreach (string s in sqlParams)
                         dbParams.Add(new DbParameter { ParameterName = s });
 
-                    DataTable = this.Visualization.GetData(dbParams);
+                    ds = this.Visualization.GetData(dbParams, offset);
                 }
                 else
-                    DataTable = this.Visualization.GetData();
+                    ds = this.Visualization.GetData(offset);
+
+                if (ds.Tables.HasIndex(2))
+                {
+                    DataTable = ds.Tables[1];
+                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["row_count"]);
+                }
+                else
+                    DataTable = new EbDataTable();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("List_SetData---" + ex.Message);
             }
         }
 
-        private void CreateView()
+        public void CreateView()
         {
             StackLayout StackL = new StackLayout { Spacing = 0 };
 
@@ -159,7 +169,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public void Refresh(List<DbParameter> parameters)
         {
             if (parameters != null)
-                DataTable = this.Visualization.GetData(parameters);
+            {
+                var ds = this.Visualization.GetData(parameters);
+                DataTable = ds.Tables[1];
+            }
             this.CreateView();
         }
     }

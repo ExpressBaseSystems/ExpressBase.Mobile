@@ -65,43 +65,55 @@ namespace ExpressBase.Mobile
 
         public WebFormDVModes FormMode { set; get; }
 
+        public int PageLength { set; get; } = 30;
+
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
 
-        public EbDataTable GetData()
+        public EbDataSet GetData(int offset = 0)
         {
-            EbDataTable Data = new EbDataTable();
+            EbDataSet Data = new EbDataSet();
             try
             {
                 string sql = HelperFunctions.WrapSelectQuery(GetQuery);
-                Data = App.DataDB.DoQuery(sql);
+
+                DbParameter[] dbParameters = {
+                    new DbParameter{ ParameterName = "@limit", Value = PageLength, DbType = (int)EbDbTypes.Int32 },
+                    new DbParameter{ ParameterName = "@offset", Value = offset, DbType = (int)EbDbTypes.Int32 },
+                };
+
+                Data = App.DataDB.DoQueries(sql, dbParameters);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("EbMobileVisualization.GetData---" + ex.Message);
             }
             return Data;
         }
 
-        public EbDataTable GetData(List<DbParameter> dbParameters)
+        public EbDataSet GetData(List<DbParameter> dbParameters, int offset = 0)
         {
-            EbDataTable Data = new EbDataTable();
+            EbDataSet Data = new EbDataSet();
             try
             {
                 var userParam = dbParameters.Find(item => item.ParameterName == "current_userid");
 
-                if(userParam != null)
+                if (userParam != null)
                 {
                     userParam.Value = Settings.UserId;
                     userParam.DbType = (int)EbDbTypes.Int32;
                 }
 
                 string sql = HelperFunctions.WrapSelectQuery(GetQuery, dbParameters);
-                Data = App.DataDB.DoQuery(sql, dbParameters.ToArray());
+
+                dbParameters.Add(new DbParameter { ParameterName = "@limit", Value = PageLength, DbType = (int)EbDbTypes.Int32 });
+                dbParameters.Add(new DbParameter { ParameterName = "@offset", Value = offset, DbType = (int)EbDbTypes.Int32 });
+
+                Data = App.DataDB.DoQueries(sql, dbParameters.ToArray());
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("EbMobileVisualization.GetData with params---" + ex.Message);
             }
             return Data;
         }

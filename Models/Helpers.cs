@@ -27,10 +27,28 @@ namespace ExpressBase.Mobile.Models
         string[] GetFiles(string Url, string Pattern);
 
         string GetBaseURl();
+
+        void WriteLogs(string message, LogTypes logType);
     }
 
     public interface IToast
     {
         void Show(string message);
     }
+
+
+    public class Log
+    {
+        public static void Write(string message, LogTypes logType = LogTypes.EXCEPTION)
+        {
+            try
+            {
+                DependencyService.Get<INativeHelper>().WriteLogs(message, logType);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+    } 
 }

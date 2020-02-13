@@ -6,12 +6,17 @@ using System.Collections.Generic;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using System.Linq;
+using ExpressBase.Mobile.Models;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ListViewRender : ContentPage
     {
+        private int Offset = 0;
+
+        private int PageCount = 1;
+
         public ListViewRenderViewModel Renderer { set; get; }
 
         public ListViewRender(EbMobilePage Page)
@@ -34,22 +39,27 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 else
                     EmptyRecordLabel.IsVisible = true;
 
+                int toVal = (Renderer.DataTable.Rows.Count < Renderer.DataCount) ? Renderer.Visualization.PageLength : Renderer.DataCount;
+                PagingMeta.Text = $"Showing {Offset} to {toVal} of {Renderer.DataCount} entries";
+
                 BindingContext = Renderer;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("ListViewRender.Constructor invoke---" + ex.Message);
             }
         }
 
         private void FilterButton_Clicked(object sender, EventArgs e)
         {
             FilterDialogView.IsVisible = true;
+            PagingContainer.IsVisible = false;
         }
 
         private void FDCancel_Clicked(object sender, EventArgs e)
         {
             FilterDialogView.IsVisible = false;
+            PagingContainer.IsVisible = true;
         }
 
         private void FDApply_Clicked(object sender, EventArgs e)
@@ -68,6 +78,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 }
 
                 FilterDialogView.IsVisible = false;
+                PagingContainer.IsVisible = true;
 
                 if (paramDict.Any())
                 {
@@ -78,7 +89,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("ListViewRender.FDApply_Clicked---" + ex.Message);
             }
         }
 
@@ -92,6 +103,53 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 return (ctrl as CustomCheckBox).IsChecked;
             else
                 return null;
+        }
+
+        private void PagingPrevButton_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Renderer != null)
+                {
+                    if (Offset <= 0) return;
+
+                    Offset -= Renderer.Visualization.PageLength;
+                    PageCount--;
+                    ResetPagedData();
+                }
+            }
+            catch(Exception ex)
+            {
+                Log.Write("ListViewRender.PrevButton_Clicked---" + ex.Message);
+            }
+        }
+
+        private void PagingNextButton_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Renderer != null)
+                {
+                    if (Offset + Renderer.Visualization.PageLength >= Renderer.DataCount) return;
+
+                    Offset += Renderer.Visualization.PageLength;
+                    PageCount++;
+                    ResetPagedData();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write("ListViewRender.NextButton_Clicked---" + ex.Message);
+            }
+        }
+        
+        private void ResetPagedData()
+        {
+            Renderer.SetData(Offset);
+            Renderer.CreateView();
+            listContainer.Content = Renderer.View;
+            PagingPageCount.Text = PageCount.ToString();
+            PagingMeta.Text = $"Showing {Offset} to {Offset + Renderer.Visualization.PageLength} of {Renderer.DataCount} entries";
         }
     }
 }

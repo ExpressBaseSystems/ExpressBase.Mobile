@@ -38,7 +38,7 @@ namespace ExpressBase.Mobile.Services
             catch (Exception e)
             {
                 Vresp.IsValid = false;
-                Console.WriteLine(e.Message);
+                Log.Write("RestServices.ValidateSid---" + e.Message);
             }
             return Vresp;
         }
@@ -60,7 +60,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Log.Write("RestServices.GetAppCollections---" + ex.Message);
             }
             return _Apps;
         }
@@ -85,7 +85,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Log.Write("RestServices.GetEbObjects---" + ex.Message);
                 return new MobilePageCollection();
             }
             return new MobilePageCollection();
@@ -112,7 +112,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("RestServices.Push---" + e.Message);
             }
             return null;
         }
@@ -136,7 +136,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("RestServices.PushAsync---" + e.Message);
             }
             return null;
         }
@@ -163,7 +163,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("RestServices.PushFiles---" + e.Message);
             }
             return FileData;
         }
@@ -190,7 +190,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("RestServices.PushFilesAsync---" + e.Message);
             }
             return FileData;
         }
