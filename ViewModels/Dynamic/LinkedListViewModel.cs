@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views.Dynamic;
@@ -11,21 +12,21 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class LinkedListViewModel : BaseViewModel
     {
-        public bool IsRedirect { set; get; } = false;
-
         public EbMobileVisualization SourceVisualization { set; get; }
 
         public EbMobileVisualization Visualization { set; get; }
 
         public CustomFrame HeaderFrame { set; get; }
 
+        public int DataCount { set; get; }
+
         public EbDataTable DataTable { set; get; }
 
         public StackLayout View { set; get; }
 
-        public Command AddCommand { set; get; }
+        public Command AddCommand => new Command(AddButtonClicked);
 
-        public Command EditCommand { set; get; }
+        public Command EditCommand => new Command(EditButtonClicked);
 
         public LinkedListViewModel() { }
 
@@ -43,15 +44,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Margin = 0
             };
 
-            this.SetData();
-            //this.GetData();
+            this.SetData(); //set query result
             this.CreateView();
-
-            AddCommand = new Command(AddButtonClicked);
-            EditCommand = new Command(EditButtonClicked);
         }
 
-        private void SetData()
+        public void SetData(int offset = 0)
         {
             try
             {
@@ -64,12 +61,18 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     foreach (string s in sqlParams)
                         dbParams.Add(new DbParameter { ParameterName = s, Value = this.HeaderFrame.DataRow?[s] });
 
-                    ds = this.Visualization.GetData(dbParams);
+                    ds = this.Visualization.GetData(dbParams, offset);
                 }
                 else
-                    ds = this.Visualization.GetData();
+                    ds = this.Visualization.GetData(offset);
 
-                DataTable = ds.Tables[1];
+                if (ds.Tables.HasIndex(2))
+                {
+                    DataTable = ds.Tables[1];
+                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["row_count"]);
+                }
+                else
+                    DataTable = new EbDataTable();
             }
             catch (Exception ex)
             {
@@ -77,12 +80,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private void CreateView()
+        public void CreateView()
         {
             StackLayout StackL = new StackLayout { Spacing = 0 };
 
             var tapGestureRecognizer = new TapGestureRecognizer();
-            tapGestureRecognizer.Tapped += VisNodeCommand;
+            tapGestureRecognizer.Tapped += ListItem_Clicked;
             int _rowColCount = 1;
 
             foreach (EbDataRow _row in this.DataTable.Rows)
@@ -95,7 +98,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 _rowColCount++;
             }
-
             this.View = StackL;
         }
 
@@ -110,7 +112,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 if (string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
                     return;
 
-                this.IsRedirect = true;
                 EbMobilePage ParentForm = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
 
                 int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
@@ -133,14 +134,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
                 if (id != 0)
                 {
-                    this.IsRedirect = true;
                     FormRender Renderer = new FormRender(_page, id);
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }
         }
 
-        void VisNodeCommand(object Frame, EventArgs args)
+        void ListItem_Clicked(object Frame, EventArgs args)
         {
             if (string.IsNullOrEmpty(this.Visualization.LinkRefId))
                 return;
@@ -156,13 +156,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }
-        }
-
-        public override void RefreshPage()
-        {
-            this.View = null;
-            this.SetData();
-            this.CreateView();
         }
     }
 }

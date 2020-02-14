@@ -24,6 +24,7 @@
         <Grid BackgroundColor="Transparent">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -37,18 +38,81 @@
                     Grid.Row="1"
                     Text="&#xf040;"
                     HorizontalOptions="End"
-                    Margin="20,10,10,10"
+                    Margin="20,0,10,10"
                     FontFamily="{StaticResource FontAwesome}"
                     Command="{Binding EditCommand}"
                     Style="{StaticResource IconedRoundButton}"/>
             </Grid>
 
-            <ScrollView x:Name="ScrollContainer" Grid.Row="1">
+            <Grid Grid.Row="1" x:Name="PagingContainer" ColumnSpacing="0" Margin="0,5,0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="35"></RowDefinition>
+                </Grid.RowDefinitions>
 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Label x:Name="PagingMeta"
+                       Grid.Column="0" 
+                       Text="Showing 0 to 30 entries" 
+                       VerticalTextAlignment="Center"
+                       Margin="5,0"
+                       FontSize="15"
+                       TextColor="#333"/>
+
+                <Frame Grid.Column="1" Padding="0" BackgroundColor="Red" Margin="5,0" CornerRadius="6" BorderColor="#ddd">
+                    <Frame.Content>
+                        <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
+                            <Button 
+                                x:Name="PagingPrevButton"
+                                Margin="0,0,0,0"
+                                CornerRadius="0"
+                                Padding="0"
+                                WidthRequest="35"
+                                Text="&#xf053;"
+                                TextColor="White"
+                                FontFamily="{StaticResource FontAwesome}"
+                                BackgroundColor="{StaticResource Blue-Dark}"
+                                Clicked="PagingPrevButton_Clicked"/>
+
+                            <Button 
+                                x:Name="PagingPageCount"
+                                Padding="0"
+                                WidthRequest="35"
+                                Text="1" 
+                                BackgroundColor="White"
+                                CornerRadius="0"/>
+
+                            <Button 
+                                x:Name="PagingNextButton"
+                                Margin="0,0,0,0"
+                                CornerRadius="0"
+                                Padding="0"
+                                WidthRequest="35"
+                                Text="&#xf054;" 
+                                FontFamily="{StaticResource FontAwesome}"
+                                TextColor="White"
+                                BackgroundColor="{StaticResource Blue-Dark}"
+                                Clicked="PagingNextButton_Clicked"/>
+                        </StackLayout>
+                    </Frame.Content>
+                </Frame>
+            </Grid>
+
+            <ScrollView x:Name="ScrollContainer" Grid.Row="2">
+                <Label 
+                    IsVisible="False"
+                    x:Name="EmptyRecordLabel"                  
+                    Text="Empty list."
+                    VerticalOptions="Center"
+                    FontSize="16"
+                    HorizontalOptions="Center"/>
             </ScrollView>
 
             <Button
-                Grid.Row="1"
+                Grid.Row="2"
                 Text="&#xf067;"
                 Margin="0,0,10,10"
                 VerticalOptions="End"
