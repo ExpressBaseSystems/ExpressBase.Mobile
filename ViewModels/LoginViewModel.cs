@@ -44,6 +44,8 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        public Command LoginCommand { set; get; }
+
         public string LoginTo { set; get; }
 
         public LoginViewModel()
@@ -55,8 +57,6 @@ namespace ExpressBase.Mobile.ViewModels
             this.ResetConfig = new Command(ResetClicked);//bind reset button
             SetLogo();
         }
-
-        public Command LoginCommand { set; get; }
 
         private async Task LoginAction()
         {

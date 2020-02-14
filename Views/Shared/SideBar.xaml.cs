@@ -1,5 +1,8 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels.Shared;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +18,24 @@ namespace ExpressBase.Mobile.Views.Shared
         public SideBar()
         {
             InitializeComponent();
+            this.BindingContext = new SideBarViewModel();
+            SetDp();
+        }
+
+        private void SetDp()
+        {
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+            string sid = Settings.SolutionId;
+            try
+            {
+                var bytes = helper.GetPhoto($"ExpressBase/{sid}/DP/dp_{Settings.UserId}.png");
+                if (bytes != null)
+                    UserDp.Source = ImageSource.FromStream(() => new MemoryStream(bytes));
+            }
+            catch (Exception ex)
+            {
+                Log.Write("SideBar.SetDp---" + ex.Message);
+            }
         }
     }
 }

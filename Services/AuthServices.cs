@@ -5,10 +5,12 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -24,7 +26,20 @@ namespace ExpressBase.Mobile.Services
                 return false;
         }
 
-        public static ApiAuthResponse TryAuthenticate(string username,string password)
+        public static async Task AuthIfTokenExpired()
+        {
+            if (IsTokenExpired(Settings.RToken))
+            {
+                string _username = Settings.UserName;
+                string _password = Settings.PassWord;
+
+                ApiAuthResponse response = await Auth.TryAuthenticateAsync(_username, _password);
+                if (response.IsValid)
+                    Auth.UpdateStore(response, _username, _password);
+            }
+        }
+
+        public static ApiAuthResponse TryAuthenticate(string username, string password)
         {
             ApiAuthResponse resp;
             try
@@ -36,16 +51,15 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("password", ToMD5Hash(string.Concat(password, username)));
 
                 var response = client.Execute(request);
+
                 if (response.StatusCode == HttpStatusCode.OK)
-                {
                     resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
-                }
                 else
                     resp = new ApiAuthResponse { IsValid = false };
             }
             catch (Exception ex)
             {
-                Log.Write("Auth.TryAuthenticate---"+ex.Message);
+                Log.Write("Auth.TryAuthenticate---" + ex.Message);
                 resp = new ApiAuthResponse { IsValid = false };
             }
             return resp;
@@ -63,10 +77,9 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("password", ToMD5Hash(string.Concat(password, username)));
 
                 var response = await client.ExecuteAsync(request);
+
                 if (response.StatusCode == HttpStatusCode.OK)
-                {
                     resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
-                }
                 else
                     resp = new ApiAuthResponse { IsValid = false };
             }
@@ -78,7 +91,7 @@ namespace ExpressBase.Mobile.Services
             return resp;
         }
 
-        public static void UpdateStore(ApiAuthResponse resp,string username,string password)
+        public static void UpdateStore(ApiAuthResponse resp, string username, string password)
         {
             Store.SetValue(AppConst.BTOKEN, resp.BToken);
             Store.SetValue(AppConst.RTOKEN, resp.RToken);
@@ -89,6 +102,21 @@ namespace ExpressBase.Mobile.Services
             Store.SetValue(AppConst.USER_OBJECT, JsonConvert.SerializeObject(resp.User));
             Store.SetValue(AppConst.USER_LOCATIONS, JsonConvert.SerializeObject(resp.Locations));
             Store.SetValue(AppConst.CURRENT_LOCATION, resp.User.Preference.DefaultLocation.ToString());
+
+            try
+            {
+                if (resp.DisplayPicture != null)
+                {
+                    HelperFunctions.CreatePlatFormDir("DP");
+                    INativeHelper helper = DependencyService.Get<INativeHelper>();
+                    string url = helper.NativeRoot + $"/ExpressBase/{Settings.SolutionId.ToUpper()}/DP/dp_{resp.UserId}.png";
+                    File.WriteAllBytes(url, resp.DisplayPicture);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Auth.UpdateStore (DisplayPicture)---" + ex.Message);
+            }
         }
 
         public static string ToMD5Hash(string str)

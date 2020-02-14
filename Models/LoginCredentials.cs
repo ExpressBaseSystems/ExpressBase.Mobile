@@ -18,6 +18,8 @@ namespace ExpressBase.Mobile.Models
 
         public User User { set; get; }
 
+        public byte[] DisplayPicture { set; get; }
+
         public List<EbLocation> Locations { get; set; }
     }
 

@@ -31,11 +31,6 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <!--  Binding context for page  -->
-    <ContentPage.BindingContext>
-        <viewModel:SideBarViewModel />
-    </ContentPage.BindingContext>
-
     <ContentPage.Content>
         <Grid BackgroundColor="#ffffff">
             <ScrollView 
@@ -62,17 +57,12 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Image
-                                Grid.RowSpan="2"
-                                Margin="16"
-                                BackgroundColor="White"
-                                HeightRequest="48"
-                                WidthRequest="48" >
-                                    <Image.Source>
-                                        <UriImageSource Uri="{Binding UserDp}" 
-			                                 CacheValidity="14" 
-			                                 CachingEnabled="true"/>
-                                    </Image.Source>
-                                </Image>
+                                    x:Name="UserDp"
+                                    Grid.RowSpan="2"
+                                    Margin="16"
+                                    BackgroundColor="White"
+                                    HeightRequest="48"
+                                    WidthRequest="48"/>
 
                                 <StackLayout
                                     Grid.Row="0"

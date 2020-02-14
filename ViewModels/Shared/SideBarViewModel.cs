@@ -35,17 +35,6 @@ namespace ExpressBase.Mobile.ViewModels.Shared
             }
         }
 
-        private string userdp;
-        public string UserDp
-        {
-            get { return this.userdp; }
-            set
-            {
-                this.userdp = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
         public Command LogOutCommand { set; get; }
 
         public Command ChangeSidCommand { set; get; }

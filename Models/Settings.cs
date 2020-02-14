@@ -52,6 +52,16 @@ namespace ExpressBase.Mobile.Models
             }
         }
 
+        public static string UserName
+        {
+            get { return Store.GetValue(AppConst.USERNAME); }
+        }
+
+        public static string PassWord
+        {
+            get { return Store.GetValue(AppConst.PASSWORD); }
+        }
+
         public static string SolutionId
         {
             get

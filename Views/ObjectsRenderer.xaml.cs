@@ -58,24 +58,29 @@ namespace ExpressBase.Mobile.Views
                     RootRefreshView.IsRefreshing = false;
                     return;
                 }
-
-                RootRefreshView.IsRefreshing = true;
-
-                var Coll = await RestServices.Instance.GetEbObjects(Settings.AppId, Settings.LocationId, true);
-
-                if(Coll != null)
+                else
                 {
-                    await Store.SetValueAsync(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(Coll.Pages));
-                    var vm = (BindingContext as ObjectsRenderViewModel);
-                    vm.ObjectList = Coll.Pages;
-                    vm.BuildView();
-                    scrollView.Content = vm.View;
+                    if (Auth.IsTokenExpired(Settings.RToken))
+                        await Auth.AuthIfTokenExpired();
 
-                    await CommonServices.Instance.LoadLocalData(Coll.Data);//load pulled data to local
+                    RootRefreshView.IsRefreshing = true;
+
+                    var Coll = await RestServices.Instance.GetEbObjects(Settings.AppId, Settings.LocationId, true);
+
+                    if (Coll != null)
+                    {
+                        await Store.SetValueAsync(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(Coll.Pages));
+                        var vm = (BindingContext as ObjectsRenderViewModel);
+                        vm.ObjectList = Coll.Pages;
+                        vm.BuildView();
+                        scrollView.Content = vm.View;
+
+                        await CommonServices.Instance.LoadLocalData(Coll.Data);//load pulled data to local
+                    }
+
+                    RootRefreshView.IsRefreshing = false;
+                    toast.Show("Refreshed");
                 }
-
-                RootRefreshView.IsRefreshing = false;
-                toast.Show("Refreshed");
             }
             catch(Exception ex)
             {
