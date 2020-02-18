@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile.Views
                 else
                 {
                     if (Auth.IsTokenExpired(Settings.RToken))
-                        await Auth.AuthIfTokenExpired();
+                        await Auth.AuthIfTokenExpiredAsync();
 
                     RootRefreshView.IsRefreshing = true;
 

@@ -26,7 +26,7 @@ namespace ExpressBase.Mobile.Services
                 return false;
         }
 
-        public static async Task AuthIfTokenExpired()
+        public static async Task AuthIfTokenExpiredAsync()
         {
             if (IsTokenExpired(Settings.RToken))
             {
@@ -34,6 +34,19 @@ namespace ExpressBase.Mobile.Services
                 string _password = Settings.PassWord;
 
                 ApiAuthResponse response = await Auth.TryAuthenticateAsync(_username, _password);
+                if (response.IsValid)
+                    Auth.UpdateStore(response, _username, _password);
+            }
+        }
+
+        public static void AuthIfTokenExpired()
+        {
+            if (IsTokenExpired(Settings.RToken))
+            {
+                string _username = Settings.UserName;
+                string _password = Settings.PassWord;
+
+                ApiAuthResponse response = Auth.TryAuthenticate(_username, _password);
                 if (response.IsValid)
                     Auth.UpdateStore(response, _username, _password);
             }

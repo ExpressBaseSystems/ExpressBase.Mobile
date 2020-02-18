@@ -195,6 +195,9 @@ namespace ExpressBase.Mobile.ViewModels
                     {
                         Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Pushing from local data..."; });
 
+                        if (Auth.IsTokenExpired(Settings.RToken))
+                            Auth.AuthIfTokenExpired();
+
                         bool status = SyncServices.Instance.Sync();
 
                         if (status)

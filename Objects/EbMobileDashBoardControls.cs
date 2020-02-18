@@ -1,12 +1,9 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -67,15 +64,10 @@ namespace ExpressBase.Mobile
             try
             {
                 string sql = HelperFunctions.WrapSelectQueryUnPaged(HelperFunctions.B64ToString(this.OfflineQuery.Code));
-
                 List<DbParameter> _DbParams = new List<DbParameter>();
-
                 List<string> _Params = HelperFunctions.GetSqlParams(sql);
-
                 if (_Params.Count > 0)
-                {
                     this.GetParameterValues(_DbParams, _Params);
-                }
                 Data = App.DataDB.DoQuery(sql, _DbParams.ToArray());
             }
             catch (Exception ex)
@@ -101,32 +93,6 @@ namespace ExpressBase.Mobile
             {
                 Console.WriteLine(ex.Message);
             }
-        }
-
-        private string GetHtml()
-        {
-            string Html = "<table style='border-collapse: collapse;width: 100%;'><thead><tr>";
-
-            foreach (EbDataColumn col in this.Data.Columns)
-            {
-                Html += $"<th style='border:1px solid #ccc'>{col.ColumnName}</th>";
-            }
-
-            Html += $"</tr></thead><tbody>";
-
-            foreach (EbDataRow row in this.Data.Rows)
-            {
-                Html += "<tr>";
-                foreach (object item in row)
-                {
-                    Html += $"<td style='border:1px solid #ccc'>{item.ToString()}</td>";
-                }
-                Html += "</tr>";
-            }
-
-            Html += "</tbody></table>";
-
-            return Html;
         }
     }
 }
