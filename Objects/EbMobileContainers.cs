@@ -125,4 +125,11 @@ namespace ExpressBase.Mobile
 
         public List<EbMobileDashBoardControls> ChildControls { get { return ChiledControls; } set { } }
     }
+
+    public class EbMobilePdf : EbMobileContainer
+    {
+        public string Template { set; get; }
+
+        public EbScript OfflineQuery { set; get; }
+    }
 }

@@ -62,11 +62,8 @@ namespace ExpressBase.Mobile.Views
                 {
                     if (Auth.IsTokenExpired(Settings.RToken))
                         await Auth.AuthIfTokenExpiredAsync();
-
                     RootRefreshView.IsRefreshing = true;
-
                     var Coll = await RestServices.Instance.GetEbObjects(Settings.AppId, Settings.LocationId, true);
-
                     if (Coll != null)
                     {
                         await Store.SetValueAsync(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(Coll.Pages));
@@ -74,10 +71,8 @@ namespace ExpressBase.Mobile.Views
                         vm.ObjectList = Coll.Pages;
                         vm.BuildView();
                         scrollView.Content = vm.View;
-
                         await CommonServices.Instance.LoadLocalData(Coll.Data);//load pulled data to local
                     }
-
                     RootRefreshView.IsRefreshing = false;
                     toast.Show("Refreshed");
                 }

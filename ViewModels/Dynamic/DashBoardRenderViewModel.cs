@@ -13,10 +13,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public DashBoardRenderViewModel() { }
 
-        public DashBoardRenderViewModel(EbMobilePage Page)
+        public DashBoardRenderViewModel(EbMobilePage page) : base(page)
         {
-            PageTitle = Page.DisplayName;
-            DashBoard = Page.Container as EbMobileDashBoard;
+            DashBoard = this.Page.Container as EbMobileDashBoard;
             CreateView();
         }
 

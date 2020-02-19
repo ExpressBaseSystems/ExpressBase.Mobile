@@ -25,7 +25,6 @@ namespace ExpressBase.Mobile.ViewModels
         public AppSelectViewModel()
         {
             PageTitle = "Choose Application";
-
             PullApplications();
         }
 

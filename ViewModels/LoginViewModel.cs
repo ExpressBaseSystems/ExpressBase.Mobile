@@ -52,7 +52,6 @@ namespace ExpressBase.Mobile.ViewModels
         {
             LoginTo = "Login to " + Settings.SolutionId;
             this.NotifyPropertyChanged("LoginTo");
-
             this.LoginCommand = new Command(async () => await LoginAction());
             this.ResetConfig = new Command(ResetClicked);//bind reset button
             SetLogo();

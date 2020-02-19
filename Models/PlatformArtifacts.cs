@@ -27,6 +27,8 @@ namespace ExpressBase.Mobile.Models
     {
         public List<MobilePagesWraper> Pages { set; get; }
 
+        public List<WebObjectsWraper> WebObjects { set; get; }
+
         public EbDataSet Data { set; get; }
 
         public List<string> TableNames { set; get; }
@@ -34,6 +36,7 @@ namespace ExpressBase.Mobile.Models
         public MobilePageCollection()
         {
             this.Pages = new List<MobilePagesWraper>();
+            this.WebObjects = new List<WebObjectsWraper>();
         }
     }
 
@@ -67,6 +70,8 @@ namespace ExpressBase.Mobile.Models
                         icon = "f022";
                     else if (_page.Container is EbMobileDashBoard)
                         icon = "f0e4";
+                    else if (_page.Container is EbMobilePdf)
+                        icon = "f1c1";
                     else
                         icon = "f0e4";
                 }
@@ -86,6 +91,8 @@ namespace ExpressBase.Mobile.Models
                     return "List";
                 else if (_page.Container is EbMobileDashBoard)
                     return "DashBoards";
+                else if (_page.Container is EbMobilePdf)
+                    return "Pdf";
                 else
                     return "Miscellaneous";
             }
@@ -96,7 +103,6 @@ namespace ExpressBase.Mobile.Models
             get
             {
                 if (_page == null) ToPage();
-
                 return _page.HideFromMenu;
             }
         }
@@ -107,6 +113,21 @@ namespace ExpressBase.Mobile.Models
             _page = EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
             return _page;
         }
+    }
+
+    public class WebObjectsWraper
+    {
+        public string DisplayName { set; get; }
+
+        public string Name { set; get; }
+
+        public string Version { set; get; }
+
+        public string RefId { set; get; }
+
+        public string Json { set; get; }
+
+        public int ObjectType { set; get; }
     }
 
     public class ValidateSidResponse

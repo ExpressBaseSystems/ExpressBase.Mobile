@@ -15,6 +15,16 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged, IDisposable
     {
+        public BaseViewModel() { }
+
+        public BaseViewModel(EbMobilePage page)
+        {
+            this.Page = page;
+            this.PageTitle = page.DisplayName;
+        }
+
+        public EbMobilePage Page { set; get; }
+
         public string PageTitle { set; get; }
 
         public EbDataTable ContextData { set; get; }
@@ -22,8 +32,6 @@ namespace ExpressBase.Mobile.ViewModels
         public int ContextRecordIndex { set; get; }
 
         //public View View { set; get; }
-
-        //public EbMobilePage Page { set; get; }
 
         protected bool _isBusy;
         public bool IsBusy

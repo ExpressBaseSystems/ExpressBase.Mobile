@@ -4,7 +4,20 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Dynamic.ReportRender">
+             x:Class="ExpressBase.Mobile.Views.Dynamic.PdfRender">
+
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="0" Padding="0" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Text="{Binding PageTitle}" 
+                   VerticalOptions="Center" 
+                   Style="{StaticResource ToolBarLabelStyle}" 
+                   Grid.Column="0"/>
+        </Grid>
+    </NavigationPage.TitleView>
+
     <ContentPage.Content>
         <StackLayout>
             <Label Text="Welcome to Xamarin.Forms!"

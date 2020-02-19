@@ -24,12 +24,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public EbDataTable DataOnEdit { set; get; }
 
         //new mode
-        public FormRenderViewModel(EbMobilePage Page)
+        public FormRenderViewModel(EbMobilePage page) : base(page)
         {
-            PageTitle = Page.DisplayName;
             try
             {
-                Form = (Page.Container as EbMobileForm);
+                Form = (this.Page.Container as EbMobileForm);
                 CreateView();
                 this.Form.CreateTableSchema();
             }

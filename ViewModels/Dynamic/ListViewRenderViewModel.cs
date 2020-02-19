@@ -26,14 +26,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Dictionary<string, View> FilterControls { set; get; }
 
-        public ListViewRenderViewModel(EbMobilePage Page)
+        public ListViewRenderViewModel(EbMobilePage page) : base(page)
         {
-            PageTitle = Page.DisplayName;
-            this.Visualization = (Page.Container as EbMobileVisualization);
-
+            this.Visualization = this.Page.Container as EbMobileVisualization;
             this.SetData();//get query result
             this.CreateView();
-
             if (!this.Visualization.Filters.IsNullOrEmpty())
                 CreateFilter();
         }

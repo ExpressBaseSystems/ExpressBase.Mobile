@@ -79,7 +79,6 @@ namespace ExpressBase.Mobile.ViewModels
         public void SetUpData()
         {
             string _objlist = Store.GetValue(AppConst.OBJ_COLLECTION);
-
             if (_objlist != null)
             {
                 List<MobilePagesWraper> _list = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
@@ -92,12 +91,9 @@ namespace ExpressBase.Mobile.ViewModels
         public void BuildView()
         {
             var stack = new StackLayout();
-
             var tapGesture = new TapGestureRecognizer();
             tapGesture.Tapped += ObjFrame_Clicked;
-
             var grouped = ObjectList.Group();
-
             foreach (KeyValuePair<string, List<MobilePagesWraper>> pair in grouped)
             {
                 if (!pair.Value.Any())
@@ -137,12 +133,10 @@ namespace ExpressBase.Mobile.ViewModels
             };
             int rownum = 0;
             int colnum = 0;
-
             foreach (MobilePagesWraper wrpr in pageWrapers)
             {
                 if (wrpr.IsHidden)
                     continue;
-
                 var frame = new CustomShadowFrame
                 {
                     HasShadow = true,
@@ -164,10 +158,8 @@ namespace ExpressBase.Mobile.ViewModels
                         }
                     }
                 };
-
                 frame.GestureRecognizers.Add(gesture);
                 grid.Children.Add(frame, colnum, rownum);
-
                 if (wrpr != pageWrapers.Last())
                 {
                     if (colnum == 1)
@@ -186,7 +178,6 @@ namespace ExpressBase.Mobile.ViewModels
         private void OnSyncClick(object sender)
         {
             IToast toast = DependencyService.Get<IToast>();
-
             if (Settings.HasInternet)
             {
                 Task.Run(() =>
@@ -194,12 +185,9 @@ namespace ExpressBase.Mobile.ViewModels
                     try
                     {
                         Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Pushing from local data..."; });
-
                         if (Auth.IsTokenExpired(Settings.RToken))
                             Auth.AuthIfTokenExpired();
-
                         bool status = SyncServices.Instance.Sync();
-
                         if (status)
                         {
                             Device.BeginInvokeOnMainThread(() =>
@@ -233,15 +221,12 @@ namespace ExpressBase.Mobile.ViewModels
             Task.Run(() =>
             {
                 IToast toast = DependencyService.Get<IToast>();
-
                 Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Loading page..."; });
-
                 try
                 {
                     EbMobilePage page = HelperFunctions.GetPage(item.RefId);
                     if (page == null)
                         toast.Show("This page is no longer available.");
-
                     if (page.Container is EbMobileForm)
                     {
                         Device.BeginInvokeOnMainThread(() =>
@@ -264,6 +249,14 @@ namespace ExpressBase.Mobile.ViewModels
                         {
                             IsBusy = false;
                             (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DashBoardRender(page));
+                        });
+                    }
+                    else if (page.Container is EbMobilePdf)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new PdfRender(page));
                         });
                     }
                     else
