@@ -148,6 +148,19 @@
                     <StackLayout VerticalOptions="End" Padding="0">
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
+                                <TapGestureRecognizer x:Name="About" Tapped="About_Tapped"/>
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Text="&#xf05a;" Style="{StaticResource SideBarIconStyle}"/>
+                                <Label Grid.Column="1" Text="About" FontFamily="{StaticResource Roboto-Regular}"/>
+                            </Grid>
+                        </Frame>
+                        <Frame Style="{StaticResource SideBarFrame}">
+                            <Frame.GestureRecognizers>
                                 <TapGestureRecognizer 
                                     Command="{Binding Path=BindingContext.LogOutCommand,Source={x:Reference SideBarLayout}}"
                                     CommandParameter="{Binding .}"/>

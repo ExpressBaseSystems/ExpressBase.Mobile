@@ -24,6 +24,13 @@ namespace ExpressBase.Mobile
         public virtual string Status { get; set; }
     }
 
+    public enum NetworkMode
+    {
+        Online,
+        Offline,
+        Mixed
+    }
+
     public abstract class EbMobilePageBase : EbObject
     {
 
@@ -31,17 +38,9 @@ namespace ExpressBase.Mobile
 
     public class EbMobilePage : EbMobilePageBase
     {
-        public override string RefId { get; set; }
-
-        public override string DisplayName { get; set; }
-
-        public override string Description { get; set; }
-
-        public override string VersionNumber { get; set; }
-
-        public override string Status { get; set; }
-
         public EbMobileContainer Container { set; get; }
+
+        public NetworkMode NetworkMode { get; set; }
 
         public bool HideFromMenu { set; get; }
 

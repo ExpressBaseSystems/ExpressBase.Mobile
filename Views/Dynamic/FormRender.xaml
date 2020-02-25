@@ -36,6 +36,12 @@
             <ScrollView Grid.Row="0" Orientation="Vertical" x:Name="FormScrollView">
                 
             </ScrollView>
+            <!--#fd6b6b-->
+            <StackLayout Grid.Row="0" IsVisible="{Binding ShowMessage}">
+                <Frame Padding="15"  BackgroundColor="{Binding MessageColor}">
+                    <Label Text="{Binding Message}" TextColor="White" FontSize="15"/>
+                </Frame>
+            </StackLayout>
 
             <Button 
                 x:Name="SaveButton"

@@ -120,9 +120,8 @@ namespace ExpressBase.Mobile.Services
             {
                 if (resp.DisplayPicture != null)
                 {
-                    HelperFunctions.CreatePlatFormDir("DP");
                     INativeHelper helper = DependencyService.Get<INativeHelper>();
-                    string url = helper.NativeRoot + $"/ExpressBase/{Settings.SolutionId.ToUpper()}/DP/dp_{resp.UserId}.png";
+                    string url = helper.NativeRoot + $"/ExpressBase/{Settings.SolutionId.ToUpper()}/user.png";
                     File.WriteAllBytes(url, resp.DisplayPicture);
                 }
             }

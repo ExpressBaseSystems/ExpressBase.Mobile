@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.Views.About"
+             BackgroundColor="White">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="VersionLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource Gray-700}" />
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Medium}" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="LineHeight" Value="{OnPlatform Default=1.25, iOS=-1}"/>
+            </Style>
+
+            <Style x:Key="HeaderLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource Gray-900}" />
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="LineHeight" Value="1.25"/>
+                <Setter Property="Margin" Value="0,16,0,8"/>
+            </Style>
+            <Style x:Key="DescriptionLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{DynamicResource Gray-700}" />
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Medium}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="HorizontalTextAlignment" Value="Start" />
+                <Setter Property="LineHeight" Value="{OnPlatform Default=1.5}"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Text="About App" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+        </Grid>
+    </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <Grid ColumnSpacing="0" RowSpacing="0">
+            <ScrollView HorizontalOptions="Center" VerticalOptions="Center">
+                <StackLayout
+                    HorizontalOptions="Center"
+                    Spacing="0"
+                    VerticalOptions="Center">
+                    
+                    <!--  Product image  -->
+                    <Image HeightRequest="150" Source="Icon.png"/>
+
+                    <!--  Product version  -->
+                    <Label
+                        x:Name="AppVersion"
+                        Margin="0,8.7,0,0"
+                        HorizontalOptions="CenterAndExpand"
+                        Text="Version 1.0.0"
+                        Style="{StaticResource VersionLabelStyle}"/>
+
+                    <!--  Product title  -->
+                    <Label
+                        HorizontalOptions="CenterAndExpand"
+                        Text="EXPRESSbase"
+                        Style="{StaticResource HeaderLabelStyle}">
+                        <Label.Margin>
+                            <OnIdiom
+                                x:TypeArguments="Thickness"
+                                Default="0, 32, 0, 8"
+                                Phone="0, 16, 0, 16" />
+                        </Label.Margin>
+                    </Label>
+
+                    <!--  Product description  -->
+                    <Label
+                        Margin="15,0,15,0"
+                        HorizontalOptions="Center"
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource DescriptionLabelStyle}"
+                        Text="EXPRESSbase is a Platform on the cloud to build and run business applications 10x faster. Get the best of both worlds – stability of Ready-Made software, and flexibility of Custom software."/>
+
+                    <Frame
+                        Margin="20,30,20,20"
+                        CornerRadius="6"
+                        BackgroundColor="#50ca50">
+                        <Label FontSize="18"
+                               HorizontalTextAlignment="Center"
+                               TextColor="White"
+                               x:Name="DeviceId"></Label>
+                    </Frame>
+                    
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

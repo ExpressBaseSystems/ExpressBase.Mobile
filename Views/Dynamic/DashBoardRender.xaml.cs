@@ -11,18 +11,15 @@ namespace ExpressBase.Mobile.Views.Dynamic
         public DashBoardRender()
         {
             InitializeComponent();
-
             BindingContext = new DashBoardRenderViewModel();
         }
 
         public DashBoardRender(EbMobilePage Page)
         {
             InitializeComponent();
-
             DashBoardRenderViewModel model = new DashBoardRenderViewModel(Page);
             BindingContext = model;
-
-            this.DashBoardContainer.Content = model.View;
+            this.DashBoardContainer.Content = model.XView;
         }
 
         public DashBoardRender(EbMobilePage Page,EbDataRow Row)
@@ -30,8 +27,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             DashBoardRenderViewModel model = new DashBoardRenderViewModel(Page, Row);
             BindingContext = model;
-
-            this.DashBoardContainer.Content = model.View;
+            this.DashBoardContainer.Content = model.XView;
         }
     }
 }

@@ -149,9 +149,7 @@ namespace ExpressBase.Mobile.Services
                 RestRequest request = new RestRequest("api/files/upload", Method.POST);
 
                 foreach (FileWrapper file in Files)
-                {
                     request.AddFileBytes(file.Name, file.Bytea, file.FileName);
-                }
 
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, Settings.BToken);

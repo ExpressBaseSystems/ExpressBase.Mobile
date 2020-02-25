@@ -19,7 +19,8 @@ namespace ExpressBase.Mobile.Helpers
     {
         public static EbMobilePage GetPage(string Refid)
         {
-            MobilePagesWraper Wrpr = Settings.Objects.Find(item => item.RefId == Refid);
+            List<MobilePagesWraper> wraper = Settings.Objects;
+            MobilePagesWraper Wrpr = wraper?.Find(item => item.RefId == Refid);
 
             if (Wrpr == null)
                 return null;

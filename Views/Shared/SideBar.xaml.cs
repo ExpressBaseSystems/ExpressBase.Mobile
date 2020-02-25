@@ -28,7 +28,7 @@ namespace ExpressBase.Mobile.Views.Shared
             string sid = Settings.SolutionId;
             try
             {
-                var bytes = helper.GetPhoto($"ExpressBase/{sid}/DP/dp_{Settings.UserId}.png");
+                var bytes = helper.GetPhoto($"ExpressBase/{sid}/user.png");
                 if (bytes != null)
                     UserDp.Source = ImageSource.FromStream(() => new MemoryStream(bytes));
             }
@@ -36,6 +36,12 @@ namespace ExpressBase.Mobile.Views.Shared
             {
                 Log.Write("SideBar.SetDp---" + ex.Message);
             }
+        }
+
+        private void About_Tapped(object sender, EventArgs e)
+        {
+            App.RootMaster.IsPresented = false;
+            App.RootMaster.Detail.Navigation.PushAsync(new About());
         }
     }
 }

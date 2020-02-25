@@ -28,6 +28,8 @@ namespace ExpressBase.Mobile.Constants
 
         public const string OBJ_COLLECTION = "obj_collection";
 
+        public const string WEBOBJ_COLLECTION = "webobj_collection";
+
         public const string ROOT_URL = "root_url";
 
         public const string APP_PULL_TABLE = "{0}_pull_tablename";

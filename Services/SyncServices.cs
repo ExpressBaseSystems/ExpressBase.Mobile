@@ -165,9 +165,7 @@ namespace ExpressBase.Mobile.Services
                 IsUpdate = false,
                 LocId = Convert.ToInt32(DataRow["eb_loc_id"]),
             };
-
             row.Columns.AddRange(Form.GetColumnValues(Dt, RowIndex));
-
             return row;
         }
 
@@ -201,9 +199,7 @@ namespace ExpressBase.Mobile.Services
                     var innerlink = HelperFunctions.GetPage((linkpage.Container as EbMobileVisualization).LinkRefId);
 
                     if (innerlink.Container is EbMobileForm)
-                    {
                         return (innerlink.Container as EbMobileForm);
-                    }
                 }
             }
             catch (Exception ex)

@@ -62,5 +62,31 @@ namespace ExpressBase.Mobile.Extensions
         {
             return (source.Count >= index);
         }
+
+        public static Dictionary<string, EbMobileControl> ToControlDictionary(this List<EbMobileControl> controls)
+        {
+            Dictionary<string, EbMobileControl> _dict = new Dictionary<string, EbMobileControl>();
+            try
+            {
+                foreach (EbMobileControl ctrl in controls)
+                {
+                    if (ctrl is EbMobileTableLayout)
+                    {
+                        foreach (EbMobileTableCell cell in (ctrl as EbMobileTableLayout).CellCollection)
+                        {
+                            foreach (EbMobileControl tctrl in cell.ControlCollection)
+                                _dict.Add(tctrl.Name, tctrl);
+                        }
+                    }
+                    else
+                        _dict.Add(ctrl.Name, ctrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return _dict;
+        }
     }
 }
