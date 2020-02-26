@@ -3,6 +3,7 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
-    public class LinkedListViewModel : BaseViewModel
+    public class LinkedListViewModel : DynamicBaseViewModel
     {
         public EbMobileVisualization SourceVisualization { set; get; }
 
@@ -21,8 +22,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public int DataCount { set; get; }
 
         public EbDataTable DataTable { set; get; }
-
-        public StackLayout View { set; get; }
 
         public Command AddCommand => new Command(AddButtonClicked);
 
@@ -98,7 +97,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 _rowColCount++;
             }
-            this.View = StackL;
+            this.XView = StackL;
         }
 
         void AddButtonClicked(object sender)

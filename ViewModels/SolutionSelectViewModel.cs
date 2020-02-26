@@ -1,19 +1,18 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class SolutionSelectViewModel : BaseViewModel
+    public class SolutionSelectViewModel : StaticBaseViewModel
     {
         private string solutionurtl;
         public string SolutionUrl
@@ -47,21 +46,6 @@ namespace ExpressBase.Mobile.ViewModels
                 this.NotifyPropertyChanged();
             }
         }
-
-        private bool showMessage;
-        public bool ShowMessage
-        {
-            get { return this.showMessage; }
-            set
-            {
-                this.showMessage = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        public string Message { set; get; }
-
-        public Color MessageColor { set; get; }
 
         public ImageSource SolutionLogo { set; get; }
 
@@ -100,8 +84,8 @@ namespace ExpressBase.Mobile.ViewModels
                 await Store.SetValueAsync(AppConst.SID, _sid);
                 await Store.SetValueAsync(AppConst.ROOT_URL, this.SolutionUrl);
 
-                Store.Remove(AppConst.OBJ_COLLECTION);//remove obj collection
-                Store.Remove(AppConst.APP_COLLECTION);
+                Store.RemoveJSON(AppConst.OBJ_COLLECTION);//remove obj collection
+                Store.RemoveJSON(AppConst.APP_COLLECTION);
                 Store.Remove(AppConst.APPID);
 
                 App.DataDB.CreateDB(_sid);
@@ -116,7 +100,10 @@ namespace ExpressBase.Mobile.ViewModels
                 ShowMessage = false;
                 IsBusy = false;
             }
-            catch (Exception ex) { Log.Write("SolutionSelect_ConfirmClicked" + ex.Message); }
+            catch (Exception ex)
+            {
+                Log.Write("SolutionSelect_ConfirmClicked" + ex.Message);
+            }
         }
 
         private async Task SolutionUrlSet()

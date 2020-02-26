@@ -1,8 +1,12 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Models;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
 {
@@ -18,9 +22,9 @@ namespace ExpressBase.Mobile.Helpers
                 else
                     return temp;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("Store.GetValue::" + ex.Message);
                 return null;
             }
         }
@@ -35,9 +39,9 @@ namespace ExpressBase.Mobile.Helpers
                 else
                     return temp;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("Store.GetValueAsync::" + ex.Message);
                 return null;
             }
         }
@@ -48,9 +52,9 @@ namespace ExpressBase.Mobile.Helpers
             {
                 SecureStorage.SetAsync(key, val);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("Store.SetValue::" + ex.Message);
             }
         }
 
@@ -60,9 +64,9 @@ namespace ExpressBase.Mobile.Helpers
             {
                 await SecureStorage.SetAsync(key, val);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("Store.SetValueAsync::" + ex.Message);
             }
         }
 
@@ -72,9 +76,9 @@ namespace ExpressBase.Mobile.Helpers
             {
                 SecureStorage.Remove(key);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("Store.Remove::" + ex.Message);
             }
         }
 
@@ -84,9 +88,48 @@ namespace ExpressBase.Mobile.Helpers
             {
                 SecureStorage.RemoveAll();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
+                Log.Write("Store.RemoveAll::" + ex.Message);
+            }
+        }
+
+        public static void SetJSON(string key, object value)
+        {
+            try
+            {
+                Application.Current.Properties[key] = JsonConvert.SerializeObject(value);
+                Application.Current.SavePropertiesAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Store.SetJSON::" + ex.Message);
+            }
+        }
+
+        public static T GetJSON<T>(string key)
+        {
+            try
+            {
+                if (Application.Current.Properties.TryGetValue(key, out var value))
+                    return JsonConvert.DeserializeObject<T>(value.ToString());
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Store.GetJSON::" + ex.Message);
+            }
+            return default;
+        }
+
+        public static void RemoveJSON(string key)
+        {
+            try
+            {
+                Application.Current.Properties.Remove(key);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Store.RemoveJSON::" + ex.Message);
             }
         }
     }

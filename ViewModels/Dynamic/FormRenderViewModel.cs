@@ -1,19 +1,18 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
-    public class FormRenderViewModel : BaseViewModel
+    public class FormRenderViewModel : DynamicBaseViewModel
     {
         public EbMobileForm Form { set; get; }
 
         private FormMode Mode { set; get; } = FormMode.NEW;
-
-        public View View { set; get; }
 
         private int RowId { set; get; } = 0;
 
@@ -120,10 +119,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             StackLayout ScrollStack = new StackLayout { Spacing = 0 };
 
-            foreach (var ctrl in this.Form.ChiledControls)
+            foreach (var ctrl in this.Form.ChildControls)
                 this.EbCtrlToXamCtrl(ctrl, ScrollStack);
 
-            this.View = ScrollStack;
+            this.XView = ScrollStack;
         }
 
         private void EbCtrlToXamCtrl(EbMobileControl ctrl, StackLayout ContentStackTop)
@@ -136,16 +135,18 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     ctrl.InitXControl(this.Mode);
                     ContentStackTop.Children.Add(ctrl.XView);
+                    this.Form.ControlDictionary.Add(ctrl.Name, ctrl);
                 }
             }
             catch (Exception ex)
             {
-                Log.Write("Form_EbCtrlToXamCtrl---" + ex.Message); 
+                Log.Write("Form_EbCtrlToXamCtrl---" + ex.Message);
             }
         }
 
         public void OnSaveClicked(object sender)
         {
+            this.Form.NetworkType = this.NetworkType;
             bool status;
 
             if (this.Mode == FormMode.REF)
@@ -182,19 +183,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public void FillControls(EbDataRow row, ColumnColletion columns)
         {
-            foreach(var ctrl in this.Form.FlatControls)
+            foreach (var pair in this.Form.ControlDictionary)
             {
-                EbDataColumn _col = columns[ctrl.Name];
+                EbDataColumn _col = columns[pair.Value.Name];
 
                 if (_col != null)
-                    ctrl.SetValue(row[_col.ColumnIndex]);
+                    pair.Value.SetValue(row[_col.ColumnIndex]);
 
                 if (this.Mode == FormMode.EDIT)
                 {
-                    ctrl.SetAsReadOnly(true);
+                    pair.Value.SetAsReadOnly(true);
 
-                    if (ctrl is EbMobileFileUpload)
-                        (ctrl as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
+                    if (pair.Value is EbMobileFileUpload)
+                        (pair.Value as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
                 }
             }
         }

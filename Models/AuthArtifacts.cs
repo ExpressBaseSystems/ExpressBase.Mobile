@@ -46,8 +46,6 @@ namespace ExpressBase.Mobile.Models
 
         public string CId { get; set; }
 
-        public string wc { get; set; }
-
         public List<string> Roles { get; set; }
 
         public List<string> Permissions { get; set; }

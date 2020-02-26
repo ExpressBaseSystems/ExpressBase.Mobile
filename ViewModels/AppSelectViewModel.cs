@@ -3,6 +3,7 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using Newtonsoft.Json;
 using System;
@@ -14,7 +15,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class AppSelectViewModel : BaseViewModel
+    public class AppSelectViewModel : StaticBaseViewModel
     {
         public IList<AppData> Applications { get; private set; }
 
@@ -30,17 +31,17 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void PullApplications()
         {
-            string _apps = Store.GetValue(AppConst.APP_COLLECTION);
+            var _apps = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
 
-            if (_apps == null)
+            if (_apps == null || _apps.Count <= 0)
             {
                 this.Applications = RestServices.Instance.GetAppCollections();
                 this.Applications.OrderBy(x => x.AppName);
 
-                Store.SetValue(AppConst.APP_COLLECTION, JsonConvert.SerializeObject(this.Applications));
+                Store.SetJSON(AppConst.APP_COLLECTION, this.Applications);
             }
             else
-                this.Applications = JsonConvert.DeserializeObject<List<AppData>>(_apps);
+                this.Applications = _apps;
         }
 
         private async Task ItemSelected(object selected)
@@ -84,7 +85,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 MobilePageCollection Coll = await RestServices.Instance.GetEbObjects(appid, Settings.LocationId, true);
 
-                await Store.SetValueAsync(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(Coll.Pages));
+                Store.SetJSON(AppConst.OBJ_COLLECTION, Coll.Pages);
 
                 if (Coll.TableNames?.Count > 0)
                     await CommonServices.Instance.LoadLocalData(Coll.Data);

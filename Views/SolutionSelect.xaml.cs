@@ -1,12 +1,4 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
-using ExpressBase.Mobile.ViewModels;
-using RestSharp;
-using System;
-using System.Net;
+﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views

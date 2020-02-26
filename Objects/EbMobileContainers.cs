@@ -46,7 +46,7 @@ namespace ExpressBase.Mobile
 
     public class EbMobileContainer : EbMobilePageBase
     {
-
+        public NetworkMode NetworkType { set; get; }
     }
 
     public class EbMobileVisualization : EbMobileContainer

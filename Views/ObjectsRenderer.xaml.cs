@@ -44,7 +44,7 @@ namespace ExpressBase.Mobile.Views
 
         public void RefreshComplete(View view)
         {
-            scrollView.Content = view; 
+            scrollView.Content = view;
         }
 
         private async void RefreshView_Refreshing(object sender, System.EventArgs e)
@@ -66,7 +66,7 @@ namespace ExpressBase.Mobile.Views
                     var Coll = await RestServices.Instance.GetEbObjects(Settings.AppId, Settings.LocationId, true);
                     if (Coll != null)
                     {
-                        await Store.SetValueAsync(AppConst.OBJ_COLLECTION, JsonConvert.SerializeObject(Coll.Pages));
+                        Store.SetJSON(AppConst.OBJ_COLLECTION, Coll.Pages);
                         var vm = (BindingContext as ObjectsRenderViewModel);
                         vm.ObjectList = Coll.Pages;
                         vm.BuildView();
@@ -77,7 +77,7 @@ namespace ExpressBase.Mobile.Views
                     toast.Show("Refreshed");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 toast.Show("Something went wrong. Please try again");
                 Log.Write("ROOT MENU REFRESH-" + ex.Message);

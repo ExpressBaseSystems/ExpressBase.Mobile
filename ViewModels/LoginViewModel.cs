@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
 using System.IO;
@@ -8,7 +9,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class LoginViewModel : BaseViewModel
+    public class LoginViewModel : StaticBaseViewModel
     {
 
         private string email;
@@ -53,7 +54,6 @@ namespace ExpressBase.Mobile.ViewModels
             LoginTo = "Login to " + Settings.SolutionId;
             this.NotifyPropertyChanged("LoginTo");
             this.LoginCommand = new Command(async () => await LoginAction());
-            this.ResetConfig = new Command(ResetClicked);//bind reset button
             SetLogo();
         }
 

@@ -3,37 +3,17 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged, IDisposable
     {
-        public BaseViewModel() { }
-
-        public BaseViewModel(EbMobilePage page)
-        {
-            this.Page = page;
-            this.PageTitle = page.DisplayName;
-        }
-
-        public EbMobilePage Page { set; get; }
-
         public string PageTitle { set; get; }
 
-        public EbDataTable ContextData { set; get; }
-
-        public int ContextRecordIndex { set; get; }
-
-        //public View View { set; get; }
-
-        protected bool _isBusy;
+        private bool _isBusy;
         public bool IsBusy
         {
             get { return this._isBusy; }
@@ -43,6 +23,41 @@ namespace ExpressBase.Mobile.ViewModels
                 this.NotifyPropertyChanged();
             }
         }
+
+        private bool _show_message;
+        public bool ShowMessage
+        {
+            get { return this._show_message; }
+            set
+            {
+                this._show_message = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
+        private string _message;
+        public string Message
+        {
+            get { return this._message; }
+            set
+            {
+                this._message = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
+        private Color _message_color;
+        public Color MessageColor
+        {
+            get { return this._message_color; }
+            set
+            {
+                this._message_color = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
+        public Command ResetConfig => new Command(ResetClicked);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -56,9 +71,7 @@ namespace ExpressBase.Mobile.ViewModels
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public Command ResetConfig { set; get; }
-
-        public void ResetClicked(object sender)
+        public void ResetClicked()
         {
             Store.Remove(AppConst.SID);
             Store.Remove(AppConst.ROOT_URL);

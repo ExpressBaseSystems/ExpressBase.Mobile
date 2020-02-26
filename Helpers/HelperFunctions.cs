@@ -19,13 +19,18 @@ namespace ExpressBase.Mobile.Helpers
     {
         public static EbMobilePage GetPage(string Refid)
         {
-            List<MobilePagesWraper> wraper = Settings.Objects;
-            MobilePagesWraper Wrpr = wraper?.Find(item => item.RefId == Refid);
-
-            if (Wrpr == null)
-                return null;
-
-            return Wrpr.ToPage();
+            EbMobilePage page = null;
+            try
+            {
+                var wraper = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
+                MobilePagesWraper wrpr = wraper?.Find(item => item.RefId == Refid);
+                page = wrpr?.ToPage();
+            }
+            catch(Exception ex)
+            {
+                Log.Write("HelperFunctions.GetPage---" + ex.Message);
+            }
+            return page;
         }
 
         public static string WrapSelectQuery(string sql, List<DbParameter> Parameters = null)

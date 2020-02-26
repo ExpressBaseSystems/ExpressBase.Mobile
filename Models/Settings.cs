@@ -74,7 +74,7 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                return JsonConvert.DeserializeObject<User>(Store.GetValue(AppConst.USER_OBJECT));
+                return Store.GetJSON<User>(AppConst.USER_OBJECT);
             }
         }
 
@@ -82,7 +82,7 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                return JsonConvert.DeserializeObject<List<EbLocation>>(Store.GetValue(AppConst.USER_LOCATIONS));
+                return Store.GetJSON<List<EbLocation>>(AppConst.USER_LOCATIONS);
             }
         }
 
@@ -106,7 +106,7 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                return JsonConvert.DeserializeObject<List<MobilePagesWraper>>(Store.GetValue(AppConst.OBJ_COLLECTION));
+                return Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
             }
         }
 

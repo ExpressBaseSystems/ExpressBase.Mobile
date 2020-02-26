@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using ExpressBase.Mobile.Views.Shared;
 using System;
@@ -11,7 +12,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Shared
 {
-    public class SideBarViewModel : BaseViewModel
+    public class SideBarViewModel : StaticBaseViewModel
     {
         private string useremail;
         public string UserEmail

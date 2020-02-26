@@ -34,7 +34,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 Grid.SetRow(Renderer.HeaderFrame, 0);
 
                 if (Renderer.DataTable.Rows.Any())
-                    ScrollContainer.Content = Renderer.View;
+                    ScrollContainer.Content = Renderer.XView;
                 else
                     EmptyRecordLabel.IsVisible = true;
 
@@ -91,7 +91,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             Renderer.SetData(Offset);
             Renderer.CreateView();
-            ScrollContainer.Content = Renderer.View;
+            ScrollContainer.Content = Renderer.XView;
             PagingPageCount.Text = PageCount.ToString();
             PagingMeta.Text = $"Showing {Offset} to {Offset + Renderer.Visualization.PageLength} of {Renderer.DataCount} entries";
         }

@@ -28,7 +28,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 if (Renderer.DataTable.Rows.Any())
                 {
-                    listContainer.Content = Renderer.View;
+                    listContainer.Content = Renderer.XView;
 
                     if (Renderer.FilterDialog != null)
                     {
@@ -84,7 +84,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 {
                     List<DbParameter> parameters = paramDict.Select(item => new DbParameter { ParameterName = item.Key, Value = item.Value }).ToList();
                     Renderer.Refresh(parameters);
-                    listContainer.Content = Renderer.View;
+                    listContainer.Content = Renderer.XView;
                 }
             }
             catch (Exception ex)
@@ -147,7 +147,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             Renderer.SetData(Offset);
             Renderer.CreateView();
-            listContainer.Content = Renderer.View;
+            listContainer.Content = Renderer.XView;
             PagingPageCount.Text = PageCount.ToString();
             PagingMeta.Text = $"Showing {Offset} to {Offset + Renderer.Visualization.PageLength} of {Renderer.DataCount} entries";
         }

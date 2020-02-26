@@ -11,12 +11,12 @@
              NavigationPage.HasNavigationBar="False"
              NavigationPage.HasBackButton="False"
              Style="{StaticResource ContentPageStyle}">
-    
+
     <!--  Binding context for page  -->
     <ContentPage.BindingContext>
         <viewModel:SolutionSelectViewModel />
     </ContentPage.BindingContext>
-    
+
     <ContentPage.Content>
         <Grid>
             <ScrollView x:Name="scrollView" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" AbsoluteLayout.LayoutFlags="All">

@@ -112,10 +112,9 @@ namespace ExpressBase.Mobile.Services
             Store.SetValue(AppConst.DISPLAY_NAME, resp.DisplayName);
             Store.SetValue(AppConst.USERNAME, username.Trim());
             Store.SetValue(AppConst.PASSWORD, password.Trim());
-            Store.SetValue(AppConst.USER_OBJECT, JsonConvert.SerializeObject(resp.User));
-            Store.SetValue(AppConst.USER_LOCATIONS, JsonConvert.SerializeObject(resp.Locations));
+            Store.SetJSON(AppConst.USER_OBJECT, resp.User);
+            Store.SetJSON(AppConst.USER_LOCATIONS, resp.Locations);
             Store.SetValue(AppConst.CURRENT_LOCATION, resp.User.Preference.DefaultLocation.ToString());
-
             try
             {
                 if (resp.DisplayPicture != null)

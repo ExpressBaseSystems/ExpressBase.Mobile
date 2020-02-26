@@ -1,13 +1,12 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
-    public class DashBoardRenderViewModel : BaseViewModel
+    public class DashBoardRenderViewModel : DynamicBaseViewModel
     {
         private EbMobileDashBoard DashBoard { set; get; }
-
-        public View View { set; get; }
 
         public EbDataRow LinkedDataRow { set; get; }
 
@@ -37,7 +36,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 stack.Children.Add(ctrl.XView);
             }
 
-            View = stack;
+            XView = stack;
         }
     }
 }

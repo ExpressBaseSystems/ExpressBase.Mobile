@@ -26,23 +26,54 @@ namespace ExpressBase.Mobile.Models
         {
             Tables = new List<MobileTable>();
         }
+
+        public MobileFormData(string masterTableName)
+        {
+            MasterTable = masterTableName;
+            Tables = new List<MobileTable>();
+        }
+
+        public WebformData ToWebFormData()
+        {
+
+            return null;
+        }
     }
 
     public class MobileTable : List<MobileTableRow>
     {
         public string TableName { set; get; }
+
+        public Dictionary<string, List<FileWrapper>> Files { set; get; }
+
+        public MobileTable()
+        {
+            Files = new Dictionary<string, List<FileWrapper>>();
+        }
+
+        public MobileTable(string tableName)
+        {
+            TableName = tableName;
+            Files = new Dictionary<string, List<FileWrapper>>();
+        }
     }
 
     public class MobileTableRow
     {
         public int RowId { set; get; }
 
-        public bool IsUpdate { set; get; }
+        public bool IsUpdate { get { return (RowId > 0); } }
 
         public List<MobileTableColumn> Columns { set; get; }
 
         public MobileTableRow()
         {
+            Columns = new List<MobileTableColumn>();
+        }
+
+        public MobileTableRow(int rowId)
+        {
+            RowId = rowId;
             Columns = new List<MobileTableColumn>();
         }
 
@@ -69,6 +100,15 @@ namespace ExpressBase.Mobile.Models
         public EbDbTypes Type { set; get; }
 
         public EbMobileControl Control { set; get; }
+
+        public MobileTableColumn() { }
+
+        public MobileTableColumn(string name, EbDbTypes type, object value)
+        {
+            Name = name;
+            Type = type;
+            Value = value;
+        }
     }
 
     public class FileWrapper

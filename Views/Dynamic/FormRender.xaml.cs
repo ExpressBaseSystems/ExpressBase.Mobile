@@ -18,7 +18,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             try
             {
                 Renderer = new FormRenderViewModel(page);
-                FormScrollView.Content = Renderer.View;
+                FormScrollView.Content = Renderer.XView;
                 BindingContext = Renderer;
             }
             catch (Exception ex)
@@ -38,7 +38,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 EditButton.IsVisible = true;
 
                 Renderer = new FormRenderViewModel(Page, RowId);
-                FormScrollView.Content = Renderer.View;
+                FormScrollView.Content = Renderer.XView;
                 BindingContext = Renderer;
             }
             catch (Exception ex)
@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             try
             {
                 Renderer = new FormRenderViewModel(CurrentForm, ParentForm, ParentId);
-                FormScrollView.Content = Renderer.View;
+                FormScrollView.Content = Renderer.XView;
                 BindingContext = Renderer;
             }
             catch (Exception ex)
@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             try
             {
                 Renderer = new FormRenderViewModel(Page, dataRow, dataColumns);
-                FormScrollView.Content = Renderer.View;
+                FormScrollView.Content = Renderer.XView;
                 BindingContext = Renderer;
             }
             catch (Exception ex)
@@ -86,10 +86,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 EditButton.IsVisible = false;
                 SaveButton.IsVisible = true;
 
-                foreach (EbMobileControl Ctrl in Renderer.Form.FlatControls)
-                {
-                    Ctrl.SetAsReadOnly(false);
-                }
+                foreach (var pair in Renderer.Form.ControlDictionary)
+                    pair.Value.SetAsReadOnly(false);
             }
         }
     }

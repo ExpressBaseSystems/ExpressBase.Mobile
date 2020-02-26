@@ -213,5 +213,22 @@ namespace ExpressBase.Mobile
                 AddImageToGallery(Wraper);
             }
         }
+
+        public List<FileWrapper> GetFiles()
+        {
+            List<FileWrapper> files = new List<FileWrapper>();
+
+            foreach(var pair in this.Gallery)
+            {
+                files.Add(new FileWrapper
+                {
+                    Name = pair.Key,
+                    FileName = pair.Key + "jpg",
+                    Bytea = pair.Value,
+                    ControlName = this.Name
+                });
+            }
+            return files;
+        }
     }
 }

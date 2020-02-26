@@ -5,6 +5,7 @@ using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using Newtonsoft.Json;
 using System;
@@ -17,7 +18,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class ObjectsRenderViewModel : BaseViewModel
+    public class ObjectsRenderViewModel : StaticBaseViewModel
     {
         private bool _isRefreshing;
 
@@ -78,12 +79,10 @@ namespace ExpressBase.Mobile.ViewModels
 
         public void SetUpData()
         {
-            string _objlist = Store.GetValue(AppConst.OBJ_COLLECTION);
+            var _objlist = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
+
             if (_objlist != null)
-            {
-                List<MobilePagesWraper> _list = JsonConvert.DeserializeObject<List<MobilePagesWraper>>(_objlist);
-                this.ObjectList = _list;
-            }
+                this.ObjectList = _objlist;
             else
                 this.ObjectList = new List<MobilePagesWraper>();
         }

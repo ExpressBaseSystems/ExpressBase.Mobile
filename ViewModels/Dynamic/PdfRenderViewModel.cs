@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ExpressBase.Mobile.ViewModels.BaseModels;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
-    public class PdfRenderViewModel : BaseViewModel
+    public class PdfRenderViewModel : DynamicBaseViewModel
     {
         public PdfRenderViewModel() { }
 

@@ -5,6 +5,7 @@ using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
@@ -12,15 +13,13 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
-    public class ListViewRenderViewModel : BaseViewModel
+    public class ListViewRenderViewModel : DynamicBaseViewModel
     {
         public int DataCount { set; get; }
 
         public EbMobileVisualization Visualization { set; get; }
 
         public EbDataTable DataTable { set; get; }
-
-        public StackLayout View { set; get; }
 
         public StackLayout FilterDialog { set; get; }
 
@@ -84,7 +83,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 StackL.Children.Add(CustFrame);
                 _rowColCount++;
             }
-            this.View = StackL;
+            this.XView = StackL;
         }
 
         private void CreateFilter()

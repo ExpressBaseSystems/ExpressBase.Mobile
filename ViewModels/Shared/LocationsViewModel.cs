@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Shared
 {
-    public class LocationsViewModel : BaseViewModel
+    public class LocationsViewModel : StaticBaseViewModel
     {
         public IList<EbLocation> Locations { get; private set; }
 
