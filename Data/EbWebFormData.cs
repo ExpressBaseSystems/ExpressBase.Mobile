@@ -28,6 +28,15 @@ namespace ExpressBase.Mobile.Data
             DisableDelete = new Dictionary<string, bool>();
             DisableCancel = new Dictionary<string, bool>();
         }
+
+        public WebformData(string masterTable)
+        {
+            this.MasterTable = masterTable;
+            MultipleTables = new Dictionary<string, SingleTable>();
+            ExtendedTables = new Dictionary<string, SingleTable>();
+            DisableDelete = new Dictionary<string, bool>();
+            DisableCancel = new Dictionary<string, bool>();
+        }
     }
 
     public class SingleTable : List<SingleRow>

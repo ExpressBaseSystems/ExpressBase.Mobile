@@ -96,6 +96,149 @@ namespace ExpressBase.Mobile
             return dt;
         }
 
+        public FormSaveResponse SaveForm(int rowId)
+        {
+            FormSaveResponse response = new FormSaveResponse();
+            try
+            {
+                MobileFormData data = this.PrepareFormData(rowId);
+                switch (this.NetworkType)
+                {
+                    case NetworkMode.Online:
+                        this.PersistCloud(data, response, rowId);
+                        break;
+                    case NetworkMode.Mixed:
+                        if (Settings.HasInternet)
+                            this.PersistCloud(data, response, rowId);
+                        else
+                            this.PersistLocal(data, response, rowId);
+                        break;
+                    default:
+                        this.PersistLocal(data, response, rowId);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write("EbMobileForm.SaveForm::" + ex.Message);
+            }
+            return response;
+        }
+
+        public FormSaveResponse SaveFormWParent(int parentId, string parentTable)
+        {
+            this.Mode = FormMode.REF;
+            this.ParentId = parentId;
+            this.ParentTable = parentTable;
+            return SaveForm(0);
+        }
+
+        private MobileFormData PrepareFormData(int RowId)
+        {
+            MobileFormData FormData = new MobileFormData(this.TableName);
+            MobileTable Table = new MobileTable(this.TableName);
+            MobileTableRow row = new MobileTableRow(RowId);
+
+            Table.Add(row);
+            foreach (var pair in this.ControlDictionary)
+            {
+                if (pair.Value is EbMobileFileUpload)
+                    Table.Files.Add(pair.Key, (pair.Value as EbMobileFileUpload).GetFiles());
+                else
+                {
+                    MobileTableColumn Column = pair.Value.GetMobileTableColumn();
+                    if (Column != null)
+                        row.Columns.Add(Column);
+                }
+            }
+            if (RowId <= 0)
+                row.AppendEbColValues();//append ebcol values
+
+            if (this.Mode == FormMode.REF)
+                row.Columns.Add(new MobileTableColumn(this.ParentTable + "_id", EbDbTypes.Int32, ParentId));
+
+            FormData.Tables.Add(Table);
+            return FormData;
+        }
+
+        private void PersistCloud(MobileFormData data, FormSaveResponse response, int rowId)
+        {
+            try
+            {
+                WebformData webformdata = data.ToWebFormData();
+
+                foreach (MobileTable table in data.Tables)
+                {
+                    List<FileWrapper> files = new List<FileWrapper>();
+                    foreach (var pair in table.Files)
+                        files.AddRange(pair.Value);
+                    if (files.Any())
+                    {
+                        var resp = RestServices.Instance.PushFiles(files);
+                        webformdata.ExtendedTables = files.GroupByControl(resp);
+                    }
+                }
+                PushResponse pushResponse = RestServices.Instance.Push(webformdata, rowId, this.WebFormRefId, Settings.LocationId);
+                if (pushResponse.RowAffected > 0)
+                {
+                    response.Status = true;
+                    response.Message = "Data pushed to cloud :)";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = "Something went wrong :(";
+                Log.Write("EbMobileForm.PushToCloud---" + ex.Message);
+            }
+        }
+
+        private void PersistLocal(MobileFormData data, FormSaveResponse response, int rowId)
+        {
+            try
+            {
+                string query = string.Empty;
+                List<DbParameter> _params = new List<DbParameter>();
+
+                foreach (MobileTable _table in data.Tables)
+                    query += HelperFunctions.GetQuery(_table, _params);
+
+                int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
+
+                if (this.HasFileSelect)
+                {
+                    object lastRowId = (rowId != 0) ? rowId : App.DataDB.DoScalar(string.Format(StaticQueries.CURRVAL, this.TableName));
+                    this.WriteFilesToLocal(lastRowId);
+                }
+
+                if (rowAffected > 0)
+                {
+                    response.Status = true;
+                    response.Message = "Data stored locally :)";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Status = false;
+                response.Message = "Something went wrong :(";
+                Log.Write("EbMobileForm.PersistOnLocal::" + ex.Message);
+            }
+        }
+
+        private void WriteFilesToLocal(object LastRowId)
+        {
+            int rowid = Convert.ToInt32(LastRowId);
+
+            Task.Run(() =>
+            {
+                foreach (var pair in this.ControlDictionary)
+                {
+                    if (pair.Value is EbMobileFileUpload)
+                        (pair.Value as EbMobileFileUpload).PushFilesToDir(this.TableName, rowid);
+                }
+            });
+        }
+
         public void PushRecords(EbMobileForm depedencyForm)
         {
             _DependantForm = depedencyForm;
@@ -221,7 +364,7 @@ namespace ExpressBase.Mobile
 
             foreach (var pair in this.ControlDictionary)
             {
-                if(!(pair.Value is EbMobileFileUpload))
+                if (!(pair.Value is EbMobileFileUpload))
                 {
                     Schema.Columns.Add(new SQLiteColumSchema
                     {
@@ -232,112 +375,6 @@ namespace ExpressBase.Mobile
             }
             Schema.AppendDefault();
             CommonServices.Instance.CreateLocalTable(Schema);
-        }
-
-        public bool Save(int RowId)
-        {
-            MobileFormData data = this.GetFormData(RowId);
-            string query = string.Empty;
-            try
-            {
-                if (NetworkType == NetworkMode.Online)
-                    this.PushToCloud(data);
-                else if (data.Tables.Count > 0)
-                {
-                    List<DbParameter> _params = new List<DbParameter>();
-                    foreach (MobileTable _table in data.Tables)
-                        query += HelperFunctions.GetQuery(_table, _params);
-
-                    int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
-
-                    if (this.HasFileSelect)
-                    {
-                        object lastRowId = (RowId != 0) ? RowId : App.DataDB.DoScalar(string.Format(StaticQueries.CURRVAL, this.TableName));
-                        this.PushFiles(lastRowId);
-                    }
-                    return (rowAffected > 0);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return false;
-        }
-
-        public bool SaveWithParentId(int ParentId, string ParentTableName)
-        {
-            this.Mode = FormMode.REF;
-            this.ParentId = ParentId;
-            this.ParentTable = ParentTableName;
-
-            MobileFormData data = this.GetFormData(0);
-            string query = string.Empty;
-            try
-            {
-                if (data.Tables.Count > 0)
-                {
-                    List<DbParameter> _params = new List<DbParameter>();
-                    foreach (MobileTable _table in data.Tables)
-                        query += HelperFunctions.GetQuery(_table, _params);
-
-                    int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
-
-                    if (this.HasFileSelect)
-                    {
-                        object lastRowId = App.DataDB.DoScalar(string.Format(StaticQueries.CURRVAL, this.TableName));
-                        this.PushFiles(lastRowId);
-                    }
-                    return (rowAffected > 0);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return false;
-        }
-
-        private MobileFormData GetFormData(int RowId)
-        {
-            MobileFormData FormData = new MobileFormData(this.TableName);
-            MobileTable Table = new MobileTable(this.TableName);
-            MobileTableRow row = new MobileTableRow(RowId);
-
-            Table.Add(row);
-            foreach (var pair in this.ControlDictionary)
-            {
-                if (pair.Value is EbMobileFileUpload)
-                    Table.Files.Add(pair.Key, (pair.Value as EbMobileFileUpload).GetFiles());
-                else
-                {
-                    MobileTableColumn Column = pair.Value.GetMobileTableColumn();
-                    if (Column != null)
-                        row.Columns.Add(Column);
-                }
-            }
-            if (RowId <= 0)
-                row.AppendEbColValues();//append ebcol values
-
-            if (this.Mode == FormMode.REF)
-                row.Columns.Add(new MobileTableColumn(this.ParentTable + "_id", EbDbTypes.Int32, ParentId));
-
-            FormData.Tables.Add(Table);
-            return FormData;
-        }
-
-        private void PushFiles(object LastRowId)
-        {
-            int rowid = Convert.ToInt32(LastRowId);
-
-            Task.Run(() =>
-            {
-                foreach (var pair in this.ControlDictionary)
-                {
-                    if (pair.Value is EbMobileFileUpload)
-                        (pair.Value as EbMobileFileUpload).PushFilesToDir(this.TableName, rowid);
-                }
-            });
         }
 
         private void PushDependencyForm(int liveid, int rowid)
@@ -382,30 +419,6 @@ namespace ExpressBase.Mobile
             catch (Exception ex)
             {
                 Log.Write("EbMobileForm.PushDependencyForm---" + ex.Message);
-            }
-        }
-
-        private void PushToCloud(MobileFormData data)
-        {
-            try
-            {
-                WebformData webformdata = data.ToWebFormData();
-
-                foreach (MobileTable table in data.Tables)
-                {
-                    List<ApiFileData> apiFiles = new List<ApiFileData>();
-                    foreach (var pair in table.Files)
-                    {
-                        var resp = RestServices.Instance.PushFiles(pair.Value);
-                        apiFiles.AddRange(resp);
-                    }
-
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Write("EbMobileForm.PushToCloud---" + ex.Message);
             }
         }
     }

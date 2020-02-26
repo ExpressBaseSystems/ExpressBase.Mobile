@@ -1,14 +1,7 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Services;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Structures;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -35,8 +28,32 @@ namespace ExpressBase.Mobile.Models
 
         public WebformData ToWebFormData()
         {
+            WebformData wd = new WebformData(this.MasterTable);
 
-            return null;
+            foreach(MobileTable table in this.Tables)
+            {
+                wd.MultipleTables.Add(table.TableName, new SingleTable());
+
+                foreach(var row in table)
+                {
+                    var srow = new SingleRow
+                    {
+                        RowId = row.RowId,
+                        LocId = Settings.LocationId,
+                        IsUpdate = (row.RowId > 0)
+                    };
+
+                    foreach (var col in row.Columns)
+                        srow.Columns.Add(new SingleColumn{ 
+                            Name = col.Name,
+                            Value = col.Value,
+                            Type = (int)col.Type
+                        });
+
+                    wd.MultipleTables[table.TableName].Add(srow);
+                }
+            }
+            return wd;
         }
     }
 
@@ -80,7 +97,7 @@ namespace ExpressBase.Mobile.Models
         public void AppendEbColValues()
         {
             this.Columns.Add(new MobileTableColumn { Name = "eb_loc_id", Type = EbDbTypes.Int32, Value = Settings.LocationId });
-            this.Columns.Add(new MobileTableColumn { Name = "eb_created_at_device", Type = EbDbTypes.DateTime, Value = DateTime.Now });
+            this.Columns.Add(new MobileTableColumn { Name = "eb_created_at_device", Type = EbDbTypes.DateTime, Value = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") });
 
             INativeHelper helper = DependencyService.Get<INativeHelper>();
 
@@ -122,5 +139,12 @@ namespace ExpressBase.Mobile.Models
         public string ControlName { set; get; }
 
         public int FileRefId { set; get; }
+    }
+
+    public class FormSaveResponse
+    {
+        public bool Status { set; get; }
+
+        public string Message { set; get; }
     }
 }

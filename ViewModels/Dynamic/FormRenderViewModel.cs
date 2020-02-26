@@ -147,29 +147,15 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public void OnSaveClicked(object sender)
         {
             this.Form.NetworkType = this.NetworkType;
-            bool status;
+            FormSaveResponse saveResponse;
 
             if (this.Mode == FormMode.REF)
-                status = this.Form.SaveWithParentId(this.RowId, ParentForm.TableName);
+                saveResponse = this.Form.SaveFormWParent(this.RowId, ParentForm.TableName);
             else
-                status = this.Form.Save(this.RowId);
+                saveResponse = this.Form.SaveForm(this.RowId);
 
-            IToast Toast = DependencyService.Get<IToast>();
-            if (status && this.RowId == 0)
-            {
-                Toast.Show("Data pushed successfully :)");
-                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
-            }
-            else if (status && this.RowId > 0)
-            {
-                Toast.Show("Changes saved successfully :)");
-                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopToRootAsync(true);
-            }
-            else
-            {
-                Toast.Show("Something went wrong!");
-                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopToRootAsync(true);
-            }
+            DependencyService.Get<IToast>().Show(saveResponse.Message);
+            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
         }
 
         private void PushFromTableLayout(EbMobileTableLayout TL, StackLayout ContentStackTop)
