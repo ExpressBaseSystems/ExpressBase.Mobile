@@ -4,7 +4,6 @@ using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -20,67 +19,84 @@ namespace ExpressBase.Mobile.Services
 
         private WebformData WebFormData;
 
-        public bool Sync()
+        public SyncResponse Sync()
         {
+            SyncResponse response = new SyncResponse();
             try
             {
                 FormCollection = GetForms();
                 WebFormData = new WebformData();
-                bool status = InitPush();
+                InitPush(response);
             }
             catch (Exception ex)
             {
                 Log.Write("SyncServices.Sync---" + ex.Message);
             }
-            return true;
+            return response;
         }
 
         private List<EbMobileForm> GetForms()
         {
             List<EbMobileForm> ls = new List<EbMobileForm>();
             var pages = Settings.Objects;
-
             foreach (MobilePagesWraper _p in pages)
             {
                 EbMobilePage mpage = _p.ToPage();
                 if (mpage != null && mpage.Container is EbMobileForm)
-                    ls.Add(mpage.Container as EbMobileForm);
+                {
+                    if (string.IsNullOrEmpty((mpage.Container as EbMobileForm).WebFormRefId))
+                        continue;
+                    if(mpage.NetworkMode == NetworkMode.Offline || mpage.NetworkMode == NetworkMode.Mixed)
+                    {
+                        ls.Add(mpage.Container as EbMobileForm);
+                    }
+                } 
             }
             return ls;
         }
 
         private List<string> DependencyTables;
 
-        private bool InitPush()
+        private void InitPush(SyncResponse response)
         {
             DependencyTables = new List<string>();
-
-            foreach (EbMobileForm Form in this.FormCollection)
+            try
             {
-                if (DependencyTables.Contains(Form.TableName))
-                    continue;
-
-                EbMobileForm DependencyForm = ResolveDependency(Form);
-
-                if (DependencyForm != null)
-                    DependencyTables.Add(DependencyForm.TableName);
-
-                EbDataTable SourceData = Form.GetFormData();
-
-                for (int i = 0; i < SourceData.Rows.Count; i++)
+                foreach (EbMobileForm Form in this.FormCollection)
                 {
-                    PushResponse resp = PushRow(Form, SourceData, SourceData.Rows[i], i);
-
-                    if (resp.RowAffected <= 0)
+                    if (DependencyTables.Contains(Form.TableName))
                         continue;
 
-                    Form.FlagLocalRow(resp, resp.LocalRowId, Form.TableName);
+                    EbMobileForm DependencyForm = ResolveDependency(Form);
 
                     if (DependencyForm != null)
-                        PushDependencyData(Form, DependencyForm, resp.RowId, resp.LocalRowId);
+                        DependencyTables.Add(DependencyForm.TableName);
+
+                    EbDataTable SourceData = Form.GetFormData();
+
+                    for (int i = 0; i < SourceData.Rows.Count; i++)
+                    {
+                        PushResponse resp = PushRow(Form, SourceData, SourceData.Rows[i], i);
+
+                        if (resp.RowAffected <= 0)
+                            continue;
+
+                        Form.FlagLocalRow(resp, resp.LocalRowId, Form.TableName);
+
+                        if (DependencyForm != null)
+                            PushDependencyData(Form, DependencyForm, resp.RowId, resp.LocalRowId);
+
+                        response.Status = true;
+                        response.Message = "Sync complted";
+                    }
                 }
             }
-            return true;
+            catch(Exception ex)
+            {
+                response.Status = false;
+                response.Message = "Sync failed";
+                Log.Write("SyncServices.InitPush---" + ex.Message);
+            }
         }
 
         private PushResponse PushRow(EbMobileForm Form, EbDataTable Dt, EbDataRow DataRow, int RowIndex)

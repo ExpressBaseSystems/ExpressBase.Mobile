@@ -147,4 +147,11 @@ namespace ExpressBase.Mobile.Models
 
         public string Message { set; get; }
     }
+
+    public class SyncResponse
+    {
+        public bool Status { set; get; }
+
+        public string Message { set; get; }
+    }
 }

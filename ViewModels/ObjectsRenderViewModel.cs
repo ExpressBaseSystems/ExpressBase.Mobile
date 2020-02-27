@@ -1,19 +1,16 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
@@ -71,8 +68,14 @@ namespace ExpressBase.Mobile.ViewModels
                 foreach (MobilePagesWraper _p in pages)
                 {
                     EbMobilePage mpage = _p.ToPage();
+
                     if (mpage != null && mpage.Container is EbMobileForm)
-                        (mpage.Container as EbMobileForm).CreateTableSchema();
+                    {
+                        if (mpage.NetworkMode == NetworkMode.Offline || mpage.NetworkMode == NetworkMode.Mixed)
+                        {
+                            (mpage.Container as EbMobileForm).CreateTableSchema();
+                        }
+                    }
                 }
             });
         }
@@ -184,25 +187,17 @@ namespace ExpressBase.Mobile.ViewModels
                     try
                     {
                         Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Pushing from local data..."; });
+
                         if (Auth.IsTokenExpired(Settings.RToken))
                             Auth.AuthIfTokenExpired();
-                        bool status = SyncServices.Instance.Sync();
-                        if (status)
+
+                        SyncResponse response = SyncServices.Instance.Sync();
+
+                        Device.BeginInvokeOnMainThread(() =>
                         {
-                            Device.BeginInvokeOnMainThread(() =>
-                            {
-                                IsBusy = false;
-                                toast.Show("Push Completed.");
-                            });
-                        }
-                        else
-                        {
-                            Device.BeginInvokeOnMainThread(() =>
-                            {
-                                IsBusy = false;
-                                toast.Show(SyncServices.Instance.Message);
-                            });
-                        }
+                            IsBusy = false; 
+                            toast.Show(response.Message);
+                        });
                     }
                     catch (Exception ex)
                     {
@@ -225,44 +220,33 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     EbMobilePage page = HelperFunctions.GetPage(item.RefId);
                     if (page == null)
+                    {
                         toast.Show("This page is no longer available.");
-                    if (page.Container is EbMobileForm)
+                        return;
+                    }
+
+                    Device.BeginInvokeOnMainThread(() =>
                     {
-                        Device.BeginInvokeOnMainThread(() =>
+                        IsBusy = false;
+                        switch (page.Container)
                         {
-                            IsBusy = false;
-                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
-                        });
-                    }
-                    else if (page.Container is EbMobileVisualization)
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListViewRender(page));
-                        });
-                    }
-                    else if (page.Container is EbMobileDashBoard)
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DashBoardRender(page));
-                        });
-                    }
-                    else if (page.Container is EbMobilePdf)
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new PdfRender(page));
-                        });
-                    }
-                    else
-                    {
-                        Device.BeginInvokeOnMainThread(() => IsBusy = false);
-                        toast.Show("This page is no longer available.");
-                    }
+                            case EbMobileForm f:
+                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
+                                break;
+                            case EbMobileVisualization v:
+                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListViewRender(page));
+                                break;
+                            case EbMobileDashBoard d:
+                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DashBoardRender(page));
+                                break;
+                            case EbMobilePdf p:
+                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new PdfRender(page));
+                                break;
+                            default:
+                                toast.Show("This page is no longer available.");
+                                break;
+                        }
+                    });
                 }
                 catch (Exception ex)
                 {

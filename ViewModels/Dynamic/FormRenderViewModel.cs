@@ -149,13 +149,22 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.Form.NetworkType = this.NetworkType;
             FormSaveResponse saveResponse;
 
-            if (this.Mode == FormMode.REF)
-                saveResponse = this.Form.SaveFormWParent(this.RowId, ParentForm.TableName);
-            else
-                saveResponse = this.Form.SaveForm(this.RowId);
+            Task.Run(() =>
+            {
+                Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
-            DependencyService.Get<IToast>().Show(saveResponse.Message);
-            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                if (this.Mode == FormMode.REF)
+                    saveResponse = this.Form.SaveFormWParent(this.RowId, ParentForm.TableName);
+                else
+                    saveResponse = this.Form.SaveForm(this.RowId);
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    IsBusy = false;
+                    DependencyService.Get<IToast>().Show(saveResponse.Message);
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                });
+            });
         }
 
         private void PushFromTableLayout(EbMobileTableLayout TL, StackLayout ContentStackTop)
