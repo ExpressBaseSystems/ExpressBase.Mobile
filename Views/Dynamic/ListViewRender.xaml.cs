@@ -7,6 +7,7 @@ using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using System.Linq;
 using ExpressBase.Mobile.Models;
+using Xamarin.Essentials;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
@@ -25,6 +26,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             try
             {
                 Renderer = new ListViewRenderViewModel(Page);
+                BindingContext = Renderer;
 
                 if (Renderer.DataTable.Rows.Any())
                 {
@@ -42,7 +44,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 int toVal = (Renderer.DataTable.Rows.Count < Renderer.DataCount) ? Renderer.Visualization.PageLength : Renderer.DataCount;
                 PagingMeta.Text = $"Showing {Offset} to {toVal} of {Renderer.DataCount} entries";
 
-                BindingContext = Renderer;
+                if (Page.NetworkMode == NetworkMode.Online && !Settings.HasInternet)
+                    ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
+
+                Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
             }
             catch (Exception ex)
             {
@@ -150,6 +155,28 @@ namespace ExpressBase.Mobile.Views.Dynamic
             listContainer.Content = Renderer.XView;
             PagingPageCount.Text = PageCount.ToString();
             PagingMeta.Text = $"Showing {Offset} to {Offset + Renderer.Visualization.PageLength} of {Renderer.DataCount} entries";
+        }
+
+        private void ShowMessage(string message, Color background)
+        {
+            MessageBoxFrame.BackgroundColor = background;
+            MessageBoxLabel.Text = message;
+            MessageBox.IsVisible = true;
+        }
+
+        private void HideMessage(string message_beforehide, Color background)
+        {
+            MessageBoxFrame.BackgroundColor = background;
+            MessageBoxLabel.Text = message_beforehide;
+            MessageBox.IsVisible = false;
+        }
+
+        private void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
+        {
+            if (e.NetworkAccess == NetworkAccess.Internet)
+                HideMessage("Back to online", Color.FromHex("41d041"));
+            else
+                ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
         }
     }
 }

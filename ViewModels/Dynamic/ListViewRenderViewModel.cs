@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
@@ -38,24 +39,23 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
-                EbDataSet ds;
-                var sqlParams = HelperFunctions.GetSqlParams(this.Visualization.GetQuery);
-
-                if (sqlParams.Count > 0)
-                {
-                    List<DbParameter> dbParams = new List<DbParameter>();
-                    foreach (string s in sqlParams)
-                        dbParams.Add(new DbParameter { ParameterName = s });
-
-                    ds = this.Visualization.GetData(dbParams, offset);
-                }
+                EbDataSet ds = null;
+                if (this.NetworkType == NetworkMode.Online)
+                    ds = GetDataFromLive(offset);
+                else if (this.NetworkType == NetworkMode.Offline)
+                    ds = GetDataFromLocal(offset);
                 else
-                    ds = this.Visualization.GetData(offset);
+                {
+                    if (Settings.HasInternet)
+                        ds = GetDataFromLive(offset);
+                    else
+                        ds = GetDataFromLocal(offset);
+                }
 
-                if (ds.Tables.HasIndex(2))
+                if (ds != null && ds.Tables.HasIndex(2))
                 {
                     DataTable = ds.Tables[1];
-                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["row_count"]);
+                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
                 }
                 else
                     DataTable = new EbDataTable();
@@ -64,6 +64,47 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 Log.Write("List_SetData---" + ex.Message);
             }
+        }
+
+        private EbDataSet GetDataFromLive(int offset)
+        {
+            EbDataSet ds = null;
+            try
+            {
+                Auth.AuthIfTokenExpired();
+                VisualizationLiveData vd = RestServices.Instance.PullReaderData(Visualization.DataSourceRefId, null, 0, offset);
+                ds = vd.Data;
+            }
+            catch (Exception ex)
+            {
+                Log.Write("ListViewRenderViewModel.GetDataFromLive---" + ex.Message);
+            }
+            return ds;
+        }
+
+        private EbDataSet GetDataFromLocal(int offset)
+        {
+            EbDataSet ds = null;
+            try
+            {
+                var sqlParams = HelperFunctions.GetSqlParams(this.Visualization.GetQuery);
+
+                if (sqlParams.Count > 0)
+                {
+                    List<DbParameter> dbParams = new List<DbParameter>();
+                    foreach (string s in sqlParams)
+                        dbParams.Add(new DbParameter { ParameterName = s });
+
+                    ds = this.Visualization.GetLocalData(dbParams, offset);
+                }
+                else
+                    ds = this.Visualization.GetLocalData(offset);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("ListViewRenderViewModel.GetDataFromLocal---" + ex.Message);
+            }
+            return ds;
         }
 
         public void CreateView()
@@ -166,7 +207,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (parameters != null)
             {
-                var ds = this.Visualization.GetData(parameters);
+                var ds = this.Visualization.GetLocalData(parameters);
                 DataTable = ds.Tables[1];
             }
             this.CreateView();

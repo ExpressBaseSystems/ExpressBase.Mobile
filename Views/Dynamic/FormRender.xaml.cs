@@ -32,7 +32,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("FormRender new mode" + ex.Message);
             }
         }
 
@@ -52,7 +52,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("FormRender edit mode" + ex.Message);
             }
         }
 
@@ -68,7 +68,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("FormRender reference mode" + ex.Message);
             }
         }
 
@@ -84,7 +84,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("FormRender prefill mode" + ex.Message);
             }
         }
 

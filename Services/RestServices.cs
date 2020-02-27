@@ -192,5 +192,59 @@ namespace ExpressBase.Mobile.Services
             }
             return FileData;
         }
+
+        public VisualizationLiveData PullReaderData(string datasorce_ref, List<Param> parameters, int limit, int offset)
+        {
+            try
+            {
+                RestRequest request = new RestRequest("api/get_data", Method.GET);
+                request.AddParameter("refid", datasorce_ref);
+                if (parameters != null)
+                {
+                    request.AddParameter("param", JsonConvert.SerializeObject(parameters));
+                }
+                request.AddParameter("limit", limit);
+                request.AddParameter("offset", offset);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+
+                IRestResponse iresp = Client.Execute(request);
+                return JsonConvert.DeserializeObject<VisualizationLiveData>(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("RestService.PullReaderData---" + ex.Message);
+            }
+            return new VisualizationLiveData();
+        }
+
+        public async Task<VisualizationLiveData> PullReaderDataAsync(string datasorce_ref, List<Param> parameters, int limit, int offset)
+        {
+            try
+            {
+                RestRequest request = new RestRequest("api/get_data", Method.GET);
+                request.AddParameter("refid", datasorce_ref); 
+                if (parameters != null)
+                {
+                    request.AddParameter("param", JsonConvert.SerializeObject(parameters));
+                }
+                request.AddParameter("limit", limit);
+                request.AddParameter("offset", offset);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+
+                IRestResponse iresp = await Client.ExecuteAsync(request);
+                return JsonConvert.DeserializeObject<VisualizationLiveData>(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("RestService.PullReaderData---" + ex.Message);
+            }
+            return new VisualizationLiveData();
+        }
     }
 }

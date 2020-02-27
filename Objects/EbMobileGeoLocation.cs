@@ -4,7 +4,6 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Xamarin.Essentials;
@@ -24,14 +23,25 @@ namespace ExpressBase.Mobile
 
         private WebView WebView { set; get; }
 
+        private string PlaceHolder => @"<html><head><style>body{height:100%;width:100%;display:flex;justify-content:center;
+                                    align-items:center;flex-direction:column}</style></head><body style='background:#eee'> 
+                                    <container style='line-height:1.5'><p style='text-align: center;'>
+                                    You are not connected to internet</p> </container></body></html>";
+
         public override void InitXControl(FormMode Mode)
         {
             this.BuildXControl();
 
-            if (Mode != FormMode.EDIT)
+            if (Settings.HasInternet)
             {
-                this.SetCordinates();
+                if (Mode != FormMode.EDIT)
+                    this.SetCordinates();
             }
+            else
+            {
+                WebView.HeightRequest = 100;
+                WebView.Source = new HtmlWebViewSource { Html = PlaceHolder };
+            } 
         }
 
         private void BuildXControl()
@@ -66,9 +76,7 @@ namespace ExpressBase.Mobile
                 }
             }
             else
-            {
                 SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
-            }
         }
 
         private void SetWebViewUrl(double lat, double lon, string place)
@@ -95,7 +103,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("EbMobileGeoLocation.GetValue" + ex.Message);
             }
             return null;
         }

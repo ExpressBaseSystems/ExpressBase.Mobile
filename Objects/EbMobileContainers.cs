@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
 
-        public EbDataSet GetData(int offset = 0)
+        public EbDataSet GetLocalData(int offset = 0)
         {
             EbDataSet Data = new EbDataSet();
             try
@@ -91,7 +91,7 @@ namespace ExpressBase.Mobile
             return Data;
         }
 
-        public EbDataSet GetData(List<DbParameter> dbParameters, int offset = 0)
+        public EbDataSet GetLocalData(List<DbParameter> dbParameters, int offset = 0)
         {
             EbDataSet Data = new EbDataSet();
             try

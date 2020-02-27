@@ -60,10 +60,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     foreach (string s in sqlParams)
                         dbParams.Add(new DbParameter { ParameterName = s, Value = this.HeaderFrame.DataRow?[s] });
 
-                    ds = this.Visualization.GetData(dbParams, offset);
+                    ds = this.Visualization.GetLocalData(dbParams, offset);
                 }
                 else
-                    ds = this.Visualization.GetData(offset);
+                    ds = this.Visualization.GetLocalData(offset);
 
                 if (ds.Tables.HasIndex(2))
                 {

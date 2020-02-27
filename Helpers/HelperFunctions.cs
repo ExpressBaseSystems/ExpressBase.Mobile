@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.Helpers
 
         public static string WrapSelectQuery(string sql, List<DbParameter> Parameters = null)
         {
-            sql = string.Format("SELECT COUNT(*) AS row_count FROM ({0}); SELECT * FROM ({0}) AS WRAPER", sql.TrimEnd(';'));
+            sql = string.Format("SELECT COUNT(*) AS count FROM ({0}); SELECT * FROM ({0}) AS WRAPER", sql.TrimEnd(';'));
 
             if (!Parameters.IsNullOrEmpty())
             {

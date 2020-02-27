@@ -118,6 +118,13 @@
                     HorizontalOptions="Center"/>
             </ScrollView>
 
+            <!--#fd6b6b-->
+            <StackLayout Grid.Row="2" x:Name="MessageBox" IsVisible="{Binding ShowMessage}">
+                <Frame Padding="15" CornerRadius="0" x:Name="MessageBoxFrame"  BackgroundColor="{Binding MessageColor}">
+                    <Label Text="{Binding Message}" x:Name="MessageBoxLabel" TextColor="White" FontSize="15"/>
+                </Frame>
+            </StackLayout>
+
             <ContentView 
                 IsVisible="False"
                 x:Name="FilterDialogView"
