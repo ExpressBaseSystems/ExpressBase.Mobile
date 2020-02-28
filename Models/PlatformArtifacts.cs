@@ -23,6 +23,35 @@ namespace ExpressBase.Mobile.Models
         public string Description { set; get; } = "No description";
     }
 
+    public class EbMyActions
+    {
+        public int Id { set; get; }
+
+        public DateTime StartDate { set; get; }
+
+        public DateTime EndDate { set; get; }
+
+        public int StageId { set; get; }
+
+        public string WebFormRefId { set; get; }
+
+        public int WebFormDataId { set; get; }
+
+        public int ApprovalLinesId { set; get; }
+
+        public string Description { set; get; }
+    }
+
+    public class MyActionsResponse
+    {
+        public List<EbMyActions> Actions { get; set; }
+
+        public MyActionsResponse()
+        {
+            Actions = new List<EbMyActions>();
+        }
+    }
+
     public class MobilePageCollection
     {
         public List<MobilePagesWraper> Pages { set; get; }

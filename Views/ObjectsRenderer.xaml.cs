@@ -21,7 +21,7 @@ namespace ExpressBase.Mobile.Views
             InitializeComponent();
             ObjectsRenderViewModel model = new ObjectsRenderViewModel();
             BindingContext = model;
-            scrollView.Content = model.View;
+            ObjectContainer.Content = model.View;
         }
 
         protected override bool OnBackButtonPressed()
@@ -44,7 +44,7 @@ namespace ExpressBase.Mobile.Views
 
         public void RefreshComplete(View view)
         {
-            scrollView.Content = view;
+            ObjectContainer.Content = view;
         }
 
         private async void RefreshView_Refreshing(object sender, System.EventArgs e)
@@ -60,8 +60,8 @@ namespace ExpressBase.Mobile.Views
                 }
                 else
                 {
-                    if (Auth.IsTokenExpired(Settings.RToken))
-                        await Auth.AuthIfTokenExpiredAsync();
+                    await Auth.AuthIfTokenExpiredAsync();//authenticate if token expired
+
                     RootRefreshView.IsRefreshing = true;
                     var Coll = await RestServices.Instance.GetEbObjects(Settings.AppId, Settings.LocationId, true);
                     if (Coll != null)
@@ -70,7 +70,8 @@ namespace ExpressBase.Mobile.Views
                         var vm = (BindingContext as ObjectsRenderViewModel);
                         vm.ObjectList = Coll.Pages;
                         vm.BuildView();
-                        scrollView.Content = vm.View;
+                        ObjectContainer.Content = vm.View;
+                        vm.DeployFormTables();
                         await CommonServices.Instance.LoadLocalData(Coll.Data);//load pulled data to local
                     }
                     RootRefreshView.IsRefreshing = false;
@@ -82,6 +83,11 @@ namespace ExpressBase.Mobile.Views
                 toast.Show("Something went wrong. Please try again");
                 Log.Write("ROOT MENU REFRESH-" + ex.Message);
             }
+        }
+
+        private void MyActions_Tapped(object sender, EventArgs e)
+        {
+
         }
     }
 }

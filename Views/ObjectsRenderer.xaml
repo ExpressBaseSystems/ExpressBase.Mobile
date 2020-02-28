@@ -5,9 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.ObjectsRenderer"
-             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              Style="{StaticResource ContentPageStyle}"
-             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
              BackgroundColor="#eeeeee">
 
     <NavigationPage.TitleView>
@@ -31,11 +29,59 @@
                 Refreshing="RefreshView_Refreshing">
             <Grid>
                 <ScrollView 
-                Padding="5"
-                x:Name="scrollView" 
+                Padding="5" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"/>
-                
+                AbsoluteLayout.LayoutFlags="All">
+                    <StackLayout VerticalOptions="FillAndExpand">
+                        <Grid Padding="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Label Text="Links" 
+                                   Grid.Row="0"
+                                   FontSize="16"
+                                   Padding="5"
+                                   Style="{StaticResource MediumLabel}"/>
+
+                            <Frame CornerRadius="4" Grid.Row="1" HasShadow="True" BorderColor="#fafafa">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30.3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="30.3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="30.3*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <StackLayout Grid.Column="0">
+                                        <Frame BackgroundColor="Green"
+                                               WidthRequest="60"
+                                               HeightRequest="60"
+                                               CornerRadius="30"
+                                               Padding="0"
+                                               HorizontalOptions="Center"
+                                               x:Name="MyActions">
+
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="MyActions_Tapped"/>
+                                            </Frame.GestureRecognizers>
+
+                                            <Label Text="&#xf25a;" 
+                                                   FontFamily="{StaticResource FontAwesome}"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"
+                                                   TextColor="White"
+                                                   FontSize="30"/>
+                                        </Frame>
+                                        <Label Text="My Actions" HorizontalOptions="Center"></Label>
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </Grid>
+                        <Frame Padding="0" 
+                               BackgroundColor="Transparent" 
+                               x:Name="ObjectContainer"/>
+                    </StackLayout>
+                </ScrollView>
                 <!--loader-->
                 <ContentView 
                 IsVisible="{Binding IsBusy}" 

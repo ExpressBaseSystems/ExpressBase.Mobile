@@ -246,5 +246,45 @@ namespace ExpressBase.Mobile.Services
             }
             return new VisualizationLiveData();
         }
+
+        public MyActionsResponse GetMyActions()
+        {
+            try
+            {
+                RestRequest request = new RestRequest("api/get_actions", Method.GET);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+
+                IRestResponse iresp = Client.Execute(request);
+                return JsonConvert.DeserializeObject<MyActionsResponse>(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("RestService.GetMyActions---" + ex.Message);
+            }
+            return new MyActionsResponse();
+        }
+
+        public async Task<MyActionsResponse> GetMyActionsAsync()
+        {
+            try
+            {
+                RestRequest request = new RestRequest("api/get_actions", Method.GET);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+
+                IRestResponse iresp = await Client.ExecuteAsync(request);
+                return JsonConvert.DeserializeObject<MyActionsResponse>(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("RestService.GetMyActions---" + ex.Message);
+            }
+            return new MyActionsResponse();
+        }
     }
 }

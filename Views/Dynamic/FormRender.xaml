@@ -30,13 +30,11 @@
         <Grid>
             <Grid RowSpacing="0">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <ScrollView Grid.Row="0" Orientation="Vertical" x:Name="FormScrollView">
-
-                </ScrollView>
                 <!--#fd6b6b-->
                 <StackLayout Grid.Row="0" x:Name="MessageBox" VerticalOptions="Start" IsVisible="{Binding ShowMessage}">
                     <Frame Padding="15" CornerRadius="0" x:Name="MessageBoxFrame"  BackgroundColor="{Binding MessageColor}">
@@ -44,9 +42,11 @@
                     </Frame>
                 </StackLayout>
 
+                <ScrollView Grid.Row="1" Orientation="Vertical" x:Name="FormScrollView"/>
+
                 <Button 
                     x:Name="SaveButton"
-                    Grid.Row="1"
+                    Grid.Row="2"
                     Text="Save"
                     HorizontalOptions="FillAndExpand"
                     VerticalOptions="EndAndExpand"
@@ -65,7 +65,6 @@
                         AbsoluteLayout.LayoutFlags="All"
                         BackgroundColor="#333333"
                         Opacity=".3"/>
-
                     <StackLayout 
                         Padding="10"
                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
@@ -83,23 +82,20 @@
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-
                                         <Label
-                                        Grid.Row="0"
-                                        TextColor="Black" 
-                                        VerticalOptions="Center" 
-                                        Text="Saving record..."
-                                        FontSize="16"/>
-
+                                            Grid.Row="0"
+                                            TextColor="Black" 
+                                            VerticalOptions="Center" 
+                                            Text="Saving record..."
+                                            FontSize="16"/>
                                         <ActivityIndicator
-                                        HorizontalOptions="End"
-                                        IsRunning="true" 
-                                        Color="#508bf9"
-                                        Grid.Column="0"
-                                        WidthRequest="30"
-                                        HeightRequest="30"/>
+                                            HorizontalOptions="End"
+                                            IsRunning="true" 
+                                            Color="#508bf9"
+                                            Grid.Column="0"
+                                            WidthRequest="30"
+                                            HeightRequest="30"/>
                                     </Grid>
-
                                 </StackLayout>
                             </Frame.Content>
                         </Frame>
@@ -108,5 +104,4 @@
             </ContentView>
         </Grid>
     </ContentPage.Content>
-    
 </ContentPage>

@@ -27,6 +27,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 if (page.NetworkMode == NetworkMode.Online && !Settings.HasInternet)
                     ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
+                else
+                    HideMessage("Back to online", Color.FromHex("41d041"));
 
                 Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
             }
@@ -37,7 +39,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
         }
 
         //edit mode
-        public FormRender(EbMobilePage Page, int RowId)
+        public FormRender(EbMobilePage page, int rowId)
         {
             InitializeComponent();
             try
@@ -46,9 +48,16 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 SaveButton.IsVisible = false;
                 EditButton.IsVisible = true;
 
-                Renderer = new FormRenderViewModel(Page, RowId);
+                Renderer = new FormRenderViewModel(page, rowId);
                 FormScrollView.Content = Renderer.XView;
                 BindingContext = Renderer;
+
+                if (page.NetworkMode == NetworkMode.Online && !Settings.HasInternet)
+                    ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
+                else
+                    HideMessage("Back to online", Color.FromHex("41d041"));
+
+                Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
             }
             catch (Exception ex)
             {
@@ -57,12 +66,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
         }
 
         //reference mode
-        public FormRender(EbMobilePage CurrentForm, EbMobilePage ParentForm, int ParentId)
+        public FormRender(EbMobilePage currentForm, EbMobilePage parentForm, int parentId)
         {
             InitializeComponent();
             try
             {
-                Renderer = new FormRenderViewModel(CurrentForm, ParentForm, ParentId);
+                Renderer = new FormRenderViewModel(currentForm, parentForm, parentId);
                 FormScrollView.Content = Renderer.XView;
                 BindingContext = Renderer;
             }
@@ -73,12 +82,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
         }
 
         //prefill new mode
-        public FormRender(EbMobilePage Page, EbDataRow dataRow, ColumnColletion dataColumns)
+        public FormRender(EbMobilePage page, EbDataRow dataRow, ColumnColletion dataColumns)
         {
             InitializeComponent();
             try
             {
-                Renderer = new FormRenderViewModel(Page, dataRow, dataColumns);
+                Renderer = new FormRenderViewModel(page, dataRow, dataColumns);
                 FormScrollView.Content = Renderer.XView;
                 BindingContext = Renderer;
             }
@@ -102,10 +111,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
         {
-            if (e.NetworkAccess == NetworkAccess.Internet)
-                HideMessage("Back to online", Color.FromHex("41d041"));
-            else
-                ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
+            if(Renderer != null && Renderer.NetworkType == NetworkMode.Online)
+            {
+                if (e.NetworkAccess == NetworkAccess.Internet)
+                    HideMessage("Back to online", Color.FromHex("41d041"));
+                else
+                    ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
+            }
         }
 
         private void ShowMessage(string message, Color background)

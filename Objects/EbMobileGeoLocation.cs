@@ -41,7 +41,7 @@ namespace ExpressBase.Mobile
             {
                 WebView.HeightRequest = 100;
                 WebView.Source = new HtmlWebViewSource { Html = PlaceHolder };
-            } 
+            }
         }
 
         private void BuildXControl()
@@ -90,16 +90,19 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                Uri uri = new Uri((WebView.Source as UrlWebViewSource).Url);
-                var query = HttpUtility.ParseQueryString(uri.Query);
+                if (WebView.Source is UrlWebViewSource)
+                {
+                    Uri uri = new Uri((WebView.Source as UrlWebViewSource).Url);
+                    var query = HttpUtility.ParseQueryString(uri.Query);
 
-                double lat = Convert.ToDouble(query.Get("latitude"));
-                double lon = Convert.ToDouble(query.Get("longitude"));
+                    double lat = Convert.ToDouble(query.Get("latitude"));
+                    double lon = Convert.ToDouble(query.Get("longitude"));
 
-                if (Cordinates == null)
-                    Cordinates = new Location { Latitude = lat, Longitude = lon };
+                    if (Cordinates == null)
+                        Cordinates = new Location { Latitude = lat, Longitude = lon };
 
-                return $"{lat},{lon}";
+                    return $"{lat},{lon}";
+                }
             }
             catch (Exception ex)
             {

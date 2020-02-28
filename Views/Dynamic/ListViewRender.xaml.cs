@@ -31,7 +31,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 if (Renderer.DataTable.Rows.Any())
                 {
                     listContainer.Content = Renderer.XView;
-
                     if (Renderer.FilterDialog != null)
                     {
                         FilterActionBar.IsVisible = true;
@@ -46,6 +45,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 if (Page.NetworkMode == NetworkMode.Online && !Settings.HasInternet)
                     ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
+                else
+                    HideMessage("Back to online", Color.FromHex("41d041"));
 
                 Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
             }
@@ -117,7 +118,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 if (Renderer != null)
                 {
                     if (Offset <= 0) return;
-
                     Offset -= Renderer.Visualization.PageLength;
                     PageCount--;
                     ResetPagedData();
@@ -136,7 +136,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 if (Renderer != null)
                 {
                     if (Offset + Renderer.Visualization.PageLength >= Renderer.DataCount) return;
-
                     Offset += Renderer.Visualization.PageLength;
                     PageCount++;
                     ResetPagedData();

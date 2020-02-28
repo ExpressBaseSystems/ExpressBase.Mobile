@@ -165,6 +165,8 @@ namespace ExpressBase.Mobile
                     response.Status = true;
                     response.Message = "Data pushed to cloud :)";
                 }
+                else
+                    throw new Exception("Failed to push data");
             }
             catch (Exception ex)
             {
@@ -197,6 +199,8 @@ namespace ExpressBase.Mobile
                     response.Status = true;
                     response.Message = "Data stored locally :)";
                 }
+                else
+                    throw new Exception("failed to store data locally");
             }
             catch (Exception ex)
             {

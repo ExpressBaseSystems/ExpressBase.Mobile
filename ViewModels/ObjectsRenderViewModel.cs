@@ -59,7 +59,7 @@ namespace ExpressBase.Mobile.ViewModels
             DeployFormTables();
         }
 
-        void DeployFormTables()
+        public void DeployFormTables()
         {
             Task.Run(() =>
             {

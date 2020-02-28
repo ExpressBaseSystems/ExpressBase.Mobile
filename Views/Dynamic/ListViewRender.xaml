@@ -142,10 +142,8 @@
                             <ColumnDefinition Width="*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <ScrollView x:Name="FilterContainer" Padding="10" Grid.ColumnSpan="2" Grid.Row="0">
-
-                        </ScrollView>
-
+                        <ScrollView x:Name="FilterContainer" Padding="10" Grid.ColumnSpan="2" Grid.Row="0"/>
+                        
                         <Button 
                             x:Name="FDCancel"
                             Text="Cancel" 
