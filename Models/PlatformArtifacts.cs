@@ -23,7 +23,25 @@ namespace ExpressBase.Mobile.Models
         public string Description { set; get; } = "No description";
     }
 
-    public class EbMyActions
+    public class EbStageInfo
+    {
+        public string StageUniqueId { set; get; }
+        public List<EbStageActions> StageActions { set; get; }
+
+        public EbStageInfo()
+        {
+            StageActions = new List<EbStageActions>();
+        }
+    }
+
+    public class EbStageActions
+    {
+        public string ActionName { set; get; }
+
+        public string ActionUniqueId { set; get; }
+    }
+
+    public class EbMyAction
     {
         public int Id { set; get; }
 
@@ -40,15 +58,36 @@ namespace ExpressBase.Mobile.Models
         public int ApprovalLinesId { set; get; }
 
         public string Description { set; get; }
+
+        public EbStageInfo StageInfo { set; get; }
+
+        public string EndsOn
+        {
+            get
+            {
+                if (EndDate != null)
+                    return "Ends on " + EndDate.ToString("MMMM dd, yyyy");
+                else
+                    return "End date not specified";
+            }
+        }
+
+        public string DescriptionL1
+        {
+            get
+            {
+                return (Description == null) ? "?" : Description[0].ToString().ToUpper();
+            }
+        }
     }
 
     public class MyActionsResponse
     {
-        public List<EbMyActions> Actions { get; set; }
+        public List<EbMyAction> Actions { get; set; }
 
         public MyActionsResponse()
         {
-            Actions = new List<EbMyActions>();
+            Actions = new List<EbMyAction>();
         }
     }
 

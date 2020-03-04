@@ -72,9 +72,7 @@ namespace ExpressBase.Mobile.ViewModels
                     if (mpage != null && mpage.Container is EbMobileForm)
                     {
                         if (mpage.NetworkMode == NetworkMode.Offline || mpage.NetworkMode == NetworkMode.Mixed)
-                        {
                             (mpage.Container as EbMobileForm).CreateTableSchema();
-                        }
                     }
                 }
             });
@@ -106,7 +104,7 @@ namespace ExpressBase.Mobile.ViewModels
                     {
                         new Label
                         {
-                            FontSize = 16, Text = pair.Key, Padding = 5,
+                            FontSize = 16, Text = pair.Key + $" ({pair.Value.Count})", Padding = 5,
                             Style = (Style)HelperFunctions.GetResourceValue("MediumLabel")
                         }
                     }
@@ -141,6 +139,7 @@ namespace ExpressBase.Mobile.ViewModels
                     continue;
                 var frame = new CustomShadowFrame
                 {
+                    BorderColor = Color.FromHex("fafafa"),
                     HasShadow = true,
                     CornerRadius = 4,
                     PageWraper = wrpr,

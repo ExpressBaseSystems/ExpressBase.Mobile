@@ -85,9 +85,28 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        private void MyActions_Tapped(object sender, EventArgs e)
+        private async void MyActions_Tapped(object sender, EventArgs e)
         {
+            try
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    LoaderMessage.Text = "Loading...";
+                    Loader.IsVisible = true;
+                });
 
+                await Auth.AuthIfTokenExpiredAsync();//authenticate if token expired
+
+                MyActionsResponse actionResp = await RestServices.Instance.GetMyActionsAsync();
+
+                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new MyActions(actionResp));
+                Device.BeginInvokeOnMainThread(() => Loader.IsVisible = false);
+            }
+            catch (Exception ex)
+            {
+                Device.BeginInvokeOnMainThread(() => Loader.IsVisible = false);
+                Log.Write(ex.Message);
+            }
         }
     }
 }

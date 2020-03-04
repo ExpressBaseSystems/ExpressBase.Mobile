@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.Views.MyActions">
+
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Text="Actions" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+        </Grid>
+    </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <Grid>
+            <ListView ItemsSource="{Binding Actions}" ItemSelected="ListView_ItemSelected" HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <Grid Padding="10" ColumnSpacing="10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Frame Grid.Row="0"
+                                           Grid.RowSpan="2"
+                                           Grid.Column="0"
+                                           HeightRequest="50"
+                                           VerticalOptions="Center"
+                                           WidthRequest="50"
+                                           Padding="0"
+                                           BackgroundColor="#dddee0"
+                                           BorderColor="#d4d5d8"
+                                           HasShadow="False"
+                                           CornerRadius="25">
+                                        <Label Text="{Binding DescriptionL1}"
+                                               FontSize="20"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center"
+                                               FontFamily="{StaticResource Roboto-Bold}"/>
+                                    </Frame>
+
+                                    <Label Text="{Binding Description}"
+                                           Grid.Row="0"
+                                           Grid.Column="1"
+                                           FontSize="18"
+                                           FontFamily="{StaticResource Roboto-Medium}"
+                                           TextColor="{DynamicResource Gray-900}"/>
+
+                                    <Label Text="{Binding EndsOn}" FontAttributes="Bold" Grid.Row="1" Grid.Column="1"/>
+
+                                </Grid>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

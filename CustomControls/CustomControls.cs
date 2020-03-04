@@ -14,6 +14,11 @@ namespace ExpressBase.Mobile.CustomControls
         public TextBox() { }
     }
 
+    public class TextArea : Editor
+    {
+        public TextArea() { }
+    }
+
     public class NumericTextBox : Entry
     {
         public NumericTextBox() { }

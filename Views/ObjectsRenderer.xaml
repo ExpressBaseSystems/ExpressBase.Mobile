@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.ObjectsRenderer"
              Style="{StaticResource ContentPageStyle}"
-             BackgroundColor="#eeeeee">
+             BackgroundColor="#ffffff">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -28,11 +28,11 @@
                 x:Name="RootRefreshView" 
                 Refreshing="RefreshView_Refreshing">
             <Grid>
-                <ScrollView 
-                Padding="5" 
+                <ScrollView
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
                     <StackLayout VerticalOptions="FillAndExpand">
+                        <BoxView HeightRequest="15" BackgroundColor="#eeeeee" />
                         <Grid Padding="5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
@@ -45,7 +45,7 @@
                                    Padding="5"
                                    Style="{StaticResource MediumLabel}"/>
 
-                            <Frame CornerRadius="4" Grid.Row="1" HasShadow="True" BorderColor="#fafafa">
+                            <Frame CornerRadius="4" Grid.Row="1">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="30.3*"></ColumnDefinition>
@@ -77,13 +77,15 @@
                                 </Grid>
                             </Frame>
                         </Grid>
-                        <Frame Padding="0" 
+                        <BoxView HeightRequest="15" BackgroundColor="#eeeeee" />
+                        <Frame Padding="5" 
                                BackgroundColor="Transparent" 
                                x:Name="ObjectContainer"/>
                     </StackLayout>
                 </ScrollView>
                 <!--loader-->
                 <ContentView 
+                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
@@ -113,6 +115,7 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Label
+                                                x:Name="LoaderMessage"
                                         Grid.Row="0"
                                         TextColor="Black" 
                                         VerticalOptions="Center" 
