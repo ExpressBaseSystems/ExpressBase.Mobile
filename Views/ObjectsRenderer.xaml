@@ -41,9 +41,22 @@
 
                             <Label Text="Links" 
                                    Grid.Row="0"
+                                   HorizontalOptions="Start"
                                    FontSize="16"
-                                   Padding="5"
+                                   Margin="5,0,5,0"
                                    Style="{StaticResource MediumLabel}"/>
+
+                            <Label HorizontalOptions="End"
+                                   Margin="5,0,5,0"
+                                   Grid.Row="0">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
+                                        <Span Text=" Current Location : "></Span>
+                                        <Span Text="Default" x:Name="CurrentLocation" TextColor="#508bf9"></Span>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
 
                             <Frame CornerRadius="4" Grid.Row="1">
                                 <Grid>
@@ -53,7 +66,7 @@
                                         <ColumnDefinition Width="30.3*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
                                     <StackLayout Grid.Column="0">
-                                        <Frame BackgroundColor="Green"
+                                        <Frame BackgroundColor="#33b762"
                                                WidthRequest="60"
                                                HeightRequest="60"
                                                CornerRadius="30"

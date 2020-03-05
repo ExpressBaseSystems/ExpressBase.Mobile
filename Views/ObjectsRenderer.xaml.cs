@@ -24,6 +24,18 @@ namespace ExpressBase.Mobile.Views
             ObjectContainer.Content = model.View;
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            int _current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
+            EbLocation loc = Settings.Locations.Find(item => item.LocId == _current);
+            if (loc != null)
+                CurrentLocation.Text = loc.ShortName;
+            else
+                CurrentLocation.Text = "Default";
+        }
+
         protected override bool OnBackButtonPressed()
         {
             BackButtonCount++;
