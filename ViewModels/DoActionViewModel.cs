@@ -34,6 +34,8 @@ namespace ExpressBase.Mobile.ViewModels
                 this.NotifyPropertyChanged();
             }
         }
+        public List<Param> ActionData { set; get; }
+
         public EbMyAction Action { set; get; }
 
         public List<EbStageActions> StageActions { set; get; }
@@ -47,6 +49,7 @@ namespace ExpressBase.Mobile.ViewModels
             if (Action.StageInfo != null)
             {
                 StageActions = Action.StageInfo.StageActions ?? new List<EbStageActions>();
+                ActionData = Action.StageInfo.Data ?? new List<Param>();
             }
 
             SubmitCommand = new Command(async () => await SubmitButton_Clicked());

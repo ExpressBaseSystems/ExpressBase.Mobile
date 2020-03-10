@@ -225,7 +225,7 @@ namespace ExpressBase.Mobile.Services
             try
             {
                 RestRequest request = new RestRequest("api/get_data", Method.GET);
-                request.AddParameter("refid", datasorce_ref); 
+                request.AddParameter("refid", datasorce_ref);
                 if (parameters != null)
                 {
                     request.AddParameter("param", JsonConvert.SerializeObject(parameters));
@@ -285,6 +285,30 @@ namespace ExpressBase.Mobile.Services
                 Log.Write("RestService.GetMyActions---" + ex.Message);
             }
             return new MyActionsResponse();
+        }
+
+        public async Task<EbStageInfo> GetMyActionInfoAsync(int stageid, string refid, int dataid)
+        {
+            try
+            {
+                RestRequest request = new RestRequest("api/get_action_info", Method.GET);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+
+                request.AddParameter("stageid", stageid);
+                request.AddParameter("refid", refid);
+                request.AddParameter("dataid", dataid);
+
+                IRestResponse iresp = await Client.ExecuteAsync(request);
+                return JsonConvert.DeserializeObject<EbStageInfo>(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("RestService.GetMyActions---" + ex.Message);
+            }
+            return new EbStageInfo();
         }
     }
 }

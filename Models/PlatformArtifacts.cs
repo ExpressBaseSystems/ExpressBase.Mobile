@@ -26,7 +26,12 @@ namespace ExpressBase.Mobile.Models
     public class EbStageInfo
     {
         public string StageUniqueId { set; get; }
+
+        public string StageName { set; get; }
+
         public List<EbStageActions> StageActions { set; get; }
+
+        public List<Param> Data { set; get; }
 
         public EbStageInfo()
         {

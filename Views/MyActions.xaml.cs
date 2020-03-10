@@ -20,11 +20,5 @@ namespace ExpressBase.Mobile.Views
             InitializeComponent();
             BindingContext = new MyActionsViewModel(actionResp);
         }
-
-        private async void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            EbMyAction action = e.SelectedItem as EbMyAction;
-            await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DoAction(action));
-        }
     }
 }

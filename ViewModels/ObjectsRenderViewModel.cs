@@ -225,7 +225,6 @@ namespace ExpressBase.Mobile.ViewModels
 
                     Device.BeginInvokeOnMainThread(() =>
                     {
-                        IsBusy = false;
                         switch (page.Container)
                         {
                             case EbMobileForm f:
@@ -244,6 +243,7 @@ namespace ExpressBase.Mobile.ViewModels
                                 toast.Show("This page is no longer available.");
                                 break;
                         }
+                        IsBusy = false;
                     });
                 }
                 catch (Exception ex)

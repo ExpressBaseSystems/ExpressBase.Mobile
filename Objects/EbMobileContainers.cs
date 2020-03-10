@@ -121,9 +121,7 @@ namespace ExpressBase.Mobile
 
     public class EbMobileDashBoard : EbMobileContainer
     {
-        public List<EbMobileDashBoardControls> ChiledControls { set; get; }
-
-        public List<EbMobileDashBoardControls> ChildControls { get { return ChiledControls; } set { } }
+        public List<EbMobileDashBoardControls> ChildControls { get; set; }
     }
 
     public class EbMobilePdf : EbMobileContainer

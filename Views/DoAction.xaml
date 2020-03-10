@@ -16,6 +16,25 @@
         </Grid>
     </NavigationPage.TitleView>
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ActionDataColName" TargetType="Label">
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Medium}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="VerticalOptions" Value="Center"></Setter>
+                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
+                <Setter Property="Margin" Value="0"></Setter>
+            </Style>
+            <Style x:Key="ActionDataColValue" TargetType="Label">
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="VerticalOptions" Value="Center"></Setter>
+                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
+                <Setter Property="Margin" Value="5,0,0,0"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ContentPage.Content>
         <Grid>
             <Grid>
@@ -24,6 +43,47 @@
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
+
+                <customcontrols:CustomShadowFrame 
+                    BackgroundColor="#d7e9f3"
+                    Padding="15"
+                    Grid.Row="0" 
+                    HasShadow="False"
+                    BorderColor="#b2ccda"
+                    BorderWidth="1"
+                    Margin="15,15,15,0"
+                    CornerRadius="4">
+                    <ScrollView>
+                        <StackLayout BindableLayout.ItemsSource="{Binding ActionData}" Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Grid.Column="0"                                              
+                                               Style="{StaticResource ActionDataColName}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Name}"></Span>
+                                                    <Span Text=" : "></Span>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Value}"
+                                               Style="{StaticResource ActionDataColValue}"/>
+                                        
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </ScrollView>
+                </customcontrols:CustomShadowFrame>
+                
                 <StackLayout Grid.Row="1" Padding="15">
                     <Label Text="Status"></Label>
                     <customcontrols:CustomPicker Title="Select status"
