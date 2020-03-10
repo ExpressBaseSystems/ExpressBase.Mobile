@@ -16,34 +16,7 @@ namespace ExpressBase.Mobile.Views
         public DoAction(EbMyAction action)
         {
             InitializeComponent();
-            DoActionViewModel vm = new DoActionViewModel(action);
-            BindingContext = vm;
-
-            //foreach (Param p in vm.ActionData)
-            //{
-            //    Grid g = new Grid
-            //    {
-            //        ColumnDefinitions =
-            //        {
-            //            new ColumnDefinition{ Width=GridLength.Auto },
-            //            new ColumnDefinition{ Width=GridLength.Star },
-            //        }
-            //    };
-
-            //    g.Children.Add(new Label
-            //    {
-            //        Style = (Style)HelperFunctions.GetResourceValue("ActionDataColName"),
-            //        Text = p.Name
-            //    }, 0, 0);
-
-            //    g.Children.Add(new Label
-            //    {
-            //        Style = (Style)HelperFunctions.GetResourceValue("ActionDataColValue"),
-            //        Text = p.Value
-            //    }, 1, 0);
-
-            //    ActionDataContainer.Children.Add(g);
-            //}
+            BindingContext = new DoActionViewModel(action);
         }
     }
 }
