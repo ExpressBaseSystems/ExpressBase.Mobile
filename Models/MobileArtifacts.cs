@@ -7,6 +7,13 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
 {
+    public interface INonPersistControl { }
+
+    public interface ILinesEnabled
+    {
+        string TableName { set; get; }
+    }
+
     public class MobileFormData
     {
         public string MasterTable { set; get; }
@@ -30,11 +37,11 @@ namespace ExpressBase.Mobile.Models
         {
             WebformData wd = new WebformData(this.MasterTable);
 
-            foreach(MobileTable table in this.Tables)
+            foreach (MobileTable table in this.Tables)
             {
                 wd.MultipleTables.Add(table.TableName, new SingleTable());
 
-                foreach(var row in table)
+                foreach (var row in table)
                 {
                     var srow = new SingleRow
                     {
@@ -44,7 +51,8 @@ namespace ExpressBase.Mobile.Models
                     };
 
                     foreach (var col in row.Columns)
-                        srow.Columns.Add(new SingleColumn{ 
+                        srow.Columns.Add(new SingleColumn
+                        {
                             Name = col.Name,
                             Value = col.Value,
                             Type = (int)col.Type
@@ -105,6 +113,14 @@ namespace ExpressBase.Mobile.Models
             //<manufacturer>(<model> <platform>:<osversion>)-<appversion>
             string appversion = string.Format("{0}({1} {2}:{3})-{4}", DeviceInfo.Manufacturer, DeviceInfo.Model, DeviceInfo.Platform, DeviceInfo.VersionString, helper.AppVersion);
             this.Columns.Add(new MobileTableColumn { Name = "eb_appversion", Type = EbDbTypes.String, Value = appversion });
+        }
+
+        public MobileTableColumn this[string columnname]
+        {
+            get
+            {
+                return this.Columns.Find(item => item.Name == columnname) ?? null;
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,7 +24,10 @@ namespace ExpressBase.Mobile.CustomControls
             this.IsHeader = IsHeader;
             this.DataRow = Row;
             this.Columns = Columns;
+
             var grid = this.CreateGrid(Visualization.DataLayout.CellCollection, Visualization.DataLayout.RowCount, Visualization.DataLayout.RowCount);
+            FillData(Visualization.DataLayout.CellCollection, grid);
+            this.Content = grid;
 
             if (!IsHeader)
             {
@@ -32,13 +36,20 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
+        public CustomFrame(MobileTableRow row, List<EbMobileTableCell> cellCollection, int rowCount, int columCount)
+        {
+            var grid = this.CreateGrid(cellCollection, rowCount, columCount);
+            this.FillTableColums(row, cellCollection, grid);
+            this.Content = grid;
+        }
+
         Grid CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
         {
             Grid G = new Grid { BackgroundColor = Color.Transparent };
 
             for (int r = 0; r < RowCount; r++)
             {
-                G.RowDefinitions.Add(new RowDefinition());
+                G.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             }
             for (int c = 0; c < ColumCount; c++)
             {
@@ -46,9 +57,6 @@ namespace ExpressBase.Mobile.CustomControls
 
                 G.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(current.Width, GridUnitType.Star) });
             }
-
-            FillData(CellCollection, G);
-            this.Content = G;
             return G;
         }
 
@@ -70,6 +78,35 @@ namespace ExpressBase.Mobile.CustomControls
 
                     this.ApplyLabelStyle(_label, _col);
 
+                    OuterGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
+                }
+            }
+        }
+
+        private void FillTableColums(MobileTableRow row, List<EbMobileTableCell> CellCollection, Grid OuterGrid)
+        {
+            foreach (EbMobileTableCell _Cell in CellCollection)
+            {
+                if (_Cell.ControlCollection.Count > 0)
+                {
+                    EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
+
+                    string _text;
+                    if (row == null)
+                    {
+                        _text = _col.ColumnName;
+                    }
+                    else
+                    {
+                        MobileTableColumn tableColumn = row[_col.ColumnName];
+                        if (!string.IsNullOrEmpty(_col.TextFormat))
+                            _text = _col.TextFormat.Replace("{value}", tableColumn.Value.ToString());
+                        else
+                            _text = tableColumn.Value.ToString();
+                    }
+
+                    Label _label = new Label { Text = _text };
+                    this.ApplyLabelStyle(_label, _col);
                     OuterGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
                 }
             }

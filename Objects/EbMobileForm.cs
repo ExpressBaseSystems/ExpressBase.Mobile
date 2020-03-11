@@ -125,6 +125,10 @@ namespace ExpressBase.Mobile
             {
                 if (pair.Value is EbMobileFileUpload)
                     Table.Files.Add(pair.Key, (pair.Value as EbMobileFileUpload).GetFiles());
+                else if (pair.Value is EbMobileDataGrid)
+                {
+
+                }
                 else
                 {
                     MobileTableColumn Column = pair.Value.GetMobileTableColumn();
@@ -308,7 +312,14 @@ namespace ExpressBase.Mobile
 
             foreach (var pair in this.ControlDictionary)
             {
-                if (!(pair.Value is EbMobileFileUpload))
+                if (pair.Value is INonPersistControl)
+                    continue;
+
+                if (pair.Value is ILinesEnabled)
+                {
+                    
+                }
+                else
                 {
                     Schema.Columns.Add(new SQLiteColumSchema
                     {

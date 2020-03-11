@@ -286,18 +286,4 @@ namespace ExpressBase.Mobile
 
         public EbFont Font { get; set; }
     }
-
-    public class EbMobileDataGrid : EbMobileControl
-    {
-        public List<EbMobileControl> ChildControls { set; get; }
-
-        public EbMobileTableLayout DataLayout { set; get; }
-
-        public string TableName { set; get; }
-
-        public override void InitXControl(FormMode Mode)
-        {
-
-        }
-    }
 }

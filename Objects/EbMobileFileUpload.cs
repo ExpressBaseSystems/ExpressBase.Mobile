@@ -12,7 +12,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileFileUpload : EbMobileControl
+    public class EbMobileFileUpload : EbMobileControl, INonPersistControl
     {
         public bool EnableCameraSelect { set; get; }
 
@@ -23,7 +23,7 @@ namespace ExpressBase.Mobile
         public bool EnableEdit { set; get; }
 
         //mobile prop
-        private Grid _Grid { set; get; }
+        private Grid Container { set; get; }
 
         private int CurrentRow { set; get; } = 1;
 
@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile
 
         public void BuildXControl()
         {
-            this._Grid = new Grid()
+            this.Container = new Grid()
             {
                 RowSpacing = 5,
                 RowDefinitions =
@@ -69,7 +69,7 @@ namespace ExpressBase.Mobile
                 }
             };
 
-            this.XControl = this._Grid;
+            this.XControl = this.Container;
         }
 
         public void AppendButtons()
@@ -130,9 +130,7 @@ namespace ExpressBase.Mobile
             });
 
             if (photo != null)
-            {
                 RenderImage(photo);
-            }
         }
 
         public async void OnFileClick(object o, object e)
@@ -168,10 +166,10 @@ namespace ExpressBase.Mobile
 
         public void AddImageToGallery(CustomImageWraper Wrapper)
         {
-            this._Grid.Children.Add(Wrapper, CurrentColumn, CurrentRow);
+            this.Container.Children.Add(Wrapper, CurrentColumn, CurrentRow);
             if (CurrentColumn == 1)
             {
-                this._Grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                this.Container.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                 CurrentRow++;
                 CurrentColumn = 0;
             }

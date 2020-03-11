@@ -5,7 +5,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.MyActions">
-
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
             <Grid.ColumnDefinitions>
@@ -15,26 +14,24 @@
             <Label Text="Actions" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
         </Grid>
     </NavigationPage.TitleView>
-
     <ContentPage.Content>
         <Grid BackgroundColor="White">
             <ScrollView x:Name="scrollView">
                 <StackLayout
-                x:Name="actionList"
-                BindableLayout.ItemsSource="{Binding Actions}"
-                Spacing="0">
+                    x:Name="actionList"
+                    BindableLayout.ItemsSource="{Binding Actions}"
+                    Spacing="0">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
                             <Frame
-                            Margin="0"
-                            Padding="0"
-                            BorderColor="{DynamicResource Gray-White}"
-                            CornerRadius="0"
-                            HasShadow="false">
+                                Margin="0"
+                                Padding="0"
+                                BorderColor="{DynamicResource Gray-White}"
+                                CornerRadius="0"
+                                HasShadow="false">
                                 <Frame.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemSelectedCommand, Source={x:Reference actionList}}" CommandParameter="{Binding .}" />
                                 </Frame.GestureRecognizers>
-
                                 <Grid ColumnSpacing="10" Padding="10,10,10,10">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"></RowDefinition>
@@ -45,33 +42,37 @@
                                         <ColumnDefinition Width="Auto"></ColumnDefinition>
                                         <ColumnDefinition Width="*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
-
-                                    <Frame Grid.Row="0"
-                                           Grid.RowSpan="2"
-                                           Grid.Column="0"
-                                           HeightRequest="50"
-                                           VerticalOptions="Center"
-                                           WidthRequest="50"
-                                           Padding="0"
-                                           BackgroundColor="#dddee0"
-                                           BorderColor="#d4d5d8"
-                                           HasShadow="False"
-                                           CornerRadius="25">
-                                        <Label Text="{Binding DescriptionL1}"
-                                               FontSize="20"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="Center"
-                                               FontFamily="{StaticResource Roboto-Bold}"/>
+                                    <Frame 
+                                        Grid.Row="0"
+                                        Grid.RowSpan="2"
+                                        Grid.Column="0"
+                                        HeightRequest="50"
+                                        VerticalOptions="Center"
+                                        WidthRequest="50"
+                                        Padding="0"
+                                        BackgroundColor="#dddee0"
+                                        BorderColor="#d4d5d8"
+                                        HasShadow="False"
+                                        CornerRadius="25">
+                                        <Label 
+                                            Text="{Binding DescriptionL1}"
+                                            FontSize="20"
+                                            VerticalOptions="Center"
+                                            HorizontalOptions="Center"
+                                            FontFamily="{StaticResource Roboto-Bold}"/>
                                     </Frame>
-
-                                    <Label Text="{Binding Description}"
-                                           Grid.Row="0"
-                                           Grid.Column="1"
-                                           FontSize="16"
-                                           FontFamily="{StaticResource Roboto-Medium}"
-                                           TextColor="{DynamicResource Gray-900}"/>
-
-                                    <Label Text="{Binding EndsOn}" FontAttributes="Bold" Grid.Row="1" Grid.Column="1"/>
+                                    <Label 
+                                        Text="{Binding Description}"
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        FontSize="16"
+                                        FontFamily="{StaticResource Roboto-Medium}"
+                                        TextColor="{DynamicResource Gray-900}"/>
+                                    <Label 
+                                        Text="{Binding EndsOn}" 
+                                        FontAttributes="Bold" 
+                                        Grid.Row="1" 
+                                        Grid.Column="1"/>
                                 </Grid>
                             </Frame>
                         </DataTemplate>
@@ -79,9 +80,8 @@
                 </StackLayout>
             </ScrollView>
             <!--loader-->
-            
             <ContentView 
-                 x:Name="Loader"
+                x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
@@ -91,7 +91,6 @@
                         AbsoluteLayout.LayoutFlags="All"
                         BackgroundColor="#333333"
                         Opacity=".5"/>
-
                     <StackLayout 
                         Margin="20"
                         AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
@@ -102,29 +101,26 @@
                             CornerRadius="6"
                             VerticalOptions="Center">
                             <Frame.Content>
-                                <StackLayout 
-                                Orientation="Vertical">
+                                <StackLayout Orientation="Vertical">
                                     <Grid Margin="0,10,0,10">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-
                                         <Label
-                                                x:Name="LoaderMessage"
-                                        Grid.Row="0"
-                                        TextColor="Black" 
-                                        VerticalOptions="Center" 
-                                        Text="Loading..."
-                                        FontSize="16"/>
-
+                                            x:Name="LoaderMessage"
+                                            Grid.Row="0"
+                                            TextColor="Black" 
+                                            VerticalOptions="Center" 
+                                            Text="Loading..."
+                                            FontSize="16"/>
                                         <ActivityIndicator
-                                        HorizontalOptions="End"
-                                        IsRunning="true" 
-                                        Color="#508bf9"
-                                        Grid.Column="0"
-                                        WidthRequest="30"
-                                        HeightRequest="30"/>
+                                            HorizontalOptions="End"
+                                            IsRunning="true" 
+                                            Color="#508bf9"
+                                            Grid.Column="0"
+                                            WidthRequest="30"
+                                            HeightRequest="30"/>
                                     </Grid>
                                 </StackLayout>
                             </Frame.Content>

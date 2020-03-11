@@ -46,9 +46,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 this.RowId = RowIdLocal;
                 this.Form = (Page.Container as EbMobileForm);
                 PageTitle = Page.DisplayName;
-
                 this.DataOnEdit = GetDataOnEdit();
-
                 this.CreateView();
                 this.FillControls(this.DataOnEdit.Rows[0], this.DataOnEdit.Columns);
                 this.Form.CreateTableSchema();
@@ -69,7 +67,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 this.RowId = ParentId;
                 this.Form = (Page.Container as EbMobileForm);
                 PageTitle = Page.DisplayName;
-
                 this.CreateView();
                 this.Form.CreateTableSchema();
             }
@@ -104,7 +101,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             try
             {
                 string sql = $"SELECT * FROM {this.Form.TableName} WHERE id = {this.RowId}";
-
                 dt = App.DataDB.DoQuery(sql);
             }
             catch (Exception e)
@@ -118,10 +114,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         private void CreateView()
         {
             StackLayout ScrollStack = new StackLayout { Spacing = 0 };
-
             foreach (var ctrl in this.Form.ChildControls)
                 this.EbCtrlToXamCtrl(ctrl, ScrollStack);
-
             this.XView = ScrollStack;
         }
 
@@ -181,14 +175,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             foreach (var pair in this.Form.ControlDictionary)
             {
                 EbDataColumn _col = columns[pair.Value.Name];
-
                 if (_col != null)
                     pair.Value.SetValue(row[_col.ColumnIndex]);
-
                 if (this.Mode == FormMode.EDIT)
                 {
                     pair.Value.SetAsReadOnly(true);
-
                     if (pair.Value is EbMobileFileUpload)
                         (pair.Value as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
                 }
