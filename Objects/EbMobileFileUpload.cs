@@ -108,9 +108,7 @@ namespace ExpressBase.Mobile
             }
 
             if (!this.EnableCameraSelect && !this.EnableFileSelect)
-            {
                 this.Hidden = true;
-            }
         }
 
         public async void OnCameraClick(object o, object e)
@@ -138,9 +136,7 @@ namespace ExpressBase.Mobile
             var photo = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions() { PhotoSize = PhotoSize.Small });
 
             if (photo != null)
-            {
                 RenderImage(photo);
-            }
         }
 
         private void RenderImage(MediaFile Media)

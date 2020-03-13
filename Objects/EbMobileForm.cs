@@ -124,7 +124,9 @@ namespace ExpressBase.Mobile
             foreach (var pair in this.ControlDictionary)
             {
                 if (pair.Value is EbMobileFileUpload)
+                {
                     Table.Files.Add(pair.Key, (pair.Value as EbMobileFileUpload).GetFiles());
+                }
                 else if (pair.Value is EbMobileDataGrid)
                 {
 

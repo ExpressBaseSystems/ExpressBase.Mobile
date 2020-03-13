@@ -36,13 +36,16 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        public CustomFrame(MobileTableRow row, List<EbMobileTableCell> cellCollection, int rowCount, int columCount)
+        //for data grid
+        public CustomFrame(MobileTableRow row, List<EbMobileTableCell> cellCollection, int rowCount, int columCount, bool isHeader = false)
         {
+            this.IsHeader = isHeader;
             var grid = this.CreateGrid(cellCollection, rowCount, columCount);
             this.FillTableColums(row, cellCollection, grid);
             this.Content = grid;
         }
 
+        //for data grid
         Grid CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
         {
             Grid G = new Grid { BackgroundColor = Color.Transparent };
@@ -83,6 +86,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
+        //for data grid
         private void FillTableColums(MobileTableRow row, List<EbMobileTableCell> CellCollection, Grid OuterGrid)
         {
             foreach (EbMobileTableCell _Cell in CellCollection)
@@ -91,22 +95,19 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
 
-                    string _text;
-                    if (row == null)
-                    {
-                        _text = _col.ColumnName;
-                    }
-                    else
-                    {
-                        MobileTableColumn tableColumn = row[_col.ColumnName];
-                        if (!string.IsNullOrEmpty(_col.TextFormat))
-                            _text = _col.TextFormat.Replace("{value}", tableColumn.Value.ToString());
-                        else
-                            _text = tableColumn.Value.ToString();
-                    }
+                    string _text = string.Empty;
+                    MobileTableColumn tableColumn = row[_col.ColumnName];
 
-                    Label _label = new Label { Text = _text };
-                    this.ApplyLabelStyle(_label, _col);
+                    if (tableColumn != null)
+                        _text = tableColumn.Value.ToString();
+
+                    Label _label = new Label { Text = _text, VerticalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center };
+
+                    if (IsHeader)
+                        _label.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("Roboto-Medium");
+                    else
+                        this.ApplyLabelStyle(_label, _col);
+
                     OuterGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
                 }
             }
