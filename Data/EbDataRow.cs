@@ -34,7 +34,7 @@ namespace ExpressBase.Mobile.Data
 
         public bool IsDBNull(int index)
         {
-            if(index > -1)
+            if (index > -1)
                 return base[index] == DBNull.Value;
             return false;
         }
@@ -76,7 +76,13 @@ namespace ExpressBase.Mobile.Data
 
         public object this[string columnname]
         {
-            get { return this[this.Rows.Table.Columns[columnname].ColumnIndex]; }
+            get
+            {
+                EbDataColumn col = this.Rows.Table.Columns[columnname];
+                if (col != null)
+                    return this[col.ColumnIndex];
+                return null;
+            }
             set { this[this.Rows.Table.Columns[columnname].ColumnIndex] = value; }
         }
     }

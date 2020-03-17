@@ -27,8 +27,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
-                Form = (this.Page.Container as EbMobileForm);
-                CreateView();
+                this.Form = this.Page.Container as EbMobileForm;
+                this.CreateView();
                 this.Form.CreateTableSchema();
             }
             catch (Exception ex)
@@ -38,17 +38,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         }
 
         //edit mode
-        public FormRenderViewModel(EbMobilePage Page, int RowIdLocal)
+        public FormRenderViewModel(EbMobilePage page, int RowIdLocal) : base(page)
         {
             this.Mode = FormMode.EDIT;
             try
             {
                 this.RowId = RowIdLocal;
-                this.Form = (Page.Container as EbMobileForm);
-                PageTitle = Page.DisplayName;
+                this.Form = page.Container as EbMobileForm;
                 this.DataOnEdit = GetDataOnEdit();
                 this.CreateView();
-                this.FillControls(this.DataOnEdit.Rows[0], this.DataOnEdit.Columns);
+                this.FillControls(this.DataOnEdit.Rows[RowIdLocal]);
                 this.Form.CreateTableSchema();
             }
             catch (Exception ex)
@@ -57,41 +56,39 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
+        //prefill new mode
+        public FormRenderViewModel(EbMobilePage page, EbDataRow dataRow) : base(page)
+        {
+            this.Mode = FormMode.NEW;
+            try
+            {
+                this.Form = page.Container as EbMobileForm;
+
+                this.CreateView();
+                this.FillControls(dataRow);
+                this.Form.CreateTableSchema();
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Form render prefill mode" + ex.Message);
+            }
+        }
+
         //referenced mode
-        public FormRenderViewModel(EbMobilePage Page, EbMobilePage ParentPage, int ParentId)
+        public FormRenderViewModel(EbMobilePage page, EbMobilePage ParentPage, int ParentId) : base(page)
         {
             this.Mode = FormMode.REF;
             ParentForm = (ParentPage.Container as EbMobileForm);
             try
             {
                 this.RowId = ParentId;
-                this.Form = (Page.Container as EbMobileForm);
-                PageTitle = Page.DisplayName;
+                this.Form = page.Container as EbMobileForm;
                 this.CreateView();
                 this.Form.CreateTableSchema();
             }
             catch (Exception ex)
             {
                 Log.Write("Form render reference mode" + ex.Message);
-            }
-        }
-
-        //prefill new mode
-        public FormRenderViewModel(EbMobilePage Page, EbDataRow dataRow, ColumnColletion dataColumns)
-        {
-            this.Mode = FormMode.NEW;
-            try
-            {
-                this.Form = (Page.Container as EbMobileForm);
-                PageTitle = Page.DisplayName;
-
-                this.CreateView();
-                this.FillControls(dataRow, dataColumns);
-                this.Form.CreateTableSchema();
-            }
-            catch (Exception ex)
-            {
-                Log.Write("Form render prefill mode" + ex.Message);
             }
         }
 
@@ -113,24 +110,32 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private void CreateView()
         {
-            StackLayout ScrollStack = new StackLayout { Spacing = 0 };
-            foreach (var ctrl in this.Form.ChildControls)
-                this.EbCtrlToXamCtrl(ctrl, ScrollStack);
-            this.XView = ScrollStack;
-        }
-
-        private void EbCtrlToXamCtrl(EbMobileControl ctrl, StackLayout ContentStackTop)
-        {
             try
             {
-                if (ctrl is EbMobileTableLayout)
-                    this.PushFromTableLayout((ctrl as EbMobileTableLayout), ContentStackTop);
-                else
+                StackLayout ScrollStack = new StackLayout { Spacing = 0 };
+
+                foreach (var ctrl in this.Form.ChildControls)
                 {
-                    ctrl.InitXControl(this.Mode);
-                    ContentStackTop.Children.Add(ctrl.XView);
-                    this.Form.ControlDictionary.Add(ctrl.Name, ctrl);
+                    if (ctrl is EbMobileTableLayout)
+                    {
+                        foreach (EbMobileTableCell Tc in (ctrl as EbMobileTableLayout).CellCollection)
+                        {
+                            foreach (var tbctrl in Tc.ControlCollection)
+                            {
+                                tbctrl.InitXControl(this.Mode);
+                                ScrollStack.Children.Add(tbctrl.XView);
+                                this.Form.ControlDictionary.Add(tbctrl.Name, tbctrl);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ctrl.InitXControl(this.Mode);
+                        ScrollStack.Children.Add(ctrl.XView);
+                        this.Form.ControlDictionary.Add(ctrl.Name, ctrl);
+                    }
                 }
+                this.XView = ScrollStack;
             }
             catch (Exception ex)
             {
@@ -161,22 +166,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             });
         }
 
-        private void PushFromTableLayout(EbMobileTableLayout TL, StackLayout ContentStackTop)
-        {
-            foreach (EbMobileTableCell Tc in TL.CellCollection)
-            {
-                foreach (var ctrl in Tc.ControlCollection)
-                    this.EbCtrlToXamCtrl(ctrl, ContentStackTop);
-            }
-        }
-
-        public void FillControls(EbDataRow row, ColumnColletion columns)
+        public void FillControls(EbDataRow row)
         {
             foreach (var pair in this.Form.ControlDictionary)
             {
-                EbDataColumn _col = columns[pair.Value.Name];
-                if (_col != null)
-                    pair.Value.SetValue(row[_col.ColumnIndex]);
+                var data = row[pair.Value.Name];
+
+                if (data != null)
+                    pair.Value.SetValue(data);
                 if (this.Mode == FormMode.EDIT)
                 {
                     pair.Value.SetAsReadOnly(true);

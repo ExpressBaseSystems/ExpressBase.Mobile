@@ -82,12 +82,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
         }
 
         //prefill new mode
-        public FormRender(EbMobilePage page, EbDataRow dataRow, ColumnColletion dataColumns)
+        public FormRender(EbMobilePage page, EbDataRow dataRow)
         {
             InitializeComponent();
             try
             {
-                Renderer = new FormRenderViewModel(page, dataRow, dataColumns);
+                Renderer = new FormRenderViewModel(page, dataRow);
                 FormScrollView.Content = Renderer.XView;
                 BindingContext = Renderer;
             }

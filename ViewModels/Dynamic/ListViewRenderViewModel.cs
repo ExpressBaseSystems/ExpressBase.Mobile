@@ -117,7 +117,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             foreach (EbDataRow _row in this.DataTable.Rows)
             {
-                CustomFrame CustFrame = new CustomFrame(_row, this.DataTable.Columns, this.Visualization);
+                CustomFrame CustFrame = new CustomFrame(_row, this.Visualization);
+
+                if (this.NetworkType == NetworkMode.Offline)
+                    CustFrame.ShowSyncFlag(this.DataTable.Columns);
+
                 CustFrame.SetBackGroundColor(_rowColCount);
                 CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
 
@@ -177,7 +181,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
                     {
-                        FormRender Renderer = new FormRender(_page, customFrame.DataRow, customFrame.Columns);//to form newmode prefill
+                        FormRender Renderer = new FormRender(_page, customFrame.DataRow);//to form newmode prefill
                         (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                     }
                     else

@@ -12,9 +12,9 @@ namespace ExpressBase.Mobile.ViewModels.BaseModels
 
         public EbMobilePage Page { set; get; }
 
-        public EbDataTable ContextData { set; get; }
+        public ColumnColletion ContextColumns { set; get; }
 
-        public int ContextRecordIndex { set; get; }
+        public EbDataRow ContextRow { set; get; }
 
         public NetworkMode NetworkType { set; get; }
 
@@ -27,13 +27,13 @@ namespace ExpressBase.Mobile.ViewModels.BaseModels
             this.NetworkType = page.NetworkMode;
         }
 
-        public DynamicBaseViewModel(EbMobilePage page, EbDataTable contextData,int contextRI)
+        public DynamicBaseViewModel(EbMobilePage page, ColumnColletion contextCollumn, EbDataRow contextRow)
         {
             this.Page = page;
             this.PageTitle = page.DisplayName;
             this.NetworkType = page.NetworkMode;
-            this.ContextData = contextData;
-            this.ContextRecordIndex = contextRI;
+            this.ContextColumns = contextCollumn;
+            this.ContextRow = contextRow;
         }
     }
 }

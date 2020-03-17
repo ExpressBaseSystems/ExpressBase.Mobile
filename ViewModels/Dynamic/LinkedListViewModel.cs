@@ -36,7 +36,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.Visualization = (LinkPage.Container as EbMobileVisualization);
             SourceVisualization = SourceVis;
 
-            this.HeaderFrame = new CustomFrame(CustFrame.DataRow, CustFrame.Columns, SourceVis, true)
+            this.HeaderFrame = new CustomFrame(CustFrame.DataRow, SourceVis, true)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = new Thickness(20, 10, 20, 0),
@@ -89,7 +89,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             foreach (EbDataRow _row in this.DataTable.Rows)
             {
-                CustomFrame CustFrame = new CustomFrame(_row, this.DataTable.Columns, this.Visualization);
+                CustomFrame CustFrame = new CustomFrame(_row, this.Visualization);
+
+                if (this.NetworkType == NetworkMode.Offline)
+                    CustFrame.ShowSyncFlag(this.DataTable.Columns);
+
                 CustFrame.SetBackGroundColor(_rowColCount);
                 CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
 

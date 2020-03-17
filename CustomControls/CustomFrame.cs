@@ -13,81 +13,84 @@ namespace ExpressBase.Mobile.CustomControls
     {
         public bool IsHeader { set; get; }
 
-        public ColumnColletion Columns { set; get; }
-
         public EbDataRow DataRow { set; get; }
+
+        private Grid ContentGrid { set; get; }
 
         public CustomFrame() { }
 
-        public CustomFrame(EbDataRow Row, ColumnColletion Columns, EbMobileVisualization Visualization, bool IsHeader = false)
+        public CustomFrame(EbDataRow Row, EbMobileVisualization Visualization, bool IsHeader = false)
         {
             this.IsHeader = IsHeader;
             this.DataRow = Row;
-            this.Columns = Columns;
 
-            var grid = this.CreateGrid(Visualization.DataLayout.CellCollection, Visualization.DataLayout.RowCount, Visualization.DataLayout.RowCount);
-            FillData(Visualization.DataLayout.CellCollection, grid);
-            this.Content = grid;
+            this.CreateGrid(Visualization.DataLayout.CellCollection, Visualization.DataLayout.RowCount, Visualization.DataLayout.ColumCount);
+            FillData(Visualization.DataLayout.CellCollection);
+            this.Content = ContentGrid;
 
             if (!IsHeader)
-            {
                 this.Padding = new Thickness(10);
-                this.RenderSyncFlag(grid);
-            }
         }
 
         //for data grid
         public CustomFrame(MobileTableRow row, List<EbMobileTableCell> cellCollection, int rowCount, int columCount, bool isHeader = false)
         {
             this.IsHeader = isHeader;
-            var grid = this.CreateGrid(cellCollection, rowCount, columCount);
-            this.FillTableColums(row, cellCollection, grid);
-            this.Content = grid;
+            this.CreateGrid(cellCollection, rowCount, columCount);
+            this.FillTableColums(row, cellCollection);
+            this.Content = ContentGrid;
         }
 
-        //for data grid
-        Grid CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
+        private void CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
         {
-            Grid G = new Grid { BackgroundColor = Color.Transparent };
+            ContentGrid = new Grid { BackgroundColor = Color.Transparent };
 
             for (int r = 0; r < RowCount; r++)
             {
-                G.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                ContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             }
             for (int c = 0; c < ColumCount; c++)
             {
                 EbMobileTableCell current = CellCollection.Find(li => li.ColIndex == c && li.RowIndex == 0);
 
-                G.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(current.Width, GridUnitType.Star) });
+                ContentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(current.Width, GridUnitType.Star) });
             }
-            return G;
         }
 
-        private void FillData(List<EbMobileTableCell> CellCollection, Grid OuterGrid)
+        private void FillData(List<EbMobileTableCell> CellCollection)
         {
-            foreach (EbMobileTableCell _Cell in CellCollection)
+            try
             {
-                if (_Cell.ControlCollection.Count > 0)
+                foreach (EbMobileTableCell _Cell in CellCollection)
                 {
-                    EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
+                    if (_Cell.ControlCollection.Count > 0)
+                    {
+                        EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
 
-                    string _text;
-                    if (!string.IsNullOrEmpty(_col.TextFormat))
-                        _text = _col.TextFormat.Replace("{value}", this.DataRow[_col.ColumnName].ToString());
-                    else
-                        _text = this.DataRow[_col.ColumnName].ToString();
+                        string _text;
+                        var data = this.DataRow[_col.ColumnName];
 
-                    Label _label = new Label { Text = _text };
+                        if (!string.IsNullOrEmpty(_col.TextFormat))
+                            _text = _col.TextFormat.Replace("{value}", data?.ToString());
+                        else
+                            _text = data?.ToString();
 
-                    this.ApplyLabelStyle(_label, _col);
+                        Label _label = new Label { Text = _text };
 
-                    OuterGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
+                        this.ApplyLabelStyle(_label, _col);
+
+                        ContentGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
             }
         }
 
         //for data grid
-        private void FillTableColums(MobileTableRow row, List<EbMobileTableCell> CellCollection, Grid OuterGrid)
+        private void FillTableColums(MobileTableRow row, List<EbMobileTableCell> CellCollection)
         {
             foreach (EbMobileTableCell _Cell in CellCollection)
             {
@@ -108,7 +111,7 @@ namespace ExpressBase.Mobile.CustomControls
                     else
                         this.ApplyLabelStyle(_label, _col);
 
-                    OuterGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
+                    ContentGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
                 }
             }
         }
@@ -152,9 +155,9 @@ namespace ExpressBase.Mobile.CustomControls
                 this.BackgroundColor = Color.FromHex("F2F2F2");
         }
 
-        private void RenderSyncFlag(Grid grid)
+        public void ShowSyncFlag(ColumnColletion columns)
         {
-            EbDataColumn col = Columns.Find(item => item.ColumnName == "eb_synced");
+            EbDataColumn col = columns.Find(item => item.ColumnName == "eb_synced");
             if (col == null)
                 return;
 
@@ -169,9 +172,14 @@ namespace ExpressBase.Mobile.CustomControls
                 FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
             };
 
-            int colLength = grid.ColumnDefinitions.Count;
+            int colLength = ContentGrid.ColumnDefinitions.Count;
 
-            grid.Children.Add(lbl, colLength - 1, 0);
+            ContentGrid.Children.Add(lbl, colLength - 1, 0);
+        }
+
+        public void UpdateGrid(MobileTableRow row)
+        {
+
         }
     }
 }
