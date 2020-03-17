@@ -4,12 +4,50 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
 {
     public class AppCollection
     {
         public List<AppData> Applications { get; set; }
+    }
+
+    public class CustomColor
+    {
+        public string BackGround { set; get; }
+
+        public string TextColor { set; get; }
+    }
+
+    public class ColorSet
+    {
+        private static Random _random;
+
+        public static IList<CustomColor> Colors
+        {
+            get
+            {
+                return new List<CustomColor>
+                {
+                    new CustomColor{ BackGround = "eaf7f9", TextColor = "3bb1cd" },
+                    new CustomColor{ BackGround = "fef0f2", TextColor = "ef7c93" },
+                    new CustomColor{ BackGround = "eef2fe", TextColor = "5a8ff4" },
+                    new CustomColor{ BackGround = "fcf4ec", TextColor = "e0a14e" },
+                    new CustomColor{ BackGround = "fdf0fb", TextColor = "e364d0" },
+                    new CustomColor{ BackGround = "f2f4f6", TextColor = "8da2b2" }
+                };
+            }
+        }
+
+        public static CustomColor RandomColor
+        {
+            get
+            {
+                if (_random == null) _random = new Random();
+                return Colors[_random.Next(6)];
+            }
+        }
     }
 
     public class AppData
@@ -21,6 +59,28 @@ namespace ExpressBase.Mobile.Models
         public string AppIcon { set; get; }
 
         public string Description { set; get; } = "No description";
+
+        public string AppNotation
+        {
+            get
+            {
+                string notation = string.Empty;
+                foreach (var item in AppName.Split(' ').Take(2))
+                    notation += item[0];
+                return notation.ToUpper();
+            }
+        }
+
+        public Color BackgroundColor { set; get; }
+
+        public Color TextColor { set; get; }
+
+        public AppData()
+        {
+            var randomColor = ColorSet.RandomColor;
+            BackgroundColor = Color.FromHex(randomColor.BackGround);
+            TextColor = Color.FromHex(randomColor.TextColor);
+        }
     }
 
     public class EbStageInfo
