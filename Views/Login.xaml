@@ -6,7 +6,6 @@
              mc:Ignorable="d"
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Login"
-             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
              Style="{StaticResource ContentPageStyle}">
 
     <NavigationPage.TitleView>
@@ -22,11 +21,6 @@
             <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Command="{Binding ResetConfig}" Grid.Column="2"/>
         </Grid>
     </NavigationPage.TitleView>
-    
-    <!--  Binding context for page  -->
-    <ContentPage.BindingContext>
-        <viewModel:LoginViewModel />
-    </ContentPage.BindingContext>
     
     <ContentPage.Content>
         <Grid>

@@ -47,6 +47,17 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        private bool showConfirmBox;
+        public bool ShowConfirmBox
+        {
+            get { return this.showConfirmBox; }
+            set
+            {
+                this.showConfirmBox = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
         public ImageSource SolutionLogo { set; get; }
 
         public Command StoreSolutionUrl { get; set; }
@@ -97,7 +108,7 @@ namespace ExpressBase.Mobile.ViewModels
                 await Application.Current.MainPage.Navigation.PushAsync(new Login());
 
                 ShowLoader = true;
-                ShowMessage = false;
+                ShowConfirmBox = false;
                 IsBusy = false;
             }
             catch (Exception ex)
@@ -126,10 +137,9 @@ namespace ExpressBase.Mobile.ViewModels
                 if (ValidateSIDResponse.IsValid)
                 {
                     ShowLoader = false;
-                    SetMessage("Success :)", Color.Green);
                     SolutionLogo = ImageSource.FromStream(() => new MemoryStream(ValidateSIDResponse.Logo));
                     NotifyPropertyChanged("SolutionLogo");
-                    ShowMessage = true;
+                    ShowConfirmBox = true;
                 }
                 else
                 {
@@ -143,15 +153,6 @@ namespace ExpressBase.Mobile.ViewModels
                 IsBusy = false;
                 toast.Show("Something went wrong");
             }
-        }
-
-        private void SetMessage(string Msg, Color color)
-        {
-            Message = Msg;
-            NotifyPropertyChanged("Message");
-
-            MessageColor = color;
-            NotifyPropertyChanged("MessageColor");
         }
 
         private void SaveLogo(byte[] imageByte)

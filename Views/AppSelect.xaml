@@ -3,10 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.AppSelect"
-             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
              Style="{StaticResource ContentPageStyle}">
 
     <NavigationPage.TitleView>
@@ -20,14 +18,26 @@
             <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Command="{Binding ResetConfig}" Grid.Column="2"/>
         </Grid>
     </NavigationPage.TitleView>
-    
-    <!--  Binding context for page  -->
-    <ContentPage.BindingContext>
-        <viewModel:AppSelectViewModel />
-    </ContentPage.BindingContext>
 
     <ContentPage.Content>
         <Grid>
+            <StackLayout 
+                    x:Name="MessageBox" 
+                    VerticalOptions="Start" 
+                    IsVisible="{Binding ShowMessage}">
+                <Frame 
+                        Padding="15" 
+                        CornerRadius="0" 
+                        x:Name="MessageBoxFrame" 
+                        BackgroundColor="{Binding MessageColor}">
+                    <Label 
+                            Text="{Binding Message}" 
+                            x:Name="MessageBoxLabel" 
+                            TextColor="White" 
+                            FontSize="15"/>
+                </Frame>
+            </StackLayout>
+            
             <ScrollView x:Name="scrollView">
                 <StackLayout
                 x:Name="applicationList"

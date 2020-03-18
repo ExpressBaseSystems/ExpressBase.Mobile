@@ -72,7 +72,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             try
             {
                 Auth.AuthIfTokenExpired();
-                VisualizationLiveData vd = RestServices.Instance.PullReaderData(Visualization.DataSourceRefId, null, 0, offset);
+                VisualizationLiveData vd = RestServices.Instance.PullReaderData(Visualization.DataSourceRefId, null, this.Visualization.PageLength, offset);
                 ds = vd.Data;
             }
             catch (Exception ex)

@@ -2,6 +2,8 @@
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -12,6 +14,8 @@ namespace ExpressBase.Mobile.Models
     public interface ILinesEnabled
     {
         string TableName { set; get; }
+
+        List<EbMobileControl> ChildControls { set; get; }
     }
 
     public class MobileFormData
@@ -63,6 +67,29 @@ namespace ExpressBase.Mobile.Models
             }
             return wd;
         }
+
+        public void SortByMaster()
+        {
+            var idx = this.Tables.FindIndex(x => x.TableName == this.MasterTable);
+            var item = this.Tables[idx];
+            this.Tables[idx] = this.Tables[0];
+            this.Tables[0] = item;
+        }
+
+        public string GetQuery(List<DbParameter> parameters)
+        {
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                foreach (MobileTable table in this.Tables)
+                    sb.Append(table.GetQuery(this.MasterTable, parameters));
+            }
+            catch (Exception ex)
+            {
+                Log.Write("MobileFormData.GetQuery---" + ex.Message);
+            }
+            return sb.ToString();
+        }
     }
 
     public class MobileTable : List<MobileTableRow>
@@ -80,6 +107,70 @@ namespace ExpressBase.Mobile.Models
         {
             TableName = tableName;
             Files = new Dictionary<string, List<FileWrapper>>();
+        }
+
+        public string GetQuery(string masterTable, List<DbParameter> parameters)
+        {
+            StringBuilder sb = new StringBuilder();
+            try
+            {
+                for (int i = 0; i < this.Count; i++)
+                {
+                    if (this[i].IsUpdate)//update
+                    {
+                        List<string> _colstrings = new List<string>();
+                        foreach (MobileTableColumn col in this[i].Columns)
+                        {
+                            _colstrings.Add(string.Format("{0} = @{1}_{2}", col.Name, col.Name, i));
+
+                            parameters.Add(new DbParameter
+                            {
+                                ParameterName = string.Format("@{0}_{1}", col.Name, i),
+                                DbType = (int)col.Type,
+                                Value = col.Value
+                            });
+                        }
+                        sb.AppendFormat("UPDATE {0} SET {1} WHERE id = {2};", this.TableName, string.Join(",", _colstrings), ("@rowid" + i));
+
+                        parameters.Add(new DbParameter
+                        {
+                            ParameterName = ("@rowid" + i),
+                            DbType = (int)EbDbTypes.Int32,
+                            Value = this[i].RowId
+                        });
+                    }
+                    else//insert
+                    {
+                        List<string> _cols = (this.Count > 0) ? this[i].Columns.Select(en => en.Name).ToList() : new List<string>();
+                        List<string> _vals = new List<string>();
+                        foreach (MobileTableColumn col in this[i].Columns)
+                        {
+                            string _prm = string.Format("@{0}_{1}", col.Name, i);
+
+                            _vals.Add(_prm);
+
+                            parameters.Add(new DbParameter
+                            {
+                                ParameterName = _prm,
+                                DbType = (int)col.Type,
+                                Value = col.Value
+                            });
+                        }
+
+                        if (this.TableName != masterTable)
+                        {
+                            _cols.Add(masterTable + "_id");
+                            _vals.Add($"(SELECT MAX(id) FROM {masterTable})");
+                        }
+                        sb.AppendFormat("INSERT INTO {0}({1}) VALUES ({2});", this.TableName, string.Join(",", _cols), string.Join(",", _vals.ToArray()));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return sb.ToString();
         }
     }
 

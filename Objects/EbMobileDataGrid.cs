@@ -201,9 +201,6 @@ namespace ExpressBase.Mobile
 
         public void RowAddCallBack(string name = null)
         {
-            //if (GridBody.Children.Count >= 1)
-            //    GridBody.Children.Add(new BoxView { HeightRequest = 1, Color = Color.FromHex("cccccc") });
-
             if (name == null)
             {
                 var grid = this.CreateRow();
@@ -235,6 +232,27 @@ namespace ExpressBase.Mobile
             string classId = (sender as CustomFrame).ClassId;
             var gridview = new DataGridView(this, DataDictionary[classId], classId);
             (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushModalAsync(gridview);
+        }
+
+        public override object GetValue()
+        {
+            try
+            {
+                MobileTable gTable = new MobileTable(this.TableName);
+
+                foreach(var pair in DataDictionary)
+                {
+                    pair.Value.AppendEbColValues();
+                    gTable.Add(pair.Value);
+                }
+
+                return gTable;
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return null;
         }
     }
 }

@@ -6,109 +6,66 @@
              mc:Ignorable="d"
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.SolutionSelect"
-             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels"
              Title="Solution URL"
              NavigationPage.HasNavigationBar="False"
              NavigationPage.HasBackButton="False"
              Style="{StaticResource ContentPageStyle}">
 
-    <!--  Binding context for page  -->
-    <ContentPage.BindingContext>
-        <viewModel:SolutionSelectViewModel />
-    </ContentPage.BindingContext>
-
     <ContentPage.Content>
         <Grid>
-            <ScrollView x:Name="scrollView" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" AbsoluteLayout.LayoutFlags="All">
-                <ScrollView.VerticalOptions>
-                    <OnIdiom
-                        x:TypeArguments="LayoutOptions"
-                        Default="CenterAndExpand"
-                        Phone="FillAndExpand" />
-                </ScrollView.VerticalOptions>
-                
-                <StackLayout
+            <ScrollView 
+                x:Name="scrollView" 
+                VerticalOptions="FillAndExpand">
+                <Grid 
                     BackgroundColor="{StaticResource Blue-Dark}"
-                    VerticalOptions="FillAndExpand" 
-                    WidthRequest="{OnPlatform Default='-1',
-                                              UWP='350'}">
-                    <Grid RowSpacing="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                    </Grid>
+                    VerticalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-                    <Grid
-                    Grid.Row="0"
-                    x:Name="ListViewHeader"
-                    Margin="0,0,0,0"
-                    HeightRequest="275"
-                    IsClippedToBounds="True"
-                    RowSpacing="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition x:Name="iOSSafeArea" Height="0" />
-                            <RowDefinition Height="265" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <Grid
-                        Grid.Row="1"
-                        Grid.RowSpan="2"
-                        ColumnSpacing="0"
-                        HeightRequest="200"
-                        Opacity="0.9"
-                        RowSpacing="0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="10*" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="10*" />
-                            </Grid.RowDefinitions>
-
-                            <Label
+                    <StackLayout
+                        VerticalOptions="CenterAndExpand"
+                        Grid.Row="0"
+                        Opacity="0.9">
+                        
+                        <Label
                             x:Name="BrandName"
-                            Margin="20,0,0,10"
-                            Grid.Row="1"
+                            Margin="20,20,0,10"
                             FontFamily="{StaticResource Roboto-Regular}"
                             HorizontalOptions="StartAndExpand"
                             FontSize="32"
                             Text="Configure"
                             TextColor="White" />
-                            
-                            <Label
+                        <Label
                             x:Name="HeaderText"
                             Margin="20,0,0,0"
-                            Grid.Row="2"
                             FontFamily="{StaticResource Roboto-Regular}"
                             FontSize="22"
                             HorizontalOptions="StartAndExpand"
                             Text="Solution URL"
                             TextColor="White" />
-                            
-                        </Grid>
+                    </StackLayout>
 
-                        <Image
-                        Grid.Row="1"
-                        Margin="0,0,0,-60"
+                    <Image
+                        Grid.Row="0"
                         HorizontalOptions="StartAndExpand"
                         Opacity="1"
                         Source="HeaderTriangle.png"
-                        VerticalOptions="EndAndExpand"
-                        WidthRequest="170" />
-
-                        <Image
-                        Grid.Row="1"
+                        VerticalOptions="EndAndExpand"/>
+                    <Image
+                        Grid.Row="0"
                         Margin="0,0,0,-110"
                         HorizontalOptions="EndAndExpand"
                         Opacity="1"
                         Source="InvertedTriangle.png"
-                        VerticalOptions="EndAndExpand"
-                        WidthRequest="190" />
-                    </Grid>
+                        VerticalOptions="EndAndExpand"/>
 
-                    <StackLayout Grid.Row="1" BackgroundColor="White" VerticalOptions="FillAndExpand" Padding="0">
-
+                    <StackLayout 
+                        Grid.Row="1"
+                        BackgroundColor="White" 
+                        VerticalOptions="FillAndExpand" 
+                        Padding="0">
                         <Grid VerticalOptions="FillAndExpand">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
@@ -119,7 +76,6 @@
                                 <ColumnDefinition Width="*"></ColumnDefinition>
                                 <ColumnDefinition Width="Auto"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-
                             <local:TextBox 
                                Margin="20,20,0,0"
                                Grid.Column="0"
@@ -131,7 +87,6 @@
                                BackgroundColor="#f5fbff"
                                Text="{Binding SolutionUrl}"
                                IsEnabled="{Binding IsEnabled}"/>
-
                             <Button
                                 x:Name="EditSolutionButton"
                                 Grid.Column="1"
@@ -145,7 +100,6 @@
                                 WidthRequest="50"
                                 Clicked="EditSolutionButton_Clicked"
                                 FontFamily="{StaticResource FontAwesome}"/>
-
                             <!--  next button  -->
                             <Button
                                 x:Name="SolutionSaveButton"
@@ -158,11 +112,9 @@
                                 BackgroundColor="{StaticResource Blue-Dark}"
                                 TextColor="White"
                                 Command="{Binding StoreSolutionUrl}"/>
-
                         </Grid>
-                        
                     </StackLayout>
-                </StackLayout>
+                </Grid>
             </ScrollView>
 
             <!--loader-->
@@ -194,14 +146,14 @@
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-                                        
+
                                         <Label
                                         Grid.Row="0"
                                         TextColor="Black" 
                                         VerticalOptions="Center" 
                                         Text="Validating solution..."
                                         FontSize="16"/>
-                                        
+
                                         <ActivityIndicator
                                         HorizontalOptions="End"
                                         IsRunning="true" 
@@ -211,25 +163,22 @@
                                         HeightRequest="30"/>
                                     </Grid>
 
-                                    <Grid x:Name="SolutionMetaGrid" IsVisible="{Binding ShowMessage}">
+                                    <Grid x:Name="SolutionMetaGrid" IsVisible="{Binding ShowConfirmBox}">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"></RowDefinition>
                                             <RowDefinition Height="Auto"></RowDefinition>
                                             <RowDefinition Height="Auto"></RowDefinition>
                                             <RowDefinition Height="*"></RowDefinition>
                                         </Grid.RowDefinitions>
-                                        
+
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
 
-                                        <Label Grid.Row="0" Margin="0,0,0,20" Grid.ColumnSpan="2" Text="{Binding Message}" TextColor="{Binding MessageColor}" FontSize="16"/>
-                                        
-                                        <Label Grid.Row="1" Grid.Column="0" Text="{Binding SolutionUrl}" FontSize="15" FontAttributes="Bold"/>
+                                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding SolutionUrl}" FontSize="16" FontAttributes="Bold"/>
 
                                         <Image 
-                                            Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="80" 
+                                            Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="80" 
                                             HorizontalOptions="Start" Source="{Binding SolutionLogo}"/>
 
                                         <Button 
@@ -240,7 +189,7 @@
                                             Margin="0,10,0,0"
                                             WidthRequest="60" HeightRequest="30"
                                             Padding="0"
-                                            Grid.Row="3"
+                                            Grid.Row="2"
                                             TextColor="{StaticResource Blue-Dark}"
                                             BorderWidth="1" 
                                             BorderColor="{StaticResource Blue-Dark}"
@@ -257,7 +206,7 @@
                                             HorizontalOptions="End"
                                             HeightRequest="40"
                                             TextColor="White"
-                                            Grid.Row="3" 
+                                            Grid.Row="2" 
                                             Padding="0" 
                                             Command="{Binding ConfirmButtonCommand}"
                                             Grid.Column="1" 
@@ -271,7 +220,25 @@
                     </StackLayout>
                 </AbsoluteLayout>
             </ContentView>
-            
+
+            <!--message box-->
+            <StackLayout 
+                    x:Name="MessageBox" 
+                    VerticalOptions="Start" 
+                    IsVisible="{Binding ShowMessage}">
+                <Frame 
+                    Padding="15" 
+                    CornerRadius="0" 
+                    x:Name="MessageBoxFrame" 
+                    BackgroundColor="{Binding MessageColor}">
+                    <Label 
+                        Text="{Binding Message}" 
+                        x:Name="MessageBoxLabel" 
+                        TextColor="White" 
+                        FontSize="15"/>
+                </Frame>
+            </StackLayout>
+
         </Grid>
     </ContentPage.Content>
 </ContentPage> 

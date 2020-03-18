@@ -12,11 +12,11 @@ namespace ExpressBase.Mobile.ViewModels.BaseModels
 
         public EbMobilePage Page { set; get; }
 
+        public NetworkMode NetworkType { set; get; }
+
         public ColumnColletion ContextColumns { set; get; }
 
         public EbDataRow ContextRow { set; get; }
-
-        public NetworkMode NetworkType { set; get; }
 
         public DynamicBaseViewModel() { }
 

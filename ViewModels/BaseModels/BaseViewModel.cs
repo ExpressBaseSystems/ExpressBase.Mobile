@@ -90,5 +90,25 @@ namespace ExpressBase.Mobile.ViewModels
         }
 
         public virtual void RefreshPage() { }
+
+        public void ShowMessageBox(string message, Color background)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                this.MessageColor = background;
+                this.Message = message;
+                this.ShowMessage = true;
+            });
+        }
+
+        public void HideMessageBox(string message, Color background)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                this.MessageColor = background;
+                this.Message = message;
+                this.ShowMessage = false;
+            });
+        }
     }
 }

@@ -18,23 +18,26 @@ namespace ExpressBase.Mobile.Services
 
         public static CommonServices Instance => instance ?? (instance = new CommonServices());
 
-        public void CreateLocalTable(SQLiteTableSchema SQLSchema)
+        public void CreateLocalTable(SQLiteTableSchemaList SQLSchemaList)
         {
             try
             {
-                var tableExist = App.DataDB.DoScalar(string.Format(StaticQueries.TABLE_EXIST, SQLSchema.TableName));
-
-                if (Convert.ToInt32(tableExist) > 0)//table exist
+                foreach (SQLiteTableSchema SQLSchema in SQLSchemaList)
                 {
-                    EbDataTable dt = App.DataDB.DoQuery(string.Format(StaticQueries.COL_SCHEMA, SQLSchema.TableName));
+                    var tableExist = App.DataDB.DoScalar(string.Format(StaticQueries.TABLE_EXIST, SQLSchema.TableName));
 
-                    List<SQLiteColumSchema> Uncreated = this.GetNewControls(SQLSchema.Columns, dt.Columns);
+                    if (Convert.ToInt32(tableExist) > 0)//table exist
+                    {
+                        EbDataTable dt = App.DataDB.DoQuery(string.Format(StaticQueries.COL_SCHEMA, SQLSchema.TableName));
 
-                    if (Uncreated.Count > 0)
-                        this.AlterTable(SQLSchema.TableName, Uncreated);
+                        List<SQLiteColumSchema> Uncreated = this.GetNewControls(SQLSchema.Columns, dt.Columns);
+
+                        if (Uncreated.Count > 0)
+                            this.AlterTable(SQLSchema.TableName, Uncreated);
+                    }
+                    else //table not exist
+                        this.CreateTable(SQLSchema.TableName, SQLSchema.Columns);
                 }
-                else //table not exist
-                    this.CreateTable(SQLSchema.TableName, SQLSchema.Columns);
             }
             catch (Exception e)
             {

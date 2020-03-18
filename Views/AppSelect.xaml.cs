@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using ExpressBase.Mobile.ViewModels;
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.Views
@@ -9,6 +10,7 @@ namespace ExpressBase.Mobile.Views
         public AppSelect()
         {
             InitializeComponent();
+            BindingContext = new AppSelectViewModel();
         }
     }
 }

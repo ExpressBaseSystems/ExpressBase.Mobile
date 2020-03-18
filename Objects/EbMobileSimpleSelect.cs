@@ -63,13 +63,9 @@ namespace ExpressBase.Mobile
         public override void InitXControl(FormMode Mode)
         {
             if (string.IsNullOrEmpty(this.DataSourceRefId))
-            {
                 XControl = this.GetPicker();
-            }
             else
-            {
                 XControl = this.GetComboBox();
-            }
         }
 
         public override object GetValue()
@@ -84,7 +80,7 @@ namespace ExpressBase.Mobile
                     return null;
             }
             else
-                return (this.Selected == null) ? null : this.Selected.Value;
+                return this.Selected?.Value;
         }
 
         public override bool SetValue(object value)
@@ -224,9 +220,7 @@ namespace ExpressBase.Mobile
             {
                 EbMobileDataColumn DisplayMember = this.DisplayMember;
                 if (DisplayMember == null)
-                {
                     throw new Exception();
-                }
 
                 byte[] b = Convert.FromBase64String(this.OfflineQuery.Code);
                 string sql = System.Text.Encoding.UTF8.GetString(b).TrimEnd(';');

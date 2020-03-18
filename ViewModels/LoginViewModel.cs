@@ -53,6 +53,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             LoginTo = "Login to " + Settings.SolutionId;
             this.NotifyPropertyChanged("LoginTo");
+            this.Email = Settings.UserName; // fill email on redirect
             this.LoginCommand = new Command(async () => await LoginAction());
             SetLogo();
         }

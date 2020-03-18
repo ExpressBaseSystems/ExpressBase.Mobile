@@ -139,7 +139,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write("Form_EbCtrlToXamCtrl---" + ex.Message);
+                Log.Write("Form_CreateView---" + ex.Message);
             }
         }
 

@@ -83,6 +83,8 @@ namespace ExpressBase.Mobile
             try
             {
                 MobileFormData data = this.PrepareFormData(rowId);
+                data.SortByMaster();//sort then mastertable will be the first index
+
                 switch (this.NetworkType)
                 {
                     case NetworkMode.Online:
@@ -124,13 +126,9 @@ namespace ExpressBase.Mobile
             foreach (var pair in this.ControlDictionary)
             {
                 if (pair.Value is EbMobileFileUpload)
-                {
                     Table.Files.Add(pair.Key, (pair.Value as EbMobileFileUpload).GetFiles());
-                }
                 else if (pair.Value is EbMobileDataGrid)
-                {
-
-                }
+                    FormData.Tables.Add((MobileTable)(pair.Value as EbMobileDataGrid).GetValue());
                 else
                 {
                     MobileTableColumn Column = pair.Value.GetMobileTableColumn();
@@ -186,11 +184,9 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                string query = string.Empty;
                 List<DbParameter> _params = new List<DbParameter>();
 
-                foreach (MobileTable _table in data.Tables)
-                    query += HelperFunctions.GetQuery(_table, _params);
+                string query = data.GetQuery(_params);
 
                 int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
 
@@ -309,29 +305,57 @@ namespace ExpressBase.Mobile
 
         public void CreateTableSchema()
         {
-            SQLiteTableSchema Schema = new SQLiteTableSchema() { TableName = this.TableName };
-            this.ControlDictionary = this.ChildControls.ToControlDictionary();
-
-            foreach (var pair in this.ControlDictionary)
+            try
             {
-                if (pair.Value is INonPersistControl)
-                    continue;
+                SQLiteTableSchemaList schemas = new SQLiteTableSchemaList();
 
-                if (pair.Value is ILinesEnabled)
+                this.ControlDictionary = this.ChildControls.ToControlDictionary();
+
+                SQLiteTableSchema masterSchema = new SQLiteTableSchema() { TableName = this.TableName };
+
+                foreach (var pair in this.ControlDictionary)
                 {
-                    
-                }
-                else
-                {
-                    Schema.Columns.Add(new SQLiteColumSchema
+                    if (pair.Value is INonPersistControl)
+                        continue;
+
+                    if (pair.Value is ILinesEnabled)
                     {
-                        ColumnName = pair.Value.Name,
-                        ColumnType = pair.Value.SQLiteType
-                    });
+                        SQLiteTableSchema linesSchema = new SQLiteTableSchema() { TableName = (pair.Value as ILinesEnabled).TableName };
+
+                        foreach (var ctrl in (pair.Value as ILinesEnabled).ChildControls)
+                        {
+                            linesSchema.Columns.Add(new SQLiteColumSchema
+                            {
+                                ColumnName = ctrl.Name,
+                                ColumnType = ctrl.SQLiteType
+                            });
+                        }
+                        linesSchema.AppendDefault();
+                        linesSchema.Columns.Add(new SQLiteColumSchema
+                        {
+                            ColumnName = this.TableName + "_id",
+                            ColumnType = "INT"
+                        });
+
+                        schemas.Add(linesSchema);
+                    }
+                    else
+                    {
+                        masterSchema.Columns.Add(new SQLiteColumSchema
+                        {
+                            ColumnName = pair.Value.Name,
+                            ColumnType = pair.Value.SQLiteType
+                        });
+                    }
                 }
+
+                masterSchema.AppendDefault();
+                CommonServices.Instance.CreateLocalTable(schemas);
             }
-            Schema.AppendDefault();
-            CommonServices.Instance.CreateLocalTable(Schema);
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
     }
 }
