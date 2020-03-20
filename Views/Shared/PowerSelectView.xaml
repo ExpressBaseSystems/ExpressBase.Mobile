@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.Views.Shared.PowerSelectView">
+    <ContentPage.Content>
+        <Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <StackLayout 
+                Spacing="0"
+                Grid.Row="0" 
+                BackgroundColor="#eeeeee">
+                    <Grid Padding="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Grid.Column="0"
+                            Padding="0"
+                            FontSize="18"
+                            TextColor="#615e5e"
+                            FontFamily="{StaticResource FontAwesome}"
+                            BackgroundColor="Transparent"
+                            HeightRequest="40"
+                            WidthRequest="40"
+                            Text="&#xf177;"
+                            Clicked="BackButton_Clicked"/>
+
+                        <customcontrols:TextBox 
+                            Grid.Column="1"
+                            x:Name="SelectSearchBox"
+                            FontSize="14"
+                            TextChanged="SelectSearchBox_TextChanged"/>
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#cccccc"></BoxView>
+                </StackLayout>
+
+                <ScrollView Grid.Row="1">
+                    <StackLayout 
+                        x:Name="ResultList"
+                        VerticalOptions="FillAndExpand">
+                        
+                    </StackLayout>
+                </ScrollView>
+            </Grid>
+            
+            <ContentView 
+                x:Name="SearchLoader"
+                IsVisible="False" 
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All">
+                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <BoxView
+                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                        AbsoluteLayout.LayoutFlags="All"
+                        BackgroundColor="#333333"
+                        Opacity=".5"/>
+                    <StackLayout 
+                        Padding="30"
+                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                        AbsoluteLayout.LayoutFlags="All">
+                        <Frame 
+                            BackgroundColor="Transparent"
+                            VerticalOptions="CenterAndExpand">
+                            <Frame.Content>
+                                <ActivityIndicator
+                                    HorizontalOptions="Center"
+                                    IsRunning="true" 
+                                    Color="White"
+                                    Grid.Column="0"
+                                    WidthRequest="40"
+                                    HeightRequest="40"/>
+                            </Frame.Content>
+                        </Frame>
+                    </StackLayout>
+                </AbsoluteLayout>
+            </ContentView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

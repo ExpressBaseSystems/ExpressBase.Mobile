@@ -68,6 +68,8 @@ namespace ExpressBase.Mobile
             }
         }
 
+        public NetworkMode NetworkType { set; get; }
+
         public virtual object GetValue() { return null; }
 
         public virtual bool SetValue(object value) { return false; }

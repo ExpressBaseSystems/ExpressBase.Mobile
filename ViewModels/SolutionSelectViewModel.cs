@@ -98,6 +98,7 @@ namespace ExpressBase.Mobile.ViewModels
                 Store.RemoveJSON(AppConst.OBJ_COLLECTION);//remove obj collection
                 Store.RemoveJSON(AppConst.APP_COLLECTION);
                 Store.Remove(AppConst.APPID);
+                Store.Remove(AppConst.USERNAME);
 
                 App.DataDB.CreateDB(_sid);
                 HelperFunctions.CreatePlatFormDir();

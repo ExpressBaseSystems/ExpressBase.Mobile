@@ -51,7 +51,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public LoginViewModel()
         {
-            LoginTo = "Login to " + Settings.SolutionId;
+            LoginTo = Settings.SolutionId;
             this.NotifyPropertyChanged("LoginTo");
             this.Email = Settings.UserName; // fill email on redirect
             this.LoginCommand = new Command(async () => await LoginAction());
@@ -106,7 +106,7 @@ namespace ExpressBase.Mobile.ViewModels
                 var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
 
                 if (bytes == null)
-                    LogoUrl = ImageSource.FromResource("eblogo.png");
+                    LogoUrl = ImageSource.FromFile("eblogo.png");
                 else
                     LogoUrl = ImageSource.FromStream(() => new MemoryStream(bytes));
             }

@@ -1,11 +1,16 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
+using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -47,6 +52,8 @@ namespace ExpressBase.Mobile
 
         public EbMobileDataColumn ValueMember { set; get; }
 
+        public int MinSearchLength { set; get; } = 3;
+
         public EbScript OfflineQuery { set; get; }
 
         public List<Param> Parameters { set; get; }
@@ -54,18 +61,37 @@ namespace ExpressBase.Mobile
         //mobile props
         public CustomSearchBar SearchBox { set; get; }
 
-        public StackLayout ResultStack { set; get; }
-
-        public Frame ResultFrame { set; get; }
-
         public ComboBoxLabel Selected { set; get; }
 
         public override void InitXControl(FormMode Mode)
         {
             if (string.IsNullOrEmpty(this.DataSourceRefId))
-                XControl = this.GetPicker();
+            {
+                this.XControl = new CustomPicker
+                {
+                    Title = "Select",
+                    TitleColor = Color.DarkBlue,
+                    ItemsSource = this.Options,
+                    ItemDisplayBinding = new Binding("DisplayName")
+                };
+            }
             else
-                XControl = this.GetComboBox();
+            {
+                SearchBox = new CustomSearchBar
+                {
+                    Placeholder = "Seach " + this.Label + "...",
+                    FontSize = 14
+                };
+
+                SearchBox.Focused += SearchBox_Focused;
+                this.XControl = SearchBox;
+            }
+        }
+
+        private void SearchBox_Focused(object sender, FocusEventArgs e)
+        {
+            var selectView = new PowerSelectView(this);
+            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushModalAsync(selectView);
         }
 
         public override object GetValue()
@@ -73,9 +99,7 @@ namespace ExpressBase.Mobile
             if (string.IsNullOrEmpty(this.DataSourceRefId))
             {
                 if ((this.XControl as CustomPicker).SelectedItem != null)
-                {
                     return ((this.XControl as CustomPicker).SelectedItem as EbMobileSSOption).Value;
-                }
                 else
                     return null;
             }
@@ -89,152 +113,45 @@ namespace ExpressBase.Mobile
                 return false;
 
             if (string.IsNullOrEmpty(this.DataSourceRefId))
-            {
                 (this.XControl as CustomPicker).SelectedItem = this.Options.Find(i => i.Value == value.ToString());
-            }
             else
             {
-                EbDataTable dt = GetDisplayFromValue(value.ToString());
+                EbDataTable dt = this.GetDisplayFromValue(value.ToString());
                 if (dt.Rows.Any())
                 {
                     var display_membertext = dt.Rows[0][DisplayMember.ColumnName].ToString();
                     Selected = new ComboBoxLabel { Text = display_membertext, Value = value };
                     SearchBox.Text = display_membertext;
-                    this.ResultFrame.IsVisible = false;
                 }
             }
             return true;
         }
 
-        public StackLayout GetComboBox()
+        public void SelectionCallback(ComboBoxLabel comboBox)
         {
-            StackLayout Stack = new StackLayout();
-
-            ResultStack = new StackLayout();
-
-            ScrollView Scroll = new ScrollView
-            {
-                Content = ResultStack
-            };
-
-            SearchBox = new CustomSearchBar
-            {
-                Placeholder = "Seach " + this.Label + "...",
-                FontSize = 14
-            };
-            SearchBox.TextChanged += SearchBox_TextChanged;
-
-            ResultFrame = new Frame()
-            {
-                BorderColor = Color.FromHex("315eff"),
-                IsVisible = false,
-                HasShadow = true,
-                CornerRadius = 10.0f,
-                Padding = 5,
-                Content = Scroll,
-            };
-
-            Stack.Children.Add(SearchBox);
-            Stack.Children.Add(ResultFrame);
-
-            return Stack;
-        }
-
-        public CustomPicker GetPicker()
-        {
-            CustomPicker Picker = new CustomPicker
-            {
-                Title = "Select",
-                TitleColor = Color.DarkBlue,
-                ItemsSource = this.Options,
-                ItemDisplayBinding = new Binding("DisplayName")
-            };
-            return Picker;
-        }
-
-        private void SearchBox_TextChanged(object sender, EventArgs e)
-        {
-            ResultStack.Children.Clear();
-            if (SearchBox.Text.Length > 3)
-            {
-                EbDataTable Data = GetData(SearchBox.Text);
-                int c = 1;
-
-                if (Data.Rows.Count <= 0)
-                {
-                    ResultStack.Children.Add(new Label { Text = "Not found :(" });
-                }
-
-                foreach (EbDataRow row in Data.Rows)
-                {
-                    ComboBoxLabel lbl = new ComboBoxLabel(c)
-                    {
-                        Text = row[this.DisplayMember.ColumnName].ToString(),
-                        Value = row[this.ValueMember.ColumnName],
-                    };
-
-                    var labelTaped = new TapGestureRecognizer();
-                    labelTaped.Tapped += LabelTaped_Tapped;
-
-                    lbl.GestureRecognizers.Add(labelTaped);
-                    ResultStack.Children.Add(lbl);
-                    c++;
-                }
-                this.ResultFrame.IsVisible = true;
-            }
-            else
-            {
-                this.Selected = null;
-                this.ResultFrame.IsVisible = false;
-            }
-        }
-
-        private void LabelTaped_Tapped(object sender, EventArgs e)
-        {
-            this.Selected = sender as ComboBoxLabel;
-            this.SearchBox.Text = this.Selected.Text;
-            this.ResultFrame.IsVisible = false;
+            this.Selected = comboBox;
+            this.SearchBox.Text = comboBox.Text;
+            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
         }
 
         private EbDataTable GetDisplayFromValue(string value)
         {
+            EbDataTable dt;
             try
             {
-                byte[] b = Convert.FromBase64String(this.OfflineQuery.Code);
-                string sql = System.Text.Encoding.UTF8.GetString(b).TrimEnd(';');
+                string sql = HelperFunctions.B64ToString(this.OfflineQuery.Code).TrimEnd(';');
 
-                string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{ValueMember.ColumnName} = {value} LIMIT 1";
+                string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{this.ValueMember.ColumnName} = {value} LIMIT 1";
 
-                return App.DataDB.DoQuery(WrpdQuery);
+                dt = App.DataDB.DoQuery(WrpdQuery);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return new EbDataTable();
+                Log.Write(ex.Message);
+                dt = new EbDataTable();
             }
-        }
-
-        private EbDataTable GetData(string text)
-        {
-            try
-            {
-                EbMobileDataColumn DisplayMember = this.DisplayMember;
-                if (DisplayMember == null)
-                    throw new Exception();
-
-                byte[] b = Convert.FromBase64String(this.OfflineQuery.Code);
-                string sql = System.Text.Encoding.UTF8.GetString(b).TrimEnd(';');
-
-                string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{DisplayMember.ColumnName} LIKE '%{text}%';";
-
-                return App.DataDB.DoQuery(WrpdQuery);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return new EbDataTable();
-            }
-        }
+            return dt;
+        }      
     }
 
     public class EbMobileSSOption : EbMobilePageBase

@@ -113,35 +113,46 @@ namespace ExpressBase.Mobile
 
         public async void OnCameraClick(object o, object e)
         {
-            await CrossMedia.Current.Initialize();
-
-            if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
+            try
             {
-                await Application.Current.MainPage.DisplayAlert("No Camera", ":( No camera available.", "OK");
-                return;
+                await CrossMedia.Current.Initialize();
+
+                if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
+                    return;
+
+                var photo = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions()
+                {
+                    PhotoSize = PhotoSize.Small,
+                    AllowCropping = true
+                });
+
+                if (photo != null)
+                    RenderImage(photo);
             }
-
-            var photo = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions()
+            catch (Exception ex)
             {
-                PhotoSize = PhotoSize.Small,
-                AllowCropping = true
-            });
-
-            if (photo != null)
-                RenderImage(photo);
+                Log.Write("EbMobileFileUpload.OnCameraClick---" + ex.Message);
+            }
         }
 
         public async void OnFileClick(object o, object e)
         {
-            var photo = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions() { PhotoSize = PhotoSize.Small });
+            try
+            {
+                var photo = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions() { PhotoSize = PhotoSize.Small });
 
-            if (photo != null)
-                RenderImage(photo);
+                if (photo != null)
+                    RenderImage(photo);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("EbMobileFileUpload.OnFileClick---" + ex.Message);
+            }
         }
 
         private void RenderImage(MediaFile Media)
         {
-            string filename = "File" + Counter++;
+            string filename = "file" + Guid.NewGuid().ToString("N") + Counter++;
             CustomImageWraper Wraper = new CustomImageWraper(filename)
             {
                 BackgroundColor = Color.FromHex("eeeeee"),
@@ -212,12 +223,12 @@ namespace ExpressBase.Mobile
         {
             List<FileWrapper> files = new List<FileWrapper>();
 
-            foreach(var pair in this.Gallery)
+            foreach (var pair in this.Gallery)
             {
                 files.Add(new FileWrapper
                 {
                     Name = pair.Key,
-                    FileName = pair.Key + "jpg",
+                    FileName = pair.Key + ".jpg",
                     Bytea = pair.Value,
                     ControlName = this.Name
                 });

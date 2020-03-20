@@ -109,6 +109,7 @@ namespace ExpressBase.Mobile.ViewModels
                         }
                     }
                 };
+
                 AddGroupElement(groupLayout, pair.Value, tapGesture);
                 stack.Children.Add(groupLayout);
             }
@@ -117,37 +118,39 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void AddGroupElement(StackLayout groupLayout, List<MobilePagesWraper> pageWrapers, TapGestureRecognizer gesture)
         {
-            Grid grid = new Grid
+            try
             {
-                Padding = 5,
-                RowSpacing = 10,
-                ColumnSpacing = 10,
-                RowDefinitions =
+                Grid grid = new Grid
+                {
+                    Padding = 5,
+                    RowSpacing = 10,
+                    ColumnSpacing = 10,
+                    RowDefinitions =
                 {
                     new RowDefinition{Height= GridLength.Auto}
                 },
-                ColumnDefinitions = {
+                    ColumnDefinitions = {
                      new ColumnDefinition{ Width = new GridLength(50, GridUnitType.Star) },
                      new ColumnDefinition{ Width = new GridLength(50, GridUnitType.Star) }
                 }
-            };
-            int rownum = 0;
-            int colnum = 0;
-            foreach (MobilePagesWraper wrpr in pageWrapers)
-            {
-                if (wrpr.IsHidden)
-                    continue;
-                var frame = new CustomShadowFrame
+                };
+                int rownum = 0;
+                int colnum = 0;
+                foreach (MobilePagesWraper wrpr in pageWrapers)
                 {
-                    BorderColor = Color.FromHex("fafafa"),
-                    HasShadow = true,
-                    CornerRadius = 4,
-                    PageWraper = wrpr,
-                    Content = new StackLayout
+                    if (wrpr.IsHidden)
+                        continue;
+                    var frame = new CustomShadowFrame
                     {
-                        VerticalOptions = LayoutOptions.Center,
-                        Children =
+                        BorderColor = Color.FromHex("fafafa"),
+                        HasShadow = true,
+                        CornerRadius = 4,
+                        PageWraper = wrpr,
+                        Content = new StackLayout
                         {
+                            VerticalOptions = LayoutOptions.Center,
+                            Children =
+                            {
                             new Label {
                                 Text = Regex.Unescape("\\u" + wrpr.ObjectIcon),
                                 FontSize = 30,
@@ -156,24 +159,30 @@ namespace ExpressBase.Mobile.ViewModels
                                 FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
                             },
                             new Label { Text = wrpr.DisplayName,HorizontalTextAlignment = TextAlignment.Center }
+                            }
                         }
-                    }
-                };
-                frame.GestureRecognizers.Add(gesture);
-                grid.Children.Add(frame, colnum, rownum);
-                if (wrpr != pageWrapers.Last())
-                {
-                    if (colnum == 1)
+                    };
+
+                    frame.GestureRecognizers.Add(gesture);
+                    grid.Children.Add(frame, colnum, rownum);
+                    if (wrpr != pageWrapers.Last())
                     {
-                        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                        rownum++;
-                        colnum = 0;
+                        if (colnum == 1)
+                        {
+                            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                            rownum++;
+                            colnum = 0;
+                        }
+                        else
+                            colnum = 1;
                     }
-                    else
-                        colnum = 1;
                 }
+                groupLayout.Children.Add(grid);
             }
-            groupLayout.Children.Add(grid);
+            catch (Exception ex)
+            {
+                Log.Write("ObjectRenderViewModel.AddGroupElement---" + ex.Message);
+            }
         }
 
         private void OnSyncClick(object sender)

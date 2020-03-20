@@ -6,7 +6,8 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.ObjectsRenderer"
              Style="{StaticResource ContentPageStyle}"
-             BackgroundColor="#ffffff">
+             BackgroundColor="#ffffff"
+             BackgroundImageSource="doodlebg.png">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -32,8 +33,8 @@
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
                     <StackLayout VerticalOptions="FillAndExpand">
-                        <BoxView HeightRequest="15" BackgroundColor="#eeeeee" />
-                        <Grid Padding="5">
+                        <!--<BoxView HeightRequest="15" BackgroundColor="#eeeeee" />-->
+                        <Grid Padding="5" Margin="0,15,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="*"></RowDefinition>
@@ -58,7 +59,7 @@
                                 </Label.FormattedText>
                             </Label>
 
-                            <Frame CornerRadius="4" Grid.Row="1">
+                            <Frame CornerRadius="4" Grid.Row="1" BackgroundColor="Transparent">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="30.3*"></ColumnDefinition>
@@ -90,7 +91,7 @@
                                 </Grid>
                             </Frame>
                         </Grid>
-                        <BoxView HeightRequest="15" BackgroundColor="#eeeeee" />
+                        <!--<BoxView HeightRequest="15" BackgroundColor="#eeeeee" />-->
                         <Frame Padding="5" 
                                BackgroundColor="Transparent" 
                                x:Name="ObjectContainer"/>

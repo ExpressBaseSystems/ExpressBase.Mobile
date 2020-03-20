@@ -174,9 +174,9 @@ namespace ExpressBase.Mobile.Services
                 RestRequest request = new RestRequest("api/files/upload", Method.POST);
 
                 foreach (FileWrapper file in Files)
-                {
                     request.AddFileBytes(file.Name, file.Bytea, file.FileName);
-                }
+
+                request.AddParameter("tags", "mobile");
 
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, Settings.BToken);
@@ -193,7 +193,7 @@ namespace ExpressBase.Mobile.Services
             return FileData;
         }
 
-        public VisualizationLiveData PullReaderData(string datasorce_ref, List<Param> parameters, int limit, int offset)
+        public VisualizationLiveData PullReaderData(string datasorce_ref, List<Param> parameters, int limit, int offset, bool is_powerselect = false)
         {
             try
             {
@@ -205,6 +205,7 @@ namespace ExpressBase.Mobile.Services
                 }
                 request.AddParameter("limit", limit);
                 request.AddParameter("offset", offset);
+                request.AddParameter("is_powerselect", is_powerselect);
 
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, Settings.BToken);
@@ -220,7 +221,7 @@ namespace ExpressBase.Mobile.Services
             return new VisualizationLiveData();
         }
 
-        public async Task<VisualizationLiveData> PullReaderDataAsync(string datasorce_ref, List<Param> parameters, int limit, int offset)
+        public async Task<VisualizationLiveData> PullReaderDataAsync(string datasorce_ref, List<Param> parameters, int limit, int offset, bool is_powerselect = false)
         {
             try
             {
@@ -232,6 +233,7 @@ namespace ExpressBase.Mobile.Services
                 }
                 request.AddParameter("limit", limit);
                 request.AddParameter("offset", offset);
+                request.AddParameter("is_powerselect", is_powerselect);
 
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, Settings.BToken);

@@ -6,6 +6,7 @@
              mc:Ignorable="d"
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Login"
+             BackgroundImageSource="doodlebg.png"
              Style="{StaticResource ContentPageStyle}">
 
     <NavigationPage.TitleView>
@@ -26,7 +27,6 @@
         <Grid>
             <ScrollView 
                 x:Name="scrollView">
-                
                 <ScrollView.VerticalOptions>
                     <OnIdiom
                         x:TypeArguments="LayoutOptions"
@@ -41,24 +41,40 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <!--  Label to display the title of this page  -->
-                        <Label
+                        <Label 
+                            Text="Login" 
                             Grid.Row="0"
                             FontFamily="{StaticResource Roboto-Medium}"
-                            FontSize="20"
-                            HorizontalTextAlignment="Center"
                             Style="{StaticResource LabelStyle}"
+                            FontSize="22"
+                            HorizontalTextAlignment="Center"/>
+
+                        <Label
+                            Margin="0,5"
+                            Grid.Row="1"
+                            HorizontalTextAlignment="Center"
+                            Text="to"/>
+
+                        <Label
+                            Grid.Row="2"
+                            TextColor="#333333"
+                            FontFamily="{StaticResource Roboto-Regular}"
+                            FontSize="18"
+                            HorizontalTextAlignment="Center"
                             Text="{Binding LoginTo}" />
 
                         <Image x:Name="LogoUrl"
-                               Grid.Row="1" 
+                               Grid.Row="3" 
                                Source="{Binding LogoUrl}" 
                                Margin="20" 
                                HorizontalOptions="Center" HeightRequest="100"/>
 
-                        <StackLayout Grid.Row="2">
+                        <StackLayout Grid.Row="4">
                             <StackLayout Margin="0,5,0,5">
 
                                 <Label Text="Username" 
@@ -80,7 +96,7 @@
                         </StackLayout>
 
                         <!--  next button  -->
-                        <Button Grid.Row="3"
+                        <Button Grid.Row="5"
                             Text="Login"
                             VerticalOptions="EndAndExpand"
                             HorizontalOptions="FillAndExpand"
