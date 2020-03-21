@@ -24,18 +24,12 @@ namespace ExpressBase.Mobile
                 if (!string.IsNullOrEmpty(DataSourceRefId))
                 {
                     if (this.ValueMember != null)
-                    {
                         return this.ValueMember.EbDbType;
-                    }
                     else
-                    {
                         return EbDbTypes.String;
-                    }
                 }
                 else
-                {
                     return EbDbTypes.String;
-                }
             }
             set { }
         }

@@ -87,7 +87,7 @@ namespace ExpressBase.Mobile.ViewModels
             ConfirmButtonCommand = new Command(async () => await ConfirmClicked());
         }
 
-        private async Task ConfirmClicked()
+        async Task ConfirmClicked()
         {
             try
             {
@@ -118,7 +118,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private async Task SolutionUrlSet()
+        async Task SolutionUrlSet()
         {
             string url = this.SolutionUrl.Trim();
             IToast toast = DependencyService.Get<IToast>();
@@ -156,7 +156,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private void SaveLogo(byte[] imageByte)
+        void SaveLogo(byte[] imageByte)
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
             string sid = Settings.SolutionId;

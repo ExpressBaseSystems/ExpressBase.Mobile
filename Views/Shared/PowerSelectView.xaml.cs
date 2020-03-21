@@ -46,6 +46,7 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             if (SelectSearchBox.Text.Length >= this.SearchLength)
                 this.SetData();
+
         }
 
         private async void SetData()
@@ -151,7 +152,7 @@ namespace ExpressBase.Mobile.Views.Shared
                     Value = search
                 };
 
-                var response = await RestServices.Instance.PullReaderDataAsync(PowerSelect.DataSourceRefId, new List<Param> { p }, 0, 0, true);
+                var response = await RestServices.Instance.PullReaderDataAsync(PowerSelect.DataSourceRefId, new List<Param> { p }, 50, 0, true);
 
                 if (response.Data != null && response.Data.Tables.Count >= 2)
                     dt = response.Data.Tables[1];

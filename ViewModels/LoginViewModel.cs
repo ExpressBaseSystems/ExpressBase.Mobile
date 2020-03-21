@@ -47,12 +47,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command LoginCommand { set; get; }
 
-        public string LoginTo { set; get; }
-
         public LoginViewModel()
         {
-            LoginTo = Settings.SolutionId;
-            this.NotifyPropertyChanged("LoginTo");
             this.Email = Settings.UserName; // fill email on redirect
             this.LoginCommand = new Command(async () => await LoginAction());
             SetLogo();
@@ -90,14 +86,14 @@ namespace ExpressBase.Mobile.ViewModels
                 toast.Show("Email/Password cannot be empty");
         }
 
-        private bool CanLogin()
+        bool CanLogin()
         {
             if ((string.IsNullOrEmpty(this.Email) || string.IsNullOrEmpty(this.PassWord)))
                 return false;
             return true;
         }
 
-        private void SetLogo()
+        void SetLogo()
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
             string sid = Settings.SolutionId;
@@ -106,7 +102,7 @@ namespace ExpressBase.Mobile.ViewModels
                 var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
 
                 if (bytes == null)
-                    LogoUrl = ImageSource.FromFile("eblogo.png");
+                    LogoUrl = ImageSource.FromFile("logo.png");
                 else
                     LogoUrl = ImageSource.FromStream(() => new MemoryStream(bytes));
             }

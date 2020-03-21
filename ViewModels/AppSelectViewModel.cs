@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     Store.Remove(AppConst.OBJ_COLLECTION);
 
-                    if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                    if (!Settings.HasInternet)
                     {
                         DependencyService.Get<IToast>().Show("Not connected to internet!");
                         return;

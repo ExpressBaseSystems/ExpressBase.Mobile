@@ -16,11 +16,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private int RowId { set; get; } = 0;
 
-        public Command SaveCommand => new Command(OnSaveClicked);
-
         public EbMobileForm ParentForm { set; get; }
 
         public EbDataTable DataOnEdit { set; get; }
+
+        public Command SaveCommand => new Command(async () => await OnSaveClicked());
 
         //new mode
         public FormRenderViewModel(EbMobilePage page) : base(page)
@@ -145,13 +145,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public void OnSaveClicked(object sender)
+        public async Task OnSaveClicked()
         {
-            this.Form.NetworkType = this.NetworkType;
-            FormSaveResponse saveResponse;
-
-            Task.Run(() =>
+            await Task.Run(() =>
             {
+                this.Form.NetworkType = this.NetworkType;
+                FormSaveResponse saveResponse;
+
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
                 if (this.Mode == FormMode.REF)

@@ -161,6 +161,9 @@ namespace ExpressBase.Mobile
                     {
                         var resp = RestServices.Instance.PushFiles(files);
                         webformdata.ExtendedTables = files.GroupByControl(resp);
+
+                        if (!webformdata.ExtendedTables.Any())
+                            throw new Exception("Image Upload faild");
                     }
                 }
                 PushResponse pushResponse = RestServices.Instance.Push(webformdata, rowId, this.WebFormRefId, Settings.LocationId);

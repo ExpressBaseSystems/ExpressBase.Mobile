@@ -79,6 +79,9 @@ namespace ExpressBase.Mobile
                 var CameraBtn = new Button()
                 {
                     FontSize = 18,
+                    CornerRadius = 4,
+                    BorderColor = Color.FromHex("cccccc"),
+                    BorderWidth = 1,
                     BackgroundColor = Color.FromHex("eeeeee"),
                     Margin = 0,
                     Text = "\uf030",
@@ -87,7 +90,7 @@ namespace ExpressBase.Mobile
                 (this.XControl as Grid).Children.Add(CameraBtn, 1, 0);
                 CameraBtn.Clicked += OnCameraClick;
                 if (!this.EnableFileSelect)
-                    Grid.SetColumnSpan(CameraBtn, 2);
+                    Grid.SetColumn(CameraBtn, 0);
             }
 
             if (this.EnableFileSelect)
@@ -95,6 +98,9 @@ namespace ExpressBase.Mobile
                 var FilesBtn = new Button()
                 {
                     FontSize = 18,
+                    CornerRadius = 4,
+                    BorderColor = Color.FromHex("cccccc"),
+                    BorderWidth = 1,
                     TextColor = Color.White,
                     BackgroundColor = Color.FromHex("ffc059"),
                     Margin = 0,
@@ -103,8 +109,6 @@ namespace ExpressBase.Mobile
                 };
                 (this.XControl as Grid).Children.Add(FilesBtn, 0, 0);
                 FilesBtn.Clicked += OnFileClick;
-                if (!this.EnableFileSelect)
-                    Grid.SetColumnSpan(FilesBtn, 2);
             }
 
             if (!this.EnableCameraSelect && !this.EnableFileSelect)

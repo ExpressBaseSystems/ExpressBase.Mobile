@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.ViewModels;
+﻿using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -11,6 +12,8 @@ namespace ExpressBase.Mobile.Views
         public Login()
         {
             InitializeComponent();
+
+            SolutionName.Text = Settings.SolutionId;
             BindingContext = new LoginViewModel();
         }
 

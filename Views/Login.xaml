@@ -61,12 +61,12 @@
                             Text="to"/>
 
                         <Label
+                            x:Name="SolutionName"
                             Grid.Row="2"
                             TextColor="#333333"
                             FontFamily="{StaticResource Roboto-Regular}"
                             FontSize="18"
-                            HorizontalTextAlignment="Center"
-                            Text="{Binding LoginTo}" />
+                            HorizontalTextAlignment="Center"/>
 
                         <Image x:Name="LogoUrl"
                                Grid.Row="3" 
@@ -97,12 +97,13 @@
 
                         <!--  next button  -->
                         <Button Grid.Row="5"
-                            Text="Login"
-                            VerticalOptions="EndAndExpand"
-                            HorizontalOptions="FillAndExpand"
-                            BackgroundColor="{StaticResource Blue-Dark}"
-                            TextColor="White"
-                            Command="{Binding LoginCommand}"/>
+                                Margin="0,15,0,0"
+                                Text="Login"
+                                VerticalOptions="EndAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                BackgroundColor="{StaticResource Blue-Dark}"
+                                TextColor="White"
+                                Command="{Binding LoginCommand}"/>
 
                     </Grid>
                 </StackLayout>
