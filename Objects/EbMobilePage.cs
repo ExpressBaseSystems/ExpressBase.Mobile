@@ -45,6 +45,10 @@ namespace ExpressBase.Mobile
         public bool HideFromMenu { set; get; }
 
         public string Icon { set; get; }
+
+        public string IconColor { get; set; }
+
+        public string IconBackground { get; set; }
     } 
 
     public class EbScript

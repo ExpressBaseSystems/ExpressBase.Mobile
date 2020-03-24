@@ -146,6 +146,7 @@ namespace ExpressBase.Mobile.ViewModels
                         HasShadow = true,
                         CornerRadius = 4,
                         PageWraper = wrpr,
+                        BackgroundColor = wrpr.IconBackground,
                         Content = new StackLayout
                         {
                             VerticalOptions = LayoutOptions.Center,
@@ -154,11 +155,11 @@ namespace ExpressBase.Mobile.ViewModels
                             new Label {
                                 Text = Regex.Unescape("\\u" + wrpr.ObjectIcon),
                                 FontSize = 30,
-                                TextColor = Color.FromHex("0046bb"),
+                                TextColor = wrpr.IconColor,
                                 HorizontalTextAlignment = TextAlignment.Center,
                                 FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
                             },
-                            new Label { Text = wrpr.DisplayName,HorizontalTextAlignment = TextAlignment.Center }
+                            new Label { Text = wrpr.DisplayName, HorizontalTextAlignment = TextAlignment.Center, TextColor = wrpr.IconColor }
                             }
                         }
                     };

@@ -62,6 +62,14 @@ namespace ExpressBase.Mobile.Data
         {
             Columns = new List<SingleColumn>();
         }
+
+        public SingleColumn this[string columnname]
+        {
+            get
+            {
+                return this.Columns.Find(item => item.Name == columnname) ?? null;
+            }
+        }
     }
 
     public class SingleColumn

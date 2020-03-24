@@ -16,6 +16,12 @@ namespace ExpressBase.Mobile.Models
         string TableName { set; get; }
 
         List<EbMobileControl> ChildControls { set; get; }
+
+        EbDataTable GetLocalData(string parentTable, int rowid);
+
+        string GetQuery(string parentTable);
+
+        List<SingleColumn> GetColumnValues(ColumnColletion columns, EbDataRow row);
     }
 
     public class MobileFormData

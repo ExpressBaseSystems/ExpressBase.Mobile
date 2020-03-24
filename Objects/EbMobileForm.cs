@@ -41,33 +41,34 @@ namespace ExpressBase.Mobile
             get { return ControlDictionary.Any(x => x.GetType() == typeof(EbMobileFileUpload)); }
         }
 
-        public string SelectQuery
-        {
-            get
-            {
-                List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_loc_id", "id" };
-
-                foreach (var pair in ControlDictionary)
-                {
-                    if (!(pair.Value is EbMobileFileUpload))
-                        colums.Add(pair.Value.Name);
-                }
-                colums.Reverse();
-                return string.Join(",", colums.ToArray());
-            }
-        }
-
         public EbMobileForm()
         {
             ControlDictionary = new Dictionary<string, EbMobileControl>();
         }
 
-        public EbDataTable GetFormData()
+        public string GetQuery()
+        {
+            List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_loc_id", "id" };
+
+            if (!ControlDictionary.Any())
+                ControlDictionary = ChildControls.ToControlDictionary();
+
+            foreach (var pair in ControlDictionary)
+            {
+                if (!(pair.Value is INonPersistControl) && !(pair.Value is ILinesEnabled))
+                    colums.Add(pair.Value.Name);
+            }
+            colums.Reverse();
+
+            return string.Join(",", colums.ToArray());
+        }
+
+        public EbDataTable GetLocalData()
         {
             EbDataTable dt;
             try
             {
-                dt = App.DataDB.DoQuery(string.Format(StaticQueries.STARFROM_TABLE, this.SelectQuery, this.TableName));
+                dt = App.DataDB.DoQuery(string.Format(StaticQueries.STARFROM_TABLE, this.GetQuery(), this.TableName));
             }
             catch (Exception ex)
             {
@@ -275,11 +276,18 @@ namespace ExpressBase.Mobile
         {
             DbTypedValue TV = new DbTypedValue(name, value, type);
 
-            var ctrl = ControlDictionary[name];
+            var ctrl = ControlDictionary.ContainsKey(name) ? ControlDictionary[name] : null;
             if (ctrl != null)
             {
                 TV.Type = ctrl.EbDbType;
                 TV.Value = ctrl.SQLiteToActual(value);
+            }
+            else
+            {
+                if (type == EbDbTypes.Date)
+                    TV.Value = Convert.ToDateTime(value).ToString("yyyy-MM-dd");
+                else if (type == EbDbTypes.DateTime)
+                    TV.Value = Convert.ToDateTime(value).ToString("yyyy-MM-dd HH:mm:ss");
             }
             return TV;
         }
@@ -315,7 +323,7 @@ namespace ExpressBase.Mobile
                 this.ControlDictionary = this.ChildControls.ToControlDictionary();
 
                 SQLiteTableSchema masterSchema = new SQLiteTableSchema() { TableName = this.TableName };
-
+                schemas.Add(masterSchema);
                 foreach (var pair in this.ControlDictionary)
                 {
                     if (pair.Value is INonPersistControl)

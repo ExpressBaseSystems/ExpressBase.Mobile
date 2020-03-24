@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
@@ -240,7 +242,7 @@ namespace ExpressBase.Mobile
             {
                 MobileTable gTable = new MobileTable(this.TableName);
 
-                foreach(var pair in DataDictionary)
+                foreach (var pair in DataDictionary)
                 {
                     pair.Value.AppendEbColValues();
                     gTable.Add(pair.Value);
@@ -248,11 +250,79 @@ namespace ExpressBase.Mobile
 
                 return gTable;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }
             return null;
+        }
+
+        public string GetQuery(string parentTable = null)
+        {
+            List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_loc_id", "id" };
+            colums.Add($"{parentTable}_id");
+            foreach (var ctrl in ChildControls)
+                colums.Add(ctrl.Name);
+
+            colums.Reverse();
+            return string.Join(",", colums.ToArray());
+        }
+
+        public EbDataTable GetLocalData(string parentTable, int rowid)
+        {
+            EbDataTable dt;
+            try
+            {
+                dt = App.DataDB.DoQuery(string.Format(StaticQueries.STARFROM_TABLE_WDEP, this.GetQuery(parentTable), this.TableName, $"{parentTable}_id", rowid));
+            }
+            catch (Exception ex)
+            {
+                dt = new EbDataTable();
+                Console.WriteLine(ex.Message);
+            }
+            return dt;
+        }
+
+        public DbTypedValue GetDbType(string name, object value, EbDbTypes type)
+        {
+            DbTypedValue TV = new DbTypedValue(name, value, type);
+
+            var ctrl = ChildControls.Find(item => item.Name == name);
+            if (ctrl != null)
+            {
+                TV.Type = ctrl.EbDbType;
+                TV.Value = ctrl.SQLiteToActual(value);
+            }
+            else
+            {
+                if (type == EbDbTypes.Date)
+                    TV.Value = Convert.ToDateTime(value).ToString("yyyy-MM-dd");
+                else if (type == EbDbTypes.DateTime)
+                    TV.Value = Convert.ToDateTime(value).ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            return TV;
+        }
+
+        public List<SingleColumn> GetColumnValues(ColumnColletion columns, EbDataRow row)
+        {
+            List<SingleColumn> SC = new List<SingleColumn>();
+
+            for (int i = 0; i < row.Count; i++)
+            {
+                EbDataColumn column = columns.Find(o => o.ColumnIndex == i);
+
+                if (column != null && column.ColumnName != "eb_loc_id" && column.ColumnName != "id")
+                {
+                    DbTypedValue DTV = this.GetDbType(column.ColumnName, row[i], column.Type);
+                    SC.Add(new SingleColumn
+                    {
+                        Name = column.ColumnName,
+                        Type = (int)DTV.Type,
+                        Value = DTV.Value
+                    });
+                }
+            }
+            return SC;
         }
     }
 }
