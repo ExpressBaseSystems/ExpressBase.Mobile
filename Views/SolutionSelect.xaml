@@ -28,7 +28,6 @@
                         VerticalOptions="CenterAndExpand"
                         Grid.Row="0"
                         Opacity="0.9">
-                        
                         <Label
                             x:Name="BrandName"
                             Margin="20,20,0,10"

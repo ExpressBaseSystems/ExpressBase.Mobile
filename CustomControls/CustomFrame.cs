@@ -131,7 +131,7 @@ namespace ExpressBase.Mobile.CustomControls
                 else
                     Label.FontAttributes = FontAttributes.None;
 
-                Label.TextColor = (this.IsHeader) ? Color.White : Color.FromHex(_font.color.TrimStart('#'));
+                Label.TextColor = (this.IsHeader) ? Color.White : Color.FromHex(_font.Color.TrimStart('#'));
 
                 if (_font.Caps)
                     Label.Text = Label.Text.ToUpper();

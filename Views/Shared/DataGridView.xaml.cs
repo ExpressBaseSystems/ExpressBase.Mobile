@@ -1,11 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -42,11 +36,18 @@ namespace ExpressBase.Mobile.Views.Shared
         //edit
         public DataGridView(EbMobileDataGrid dataGrid, MobileTableRow row, string name)
         {
+            InitializeComponent();
+
             Mode = GridMode.Edit;
             RowName = name;
 
+            SaveAndContinue.IsVisible = false;
+            SaveAndClose.Text = "Save Changes";
+            Grid.SetColumn(SaveAndClose, 0);
+            SaveAndClose.BackgroundColor = Color.FromHex("0046bb");
+            SaveAndClose.TextColor = Color.White;
+
             this.DataGrid = dataGrid;
-            InitializeComponent();
             this.CreateForm();
             this.FillValue(row);
         }
@@ -56,6 +57,7 @@ namespace ExpressBase.Mobile.Views.Shared
             foreach (var ctrl in this.DataGrid.ChildControls)
             {
                 ctrl.InitXControl(this.DataGrid.Mode);
+                ctrl.Required = true;
                 ControlContainer.Children.Add(ctrl.XView);
             }
         }
@@ -70,13 +72,51 @@ namespace ExpressBase.Mobile.Views.Shared
             }
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
+        private void SaveAndContinue_Clicked(object sender, EventArgs e)
         {
+            if (!Validate())
+                return;
+
+            if (Mode == GridMode.New)
+                DataGrid.RowAddCallBack();
+            else
+                DataGrid.RowAddCallBack(this.RowName);
+
+            DependencyService.Get<IToast>().Show("1 row added.");
+            this.ResetControls();
+        }
+
+        private void SaveAndClose_Clicked(object sender, EventArgs e)
+        {
+            if (!Validate())
+                return;
+
             (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
             if (Mode == GridMode.New)
                 DataGrid.RowAddCallBack();
             else
                 DataGrid.RowAddCallBack(this.RowName);
+        }
+
+        private void ResetControls()
+        {
+            foreach (var ctrl in DataGrid.ChildControls)
+                ctrl.Reset();
+        }
+
+        private void BackButton_Clicked(object sender, EventArgs e)
+        {
+            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
+        }
+
+        public bool Validate()
+        {
+            foreach (var ctrl in DataGrid.ChildControls)
+            {
+                if (ctrl.Required && ctrl.GetValue() == null)
+                    return false;
+            }
+            return true;
         }
     }
 }

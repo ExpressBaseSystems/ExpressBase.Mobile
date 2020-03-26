@@ -83,7 +83,6 @@ namespace ExpressBase.Mobile.ViewModels
                 if (SolutionUrl != url.Replace("https://", string.Empty))
                     await SolutionUrlSet();
             });
-
             ConfirmButtonCommand = new Command(async () => await ConfirmClicked());
         }
 

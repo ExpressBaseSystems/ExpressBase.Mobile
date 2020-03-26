@@ -14,15 +14,14 @@ namespace ExpressBase.Mobile.Views
         public SolutionSelect()
         {
             InitializeComponent();
-            ViewModel = new SolutionSelectViewModel();
-            BindingContext = ViewModel;
+            BindingContext = ViewModel = new SolutionSelectViewModel();
 
             if (!Settings.HasInternet)
                 ViewModel.ShowMessageBox("You are not connected to internet!", Color.FromHex("fd6b6b"));
             else
-                ViewModel.HideMessageBox("Back to online", Color.FromHex("41d041"));
+                ViewModel.HideMessageBox();
 
-            Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged; ;
+            Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
         }
 
         private void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
@@ -30,7 +29,7 @@ namespace ExpressBase.Mobile.Views
             if (ViewModel != null)
             {
                 if (e.NetworkAccess == NetworkAccess.Internet)
-                    ViewModel.HideMessageBox("Back to online", Color.FromHex("41d041"));
+                    ViewModel.HideMessageBox();
                 else
                     ViewModel.ShowMessageBox("You are not connected to internet!", Color.FromHex("fd6b6b"));
             }

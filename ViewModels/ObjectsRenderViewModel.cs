@@ -126,46 +126,61 @@ namespace ExpressBase.Mobile.ViewModels
                     RowSpacing = 10,
                     ColumnSpacing = 10,
                     RowDefinitions =
-                {
-                    new RowDefinition{Height= GridLength.Auto}
-                },
+                    {
+                        new RowDefinition{Height= GridLength.Auto}
+                    },
                     ColumnDefinitions = {
-                     new ColumnDefinition{ Width = new GridLength(50, GridUnitType.Star) },
-                     new ColumnDefinition{ Width = new GridLength(50, GridUnitType.Star) }
-                }
+                        new ColumnDefinition(),
+                        new ColumnDefinition()
+                    }
                 };
                 int rownum = 0;
                 int colnum = 0;
+
                 foreach (MobilePagesWraper wrpr in pageWrapers)
                 {
                     if (wrpr.IsHidden)
                         continue;
-                    var frame = new CustomShadowFrame
+
+                    var iconFrame = new CustomShadowFrame
                     {
+                        Padding = 10,
                         BorderColor = Color.FromHex("fafafa"),
                         HasShadow = true,
                         CornerRadius = 4,
                         PageWraper = wrpr,
-                        BackgroundColor = wrpr.IconBackground,
-                        Content = new StackLayout
-                        {
-                            VerticalOptions = LayoutOptions.Center,
-                            Children =
-                            {
-                            new Label {
-                                Text = Regex.Unescape("\\u" + wrpr.ObjectIcon),
-                                FontSize = 30,
-                                TextColor = wrpr.IconColor,
-                                HorizontalTextAlignment = TextAlignment.Center,
-                                FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
-                            },
-                            new Label { Text = wrpr.DisplayName, HorizontalTextAlignment = TextAlignment.Center, TextColor = wrpr.IconColor }
-                            }
-                        }
+                        BackgroundColor = wrpr.IconBackground
                     };
+                    iconFrame.GestureRecognizers.Add(gesture);
 
-                    frame.GestureRecognizers.Add(gesture);
-                    grid.Children.Add(frame, colnum, rownum);
+                    var iconContainer = new FlexLayout { Direction = FlexDirection.Column };
+                    iconContainer.SizeChanged += IconContainer_SizeChanged;
+
+                    var icon = new Label
+                    {
+                        Text = Regex.Unescape("\\u" + wrpr.ObjectIcon),
+                        FontSize = 30,
+                        TextColor = wrpr.IconColor,
+                        VerticalTextAlignment = TextAlignment.Center,
+                        HorizontalTextAlignment = TextAlignment.Center,
+                        FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                    };
+                    icon.SizeChanged += Icon_SizeChanged;
+                    iconContainer.Children.Add(icon);
+                    FlexLayout.SetAlignSelf(icon, FlexAlignSelf.Center);
+                    FlexLayout.SetGrow(icon, 1);
+
+                    var name = new Label
+                    {
+                        Text = wrpr.DisplayName,
+                        HorizontalTextAlignment = TextAlignment.Center,
+                        TextColor = wrpr.TextColor
+                    };
+                    iconContainer.Children.Add(name);
+
+                    iconFrame.Content = iconContainer;
+                    grid.Children.Add(iconFrame, colnum, rownum);
+
                     if (wrpr != pageWrapers.Last())
                     {
                         if (colnum == 1)
@@ -184,6 +199,18 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 Log.Write("ObjectRenderViewModel.AddGroupElement---" + ex.Message);
             }
+        }
+
+        private void Icon_SizeChanged(object sender, EventArgs e)
+        {
+            var icon = (sender as Label);
+            icon.FontSize = icon.Height * .4;
+        }
+
+        private void IconContainer_SizeChanged(object sender, EventArgs e)
+        {
+            var lay = (sender as FlexLayout);
+            lay.HeightRequest = lay.Width;
         }
 
         private void OnSyncClick(object sender)

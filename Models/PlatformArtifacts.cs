@@ -264,6 +264,17 @@ namespace ExpressBase.Mobile.Models
             }
         }
 
+        public Color TextColor
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_page.IconColor))
+                    return Color.FromHex("333333");
+                else 
+                    return Color.FromHex(_page.IconColor);
+            }
+        }
+
         public EbMobilePage ToPage()
         {
             string regexed = EbSerializers.JsonToNETSTD(this.Json);

@@ -3,12 +3,11 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -20,6 +19,10 @@ namespace ExpressBase.Mobile
         public EbMobileTableLayout DataLayout { set; get; }
 
         public string TableName { set; get; }
+
+        public string DataSourceRefId { set; get; }
+
+        public EbScript OfflineQuery { set; get; }
 
         public FormMode Mode { set; get; }
 
@@ -67,15 +70,10 @@ namespace ExpressBase.Mobile
             GridFooter = new StackLayout { IsVisible = false };
             DataDictionary = new Dictionary<string, MobileTableRow>();
 
-            var stackL = new StackLayout
+            StackLayout stackL = new StackLayout
             {
                 Spacing = 0,
-                Children =
-                {
-                    GridHeader,
-                    GridBody,
-                    GridFooter
-                }
+                Children = { GridHeader, GridBody, GridFooter }
             };
             Container.Content = stackL;
             TapRecognizer = new TapGestureRecognizer();
@@ -103,6 +101,7 @@ namespace ExpressBase.Mobile
             this.CreateHeader();//creating grid header
             this.CreateFooter();//creating grid footer
             this.XControl = Container;
+            this.AutoFill();
         }
 
         private void CreateHeader()
@@ -117,7 +116,7 @@ namespace ExpressBase.Mobile
             };
             addRowBtn.Clicked += AddRowBtn_Clicked;
             grid.Children.Add(addRowBtn, 1, 0);
-            var frame = new CustomFrame(this.GetTableRow(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount, true)
+            CustomFrame frame = new CustomFrame(this.GetTableRow(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount, true)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = 0
@@ -129,26 +128,33 @@ namespace ExpressBase.Mobile
         private Grid CreateRow(string name = null)
         {
             Grid grid = CreateGridLayout(name);
-            Button rowOptions = new Button
+            try
             {
-                ClassId = grid.ClassId,
-                Text = "\uf014",
-                Style = ButtonStyles,
-                BackgroundColor = Color.Transparent
-            };
-            rowOptions.Clicked += RowDelete_Clicked;
-            grid.Children.Add(rowOptions, 1, 0);
-            var row = this.GetTableRow();
-            CustomFrame frame = new CustomFrame(row, DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
-            {
-                ClassId = grid.ClassId,
-                BackgroundColor = Color.Transparent,
-                Padding = 0
-            };
-            frame.GestureRecognizers.Add(this.TapRecognizer);
-            grid.Children.Add(frame, 0, 0);
+                Button rowOptions = new Button
+                {
+                    ClassId = grid.ClassId,
+                    Text = "\uf014",
+                    Style = ButtonStyles,
+                    BackgroundColor = Color.Transparent
+                };
+                rowOptions.Clicked += RowDelete_Clicked;
+                grid.Children.Add(rowOptions, 1, 0);
+                MobileTableRow row = this.GetTableRow();
 
-            DataDictionary[grid.ClassId] = row;
+                grid.Children.Add(new CustomFrame(row, DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
+                {
+                    ClassId = grid.ClassId,
+                    BackgroundColor = Color.Transparent,
+                    Padding = 0,
+                    GestureRecognizers = { this.TapRecognizer }
+                }, 0, 0);
+
+                DataDictionary[grid.ClassId] = row;
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex.Message);
+            }   
             return grid;
         }
 
@@ -166,7 +172,7 @@ namespace ExpressBase.Mobile
         private MobileTableRow GetTableRow(bool isHeader = false)
         {
             MobileTableRow row = new MobileTableRow();
-            foreach (var ctrl in this.ChildControls)
+            foreach (EbMobileControl ctrl in this.ChildControls)
             {
                 if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
                     continue;
@@ -182,15 +188,14 @@ namespace ExpressBase.Mobile
 
         private void AddRowBtn_Clicked(object sender, EventArgs e)
         {
-            var gridview = new DataGridView(this);
+            DataGridView gridview = new DataGridView(this);
             (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushModalAsync(gridview);
         }
 
         private void RowDelete_Clicked(object sender, EventArgs e)
         {
-            var button = sender as Button;
-
-            foreach (var el in GridBody.Children)
+            Button button = sender as Button;
+            foreach (View el in GridBody.Children)
             {
                 if (el.ClassId == button.ClassId)
                 {
@@ -205,12 +210,12 @@ namespace ExpressBase.Mobile
         {
             if (name == null)
             {
-                var grid = this.CreateRow();
+                Grid grid = this.CreateRow();
                 GridBody.Children.Add(grid);
             }
             else
             {
-                var row = this.GetTableRow();
+                MobileTableRow row = this.GetTableRow();
                 DataDictionary[name] = row;
 
                 for (int i = 0; i < GridBody.Children.Count; i++)
@@ -218,13 +223,12 @@ namespace ExpressBase.Mobile
                     if (GridBody.Children[i].ClassId == name)
                     {
                         GridBody.Children.Remove(GridBody.Children[i]);
-                        var ig = this.CreateRow(name);
+                        Grid ig = this.CreateRow(name);
                         GridBody.Children.Insert(i, ig);
                         break;
                     }
                 }
             }
-
             if (GridBody.Children.Count > 0)
                 GridBody.IsVisible = true;
         }
@@ -232,7 +236,7 @@ namespace ExpressBase.Mobile
         private void TapRecognizer_Tapped(object sender, EventArgs e)
         {
             string classId = (sender as CustomFrame).ClassId;
-            var gridview = new DataGridView(this, DataDictionary[classId], classId);
+            DataGridView gridview = new DataGridView(this, DataDictionary[classId], classId);
             (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushModalAsync(gridview);
         }
 
@@ -241,13 +245,11 @@ namespace ExpressBase.Mobile
             try
             {
                 MobileTable gTable = new MobileTable(this.TableName);
-
-                foreach (var pair in DataDictionary)
+                foreach (KeyValuePair<string, MobileTableRow> pair in DataDictionary)
                 {
                     pair.Value.AppendEbColValues();
                     gTable.Add(pair.Value);
                 }
-
                 return gTable;
             }
             catch (Exception ex)
@@ -286,8 +288,7 @@ namespace ExpressBase.Mobile
         public DbTypedValue GetDbType(string name, object value, EbDbTypes type)
         {
             DbTypedValue TV = new DbTypedValue(name, value, type);
-
-            var ctrl = ChildControls.Find(item => item.Name == name);
+            EbMobileControl ctrl = ChildControls.Find(item => item.Name == name);
             if (ctrl != null)
             {
                 TV.Type = ctrl.EbDbType;
@@ -306,11 +307,9 @@ namespace ExpressBase.Mobile
         public List<SingleColumn> GetColumnValues(ColumnColletion columns, EbDataRow row)
         {
             List<SingleColumn> SC = new List<SingleColumn>();
-
             for (int i = 0; i < row.Count; i++)
             {
                 EbDataColumn column = columns.Find(o => o.ColumnIndex == i);
-
                 if (column != null && column.ColumnName != "eb_loc_id" && column.ColumnName != "id")
                 {
                     DbTypedValue DTV = this.GetDbType(column.ColumnName, row[i], column.Type);
@@ -323,6 +322,75 @@ namespace ExpressBase.Mobile
                 }
             }
             return SC;
+        }
+
+        public void AutoFill()
+        {
+            try
+            {
+                EbDataTable dt = null;
+                if (this.NetworkType == NetworkMode.Online)
+                {
+                    VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, 0, 0);
+                    if (data.Data != null && data.Data.Tables.Count >= 2)
+                        dt = data.Data.Tables[1];
+                }
+                else
+                {
+                    string query = HelperFunctions.B64ToString(this.OfflineQuery.Code);
+                    dt = App.DataDB.DoQuery(query);
+                }
+
+                if (dt != null)
+                {
+                    foreach (var row in dt.Rows)
+                        CreateAutoFillRow(row);
+                    GridBody.IsVisible = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        public void CreateAutoFillRow(EbDataRow row)
+        {
+            try
+            {
+                Grid grid = CreateGridLayout(null);
+                Button rowOptions = new Button { ClassId = grid.ClassId, Text = "\uf014", Style = ButtonStyles, BackgroundColor = Color.Transparent };
+                rowOptions.Clicked += RowDelete_Clicked;
+                grid.Children.Add(rowOptions, 1, 0);
+
+                MobileTableRow table_row = new MobileTableRow();
+                foreach (EbMobileControl ctrl in this.ChildControls)
+                {
+                    if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
+                        continue;
+                    table_row.Columns.Add(new MobileTableColumn
+                    {
+                        Name = ctrl.Name,
+                        Type = ctrl.EbDbType,
+                        Value = row[ctrl.Name] ?? null
+                    });
+                }
+
+                grid.Children.Add(new CustomFrame(table_row, DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
+                {
+                    ClassId = grid.ClassId,
+                    BackgroundColor = Color.Transparent,
+                    Padding = 0,
+                    GestureRecognizers = { this.TapRecognizer }
+                }, 0, 0);
+
+                DataDictionary[grid.ClassId] = table_row;
+                GridBody.Children.Add(grid);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
     }
 }

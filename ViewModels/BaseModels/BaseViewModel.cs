@@ -101,14 +101,9 @@ namespace ExpressBase.Mobile.ViewModels
             });
         }
 
-        public void HideMessageBox(string message, Color background)
+        public void HideMessageBox()
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                this.MessageColor = background;
-                this.Message = message;
-                this.ShowMessage = false;
-            });
+            Device.BeginInvokeOnMainThread(() => this.ShowMessage = false );
         }
     }
 }

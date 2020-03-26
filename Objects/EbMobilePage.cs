@@ -31,6 +31,12 @@ namespace ExpressBase.Mobile
         Mixed
     }
 
+    public enum NumericBoxTypes
+    {
+        TextType = 0,
+        ButtonType = 1
+    }
+
     public abstract class EbMobilePageBase : EbObject
     {
 
@@ -71,7 +77,8 @@ namespace ExpressBase.Mobile
 
         public FontStyle Style { get; set; }
 
-        public string color { get; set; }
+        [JsonProperty("color")]
+        public string Color { get; set; }
 
         public bool Caps { get; set; }
 

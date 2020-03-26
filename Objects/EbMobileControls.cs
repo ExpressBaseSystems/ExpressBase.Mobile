@@ -1,11 +1,10 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -23,6 +22,8 @@ namespace ExpressBase.Mobile
         public virtual bool ReadOnly { get; set; }
 
         public virtual bool DoNotPersist { get; set; }
+
+        public virtual bool Required { get; set; }
 
         public string SQLiteType
         {
@@ -55,13 +56,18 @@ namespace ExpressBase.Mobile
         {
             get
             {
+                var formatted = new FormattedString { Spans = { new Span { Text = this.Label } } };
+
+                if (this.Required)
+                    formatted.Spans.Add(new Span { Text = " *", FontSize = 16, TextColor = Color.Red });
+
                 return new StackLayout
                 {
                     Padding = new Thickness(15, 10, 15, 10),
                     IsVisible = !(this.Hidden),
                     Children =
                     {
-                        new Label { Text = this.Label },
+                        new Label { FormattedText =  formatted },
                         XControl
                     }
                 };
@@ -81,6 +87,8 @@ namespace ExpressBase.Mobile
             else
                 this.XControl.IsEnabled = true;
         }
+
+        public virtual void Reset() { }
 
         public virtual MobileTableColumn GetMobileTableColumn()
         {
@@ -128,6 +136,11 @@ namespace ExpressBase.Mobile
             (this.XControl as TextBox).Text = value.ToString();
             return true;
         }
+
+        public override void Reset()
+        {
+            (this.XControl as TextBox).ClearValue(TextBox.TextProperty);
+        }
     }
 
     public class EbMobileNumericBox : EbMobileControl
@@ -144,23 +157,108 @@ namespace ExpressBase.Mobile
 
         public bool IsCurrency { get; set; }
 
+        public NumericBoxTypes RenderType { get; set; }
+
+        private readonly Style ButtonStyles = new Style(typeof(Button))
+        {
+            Setters =
+            {
+                new Setter{ Property = Button.VerticalOptionsProperty,Value = LayoutOptions.Center },
+                new Setter{ Property = Button.PaddingProperty,Value = 0 },
+                new Setter{ Property = Button.HeightRequestProperty,Value = 40 },
+                new Setter{ Property = Button.WidthRequestProperty,Value = 40 },
+                new Setter{ Property = Button.CornerRadiusProperty,Value = 20 },
+                new Setter{ Property = Button.BorderColorProperty,Value = Color.FromHex("cccccc") },
+                new Setter{ Property = Button.BackgroundColorProperty,Value = Color.FromHex("eeeeee") },
+                new Setter{ Property = Button.BorderWidthProperty,Value = 1 },
+                new Setter
+                {
+                    Property = Button.FontFamilyProperty,
+                    Value = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                },
+            }
+        };
+
+        private TextBox ValueBox { set; get; }
+
+        private int ValueBoxNumber { set; get; } = 0;
+
         public override void InitXControl(FormMode Mode)
         {
-            XControl = new TextBox();
-            (XControl as TextBox).Keyboard = Keyboard.Numeric;
+            if (RenderType == NumericBoxTypes.ButtonType)
+            {
+                Grid grid = new Grid { ColumnSpacing = 10 };
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                var minus = new Button { Style = ButtonStyles, Text = "\uf068" };
+                minus.Clicked += Minus_Clicked;
+                grid.Children.Add(minus, 0, 0);
+
+                ValueBox = new TextBox { Text = ValueBoxNumber.ToString(), IsReadOnly = true };
+                grid.Children.Add(ValueBox, 1, 0);
+
+                var plus = new Button { Style = ButtonStyles, Text = "\uf067" };
+                plus.Clicked += Plus_Clicked;
+                grid.Children.Add(plus, 2, 0);
+
+                this.XControl = grid;
+            }
+            else
+            {
+                this.XControl = new TextBox();
+                (this.XControl as TextBox).Keyboard = Keyboard.Numeric;
+            }
+        }
+
+        private void Plus_Clicked(object sender, EventArgs e)
+        {
+            ValueBoxNumber++;
+            ValueBox.Text = ValueBoxNumber.ToString();
+        }
+
+        private void Minus_Clicked(object sender, EventArgs e)
+        {
+            if (ValueBoxNumber == 0) return;
+
+            ValueBoxNumber--;
+            ValueBox.Text = ValueBoxNumber.ToString();
         }
 
         public override object GetValue()
         {
-            return (this.XControl as TextBox).Text;
+            if (RenderType == NumericBoxTypes.ButtonType)
+                return ValueBoxNumber.ToString();
+            else
+                return (this.XControl as TextBox).Text;
         }
 
         public override bool SetValue(object value)
         {
             if (value == null)
                 return false;
-            (this.XControl as TextBox).Text = value.ToString();
+
+            if (RenderType == NumericBoxTypes.ButtonType)
+            {
+                ValueBoxNumber = Convert.ToInt32(value);
+                ValueBox.Text = ValueBoxNumber.ToString();
+            }
+            else
+                (this.XControl as TextBox).Text = value.ToString();
+
             return true;
+        }
+
+        public override void Reset()
+        {
+            if (RenderType == NumericBoxTypes.ButtonType)
+            {
+                ValueBox.ClearValue(TextBox.TextProperty);
+                ValueBoxNumber = 0;
+            }
+            else
+                (this.XControl as TextBox).ClearValue(TextBox.TextProperty);
         }
     }
 
@@ -179,9 +277,10 @@ namespace ExpressBase.Mobile
         public override object SQLiteToActual(object value)
         {
             if (this.EbDbType == EbDbTypes.Date)
-            {
                 return Convert.ToDateTime(value).Date.ToString("yyyy-MM-dd");
-            }
+            else if (this.EbDbType == EbDbTypes.DateTime)
+                return Convert.ToDateTime(value).Date.ToString("yyyy-MM-dd HH:mm:ss");
+
             return value.ToString();
         }
 
@@ -204,6 +303,11 @@ namespace ExpressBase.Mobile
                 return false;
             (this.XControl as CustomDatePicker).Date = Convert.ToDateTime(value);
             return true;
+        }
+
+        public override void Reset()
+        {
+            (this.XControl as CustomDatePicker).ClearValue(CustomDatePicker.DateProperty);
         }
     }
 
@@ -237,6 +341,11 @@ namespace ExpressBase.Mobile
             int val = Convert.ToInt32(value);
             (this.XControl as CheckBox).IsChecked = (val == 0) ? false : true;
             return true;
+        }
+
+        public override void Reset()
+        {
+            (this.XControl as CheckBox).ClearValue(CheckBox.IsCheckedProperty);
         }
     }
 
