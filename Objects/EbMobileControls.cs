@@ -121,25 +121,50 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
-            XControl = new TextBox();
+            if (TextMode == TextMode.MultiLine)
+            {
+                XControl = new TextArea()
+                {
+                    HeightRequest = 100,
+                    IsReadOnly = this.ReadOnly,
+                    BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
+                };
+            }
+            else
+                XControl = new TextBox
+                {
+                    IsReadOnly = this.ReadOnly,
+                    BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
+                };
         }
 
         public override object GetValue()
         {
-            return (this.XControl as TextBox).Text;
+            if (TextMode == TextMode.MultiLine)
+                return (this.XControl as TextArea).Text;
+            else
+                return (this.XControl as TextBox).Text;
         }
 
         public override bool SetValue(object value)
         {
             if (value == null)
                 return false;
-            (this.XControl as TextBox).Text = value.ToString();
+
+            if (TextMode == TextMode.MultiLine)
+                (this.XControl as TextArea).Text = value.ToString();
+            else
+                (this.XControl as TextBox).Text = value.ToString();
+
             return true;
         }
 
         public override void Reset()
         {
-            (this.XControl as TextBox).ClearValue(TextBox.TextProperty);
+            if (TextMode == TextMode.MultiLine)
+                (this.XControl as TextArea).ClearValue(TextBox.TextProperty);
+            else
+                (this.XControl as TextBox).ClearValue(TextBox.TextProperty);
         }
     }
 
@@ -187,7 +212,7 @@ namespace ExpressBase.Mobile
         {
             if (RenderType == NumericBoxTypes.ButtonType)
             {
-                Grid grid = new Grid { ColumnSpacing = 10 };
+                Grid grid = new Grid { ColumnSpacing = 10, IsEnabled = !this.ReadOnly };
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -207,7 +232,11 @@ namespace ExpressBase.Mobile
             }
             else
             {
-                this.XControl = new TextBox();
+                this.XControl = new TextBox
+                {
+                    IsReadOnly = this.ReadOnly,
+                    BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
+                };
                 (this.XControl as TextBox).Keyboard = Keyboard.Numeric;
             }
         }
@@ -286,7 +315,7 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
-            this.XControl = new CustomDatePicker();
+            this.XControl = new CustomDatePicker { IsEnabled = !this.ReadOnly };
 
             (this.XControl as CustomDatePicker).Date = DateTime.Now;
             (this.XControl as CustomDatePicker).Format = "yyyy-MM-dd";

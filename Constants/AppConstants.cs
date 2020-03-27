@@ -6,6 +6,8 @@ namespace ExpressBase.Mobile.Constants
 {
     public static class AppConst
     {
+        public const string MYSOLUTIONS = "mysolutions";
+
         public const string BTOKEN = "bToken";
 
         public const string RTOKEN = "rToken";

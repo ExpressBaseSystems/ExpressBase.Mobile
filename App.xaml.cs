@@ -19,13 +19,9 @@ namespace ExpressBase.Mobile
         public App(string dbPath)
         {
             InitializeComponent();
-
             DbPath = dbPath;
-
             if (DataDB == null)
-            {
                 DataDB = DependencyService.Get<IDataBase>();
-            }
 
             this.InitNavigation();
         }

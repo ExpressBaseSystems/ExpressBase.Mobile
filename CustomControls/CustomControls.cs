@@ -1,16 +1,20 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Structures;
-using Plugin.Media;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
     public class TextBox : Entry
     {
+        public int BorderThickness { set; get; } = 1;
+
+        public float BorderRadius { set; get; } = 10.0f;
+
+        public string BorderColor { set; get; } = "#cccccc";
+
+        public bool HasBorder { set; get; } = true;
+
+        public bool HasBackground { set; get; } = true;
+
         public TextBox() { }
     }
 

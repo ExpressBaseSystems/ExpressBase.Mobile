@@ -267,4 +267,20 @@ namespace ExpressBase.Mobile.Models
 
         public string Message { set; get; }
     }
+
+    public class SolutionInfo
+    {
+        public string RootUrl { set; get; }
+
+        public string SolutionName { set; get; }
+
+        public ImageSource Logo { set; get; }
+
+        public bool IsCurrent { set; get; }
+
+        public void SetLogo()
+        {
+
+        }
+    }
 }

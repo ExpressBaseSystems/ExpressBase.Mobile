@@ -2,10 +2,10 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -15,6 +15,7 @@ namespace ExpressBase.Mobile.ViewModels
     public class SolutionSelectViewModel : StaticBaseViewModel
     {
         private string solutionurtl;
+
         public string SolutionUrl
         {
             get { return this.solutionurtl; }
@@ -25,133 +26,60 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private bool isEnabled;
-        public bool IsEnabled
-        {
-            get { return this.isEnabled; }
-            set
-            {
-                this.isEnabled = value;
-                this.NotifyPropertyChanged();
-            }
-        }
+        public List<SolutionInfo> MySolutions { set; get; }
 
-        private bool showLoader;
-        public bool ShowLoader
-        {
-            get { return this.showLoader; }
-            set
-            {
-                this.showLoader = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        private bool showConfirmBox;
-        public bool ShowConfirmBox
-        {
-            get { return this.showConfirmBox; }
-            set
-            {
-                this.showConfirmBox = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        public ImageSource SolutionLogo { set; get; }
-
-        public Command StoreSolutionUrl { get; set; }
-
-        public Command ConfirmButtonCommand { get; set; }
+        public Command SolutionTapedCommand => new Command(SolutionTapedEvent);
 
         private ValidateSidResponse ValidateSIDResponse { set; get; }
 
         public SolutionSelectViewModel()
         {
-            SolutionUrl = (Settings.RootUrl != null) ? Settings.RootUrl.Replace("https://", string.Empty) : string.Empty;
-
-            if (string.IsNullOrEmpty(SolutionUrl))
-                IsEnabled = true;
-
-            StoreSolutionUrl = new Command(async () =>
+            try
             {
-                if (string.IsNullOrEmpty(SolutionUrl))
-                    return;
-
-                string url = Settings.RootUrl ?? string.Empty;
-
-                if (SolutionUrl != url.Replace("https://", string.Empty))
-                    await SolutionUrlSet();
-            });
-            ConfirmButtonCommand = new Command(async () => await ConfirmClicked());
+                this.MySolutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
+                foreach (var info in this.MySolutions)
+                    info.SetLogo();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
-        async Task ConfirmClicked()
+        private void SolutionTapedEvent(object obj)
+        {
+
+        }
+
+        public async Task AddSolution()
         {
             try
             {
                 string _sid = this.SolutionUrl.Split('.')[0];
+
+                SolutionInfo info = new SolutionInfo
+                {
+                    SolutionName = _sid,
+                    RootUrl = this.SolutionUrl,
+                    IsCurrent = true,
+                };
+
+                this.MySolutions.Add(info);
+                Store.SetJSON(AppConst.MYSOLUTIONS, this.MySolutions);
                 await Store.SetValueAsync(AppConst.SID, _sid);
                 await Store.SetValueAsync(AppConst.ROOT_URL, this.SolutionUrl);
 
-                Store.RemoveJSON(AppConst.OBJ_COLLECTION);//remove obj collection
-                Store.RemoveJSON(AppConst.APP_COLLECTION);
-                Store.Remove(AppConst.APPID);
-                Store.Remove(AppConst.USERNAME);
+                this.ClearCached();
 
                 App.DataDB.CreateDB(_sid);
                 HelperFunctions.CreatePlatFormDir();
 
                 if (ValidateSIDResponse.Logo != null)
                     this.SaveLogo(ValidateSIDResponse.Logo);
-
-                await Application.Current.MainPage.Navigation.PushAsync(new Login());
-
-                ShowLoader = true;
-                ShowConfirmBox = false;
-                IsBusy = false;
             }
             catch (Exception ex)
             {
                 Log.Write("SolutionSelect_ConfirmClicked" + ex.Message);
-            }
-        }
-
-        async Task SolutionUrlSet()
-        {
-            string url = this.SolutionUrl.Trim();
-            IToast toast = DependencyService.Get<IToast>();
-
-            if (!Settings.HasInternet)
-            {
-                toast.Show("Not connected to internet!");
-                return;
-            }
-
-            try
-            {
-                IsBusy = true;
-                ShowLoader = true;
-
-                ValidateSIDResponse = await RestServices.ValidateSid(url);
-                if (ValidateSIDResponse.IsValid)
-                {
-                    ShowLoader = false;
-                    SolutionLogo = ImageSource.FromStream(() => new MemoryStream(ValidateSIDResponse.Logo));
-                    NotifyPropertyChanged("SolutionLogo");
-                    ShowConfirmBox = true;
-                }
-                else
-                {
-                    IsBusy = false;
-                    toast.Show("Invalid solution URL");
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Write("SolutionSelect_SolutionUrlSet" + ex.Message);
-                IsBusy = false;
-                toast.Show("Something went wrong");
             }
         }
 
@@ -168,6 +96,14 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 Log.Write("SolutionSelect_SaveLogo" + ex.Message);
             }
+        }
+
+        void ClearCached()
+        {
+            Store.RemoveJSON(AppConst.OBJ_COLLECTION);//remove obj collection
+            Store.RemoveJSON(AppConst.APP_COLLECTION);
+            Store.Remove(AppConst.APPID);
+            Store.Remove(AppConst.USERNAME);
         }
     }
 }

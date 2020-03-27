@@ -26,6 +26,7 @@ namespace ExpressBase.Mobile
 
         public FormMode Mode { set; get; }
 
+        //mobile props
         private Frame Container { set; get; }
 
         private StackLayout GridHeader { set; get; }
@@ -45,6 +46,7 @@ namespace ExpressBase.Mobile
                 new Setter{ Property = Button.HeightRequestProperty,Value = 30 },
                 new Setter{ Property = Button.WidthRequestProperty,Value = 30 },
                 new Setter{ Property = Button.CornerRadiusProperty,Value = 4 },
+                new Setter{ Property = Button.BackgroundColorProperty,Value = Color.Transparent },
                 new Setter
                 {
                     Property = Button.FontFamilyProperty,
@@ -55,31 +57,6 @@ namespace ExpressBase.Mobile
 
         private Dictionary<string, MobileTableRow> DataDictionary { set; get; }
 
-        public EbMobileDataGrid()
-        {
-            Container = new Frame
-            {
-                BorderColor = Color.FromHex("cccccc"),
-                CornerRadius = 4,
-                HasShadow = false,
-                Padding = 1
-            };
-
-            GridHeader = new StackLayout { BackgroundColor = Color.FromHex("eeeeee") };
-            GridBody = new StackLayout { IsVisible = false };
-            GridFooter = new StackLayout { IsVisible = false };
-            DataDictionary = new Dictionary<string, MobileTableRow>();
-
-            StackLayout stackL = new StackLayout
-            {
-                Spacing = 0,
-                Children = { GridHeader, GridBody, GridFooter }
-            };
-            Container.Content = stackL;
-            TapRecognizer = new TapGestureRecognizer();
-            TapRecognizer.Tapped += TapRecognizer_Tapped;
-        }
-
         private Grid CreateGridLayout(string name = null)
         {
             return new Grid
@@ -87,6 +64,7 @@ namespace ExpressBase.Mobile
                 ClassId = name ?? Guid.NewGuid().ToString("N"),
                 VerticalOptions = LayoutOptions.Center,
                 Padding = new Thickness(5, 5),
+                BackgroundColor = Color.White,
                 ColumnDefinitions =
                 {
                     new ColumnDefinition{ Width=GridLength.Star },
@@ -98,48 +76,96 @@ namespace ExpressBase.Mobile
         public override void InitXControl(FormMode mode)
         {
             this.Mode = mode;
-            this.CreateHeader();//creating grid header
-            this.CreateFooter();//creating grid footer
-            this.XControl = Container;
-            this.AutoFill();
+            try
+            {
+                Container = new Frame
+                {
+                    BorderColor = Color.FromHex("cccccc"),
+                    CornerRadius = 4,
+                    HasShadow = false,
+                    Padding = 1
+                };
+
+                GridHeader = new StackLayout { Spacing = 0 };
+                GridBody = new StackLayout { IsVisible = false, BackgroundColor = Color.FromHex("cccccc"), Spacing = 1 };
+                GridFooter = new StackLayout { IsVisible = false };
+                DataDictionary = new Dictionary<string, MobileTableRow>();
+
+                StackLayout stackL = new StackLayout
+                {
+                    Spacing = 0,
+                    Children = { GridHeader, GridBody, GridFooter }
+                };
+                Container.Content = stackL;
+                TapRecognizer = new TapGestureRecognizer();
+                TapRecognizer.Tapped += TapRecognizer_Tapped;
+
+                this.CreateHeader();//creating grid header
+                this.CreateFooter();//creating grid footer
+                this.XControl = Container;
+                this.AutoFill();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
         private void CreateHeader()
         {
             Grid grid = CreateGridLayout();//creating new grid
+            grid.BackgroundColor = Color.FromHex("eeeeee");
             Button addRowBtn = new Button
             {
                 Text = "\uf055",
                 Style = ButtonStyles,
                 TextColor = Color.White,
-                BackgroundColor = Color.FromHex("#33b762")
+                BackgroundColor = Color.FromHex("33b762")
             };
             addRowBtn.Clicked += AddRowBtn_Clicked;
             grid.Children.Add(addRowBtn, 1, 0);
-            CustomFrame frame = new CustomFrame(this.GetTableRow(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount, true)
+            CustomFrame frame = new CustomFrame(this.GetControlValues(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount, true)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = 0
             };
             grid.Children.Add(frame, 0, 0);
             GridHeader.Children.Add(grid);
+            GridHeader.Children.Add(new BoxView { Color = Color.FromHex("cccccc"), HeightRequest = 1 });
         }
 
-        private Grid CreateRow(string name = null)
+        private MobileTableRow GetControlValues(bool isHeader = false)
+        {
+            MobileTableRow row = new MobileTableRow();
+            try
+            {
+                foreach (EbMobileControl ctrl in this.ChildControls)
+                {
+                    if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
+                        continue;
+                    row.Columns.Add(new MobileTableColumn
+                    {
+                        Name = ctrl.Name,
+                        Type = ctrl.EbDbType,
+                        Value = isHeader ? ctrl.Label : ctrl.GetValue()
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return row;
+        }
+
+        private Grid CreateDataRow(MobileTableRow row, string name = null)
         {
             Grid grid = CreateGridLayout(name);
             try
             {
-                Button rowOptions = new Button
-                {
-                    ClassId = grid.ClassId,
-                    Text = "\uf014",
-                    Style = ButtonStyles,
-                    BackgroundColor = Color.Transparent
-                };
+                Button rowOptions = new Button { ClassId = grid.ClassId, Text = "\uf014", Style = ButtonStyles };
                 rowOptions.Clicked += RowDelete_Clicked;
                 grid.Children.Add(rowOptions, 1, 0);
-                MobileTableRow row = this.GetTableRow();
 
                 grid.Children.Add(new CustomFrame(row, DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
                 {
@@ -151,39 +177,22 @@ namespace ExpressBase.Mobile
 
                 DataDictionary[grid.ClassId] = row;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
-            }   
+            }
             return grid;
         }
 
         private void CreateFooter()
         {
             Grid grid = CreateGridLayout();
-            grid.Children.Add(new CustomFrame(this.GetTableRow(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
+            grid.Children.Add(new CustomFrame(this.GetControlValues(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = 0
             }, 0, 0);
             GridFooter.Children.Add(grid);
-        }
-
-        private MobileTableRow GetTableRow(bool isHeader = false)
-        {
-            MobileTableRow row = new MobileTableRow();
-            foreach (EbMobileControl ctrl in this.ChildControls)
-            {
-                if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
-                    continue;
-                row.Columns.Add(new MobileTableColumn
-                {
-                    Name = ctrl.Name,
-                    Type = ctrl.EbDbType,
-                    Value = isHeader ? ctrl.Label : ctrl.GetValue()
-                });
-            }
-            return row;
         }
 
         private void AddRowBtn_Clicked(object sender, EventArgs e)
@@ -208,29 +217,37 @@ namespace ExpressBase.Mobile
 
         public void RowAddCallBack(string name = null)
         {
-            if (name == null)
+            try
             {
-                Grid grid = this.CreateRow();
-                GridBody.Children.Add(grid);
-            }
-            else
-            {
-                MobileTableRow row = this.GetTableRow();
-                DataDictionary[name] = row;
-
-                for (int i = 0; i < GridBody.Children.Count; i++)
+                MobileTableRow values = this.GetControlValues();
+                if (name == null)
                 {
-                    if (GridBody.Children[i].ClassId == name)
+                    Grid grid = this.CreateDataRow(values);
+                    GridBody.Children.Add(grid);
+                }
+                else
+                {
+                    MobileTableRow row = this.GetControlValues();
+                    DataDictionary[name] = row;
+
+                    for (int i = 0; i < GridBody.Children.Count; i++)
                     {
-                        GridBody.Children.Remove(GridBody.Children[i]);
-                        Grid ig = this.CreateRow(name);
-                        GridBody.Children.Insert(i, ig);
-                        break;
+                        if (GridBody.Children[i].ClassId == name)
+                        {
+                            GridBody.Children.Remove(GridBody.Children[i]);
+                            Grid ig = this.CreateDataRow(row, name);
+                            GridBody.Children.Insert(i, ig);
+                            break;
+                        }
                     }
                 }
+                if (GridBody.Children.Count > 0)
+                    GridBody.IsVisible = true;
             }
-            if (GridBody.Children.Count > 0)
-                GridBody.IsVisible = true;
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
         private void TapRecognizer_Tapped(object sender, EventArgs e)
@@ -358,11 +375,6 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                Grid grid = CreateGridLayout(null);
-                Button rowOptions = new Button { ClassId = grid.ClassId, Text = "\uf014", Style = ButtonStyles, BackgroundColor = Color.Transparent };
-                rowOptions.Clicked += RowDelete_Clicked;
-                grid.Children.Add(rowOptions, 1, 0);
-
                 MobileTableRow table_row = new MobileTableRow();
                 foreach (EbMobileControl ctrl in this.ChildControls)
                 {
@@ -375,16 +387,7 @@ namespace ExpressBase.Mobile
                         Value = row[ctrl.Name] ?? null
                     });
                 }
-
-                grid.Children.Add(new CustomFrame(table_row, DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
-                {
-                    ClassId = grid.ClassId,
-                    BackgroundColor = Color.Transparent,
-                    Padding = 0,
-                    GestureRecognizers = { this.TapRecognizer }
-                }, 0, 0);
-
-                DataDictionary[grid.ClassId] = table_row;
+                Grid grid = this.CreateDataRow(table_row);
                 GridBody.Children.Add(grid);
             }
             catch (Exception ex)

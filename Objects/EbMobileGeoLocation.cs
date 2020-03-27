@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Threading.Tasks;
@@ -71,19 +72,21 @@ namespace ExpressBase.Mobile
                     if (plc != null)
                     {
                         Place = $"{plc.FeatureName},{plc.Locality},{plc.Locality}";
-                        SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
+                        this.SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
                     }
                 }
             }
             else
-                SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
+                this.SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
         }
 
         private void SetWebViewUrl(double lat, double lon, string place)
         {
-            string url = $"{Settings.RootUrl}/api/map?bToken={AppConst.BTOKEN}&rToken={AppConst.RTOKEN}&type=GOOGLEMAP&latitude={lat}&longitude={lon}&place={place}";
+            Auth.AuthIfTokenExpired();//auth again if token expires
+
+            string url = $"{Settings.RootUrl}/api/map?bToken={Settings.BToken}&rToken={Settings.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}&place={place}";
             this.WebView.Source = new UrlWebViewSource { Url = url };
-            WebView.Reload();
+            this.WebView.Reload();
         }
 
         public override object GetValue()
