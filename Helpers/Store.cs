@@ -132,5 +132,30 @@ namespace ExpressBase.Mobile.Helpers
                 Log.Write("Store.RemoveJSON::" + ex.Message);
             }
         }
+
+        public static void ResetSolution()
+        {
+            try
+            {
+                Store.Remove(AppConst.SID);
+                Store.Remove(AppConst.USERNAME);
+                Store.Remove(AppConst.PASSWORD);
+                Store.Remove(AppConst.BTOKEN);
+                Store.Remove(AppConst.RTOKEN);
+                Store.Remove(AppConst.USER_ID);
+                Store.RemoveJSON(AppConst.USER_OBJECT);
+                Store.RemoveJSON(AppConst.USER_LOCATIONS);
+                Store.Remove(AppConst.CURRENT_LOCATION);
+
+                Store.Remove(AppConst.APPID);
+                Store.Remove(AppConst.APPNAME);
+                Store.RemoveJSON(AppConst.OBJ_COLLECTION);
+                Store.RemoveJSON(AppConst.APP_COLLECTION);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Store.RemoveJSON::" + ex.Message);
+            }
+        }
     }
 }

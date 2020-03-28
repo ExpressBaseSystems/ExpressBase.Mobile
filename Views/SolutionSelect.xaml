@@ -19,23 +19,14 @@
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
+
+                <Image
+                    Source="connect.jpg"/>
+
                 <BoxView 
+                    Opacity=".9"
                     Grid.Row="0"
                     BackgroundColor="{StaticResource Blue-Dark}"></BoxView>
-                <Image
-                    Grid.Row="0"
-                    HorizontalOptions="StartAndExpand"
-                    Opacity="1"
-                    Source="HeaderTriangle.png"
-                    VerticalOptions="EndAndExpand"/>
-                <Image
-                    Grid.Row="0"
-                    Margin="0,0,0,-110"
-                    HorizontalOptions="EndAndExpand"
-                    Opacity="1"
-                    Source="InvertedTriangle.png"
-                    VerticalOptions="EndAndExpand"/>
-                
                 <StackLayout
                     VerticalOptions="CenterAndExpand"
                     Grid.Row="0">
@@ -73,7 +64,7 @@
                                 CornerRadius="0"
                                 HasShadow="false">
                                     <Frame.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemSelectedCommand, Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}" />
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.SolutionTapedCommand, Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}" />
                                     </Frame.GestureRecognizers>
                                     <Grid ColumnSpacing="20">
                                         <Grid.ColumnDefinitions>
@@ -84,21 +75,23 @@
 
                                         <AbsoluteLayout Grid.Column="0">
                                             <Frame 
-                                                HeightRequest="50"
+                                                HeightRequest="55"
                                                 VerticalOptions="Center"
-                                                WidthRequest="50"
+                                                WidthRequest="55"
                                                 Padding="0"
                                                 BackgroundColor="#dddee0"
                                                 BorderColor="#d4d5d8"
                                                 HasShadow="False"
-                                                CornerRadius="25">
-                                                <Image Source="{Binding Logo}" Aspect="AspectFill"/>
+                                                CornerRadius="30">
+                                                <Image Source="{Binding Logo}"/>
                                             </Frame>
-                                            <CheckBox
-                                                    AbsoluteLayout.LayoutFlags="PositionProportional"   
-                                                    AbsoluteLayout.LayoutBounds="1.5,1.2,AutoSize,AutoSize"
-                                                    Color="{StaticResource Blue-Dark}"
-                                                    IsChecked="{Binding IsCurrent}"/>
+                                            <BoxView
+                                                CornerRadius="8"
+                                                WidthRequest="15"
+                                                HeightRequest="15"
+                                                AbsoluteLayout.LayoutFlags="PositionProportional"   
+                                                AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
+                                                BackgroundColor="{Binding StatusColor}"/>
                                         </AbsoluteLayout>
 
                                         <Label 
@@ -108,6 +101,20 @@
                                             VerticalTextAlignment="Center"
                                             FontFamily="{StaticResource Roboto-Medium}"
                                             TextColor="{DynamicResource Gray-900}"/>
+
+                                        <Button
+                                            x:Name="DeleteSolution"
+                                            Grid.Column="2"
+                                            Padding="0"
+                                            FontSize="15"
+                                            Margin="0"
+                                            ClassId="{Binding SolutionName}"
+                                            Text="&#xf014;"
+                                            TextColor="Red"
+                                            BackgroundColor="Transparent"
+                                            WidthRequest="50"
+                                            FontFamily="{StaticResource FontAwesome}"
+                                            Clicked="DeleteSolution_Clicked"/> 
                                     </Grid>
                                 </Frame>
                             </DataTemplate>
@@ -264,25 +271,6 @@
                     </StackLayout>
                 </AbsoluteLayout>
             </ContentView>
-
-            <!--message box-->
-            <StackLayout 
-                    x:Name="MessageBox" 
-                    VerticalOptions="Start" 
-                    IsVisible="{Binding ShowMessage}">
-                <Frame 
-                    Padding="15" 
-                    CornerRadius="0" 
-                    x:Name="MessageBoxFrame" 
-                    BackgroundColor="{Binding MessageColor}">
-                    <Label 
-                        Text="{Binding Message}" 
-                        x:Name="MessageBoxLabel" 
-                        TextColor="White" 
-                        FontSize="15"/>
-                </Frame>
-            </StackLayout>
-
         </Grid>
     </ContentPage.Content>
 </ContentPage> 

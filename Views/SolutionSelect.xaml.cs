@@ -1,4 +1,6 @@
-﻿using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using System;
@@ -18,24 +20,6 @@ namespace ExpressBase.Mobile.Views
             InitializeComponent();
             ViewModel = new SolutionSelectViewModel();
             BindingContext = ViewModel;
-
-            if (!Settings.HasInternet)
-                ViewModel.ShowMessageBox("You are not connected to internet!", Color.FromHex("fd6b6b"));
-            else
-                ViewModel.HideMessageBox();
-
-            Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
-        }
-
-        private void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
-        {
-            if (ViewModel != null)
-            {
-                if (e.NetworkAccess == NetworkAccess.Internet)
-                    ViewModel.HideMessageBox();
-                else
-                    ViewModel.ShowMessageBox("You are not connected to internet!", Color.FromHex("fd6b6b"));
-            }
         }
 
         protected override bool OnBackButtonPressed()
@@ -61,7 +45,14 @@ namespace ExpressBase.Mobile.Views
             {
                 IToast toast = DependencyService.Get<IToast>();
                 if (!Settings.HasInternet)
+                {
                     toast.Show("Not connected to internet!");
+                    return;
+                }
+
+                var info = ViewModel.MySolutions.Find(item => item.SolutionName == SolutionName.Text.Trim().Split('.')[0]);
+                if (info != null)
+                    return;
 
                 PopupContainer.IsVisible = true;
                 ValidateSidResponse resp = await RestServices.ValidateSid(SolutionName.Text);
@@ -78,7 +69,7 @@ namespace ExpressBase.Mobile.Views
                     toast.Show("Invalid solution URL");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }
@@ -96,7 +87,36 @@ namespace ExpressBase.Mobile.Views
 
                 await Application.Current.MainPage.Navigation.PushAsync(new Login());
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        private void DeleteSolution_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                string sname = (sender as Button).ClassId;
+                SolutionInfo info = ViewModel.MySolutions.Find(item => item.SolutionName == sname);
+                if (info != null)
+                {
+                    ViewModel.MySolutions.Remove(info);
+                    Store.SetJSON(AppConst.MYSOLUTIONS, ViewModel.MySolutions);
+                }
+
+                string current = Store.GetValue(AppConst.SID);
+                if(sname== current)
+                {
+                    Store.ResetSolution();
+                    Application.Current.MainPage = new NavigationPage(new SolutionSelect())
+                    {
+                        BarBackgroundColor = Color.FromHex("0046bb"),
+                        BarTextColor = Color.White
+                    };
+                }
+            }
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }

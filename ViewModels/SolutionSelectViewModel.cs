@@ -37,8 +37,12 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 this.MySolutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
+                string current = Store.GetValue(AppConst.SID);
                 foreach (var info in this.MySolutions)
+                {
                     info.SetLogo();
+                    info.IsCurrent = info.SolutionName == current ? true : false;
+                }
             }
             catch (Exception ex)
             {
@@ -60,8 +64,7 @@ namespace ExpressBase.Mobile.ViewModels
                 SolutionInfo info = new SolutionInfo
                 {
                     SolutionName = _sid,
-                    RootUrl = this.SolutionUrl,
-                    IsCurrent = true,
+                    RootUrl = this.SolutionUrl
                 };
 
                 this.MySolutions.Add(info);

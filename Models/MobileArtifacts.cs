@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Xamarin.Essentials;
@@ -278,9 +279,31 @@ namespace ExpressBase.Mobile.Models
 
         public bool IsCurrent { set; get; }
 
+        public Color StatusColor
+        {
+            get
+            {
+                if (IsCurrent)
+                    return Color.FromHex("26bd26");
+                else
+                    return Color.Transparent;
+            }
+        }
+
         public void SetLogo()
         {
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+            try
+            {
+                var bytes = helper.GetPhoto($"ExpressBase/{this.SolutionName}/logo.png");
 
+                if (bytes != null)
+                    this.Logo = ImageSource.FromStream(() => new MemoryStream(bytes));
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Login_SetLogo" + ex.Message);
+            }
         }
     }
 }
