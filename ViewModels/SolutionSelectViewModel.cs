@@ -67,8 +67,10 @@ namespace ExpressBase.Mobile.ViewModels
                     RootUrl = this.SolutionUrl
                 };
 
-                this.MySolutions.Add(info);
-                Store.SetJSON(AppConst.MYSOLUTIONS, this.MySolutions);
+                List<SolutionInfo> sol = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
+                sol.Add(info);
+                Store.SetJSON(AppConst.MYSOLUTIONS, sol);
+
                 await Store.SetValueAsync(AppConst.SID, _sid);
                 await Store.SetValueAsync(AppConst.ROOT_URL, this.SolutionUrl);
 

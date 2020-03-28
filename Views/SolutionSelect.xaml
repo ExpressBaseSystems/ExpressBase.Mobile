@@ -6,127 +6,120 @@
              mc:Ignorable="d"
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.SolutionSelect"
-             Title="Solution URL"
              NavigationPage.HasNavigationBar="False"
              NavigationPage.HasBackButton="False"
              Style="{StaticResource ContentPageStyle}">
-
     <ContentPage.Content>
         <Grid BackgroundColor="White">
             <Grid RowSpacing="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-
-                <Image
-                    Source="connect.jpg"/>
-
-                <BoxView 
-                    Opacity=".9"
-                    Grid.Row="0"
-                    BackgroundColor="{StaticResource Blue-Dark}"></BoxView>
-                <StackLayout
-                    VerticalOptions="CenterAndExpand"
-                    Grid.Row="0">
-                    <Label
-                        x:Name="BrandName"
-                        Margin="20,20,0,10"
-                        FontFamily="{StaticResource Roboto-Regular}"
-                        HorizontalOptions="StartAndExpand"
-                        FontSize="32"
-                        Text="Configure"
-                        TextColor="White" />
-                    <Label
-                        x:Name="HeaderText"
-                        Margin="20,0,0,0"
-                        FontFamily="{StaticResource Roboto-Regular}"
-                        FontSize="22"
-                        HorizontalOptions="StartAndExpand"
-                        Text="Solution URL"
-                        TextColor="White" />
-                </StackLayout>
-
                 <ScrollView 
-                    Grid.Row="1"
+                    Grid.Row="0"
                     x:Name="scrollView">
-                    <StackLayout
-                    x:Name="SolutionsList"
-                    BindableLayout.ItemsSource="{Binding MySolutions}"
-                    Spacing="0">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Frame
-                                Margin="0"
-                                Padding="10"
-                                BorderColor="{DynamicResource Gray-White}"
-                                CornerRadius="0"
-                                HasShadow="false">
-                                    <Frame.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.SolutionTapedCommand, Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}" />
-                                    </Frame.GestureRecognizers>
-                                    <Grid ColumnSpacing="20">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                            <ColumnDefinition Width="*"></ColumnDefinition>
-                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-
-                                        <AbsoluteLayout Grid.Column="0">
-                                            <Frame 
-                                                HeightRequest="55"
-                                                VerticalOptions="Center"
-                                                WidthRequest="55"
+                    <StackLayout>
+                        <Grid>
+                            <Image Source="connect.jpg"/>
+                            <BoxView 
+                                Opacity=".9"
+                                Grid.Row="0"
+                                BackgroundColor="{StaticResource Blue-Dark}"/>
+                            <StackLayout
+                                VerticalOptions="CenterAndExpand"
+                                Grid.Row="0">
+                                <Label
+                                    x:Name="BrandName"
+                                    Margin="20,20,0,10"
+                                    FontFamily="{StaticResource Roboto-Regular}"
+                                    HorizontalOptions="StartAndExpand"
+                                    FontSize="32"
+                                    Text="Configure"
+                                    TextColor="White" />
+                                <Label
+                                    x:Name="HeaderText"
+                                    Margin="20,0,0,0"
+                                    FontFamily="{StaticResource Roboto-Regular}"
+                                    FontSize="22"
+                                    HorizontalOptions="StartAndExpand"
+                                    Text="Solution URL"
+                                    TextColor="White" />
+                            </StackLayout>
+                        </Grid>
+                        <StackLayout
+                            x:Name="SolutionsList"
+                            BindableLayout.ItemsSource="{Binding MySolutions}"
+                            Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame
+                                        Margin="0"
+                                        Padding="10"
+                                        BorderColor="{DynamicResource Gray-White}"
+                                        CornerRadius="0"
+                                        HasShadow="false">
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.SolutionTapedCommand, Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}" />
+                                        </Frame.GestureRecognizers>
+                                        <Grid ColumnSpacing="20">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <AbsoluteLayout Grid.Column="0">
+                                                <Frame 
+                                                    HeightRequest="55"
+                                                    VerticalOptions="Center"
+                                                    WidthRequest="55"
+                                                    Padding="0"
+                                                    BackgroundColor="#dddee0"
+                                                    BorderColor="#d4d5d8"
+                                                    HasShadow="False"
+                                                    CornerRadius="30">
+                                                    <Image Source="{Binding Logo}"/>
+                                                </Frame>
+                                                <BoxView
+                                                    CornerRadius="8"
+                                                    WidthRequest="15"
+                                                    HeightRequest="15"
+                                                    AbsoluteLayout.LayoutFlags="PositionProportional"   
+                                                    AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
+                                                    BackgroundColor="{Binding StatusColor}"/>
+                                            </AbsoluteLayout>
+                                            <Label 
+                                                Text="{Binding SolutionName}"
+                                                Grid.Column="1"
+                                                FontSize="18"
+                                                VerticalTextAlignment="Center"
+                                                FontFamily="{StaticResource Roboto-Medium}"
+                                                TextColor="{DynamicResource Gray-900}"/>
+                                            <Button
+                                                x:Name="DeleteSolution"
+                                                Grid.Column="2"
                                                 Padding="0"
-                                                BackgroundColor="#dddee0"
-                                                BorderColor="#d4d5d8"
-                                                HasShadow="False"
-                                                CornerRadius="30">
-                                                <Image Source="{Binding Logo}"/>
-                                            </Frame>
-                                            <BoxView
-                                                CornerRadius="8"
-                                                WidthRequest="15"
-                                                HeightRequest="15"
-                                                AbsoluteLayout.LayoutFlags="PositionProportional"   
-                                                AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
-                                                BackgroundColor="{Binding StatusColor}"/>
-                                        </AbsoluteLayout>
-
-                                        <Label 
-                                            Text="{Binding SolutionName}"
-                                            Grid.Column="1"
-                                            FontSize="18"
-                                            VerticalTextAlignment="Center"
-                                            FontFamily="{StaticResource Roboto-Medium}"
-                                            TextColor="{DynamicResource Gray-900}"/>
-
-                                        <Button
-                                            x:Name="DeleteSolution"
-                                            Grid.Column="2"
-                                            Padding="0"
-                                            FontSize="15"
-                                            Margin="0"
-                                            ClassId="{Binding SolutionName}"
-                                            Text="&#xf014;"
-                                            TextColor="Red"
-                                            BackgroundColor="Transparent"
-                                            WidthRequest="50"
-                                            FontFamily="{StaticResource FontAwesome}"
-                                            Clicked="DeleteSolution_Clicked"/> 
-                                    </Grid>
-                                </Frame>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
+                                                FontSize="15"
+                                                Margin="0"
+                                                ClassId="{Binding SolutionName}"
+                                                Text="&#xf014;"
+                                                TextColor="Red"
+                                                BackgroundColor="Transparent"
+                                                WidthRequest="50"
+                                                FontFamily="{StaticResource FontAwesome}"
+                                                Clicked="DeleteSolution_Clicked"/>
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
                     </StackLayout>
                 </ScrollView>
-
                 <Frame 
                     HasShadow="False"
                     BackgroundColor="#dddddd"
                     Margin="10"
-                    Grid.Row="2"
+                    Grid.Row="1"
                     CornerRadius="30"
                     Padding="15,10,10,10">
                     <Grid>
@@ -157,11 +150,9 @@
                             WidthRequest="50"
                             FontFamily="{StaticResource FontAwesome}"
                             Clicked="AddSolution_Clicked"/>
-
                     </Grid>
                 </Frame>
             </Grid>
-            
             <!--loader-->
             <ContentView 
                 x:Name="PopupContainer"
@@ -174,16 +165,15 @@
                         AbsoluteLayout.LayoutFlags="All"
                         BackgroundColor="#333333"
                         Opacity=".5"/>
-
                     <StackLayout 
-                        Padding="20"
+                        Padding="10"
                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                         AbsoluteLayout.LayoutFlags="All">
                         <Frame 
                             HasShadow="False"
                             BackgroundColor="White"
                             CornerRadius="6"
-                            VerticalOptions="CenterAndExpand">
+                            VerticalOptions="EndAndExpand">
                             <Frame.Content>
                                 <StackLayout Orientation="Vertical" Padding="0,0,0,0">
                                     <Grid x:Name="Loader" Margin="0,10,0,10">
@@ -191,23 +181,20 @@
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-
                                         <Label
-                                        Grid.Row="0"
-                                        TextColor="Black" 
-                                        VerticalOptions="Center" 
-                                        Text="Validating solution..."
-                                        FontSize="16"/>
-
+                                            Grid.Row="0"
+                                            TextColor="Black" 
+                                            VerticalOptions="Center" 
+                                            Text="Validating solution..."
+                                            FontSize="16"/>
                                         <ActivityIndicator
-                                        HorizontalOptions="End"
-                                        IsRunning="true" 
-                                        Color="{StaticResource Blue-Dark}"
-                                        Grid.Column="0"
-                                        WidthRequest="30"
-                                        HeightRequest="30"/>
+                                            HorizontalOptions="End"
+                                            IsRunning="true" 
+                                            Color="{StaticResource Blue-Dark}"
+                                            Grid.Column="0"
+                                            WidthRequest="30"
+                                            HeightRequest="30"/>
                                     </Grid>
-
                                     <Grid x:Name="SolutionMetaGrid" IsVisible="False">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"></RowDefinition>
@@ -219,19 +206,16 @@
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-
                                         <Label 
                                             x:Name="SolutionLabel"
                                             Grid.Row="0" 
                                             Grid.Column="0" 
                                             FontSize="16"
                                             FontAttributes="Bold"/>
-
                                         <Image 
                                             x:Name="SolutionLogoPrompt"
                                             Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="80" 
                                             HorizontalOptions="Start"/>
-
                                         <Button 
                                             x:Name="PopupCancel"
                                             Text="Cancel"
@@ -248,7 +232,6 @@
                                             FontSize="12" 
                                             CornerRadius="4" 
                                             Clicked="PopupCancel_Clicked"/>
-
                                         <Button 
                                             Text="Confirm" 
                                             BackgroundColor="{StaticResource Blue-Dark}"
@@ -263,7 +246,6 @@
                                             FontSize="12" 
                                             CornerRadius="4"
                                             Clicked="ConfirmButton_Clicked"/>
-
                                     </Grid>
                                 </StackLayout>
                             </Frame.Content>
