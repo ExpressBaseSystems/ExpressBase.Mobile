@@ -22,8 +22,6 @@ namespace ExpressBase.Mobile.Models
 
     public class ColorSet
     {
-        private static Random _random;
-
         public static IList<CustomColor> Colors
         {
             get
@@ -37,15 +35,6 @@ namespace ExpressBase.Mobile.Models
                     new CustomColor{ BackGround = "fdf0fb", TextColor = "e364d0" },
                     new CustomColor{ BackGround = "f2f4f6", TextColor = "8da2b2" }
                 };
-            }
-        }
-
-        public static CustomColor RandomColor
-        {
-            get
-            {
-                if (_random == null) _random = new Random();
-                return Colors[_random.Next(6)];
             }
         }
     }
@@ -74,13 +63,6 @@ namespace ExpressBase.Mobile.Models
         public Color BackgroundColor { set; get; }
 
         public Color TextColor { set; get; }
-
-        public AppData()
-        {
-            var randomColor = ColorSet.RandomColor;
-            BackgroundColor = Color.FromHex(randomColor.BackGround);
-            TextColor = Color.FromHex(randomColor.TextColor);
-        }
     }
 
     public class EbStageInfo
@@ -200,7 +182,7 @@ namespace ExpressBase.Mobile.Models
                     if (_page.Container is EbMobileForm)
                         icon = "f298";
                     else if (_page.Container is EbMobileVisualization)
-                        icon = "f022";
+                        icon = "f03a";//"f022";
                     else if (_page.Container is EbMobileDashBoard)
                         icon = "f0e4";
                     else if (_page.Container is EbMobilePdf)
@@ -270,7 +252,7 @@ namespace ExpressBase.Mobile.Models
             {
                 if (string.IsNullOrEmpty(_page.IconColor))
                     return Color.FromHex("333333");
-                else 
+                else
                     return Color.FromHex(_page.IconColor);
             }
         }

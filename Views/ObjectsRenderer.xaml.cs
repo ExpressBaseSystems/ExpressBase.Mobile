@@ -101,6 +101,11 @@ namespace ExpressBase.Mobile.Views
         {
             try
             {
+                if (!Settings.HasInternet)
+                {
+                    DependencyService.Get<IToast>().Show("You are not connected to internet.");
+                    return;
+                }
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     LoaderMessage.Text = "Loading...";

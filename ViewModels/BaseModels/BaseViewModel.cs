@@ -74,14 +74,15 @@ namespace ExpressBase.Mobile.ViewModels
         public void ResetClicked()
         {
             Store.Remove(AppConst.SID);
+            Store.RemoveJSON(AppConst.MYSOLUTIONS);
             Store.Remove(AppConst.ROOT_URL);
             Store.Remove(AppConst.APPID);
             Store.Remove(AppConst.USERNAME);
             Store.Remove(AppConst.PASSWORD);
             Store.Remove(AppConst.BTOKEN);
             Store.Remove(AppConst.RTOKEN);
-            Store.Remove(AppConst.OBJ_COLLECTION);
-            Store.Remove(AppConst.APP_COLLECTION);
+            Store.RemoveJSON(AppConst.OBJ_COLLECTION);
+            Store.RemoveJSON(AppConst.APP_COLLECTION);
             Application.Current.MainPage = new NavigationPage(new SolutionSelect())
             {
                 BarBackgroundColor = Color.FromHex("0046bb"),

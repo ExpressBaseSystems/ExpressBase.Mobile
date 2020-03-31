@@ -172,10 +172,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         void ListItem_Clicked(object Frame, EventArgs args)
         {
             var customFrame = Frame as CustomFrame;
-
-            if (!string.IsNullOrEmpty(this.Visualization.LinkRefId))
+            try
             {
+                if (string.IsNullOrEmpty(this.Visualization.LinkRefId)) return;
+
                 EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
+
+                if (this.NetworkType != _page.NetworkMode)
+                {
+                    DependencyService.Get<IToast>().Show("Link page Mode is different.");
+                    return;
+                }
 
                 if (_page.Container is EbMobileForm)
                 {
@@ -204,6 +211,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     DashBoardRender Renderer = new DashBoardRender(_page, customFrame.DataRow);
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
             }
         }
 

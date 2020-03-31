@@ -34,8 +34,6 @@ namespace ExpressBase.Mobile.Constants
 
         public const string ROOT_URL = "root_url";
 
-        public const string APP_PULL_TABLE = "{0}_pull_tablename";
-
         public const string USER_OBJECT = "eb_userobject";
 
         public const string USER_LOCATIONS = "eb_userlocations";

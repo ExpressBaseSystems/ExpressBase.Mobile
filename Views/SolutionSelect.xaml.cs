@@ -4,8 +4,9 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using Xamarin.Essentials;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
@@ -15,11 +16,19 @@ namespace ExpressBase.Mobile.Views
     {
         public SolutionSelectViewModel ViewModel { set; get; }
 
+        public ValidateSidResponse Response { set; get; }
+
         public SolutionSelect()
         {
             InitializeComponent();
-            ViewModel = new SolutionSelectViewModel();
-            BindingContext = ViewModel;
+            BindingContext = ViewModel = new SolutionSelectViewModel();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if (ViewModel != null && ViewModel.MySolutions.Count <= 0)
+                SolutionName.Focus();
         }
 
         protected override bool OnBackButtonPressed()
@@ -49,17 +58,15 @@ namespace ExpressBase.Mobile.Views
                     toast.Show("Not connected to internet!");
                     return;
                 }
-
-                var info = ViewModel.MySolutions.Find(item => item.SolutionName == SolutionName.Text.Trim().Split('.')[0]);
-                if (info != null)
-                    return;
+                if (string.IsNullOrEmpty(SolutionName.Text)) return;
+                if (ViewModel.MySolutions.Any(item => item.SolutionName == SolutionName.Text.Trim().Split('.')[0])) return;
 
                 PopupContainer.IsVisible = true;
-                ValidateSidResponse resp = await RestServices.ValidateSid(SolutionName.Text);
-                if (resp.IsValid)
+                Response = await RestServices.ValidateSid(SolutionName.Text);
+                if (Response.IsValid)
                 {
                     Loader.IsVisible = false;
-                    SolutionLogoPrompt.Source = ImageSource.FromStream(() => new MemoryStream(resp.Logo));
+                    SolutionLogoPrompt.Source = ImageSource.FromStream(() => new MemoryStream(Response.Logo));
                     SolutionLabel.Text = SolutionName.Text;
                     SolutionMetaGrid.IsVisible = true;
                 }
@@ -79,7 +86,7 @@ namespace ExpressBase.Mobile.Views
         {
             try
             {
-                await ViewModel.AddSolution();
+                await ViewModel.AddSolution(SolutionName.Text, Response);
 
                 Loader.IsVisible = true;
                 SolutionMetaGrid.IsVisible = false;
@@ -98,15 +105,14 @@ namespace ExpressBase.Mobile.Views
             try
             {
                 string sname = (sender as Button).ClassId;
-                SolutionInfo info = ViewModel.MySolutions.Find(item => item.SolutionName == sname);
+                SolutionInfo info = ViewModel.MySolutions.Single(item => item.SolutionName == sname);
                 if (info != null)
                 {
                     ViewModel.MySolutions.Remove(info);
-                    Store.SetJSON(AppConst.MYSOLUTIONS, ViewModel.MySolutions);
+                    Store.SetJSON(AppConst.MYSOLUTIONS, new List<SolutionInfo>(ViewModel.MySolutions));
                 }
 
-                string current = Store.GetValue(AppConst.SID);
-                if(sname== current)
+                if (sname == ViewModel.CurrentSolution)
                 {
                     Store.ResetSolution();
                     Application.Current.MainPage = new NavigationPage(new SolutionSelect())

@@ -42,6 +42,15 @@ namespace ExpressBase.Mobile.ViewModels
             }
             else
                 this.Applications = _apps;
+
+            //fill by randdom colors
+            Random random = new Random();
+            foreach (AppData appdata in this.Applications)
+            {
+                var randomColor = ColorSet.Colors[random.Next(6)];
+                appdata.BackgroundColor = Color.FromHex(randomColor.BackGround);
+                appdata.TextColor = Color.FromHex(randomColor.TextColor);
+            }
         }
 
         private async Task ItemSelected(object selected)

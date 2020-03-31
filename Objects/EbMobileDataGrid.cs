@@ -348,14 +348,32 @@ namespace ExpressBase.Mobile
                 EbDataTable dt = null;
                 if (this.NetworkType == NetworkMode.Online)
                 {
+                    if (string.IsNullOrEmpty(this.DataSourceRefId))
+                        return;
                     VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, 0, 0);
                     if (data.Data != null && data.Data.Tables.Count >= 2)
                         dt = data.Data.Tables[1];
                 }
+                else if (this.NetworkType == NetworkMode.Offline)
+                {
+                    if (string.IsNullOrEmpty(this.OfflineQuery.Code)) 
+                        return;
+                    dt = App.DataDB.DoQuery(HelperFunctions.B64ToString(this.OfflineQuery.Code));
+                }
                 else
                 {
-                    string query = HelperFunctions.B64ToString(this.OfflineQuery.Code);
-                    dt = App.DataDB.DoQuery(query);
+                    if (Settings.HasInternet && !string.IsNullOrEmpty(this.DataSourceRefId))
+                    {
+                        VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, 0, 0);
+                        if (data.Data != null && data.Data.Tables.Count >= 2)
+                            dt = data.Data.Tables[1];
+                    }
+                    else if (!string.IsNullOrEmpty(this.OfflineQuery.Code))
+                    {
+                        dt = App.DataDB.DoQuery(HelperFunctions.B64ToString(this.OfflineQuery.Code));
+                    }
+                    else
+                        return;
                 }
 
                 if (dt != null)

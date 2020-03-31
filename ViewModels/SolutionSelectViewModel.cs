@@ -6,6 +6,7 @@ using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -14,34 +15,24 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class SolutionSelectViewModel : StaticBaseViewModel
     {
-        private string solutionurtl;
+        public string CurrentSolution { set; get; }
 
-        public string SolutionUrl
-        {
-            get { return this.solutionurtl; }
-            set
-            {
-                this.solutionurtl = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        public List<SolutionInfo> MySolutions { set; get; }
+        public ObservableCollection<SolutionInfo> MySolutions { set; get; }
 
         public Command SolutionTapedCommand => new Command(SolutionTapedEvent);
-
-        private ValidateSidResponse ValidateSIDResponse { set; get; }
 
         public SolutionSelectViewModel()
         {
             try
             {
-                this.MySolutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
-                string current = Store.GetValue(AppConst.SID);
+                List<SolutionInfo> solutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
+                this.MySolutions = new ObservableCollection<SolutionInfo>(solutions);
+
+                CurrentSolution = Store.GetValue(AppConst.SID);
                 foreach (var info in this.MySolutions)
                 {
                     info.SetLogo();
-                    info.IsCurrent = info.SolutionName == current ? true : false;
+                    info.IsCurrent = info.SolutionName == CurrentSolution ? true : false;
                 }
             }
             catch (Exception ex)
@@ -52,35 +43,55 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void SolutionTapedEvent(object obj)
         {
+            try
+            {
+                SolutionInfo tapedInfo = obj as SolutionInfo;
+                if (tapedInfo.SolutionName == CurrentSolution) return;
 
+                Store.SetValue(AppConst.SID, tapedInfo.SolutionName);
+                Store.SetValue(AppConst.ROOT_URL, tapedInfo.RootUrl);
+
+                this.ClearCached();
+                App.DataDB.CreateDB(tapedInfo.SolutionName);
+                HelperFunctions.CreatePlatFormDir();
+
+                Application.Current.MainPage.Navigation.PushAsync(new Login());
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
-        public async Task AddSolution()
+        public async Task AddSolution(string solutionUrl, ValidateSidResponse response)
         {
             try
             {
-                string _sid = this.SolutionUrl.Split('.')[0];
+                string _sid = solutionUrl.Trim().Split('.')[0];
+                CurrentSolution = _sid;
 
                 SolutionInfo info = new SolutionInfo
                 {
                     SolutionName = _sid,
-                    RootUrl = this.SolutionUrl
+                    RootUrl = solutionUrl
                 };
 
                 List<SolutionInfo> sol = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
                 sol.Add(info);
                 Store.SetJSON(AppConst.MYSOLUTIONS, sol);
-
                 await Store.SetValueAsync(AppConst.SID, _sid);
-                await Store.SetValueAsync(AppConst.ROOT_URL, this.SolutionUrl);
+                await Store.SetValueAsync(AppConst.ROOT_URL, solutionUrl);
+
+                //update page with newly added solution
+                info.IsCurrent = true;
+                this.MySolutions.Add(info);
 
                 this.ClearCached();
-
                 App.DataDB.CreateDB(_sid);
                 HelperFunctions.CreatePlatFormDir();
 
-                if (ValidateSIDResponse.Logo != null)
-                    this.SaveLogo(ValidateSIDResponse.Logo);
+                if (response.Logo != null)
+                    this.SaveLogo(response.Logo);
             }
             catch (Exception ex)
             {
@@ -91,11 +102,10 @@ namespace ExpressBase.Mobile.ViewModels
         void SaveLogo(byte[] imageByte)
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
-            string sid = Settings.SolutionId;
             try
             {
-                if (!helper.DirectoryOrFileExist($"ExpressBase/{sid}/logo.png", SysContentType.File))
-                    File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{sid}/logo.png", imageByte);
+                if (!helper.DirectoryOrFileExist($"ExpressBase/{CurrentSolution}/logo.png", SysContentType.File))
+                    File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{CurrentSolution}/logo.png", imageByte);
             }
             catch (Exception ex)
             {
@@ -107,8 +117,12 @@ namespace ExpressBase.Mobile.ViewModels
         {
             Store.RemoveJSON(AppConst.OBJ_COLLECTION);//remove obj collection
             Store.RemoveJSON(AppConst.APP_COLLECTION);
+            Store.RemoveJSON(AppConst.USER_LOCATIONS);
+            Store.RemoveJSON(AppConst.USER_OBJECT);
             Store.Remove(AppConst.APPID);
             Store.Remove(AppConst.USERNAME);
+            Store.Remove(AppConst.BTOKEN);
+            Store.Remove(AppConst.RTOKEN);
         }
     }
 }

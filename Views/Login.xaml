@@ -6,7 +6,6 @@
              mc:Ignorable="d"
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Login"
-             BackgroundImageSource="doodlebg.png"
              Style="{StaticResource ContentPageStyle}">
 
     <NavigationPage.TitleView>

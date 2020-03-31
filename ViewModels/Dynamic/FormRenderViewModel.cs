@@ -147,25 +147,34 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public async Task OnSaveClicked()
         {
-            await Task.Run(() =>
+            IToast toast = DependencyService.Get<IToast>();
+
+            if (Form.Validate())
             {
-                this.Form.NetworkType = this.NetworkType;
-                FormSaveResponse saveResponse;
-
-                Device.BeginInvokeOnMainThread(() => IsBusy = true);
-
-                if (this.Mode == FormMode.REF)
-                    saveResponse = this.Form.SaveFormWParent(this.RowId, ParentForm.TableName);
-                else
-                    saveResponse = this.Form.SaveForm(this.RowId);
-
-                Device.BeginInvokeOnMainThread(() =>
+                await Task.Run(() =>
                 {
-                    IsBusy = false;
-                    DependencyService.Get<IToast>().Show(saveResponse.Message);
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                    this.Form.NetworkType = this.NetworkType;
+                    FormSaveResponse saveResponse;
+
+                    Device.BeginInvokeOnMainThread(() => IsBusy = true);
+
+                    if (this.Mode == FormMode.REF)
+                        saveResponse = this.Form.SaveFormWParent(this.RowId, ParentForm.TableName);
+                    else
+                        saveResponse = this.Form.SaveForm(this.RowId);
+
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        IsBusy = false;
+                        toast.Show(saveResponse.Message);
+                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                    });
                 });
-            });
+            }
+            else
+            {
+                toast.Show("Some fields are required");
+            }
         }
 
         public void FillControls(EbDataRow row)

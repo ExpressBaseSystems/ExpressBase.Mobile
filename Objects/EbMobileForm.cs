@@ -368,5 +368,22 @@ namespace ExpressBase.Mobile
                 Log.Write(ex.Message);
             }
         }
+
+        public bool Validate()
+        {
+            try
+            {
+                foreach (EbMobileControl ctrl in this.ControlDictionary.Values)
+                {
+                    if (ctrl.Required && ctrl.GetValue() == null)
+                        return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return true;
+        }
     }
 }

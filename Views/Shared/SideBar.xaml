@@ -77,14 +77,15 @@
                             </Frame>
 
                             <Label
+                                x:Name="UserName"
                                 TextColor="#333"
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 FontFamily="{StaticResource Roboto-Medium}"
-                                FontSize="16"
-                                Text="{Binding UserName}"/>
+                                FontSize="16"/>
 
                             <Label
+                                x:Name="Email"
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 FontFamily="{StaticResource Roboto-Regular}"
@@ -96,9 +97,7 @@
                     <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="0" Spacing="0">
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer 
-                                    Command="{Binding Path=BindingContext.ChangeSidCommand,Source={x:Reference SideBarLayout}}" 
-                                    CommandParameter="{Binding .}"/>
+                                <TapGestureRecognizer Tapped="ChangeSolution_Tapped"/>
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
@@ -113,9 +112,7 @@
                         </Frame>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer 
-                                    Command="{Binding Path=BindingContext.SwitchAppCommand,Source={x:Reference SideBarLayout}}"
-                                    CommandParameter="{Binding .}"/>
+                                <TapGestureRecognizer Tapped="ChangeApplication_Tapped"/>
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
@@ -130,9 +127,7 @@
                         </Frame>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer 
-                                    Command="{Binding Path=BindingContext.SwitchLocations,Source={x:Reference SideBarLayout}}"
-                                    CommandParameter="{Binding .}"/>
+                                <TapGestureRecognizer Tapped="ChangeLocation_Tapped"/>
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
@@ -164,9 +159,7 @@
                         </Frame>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer 
-                                    Command="{Binding Path=BindingContext.LogOutCommand,Source={x:Reference SideBarLayout}}"
-                                    CommandParameter="{Binding .}"/>
+                                <TapGestureRecognizer Tapped="Logout_Tapped"/>
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>

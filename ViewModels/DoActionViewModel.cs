@@ -14,6 +14,7 @@ namespace ExpressBase.Mobile.ViewModels
     class DoActionViewModel : StaticBaseViewModel
     {
         private EbStageActions _status;
+
         public EbStageActions Status
         {
             get { return this._status; }
@@ -25,6 +26,7 @@ namespace ExpressBase.Mobile.ViewModels
         }
 
         private string _comments;
+
         public string Comments
         {
             get { return this._comments; }
@@ -41,6 +43,7 @@ namespace ExpressBase.Mobile.ViewModels
         public List<EbStageActions> StageActions { set; get; }
 
         public Command SubmitCommand { set; get; }
+
         public DoActionViewModel(EbMyAction myAction)
         {
             PageTitle = myAction.Description;

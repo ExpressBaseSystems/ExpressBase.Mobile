@@ -13,6 +13,7 @@ namespace ExpressBase.Mobile.ViewModels
     {
 
         private string email;
+
         public string Email
         {
             get { return this.email; }
@@ -24,6 +25,7 @@ namespace ExpressBase.Mobile.ViewModels
         }
 
         private string password;
+
         public string PassWord
         {
             get { return this.password; }
@@ -35,6 +37,7 @@ namespace ExpressBase.Mobile.ViewModels
         }
 
         private ImageSource logourl;
+
         public ImageSource LogoUrl
         {
             get { return logourl; }
@@ -51,7 +54,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             this.Email = Settings.UserName; // fill email on redirect
             this.LoginCommand = new Command(async () => await LoginAction());
-            SetLogo();
+            this.SetLogo();
         }
 
         private async Task LoginAction()
@@ -66,6 +69,7 @@ namespace ExpressBase.Mobile.ViewModels
 
             string _username = this.Email.Trim();
             string _password = this.PassWord.Trim();
+
             if (CanLogin())
             {
                 IsBusy = true;
@@ -100,10 +104,7 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
-
-                if (bytes == null)
-                    LogoUrl = ImageSource.FromFile("logo.png");
-                else
+                if (bytes != null)
                     LogoUrl = ImageSource.FromStream(() => new MemoryStream(bytes));
             }
             catch (Exception ex)

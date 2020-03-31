@@ -4,21 +4,22 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels.Shared"
              x:Class="ExpressBase.Mobile.Views.Shared.LocationsView"
-             Style="{StaticResource ContentPageStyle}"
-             Title="{Binding PageTitle}">
-
-    <!--  Binding context for page  -->
-    <ContentPage.BindingContext>
-        <viewModel:LocationsViewModel />
-    </ContentPage.BindingContext>
-
+             Style="{StaticResource ContentPageStyle}">
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Text="Locations" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+        </Grid>
+    </NavigationPage.TitleView>
     <ContentPage.Content>
         <ListView 
                 ItemsSource="{Binding Locations}"
                 HasUnevenRows="true"
-                SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+                ItemTapped="ListView_ItemTapped">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -33,10 +34,11 @@
                             </Grid.ColumnDefinitions>
 
                             <CheckBox 
+                                IsEnabled="False"
                                 Grid.RowSpan="2" 
                                 IsChecked="{Binding Selected}"
                                 Margin="0,0,10,0"
-                                Color="#315eff"/>
+                                Color="{StaticResource Blue-Dark}"/>
 
                             <Label 
                                 Grid.Row="0" 
