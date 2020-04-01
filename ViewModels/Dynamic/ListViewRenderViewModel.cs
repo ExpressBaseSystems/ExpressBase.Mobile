@@ -4,7 +4,6 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
@@ -29,29 +28,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public ListViewRenderViewModel(EbMobilePage page) : base(page)
         {
             this.Visualization = this.Page.Container as EbMobileVisualization;
-            this.SetData();//get query result
+            this.SetData();
             this.CreateView();
             if (!this.Visualization.Filters.IsNullOrEmpty())
-                CreateFilter();
+                this.CreateFilter();
         }
 
         public void SetData(int offset = 0)
         {
             try
             {
-                EbDataSet ds = null;
-                if (this.NetworkType == NetworkMode.Online)
-                    ds = GetDataFromLive(offset);
-                else if (this.NetworkType == NetworkMode.Offline)
-                    ds = GetDataFromLocal(offset);
-                else
-                {
-                    if (Settings.HasInternet)
-                        ds = GetDataFromLive(offset);
-                    else
-                        ds = GetDataFromLocal(offset);
-                }
-
+                EbDataSet ds = this.Visualization.GetData(this.Page.NetworkMode, offset);
                 if (ds != null && ds.Tables.HasIndex(2))
                 {
                     DataTable = ds.Tables[1];
@@ -62,49 +49,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write("List_SetData---" + ex.Message);
+                Log.Write(ex.Message);
             }
-        }
-
-        private EbDataSet GetDataFromLive(int offset)
-        {
-            EbDataSet ds = null;
-            try
-            {
-                Auth.AuthIfTokenExpired();
-                VisualizationLiveData vd = RestServices.Instance.PullReaderData(Visualization.DataSourceRefId, null, this.Visualization.PageLength, offset);
-                ds = vd.Data;
-            }
-            catch (Exception ex)
-            {
-                Log.Write("ListViewRenderViewModel.GetDataFromLive---" + ex.Message);
-            }
-            return ds;
-        }
-
-        private EbDataSet GetDataFromLocal(int offset)
-        {
-            EbDataSet ds = null;
-            try
-            {
-                var sqlParams = HelperFunctions.GetSqlParams(this.Visualization.GetQuery);
-
-                if (sqlParams.Count > 0)
-                {
-                    List<DbParameter> dbParams = new List<DbParameter>();
-                    foreach (string s in sqlParams)
-                        dbParams.Add(new DbParameter { ParameterName = s });
-
-                    ds = this.Visualization.GetLocalData(dbParams, offset);
-                }
-                else
-                    ds = this.Visualization.GetLocalData(offset);
-            }
-            catch (Exception ex)
-            {
-                Log.Write("ListViewRenderViewModel.GetDataFromLocal---" + ex.Message);
-            }
-            return ds;
         }
 
         public void CreateView()
@@ -158,9 +104,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             if (col.Type == EbDbTypes.String)
                 return new TextBox();
             else if (col.Type == EbDbTypes.Int16 || col.Type == EbDbTypes.Int32)
-                return new TextBox() { Keyboard = Keyboard.Numeric };
+                return new NumericTextBox() { Keyboard = Keyboard.Numeric };
             else if (col.Type == EbDbTypes.Decimal || col.Type == EbDbTypes.Double)
-                return new TextBox() { Keyboard = Keyboard.Numeric };
+                return new NumericTextBox() { Keyboard = Keyboard.Numeric };
             else if (col.Type == EbDbTypes.Date || col.Type == EbDbTypes.DateTime)
                 return new CustomDatePicker();
             else if (col.Type == EbDbTypes.Boolean)
@@ -222,7 +168,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (parameters != null)
             {
-                var ds = this.Visualization.GetLocalData(parameters);
+                var ds = this.Visualization.GetData(this.Page.NetworkMode, 0, parameters);
+                DataTable = ds.Tables[1];
+            }
+            else
+            {
+                var ds = this.Visualization.GetData(this.Page.NetworkMode, 0);
                 DataTable = ds.Tables[1];
             }
             this.CreateView();

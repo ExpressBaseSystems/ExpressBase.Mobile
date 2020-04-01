@@ -25,9 +25,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             try
             {
-                Renderer = new ListViewRenderViewModel(Page);
-                BindingContext = Renderer;
-
+                BindingContext = Renderer = new ListViewRenderViewModel(Page);
                 if (Renderer.DataTable.Rows.Any())
                 {
                     listContainer.Content = Renderer.XView;
@@ -101,14 +99,27 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private object GetControlValue(View ctrl)
         {
+            object value = null;
+
             if (ctrl is TextBox)
-                return (ctrl as TextBox).Text;
+            {
+                if (!string.IsNullOrEmpty((ctrl as TextBox).Text))
+                    value = (ctrl as TextBox).Text;
+            }
+            else if (ctrl is NumericTextBox)
+            {
+                if (!string.IsNullOrEmpty((ctrl as NumericTextBox).Text))
+                    value = (ctrl as NumericTextBox).Text;
+            }
             else if (ctrl is CustomDatePicker)
-                return (ctrl as CustomDatePicker).Date;
+            {
+                value = (ctrl as CustomDatePicker).Date.ToString("yyyy-MM-dd");
+            }
             else if (ctrl is CustomCheckBox)
-                return (ctrl as CustomCheckBox).IsChecked;
-            else
-                return null;
+            {
+                value = (ctrl as CustomCheckBox).IsChecked;
+            }
+            return value;
         }
 
         private void PagingPrevButton_Clicked(object sender, EventArgs e)
@@ -123,7 +134,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                     ResetPagedData();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write("ListViewRender.PrevButton_Clicked---" + ex.Message);
             }
@@ -146,7 +157,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 Log.Write("ListViewRender.NextButton_Clicked---" + ex.Message);
             }
         }
-        
+
         private void ResetPagedData()
         {
             Renderer.SetData(Offset);
@@ -176,6 +187,24 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 HideMessage("Back to online", Color.FromHex("41d041"));
             else
                 ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
+        }
+
+        private void ListViewRefresh_Refreshing(object sender, EventArgs e)
+        {
+            IToast toast = DependencyService.Get<IToast>();
+            try
+            {
+                ListViewRefresh.IsRefreshing = true;
+                this.Offset = 0;
+                this.ResetPagedData();
+                ListViewRefresh.IsRefreshing = false;
+                toast.Show("Refreshed");
+            }
+            catch (Exception ex)
+            {
+                toast.Show("Something went wrong. Please try again");
+                Log.Write(ex.Message);
+            }
         }
     }
 }

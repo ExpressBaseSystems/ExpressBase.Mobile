@@ -88,5 +88,27 @@ namespace ExpressBase.Mobile.Extensions
             }
             return _dict;
         }
+
+        public static List<Param> ToParams(this List<DbParameter> parameters)
+        {
+            List<Param> p = new List<Param>();
+            try
+            {
+                foreach (DbParameter dbp in parameters)
+                {
+                    p.Add(new Param
+                    {
+                        Name = dbp.ParameterName,
+                        Type = dbp.DbType.ToString(),
+                        Value = dbp.Value.ToString()
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return p;
+        }
     }
 }

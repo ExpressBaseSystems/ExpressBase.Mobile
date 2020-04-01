@@ -25,37 +25,43 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Grid x:Name="FilterActionBar" IsVisible="False" Grid.Row="0" Padding="15,0" BackgroundColor="{StaticResource Blue-Dark}">
+            <Grid x:Name="FilterActionBar" IsVisible="False" Grid.Row="0" Padding="20,0" BackgroundColor="{StaticResource Blue-Dark}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-
-                <Label Text="Filters"
-                       FontSize="16"
-                       Margin="5,0,0,0"
-                       TextColor="White"
-                       VerticalTextAlignment="Center"
-                       Grid.Column="0"/>
-
-                <Button Text="&#xf078;"
-                        x:Name="FilterButton"
-                        HeightRequest="35"
-                        TextColor="White"
-                        FontSize="16" 
-                        Padding="0" 
-                        BackgroundColor="Transparent" 
-                        FontFamily="{StaticResource FontAwesome}" 
-                        Grid.Column="0" 
-                        Clicked="FilterButton_Clicked"/>
-
+                <Frame
+                    Grid.Column="0"
+                    x:Name="FilterButton"
+                    BackgroundColor="Transparent"
+                    Padding="0,0,0,10">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="FilterButton_Clicked"></TapGestureRecognizer>
+                    </Frame.GestureRecognizers>
+                    <Frame.Content>
+                        <FlexLayout Direction="Row">
+                            <Label 
+                               Text="&#xf0b0;"
+                               FontSize="16"
+                               TextColor="White"
+                               FontFamily="{StaticResource FontAwesome}"
+                               VerticalTextAlignment="Center"/>
+                            <Label 
+                                Text="Filters"
+                                FontSize="16"
+                                Margin="10,0,0,0"
+                                TextColor="White"
+                                VerticalTextAlignment="Center"/>
+                        </FlexLayout>
+                    </Frame.Content>
+                </Frame>
             </Grid>
 
             <Grid Grid.Row="1" x:Name="PagingContainer" ColumnSpacing="0" Margin="0,5,0,5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="35"></RowDefinition>
                 </Grid.RowDefinitions>
-                
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -107,24 +113,25 @@
                     </Frame.Content>
                 </Frame>
             </Grid>
-
-            <ScrollView x:Name="listContainer" Grid.Row="2">
-                <Label 
-                    IsVisible="False"
-                    x:Name="EmptyRecordLabel"                  
-                    Text="Empty list."
-                    VerticalOptions="Center"
-                    FontSize="16"
-                    HorizontalOptions="Center"/>
-            </ScrollView>
-
-            <!--#fd6b6b-->
+            <RefreshView
+                Grid.Row="2"
+                x:Name="ListViewRefresh"
+                Refreshing="ListViewRefresh_Refreshing">
+                <ScrollView x:Name="listContainer">
+                    <Label 
+                        IsVisible="False"
+                        x:Name="EmptyRecordLabel"                  
+                        Text="Empty list."
+                        VerticalOptions="Center"
+                        FontSize="16"
+                        HorizontalOptions="Center"/>
+                </ScrollView>
+            </RefreshView>
             <StackLayout Grid.Row="2" x:Name="MessageBox" IsVisible="{Binding ShowMessage}">
                 <Frame Padding="15" CornerRadius="0" x:Name="MessageBoxFrame"  BackgroundColor="{Binding MessageColor}">
                     <Label Text="{Binding Message}" x:Name="MessageBoxLabel" TextColor="White" FontSize="15"/>
                 </Frame>
             </StackLayout>
-
             <ContentView 
                 IsVisible="False"
                 x:Name="FilterDialogView"
@@ -143,7 +150,7 @@
                         </Grid.ColumnDefinitions>
 
                         <ScrollView x:Name="FilterContainer" Padding="10" Grid.ColumnSpan="2" Grid.Row="0"/>
-                        
+
                         <Button 
                             x:Name="FDCancel"
                             Text="Cancel" 

@@ -426,4 +426,16 @@ namespace ExpressBase.Mobile
 
         public EbFont Font { get; set; }
     }
+
+    public class EbMobileAutoId : EbMobileControl
+    {
+        public override bool ReadOnly { get { return true; } }
+
+        public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
+
+        public override void InitXControl(FormMode Mode)
+        {
+            this.XControl = new TextBox { IsReadOnly = true };
+        }
+    }
 }

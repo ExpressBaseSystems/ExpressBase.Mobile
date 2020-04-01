@@ -53,6 +53,8 @@ namespace ExpressBase.Mobile
     {
         public string DataSourceRefId { set; get; }
 
+        public List<Param> DataSourceParams { get; set; }
+
         public string SourceFormRefId { set; get; }
 
         public EbScript OfflineQuery { set; get; }
@@ -69,6 +71,40 @@ namespace ExpressBase.Mobile
 
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
+
+        public EbDataSet GetData(NetworkMode networkType, int offset = 0, List<DbParameter> parameters = null)
+        {
+            EbDataSet ds = null;
+            try
+            {
+                if (networkType == NetworkMode.Online)
+                {
+                    if (parameters == null)
+                        ds = this.GetLiveData(offset);
+                    else
+                        ds = this.GetLiveData(parameters, offset);
+                }
+                else if (networkType == NetworkMode.Offline)
+                {
+                    var sqlParams = HelperFunctions.GetSqlParams(this.GetQuery);
+                    if (sqlParams.Count > 0)
+                    {
+                        List<DbParameter> dbParams = new List<DbParameter>();
+                        foreach (string s in sqlParams)
+                            dbParams.Add(new DbParameter { ParameterName = s });
+
+                        ds = this.GetLocalData(dbParams, offset);
+                    }
+                    else
+                        ds = this.GetLocalData(offset);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return ds;
+        }
 
         public EbDataSet GetLocalData(int offset = 0)
         {
@@ -117,11 +153,55 @@ namespace ExpressBase.Mobile
             }
             return Data;
         }
+
+        public EbDataSet GetLiveData(int offset = 0)
+        {
+            EbDataSet Data = null;
+            try
+            {
+                Auth.AuthIfTokenExpired();
+                VisualizationLiveData vd = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, this.PageLength, offset);
+                Data = vd.Data;
+            }
+            catch (Exception ex)
+            {
+                Log.Write("EbMobileVisualization.GetLiveData---" + ex.Message);
+            }
+            return Data;
+        }
+
+        public EbDataSet GetLiveData(List<DbParameter> dbParameters, int offset = 0)
+        {
+            EbDataSet Data = null;
+            try
+            {
+                Auth.AuthIfTokenExpired();
+                VisualizationLiveData vd = RestServices.Instance.PullReaderData(this.DataSourceRefId, dbParameters.ToParams(), this.PageLength, offset);
+                Data = vd.Data;
+            }
+            catch (Exception ex)
+            {
+                Log.Write("EbMobileVisualization.GetLiveData with params---" + ex.Message);
+            }
+            return Data;
+        }
+
+        public EbMobileVisualization()
+        {
+            OfflineQuery = new EbScript();
+            Filters = new List<EbMobileDataColumn>();
+            DataSourceParams = new List<Param>();
+        }
     }
 
     public class EbMobileDashBoard : EbMobileContainer
     {
         public List<EbMobileDashBoardControls> ChildControls { get; set; }
+
+        public EbMobileDashBoard()
+        {
+            ChildControls = new List<EbMobileDashBoardControls>();
+        }
     }
 
     public class EbMobilePdf : EbMobileContainer
@@ -129,5 +209,10 @@ namespace ExpressBase.Mobile
         public string Template { set; get; }
 
         public EbScript OfflineQuery { set; get; }
+
+        public EbMobilePdf()
+        {
+            OfflineQuery = new EbScript();
+        }
     }
 }
