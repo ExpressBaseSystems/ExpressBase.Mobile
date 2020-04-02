@@ -47,7 +47,7 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             try
             {
-                Application.Current.MainPage = new NavigationPage(new SolutionSelect())
+                Application.Current.MainPage = new NavigationPage(new MySolutions())
                 {
                     BarBackgroundColor = Color.FromHex("0046bb"),
                     BarTextColor = Color.White
@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile.Views.Shared
             try
             {
                 App.RootMaster.IsPresented = false;
-                await App.RootMaster.Detail.Navigation.PushAsync(new AppSelect());
+                await App.RootMaster.Detail.Navigation.PushAsync(new MyApplications());
             }
             catch (Exception ex)
             {
@@ -78,7 +78,7 @@ namespace ExpressBase.Mobile.Views.Shared
             try
             {
                 App.RootMaster.IsPresented = false;
-                await App.RootMaster.Detail.Navigation.PushAsync(new LocationsView());
+                await App.RootMaster.Detail.Navigation.PushAsync(new MyLocations());
             }
             catch (Exception ex)
             {

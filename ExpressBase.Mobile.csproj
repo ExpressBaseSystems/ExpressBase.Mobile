@@ -19,17 +19,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\AppSelect.xaml.cs">
-      <DependentUpon>AppSelect.xaml</DependentUpon>
+    <Compile Update="Views\MyApplications.xaml.cs">
+      <DependentUpon>MyApplications.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Dynamic\LinkedListRender.xaml.cs">
+      <DependentUpon>LinkedListRender.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Dynamic\PdfRender.xaml.cs">
       <DependentUpon>PdfRender.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\SolutionSelect.xaml.cs">
-      <DependentUpon>SolutionSelect.xaml</DependentUpon>
+    <Compile Update="Views\Home.xaml.cs">
+      <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Dynamic\ListViewRender.xaml.cs">
-      <DependentUpon>ListViewRender.xaml</DependentUpon>
+    <Compile Update="Views\MySolutions.xaml.cs">
+      <DependentUpon>MySolutions.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Dynamic\ListRender.xaml.cs">
+      <DependentUpon>ListRender.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Shared\MyLocations.xaml.cs">
+      <DependentUpon>MyLocations.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -46,7 +55,7 @@
     <EmbeddedResource Update="Views\Dynamic\DashBoardRender.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\Dynamic\LinkedListViewRender.xaml">
+    <EmbeddedResource Update="Views\Dynamic\LinkedListRender.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\Dynamic\PdfRender.xaml">
@@ -58,7 +67,10 @@
     <EmbeddedResource Update="Views\Shared\DataGridView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\Shared\LocationsView.xaml">
+    <EmbeddedResource Update="Views\Shared\Loader.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Shared\MyLocations.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\Shared\PowerSelectView.xaml">
@@ -67,7 +79,7 @@
     <EmbeddedResource Update="Views\Shared\SideBar.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\Dynamic\ListViewRender.xaml">
+    <EmbeddedResource Update="Views\Dynamic\ListRender.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

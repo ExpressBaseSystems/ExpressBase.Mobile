@@ -10,11 +10,11 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views.Shared
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LocationsView : ContentPage
+    public partial class MyLocations : ContentPage
     {
         public ObservableCollection<EbLocation> Locations { get; private set; }
 
-        public LocationsView()
+        public MyLocations()
         {
             InitializeComponent();
 

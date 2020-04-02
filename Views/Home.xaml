@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.ObjectsRenderer"
+             x:Class="ExpressBase.Mobile.Views.Home"
              Style="{StaticResource ContentPageStyle}"
              BackgroundColor="#ffffff"
              BackgroundImageSource="doodlebg.png">
@@ -98,58 +99,11 @@
                     </StackLayout>
                 </ScrollView>
                 <!--loader-->
-                <ContentView 
-                 x:Name="Loader"
-                IsVisible="{Binding IsBusy}" 
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-                    <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                        <BoxView
-                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                        AbsoluteLayout.LayoutFlags="All"
-                        BackgroundColor="#333333"
-                        Opacity=".5"/>
-
-                        <StackLayout 
-                        Margin="20"
-                        AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
-                        AbsoluteLayout.LayoutFlags="PositionProportional">
-                            <Frame 
-                            HasShadow="False"
-                            BackgroundColor="White"
-                            CornerRadius="6"
-                            VerticalOptions="Center">
-                                <Frame.Content>
-                                    <StackLayout 
-                                Orientation="Vertical">
-                                        <Grid Margin="0,10,0,10">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                            </Grid.ColumnDefinitions>
-
-                                            <Label
-                                                x:Name="LoaderMessage"
-                                        Grid.Row="0"
-                                        TextColor="Black" 
-                                        VerticalOptions="Center" 
-                                        Text="{Binding LoaderMessage}"
-                                        FontSize="16"/>
-
-                                            <ActivityIndicator
-                                        HorizontalOptions="End"
-                                        IsRunning="true" 
-                                        Color="#508bf9"
-                                        Grid.Column="0"
-                                        WidthRequest="30"
-                                        HeightRequest="30"/>
-                                        </Grid>
-                                    </StackLayout>
-                                </Frame.Content>
-                            </Frame>
-                        </StackLayout>
-                    </AbsoluteLayout>
-                </ContentView>
+                <shared:Loader 
+                    IsVisible="{Binding IsBusy}"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                    AbsoluteLayout.LayoutFlags="All"
+                    Message="{Binding LoaderMessage}"/>
             </Grid>
         </RefreshView>
     </ContentPage.Content>

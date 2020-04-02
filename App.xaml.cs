@@ -43,7 +43,7 @@ namespace ExpressBase.Mobile
 
             string sid = Store.GetValue(AppConst.SID);
             if (sid == null)
-                MainPage.Navigation.PushAsync(new SolutionSelect());
+                MainPage.Navigation.PushAsync(new MySolutions());
             else
             {
                 string rtoken = Store.GetValue(AppConst.RTOKEN);
@@ -56,7 +56,7 @@ namespace ExpressBase.Mobile
                         ApiAuthResponse authresponse = Auth.TryAuthenticate(username, password);
                         if (authresponse.IsValid)
                         {
-                            RootMaster = new RootMaster(typeof(ObjectsRenderer));
+                            RootMaster = new RootMaster(typeof(Home));
                             MainPage = RootMaster;
                         }
                         else
@@ -67,10 +67,10 @@ namespace ExpressBase.Mobile
                         string apid = Store.GetValue(AppConst.APPID);
 
                         if (apid == null)
-                            MainPage.Navigation.PushAsync(new AppSelect());
+                            MainPage.Navigation.PushAsync(new MyApplications());
                         else
                         {
-                            RootMaster = new RootMaster(typeof(ObjectsRenderer));
+                            RootMaster = new RootMaster(typeof(Home));
                             MainPage = RootMaster;
                         } 
                     }

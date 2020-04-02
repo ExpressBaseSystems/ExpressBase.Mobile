@@ -12,16 +12,17 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ObjectsRenderer : ContentPage
+    public partial class Home : ContentPage
     {
         public int BackButtonCount { set; get; } = 0;
 
-        public ObjectsRenderer()
+        public HomeViewModel ViewModel { set; get; }
+
+        public Home()
         {
             InitializeComponent();
-            ObjectsRenderViewModel model = new ObjectsRenderViewModel();
-            BindingContext = model;
-            ObjectContainer.Content = model.View;
+            BindingContext = ViewModel = new HomeViewModel();
+            ObjectContainer.Content = ViewModel.View;
         }
 
         protected override void OnAppearing()
@@ -79,7 +80,7 @@ namespace ExpressBase.Mobile.Views
                     if (Coll != null)
                     {
                         Store.SetJSON(AppConst.OBJ_COLLECTION, Coll.Pages);
-                        var vm = (BindingContext as ObjectsRenderViewModel);
+                        var vm = (BindingContext as HomeViewModel);
                         vm.ObjectList = Coll.Pages;
                         vm.BuildView();
                         ObjectContainer.Content = vm.View;
@@ -108,8 +109,8 @@ namespace ExpressBase.Mobile.Views
                 }
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    LoaderMessage.Text = "Loading...";
-                    Loader.IsVisible = true;
+                    ViewModel.LoaderMessage = "Loading...";
+                    ViewModel.IsBusy = true;
                 });
 
                 await Auth.AuthIfTokenExpiredAsync();//authenticate if token expired
@@ -117,11 +118,11 @@ namespace ExpressBase.Mobile.Views
                 MyActionsResponse actionResp = await RestServices.Instance.GetMyActionsAsync();
 
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new MyActions(actionResp));
-                Device.BeginInvokeOnMainThread(() => Loader.IsVisible = false);
+                Device.BeginInvokeOnMainThread(() => ViewModel.IsBusy = false);
             }
             catch (Exception ex)
             {
-                Device.BeginInvokeOnMainThread(() => Loader.IsVisible = false);
+                Device.BeginInvokeOnMainThread(() => ViewModel.IsBusy = false);
                 Log.Write(ex.Message);
             }
         }

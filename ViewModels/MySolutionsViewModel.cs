@@ -13,7 +13,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class SolutionSelectViewModel : StaticBaseViewModel
+    public class MySolutionsViewModel : StaticBaseViewModel
     {
         public string CurrentSolution { set; get; }
 
@@ -21,7 +21,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command SolutionTapedCommand => new Command(SolutionTapedEvent);
 
-        public SolutionSelectViewModel()
+        public MySolutionsViewModel()
         {
             try
             {

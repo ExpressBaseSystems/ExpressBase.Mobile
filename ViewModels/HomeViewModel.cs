@@ -15,7 +15,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class ObjectsRenderViewModel : StaticBaseViewModel
+    public class HomeViewModel : StaticBaseViewModel
     {
         private bool _isRefreshing;
 
@@ -47,7 +47,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command SyncButtonCommand => new Command(OnSyncClick);
 
-        public ObjectsRenderViewModel()
+        public HomeViewModel()
         {
             LoaderMessage = "Opening page...";
             PageTitle = Settings.AppName;
@@ -268,7 +268,7 @@ namespace ExpressBase.Mobile.ViewModels
                                 (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
                                 break;
                             case EbMobileVisualization v:
-                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListViewRender(page));
+                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListRender(page));
                                 break;
                             case EbMobileDashBoard d:
                                 (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DashBoardRender(page));

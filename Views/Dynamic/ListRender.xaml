@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ExpressBase.Mobile.Views.Dynamic.ListViewRender">
+             x:Class="ExpressBase.Mobile.Views.Dynamic.ListRender">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -57,9 +57,10 @@
                 </Frame>
             </Grid>
 
-            <Grid Grid.Row="1" x:Name="PagingContainer" ColumnSpacing="0" Margin="0,5,0,5">
+            <Grid Grid.Row="1" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -75,43 +76,52 @@
                        FontSize="15"
                        TextColor="#333"/>
 
-                <Frame Grid.Column="1" Padding="0" BackgroundColor="Red" Margin="5,0" CornerRadius="6" BorderColor="#ddd">
+                <Frame Grid.Column="1" 
+                       Padding="0" 
+                       Margin="5"
+                       BackgroundColor="Transparent"
+                       HasShadow="False">
                     <Frame.Content>
                         <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
                             <Button 
                                 x:Name="PagingPrevButton"
-                                Margin="0,0,0,0"
-                                CornerRadius="0"
+                                CornerRadius="17"
                                 Padding="0"
+                                BorderColor="#e1e6e9"
+                                BorderWidth="1"
+                                HeightRequest="35"
                                 WidthRequest="35"
                                 Text="&#xf053;"
-                                TextColor="White"
                                 FontFamily="{StaticResource FontAwesome}"
-                                BackgroundColor="{StaticResource Blue-Dark}"
+                                BackgroundColor="#e1e6e9"
                                 Clicked="PagingPrevButton_Clicked"/>
 
                             <Button 
                                 x:Name="PagingPageCount"
                                 Padding="0"
+                                HeightRequest="35"
                                 WidthRequest="35"
                                 Text="1" 
-                                BackgroundColor="White"
+                                BackgroundColor="Transparent"
                                 CornerRadius="0"/>
 
                             <Button 
                                 x:Name="PagingNextButton"
                                 Margin="0,0,0,0"
-                                CornerRadius="0"
+                                CornerRadius="17" 
                                 Padding="0"
+                                HeightRequest="35"
                                 WidthRequest="35"
                                 Text="&#xf054;" 
                                 FontFamily="{StaticResource FontAwesome}"
-                                TextColor="White"
-                                BackgroundColor="{StaticResource Blue-Dark}"
+                                BorderColor="#e1e6e9"
+                                BorderWidth="1"
+                                BackgroundColor="#e1e6e9"
                                 Clicked="PagingNextButton_Clicked"/>
                         </StackLayout>
                     </Frame.Content>
                 </Frame>
+                <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
             </Grid>
             <RefreshView
                 Grid.Row="2"
@@ -127,11 +137,6 @@
                         HorizontalOptions="Center"/>
                 </ScrollView>
             </RefreshView>
-            <StackLayout Grid.Row="2" x:Name="MessageBox" IsVisible="{Binding ShowMessage}">
-                <Frame Padding="15" CornerRadius="0" x:Name="MessageBoxFrame"  BackgroundColor="{Binding MessageColor}">
-                    <Label Text="{Binding Message}" x:Name="MessageBoxLabel" TextColor="White" FontSize="15"/>
-                </Frame>
-            </StackLayout>
             <ContentView 
                 IsVisible="False"
                 x:Name="FilterDialogView"
@@ -177,5 +182,4 @@
             </ContentView>
         </Grid>
     </ContentPage.Content>
-
 </ContentPage>

@@ -12,16 +12,16 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class SolutionSelect : ContentPage
+    public partial class MySolutions : ContentPage
     {
-        public SolutionSelectViewModel ViewModel { set; get; }
+        public MySolutionsViewModel ViewModel { set; get; }
 
         public ValidateSidResponse Response { set; get; }
 
-        public SolutionSelect()
+        public MySolutions()
         {
             InitializeComponent();
-            BindingContext = ViewModel = new SolutionSelectViewModel();
+            BindingContext = ViewModel = new MySolutionsViewModel();
         }
 
         protected override void OnAppearing()
@@ -115,7 +115,7 @@ namespace ExpressBase.Mobile.Views
                 if (sname == ViewModel.CurrentSolution)
                 {
                     Store.ResetSolution();
-                    Application.Current.MainPage = new NavigationPage(new SolutionSelect())
+                    Application.Current.MainPage = new NavigationPage(new MySolutions())
                     {
                         BarBackgroundColor = Color.FromHex("0046bb"),
                         BarTextColor = Color.White

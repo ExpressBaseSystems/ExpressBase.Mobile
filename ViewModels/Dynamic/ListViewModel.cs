@@ -13,7 +13,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
-    public class ListViewRenderViewModel : DynamicBaseViewModel
+    public class ListViewModel : DynamicBaseViewModel
     {
         public int DataCount { set; get; }
 
@@ -25,7 +25,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Dictionary<string, View> FilterControls { set; get; }
 
-        public ListViewRenderViewModel(EbMobilePage page) : base(page)
+        public ListViewModel(EbMobilePage page) : base(page)
         {
             this.Visualization = this.Page.Container as EbMobileVisualization;
             this.SetData();
@@ -38,28 +38,34 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
+                if (this.Page.NetworkMode == NetworkMode.Online && !Settings.HasInternet)
+                {
+                    DependencyService.Get<IToast>().Show("You are not connected to internet.");
+                    throw new Exception("no internet");
+                }
+
                 EbDataSet ds = this.Visualization.GetData(this.Page.NetworkMode, offset);
-                if (ds != null && ds.Tables.HasIndex(2))
+                if (ds != null && ds.Tables.HasLength(2))
                 {
                     DataTable = ds.Tables[1];
                     DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
                 }
                 else
-                    DataTable = new EbDataTable();
+                    throw new Exception("no internet");
             }
             catch (Exception ex)
             {
+                DataTable = new EbDataTable();
                 Log.Write(ex.Message);
             }
         }
 
         public void CreateView()
         {
-            StackLayout StackL = new StackLayout { Spacing = 0 };
+            StackLayout StackL = new StackLayout { Spacing = 1, BackgroundColor = Color.FromHex("eeeeee") };
 
             var tapGestureRecognizer = new TapGestureRecognizer();
             tapGestureRecognizer.Tapped += ListItem_Clicked;
-            int _rowColCount = 1;
 
             foreach (EbDataRow _row in this.DataTable.Rows)
             {
@@ -68,11 +74,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 if (this.NetworkType == NetworkMode.Offline)
                     CustFrame.ShowSyncFlag(this.DataTable.Columns);
 
-                CustFrame.SetBackGroundColor(_rowColCount);
                 CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
-
                 StackL.Children.Add(CustFrame);
-                _rowColCount++;
             }
             this.XView = StackL;
         }
@@ -149,7 +152,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
                 else if (_page.Container is EbMobileVisualization)
                 {
-                    LinkedListViewRender Renderer = new LinkedListViewRender(_page, this.Visualization, customFrame);
+                    LinkedListRender Renderer = new LinkedListRender(_page, this.Visualization, customFrame);
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
                 else if (_page.Container is EbMobileDashBoard)
@@ -166,17 +169,32 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public void Refresh(List<DbParameter> parameters)
         {
-            if (parameters != null)
+            try
             {
-                var ds = this.Visualization.GetData(this.Page.NetworkMode, 0, parameters);
-                DataTable = ds.Tables[1];
+                if (parameters != null)
+                {
+                    var ds = this.Visualization.GetData(this.Page.NetworkMode, 0, parameters);
+                    if (ds.Tables.HasLength(2))
+                    {
+                        DataTable = ds.Tables[1];
+                        DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
+                    }
+                }
+                else
+                {
+                    var ds = this.Visualization.GetData(this.Page.NetworkMode, 0);
+                    if (ds.Tables.HasLength(2))
+                    {
+                        DataTable = ds.Tables[1];
+                        DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
+                    }
+                }
+                this.CreateView();
             }
-            else
+            catch(Exception ex)
             {
-                var ds = this.Visualization.GetData(this.Page.NetworkMode, 0);
-                DataTable = ds.Tables[1];
+                Log.Write(ex.Message);
             }
-            this.CreateView();
         }
     }
 }

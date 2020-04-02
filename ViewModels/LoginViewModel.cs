@@ -78,7 +78,7 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     Auth.UpdateStore(response, _username, password);
                     IsBusy = false;
-                    await Application.Current.MainPage.Navigation.PushAsync(new AppSelect());
+                    await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
                 }
                 else
                 {

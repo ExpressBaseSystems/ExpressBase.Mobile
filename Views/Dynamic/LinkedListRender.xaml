@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Dynamic.LinkedListViewRender">
+             x:Class="ExpressBase.Mobile.Views.Dynamic.LinkedListRender">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -21,7 +21,7 @@
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
-        <Grid BackgroundColor="Transparent">
+        <Grid RowSpacing="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -36,17 +36,20 @@
 
                 <Button
                     Grid.Row="1"
-                    Text="&#xf040;"
-                    HorizontalOptions="End"
-                    Margin="20,0,10,10"
-                    FontFamily="{StaticResource FontAwesome}"
-                    Command="{Binding EditCommand}"
-                    Style="{StaticResource IconedRoundButton}"/>
+                    Text="Edit"
+                    HorizontalOptions="Start"
+                    Margin="20,10,10,10"
+                    Padding="0"
+                    CornerRadius="15"
+                    HeightRequest="30"
+                    BackgroundColor="White"
+                    Command="{Binding EditCommand}"/>
             </Grid>
 
-            <Grid Grid.Row="1" x:Name="PagingContainer" ColumnSpacing="0" Margin="0,5,0,5">
+            <Grid Grid.Row="1" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="35"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -62,55 +65,67 @@
                        FontSize="15"
                        TextColor="#333"/>
 
-                <Frame Grid.Column="1" Padding="0" BackgroundColor="Red" Margin="5,0" CornerRadius="6" BorderColor="#ddd">
+                <Frame Grid.Column="1" 
+                       Padding="0" 
+                       Margin="5"
+                       BackgroundColor="Transparent"
+                       HasShadow="False">
                     <Frame.Content>
                         <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
                             <Button 
                                 x:Name="PagingPrevButton"
-                                Margin="0,0,0,0"
-                                CornerRadius="0"
+                                CornerRadius="17"
                                 Padding="0"
+                                BorderColor="#e1e6e9"
+                                BorderWidth="1"
+                                HeightRequest="35"
                                 WidthRequest="35"
                                 Text="&#xf053;"
-                                TextColor="White"
                                 FontFamily="{StaticResource FontAwesome}"
-                                BackgroundColor="{StaticResource Blue-Dark}"
+                                BackgroundColor="#e1e6e9"
                                 Clicked="PagingPrevButton_Clicked"/>
 
                             <Button 
                                 x:Name="PagingPageCount"
                                 Padding="0"
+                                HeightRequest="35"
                                 WidthRequest="35"
                                 Text="1" 
-                                BackgroundColor="White"
+                                BackgroundColor="Transparent"
                                 CornerRadius="0"/>
 
                             <Button 
                                 x:Name="PagingNextButton"
-                                Margin="0,0,0,0"
-                                CornerRadius="0"
+                                 Margin="0,0,0,0"
+                                CornerRadius="17" 
                                 Padding="0"
+                                HeightRequest="35"
                                 WidthRequest="35"
                                 Text="&#xf054;" 
                                 FontFamily="{StaticResource FontAwesome}"
-                                TextColor="White"
-                                BackgroundColor="{StaticResource Blue-Dark}"
+                                BorderColor="#e1e6e9"
+                                BorderWidth="1"
+                                BackgroundColor="#e1e6e9"
                                 Clicked="PagingNextButton_Clicked"/>
                         </StackLayout>
                     </Frame.Content>
                 </Frame>
+                <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
             </Grid>
-
-            <ScrollView x:Name="ScrollContainer" Grid.Row="2">
-                <Label 
-                    IsVisible="False"
-                    x:Name="EmptyRecordLabel"                  
-                    Text="Empty list."
-                    VerticalOptions="Center"
-                    FontSize="16"
-                    HorizontalOptions="Center"/>
-            </ScrollView>
-
+            <RefreshView
+                Grid.Row="2"
+                x:Name="ListViewRefresh"
+                Refreshing="ListViewRefresh_Refreshing">
+                <ScrollView x:Name="ScrollContainer" Grid.Row="2">
+                    <Label 
+                        IsVisible="False"
+                        x:Name="EmptyRecordLabel"                  
+                        Text="Empty list."
+                        VerticalOptions="Center"
+                        FontSize="16"
+                        HorizontalOptions="Center"/>
+                </ScrollView>
+            </RefreshView>
             <Button
                 Grid.Row="2"
                 Text="&#xf067;"
@@ -126,5 +141,4 @@
                 Command="{Binding AddCommand}"/>
         </Grid>
     </ContentPage.Content>
-
 </ContentPage>

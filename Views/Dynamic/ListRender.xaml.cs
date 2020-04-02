@@ -7,46 +7,37 @@ using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using System.Linq;
 using ExpressBase.Mobile.Models;
-using Xamarin.Essentials;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ListViewRender : ContentPage
+    public partial class ListRender : ContentPage
     {
         private int Offset = 0;
 
         private int PageCount = 1;
 
-        public ListViewRenderViewModel Renderer { set; get; }
+        public ListViewModel ViewModel { set; get; }
 
-        public ListViewRender(EbMobilePage Page)
+        public ListRender(EbMobilePage Page)
         {
             InitializeComponent();
             try
             {
-                BindingContext = Renderer = new ListViewRenderViewModel(Page);
-                if (Renderer.DataTable.Rows.Any())
+                BindingContext = ViewModel = new ListViewModel(Page);
+                if (ViewModel.DataTable.Rows.Any())
                 {
-                    listContainer.Content = Renderer.XView;
-                    if (Renderer.FilterDialog != null)
+                    listContainer.Content = ViewModel.XView;
+                    if (ViewModel.FilterDialog != null)
                     {
                         FilterActionBar.IsVisible = true;
-                        FilterContainer.Content = Renderer.FilterDialog;
+                        FilterContainer.Content = ViewModel.FilterDialog;
                     }
                 }
                 else
                     EmptyRecordLabel.IsVisible = true;
 
-                int toVal = (Renderer.DataTable.Rows.Count < Renderer.DataCount) ? Renderer.Visualization.PageLength : Renderer.DataCount;
-                PagingMeta.Text = $"Showing {Offset} to {toVal} of {Renderer.DataCount} entries";
-
-                if (Page.NetworkMode == NetworkMode.Online && !Settings.HasInternet)
-                    ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
-                else
-                    HideMessage("Back to online", Color.FromHex("41d041"));
-
-                Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
+                this.UpdatePaginationBar();
             }
             catch (Exception ex)
             {
@@ -72,7 +63,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 var paramDict = new Dictionary<string, object>();
 
-                foreach (KeyValuePair<string, View> pair in Renderer.FilterControls)
+                foreach (KeyValuePair<string, View> pair in ViewModel.FilterControls)
                 {
                     if (paramDict.ContainsKey(pair.Key))
                         continue;
@@ -86,9 +77,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 if (paramDict.Any())
                 {
-                    List<DbParameter> parameters = paramDict.Select(item => new DbParameter { ParameterName = item.Key, Value = item.Value }).ToList();
-                    Renderer.Refresh(parameters);
-                    listContainer.Content = Renderer.XView;
+                    List<DbParameter> parameters = paramDict.Select(item => new DbParameter { ParameterName = item.Key, Value = item.Value }).ToList();                 
+                    ViewModel.Refresh(parameters);
+                    listContainer.Content = ViewModel.XView;
+                    this.Offset = 0;
+                    this.UpdatePaginationBar();
                 }
             }
             catch (Exception ex)
@@ -126,12 +119,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                if (Renderer != null)
+                if (ViewModel != null)
                 {
                     if (Offset <= 0) return;
-                    Offset -= Renderer.Visualization.PageLength;
+                    Offset -= ViewModel.Visualization.PageLength;
                     PageCount--;
-                    ResetPagedData();
+                    this.RefreshListView();
                 }
             }
             catch (Exception ex)
@@ -144,12 +137,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                if (Renderer != null)
+                if (ViewModel != null)
                 {
-                    if (Offset + Renderer.Visualization.PageLength >= Renderer.DataCount) return;
-                    Offset += Renderer.Visualization.PageLength;
+                    if (Offset + ViewModel.Visualization.PageLength >= ViewModel.DataCount) return;
+                    Offset += ViewModel.Visualization.PageLength;
                     PageCount++;
-                    ResetPagedData();
+                    this.RefreshListView();
                 }
             }
             catch (Exception ex)
@@ -158,35 +151,43 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        private void ResetPagedData()
+        private void RefreshListView()
         {
-            Renderer.SetData(Offset);
-            Renderer.CreateView();
-            listContainer.Content = Renderer.XView;
-            PagingPageCount.Text = PageCount.ToString();
-            PagingMeta.Text = $"Showing {Offset} to {Offset + Renderer.Visualization.PageLength} of {Renderer.DataCount} entries";
+            try
+            {
+                ViewModel.SetData(Offset);
+                ViewModel.CreateView();
+                listContainer.Content = ViewModel.XView;
+
+                this.UpdatePaginationBar();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
-        private void ShowMessage(string message, Color background)
+        private void UpdatePaginationBar()
         {
-            MessageBoxFrame.BackgroundColor = background;
-            MessageBoxLabel.Text = message;
-            MessageBox.IsVisible = true;
-        }
+            try
+            {
+                int totalEntries = ViewModel.DataCount;
+                int offset = this.Offset + 1;
+                int length = ViewModel.Visualization.PageLength + offset - 1;
 
-        private void HideMessage(string message_beforehide, Color background)
-        {
-            MessageBoxFrame.BackgroundColor = background;
-            MessageBoxLabel.Text = message_beforehide;
-            MessageBox.IsVisible = false;
-        }
+                if (totalEntries < ViewModel.Visualization.PageLength)
+                    length = totalEntries;
 
-        private void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
-        {
-            if (e.NetworkAccess == NetworkAccess.Internet)
-                HideMessage("Back to online", Color.FromHex("41d041"));
-            else
-                ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
+                if (ViewModel.Visualization.PageLength + offset > totalEntries)
+                    length = totalEntries;
+
+                PagingMeta.Text = $"Showing {offset} to {length} of {totalEntries} entries";
+                PagingPageCount.Text = PageCount.ToString();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
         private void ListViewRefresh_Refreshing(object sender, EventArgs e)
@@ -196,12 +197,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 ListViewRefresh.IsRefreshing = true;
                 this.Offset = 0;
-                this.ResetPagedData();
+                this.RefreshListView();
                 ListViewRefresh.IsRefreshing = false;
                 toast.Show("Refreshed");
             }
             catch (Exception ex)
             {
+                ListViewRefresh.IsRefreshing = false;
                 toast.Show("Something went wrong. Please try again");
                 Log.Write(ex.Message);
             }

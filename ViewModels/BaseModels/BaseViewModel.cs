@@ -83,7 +83,7 @@ namespace ExpressBase.Mobile.ViewModels
             Store.Remove(AppConst.RTOKEN);
             Store.RemoveJSON(AppConst.OBJ_COLLECTION);
             Store.RemoveJSON(AppConst.APP_COLLECTION);
-            Application.Current.MainPage = new NavigationPage(new SolutionSelect())
+            Application.Current.MainPage = new NavigationPage(new MySolutions())
             {
                 BarBackgroundColor = Color.FromHex("0046bb"),
                 BarTextColor = Color.White

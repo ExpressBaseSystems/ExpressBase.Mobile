@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              mc:Ignorable="d"
              xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
+             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
              x:Class="ExpressBase.Mobile.Views.Login"
              Style="{StaticResource ContentPageStyle}">
 
@@ -109,55 +110,11 @@
             </ScrollView>
 
             <!--loader-->
-            <ContentView 
+            <shared:Loader 
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                    <BoxView
-                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                        AbsoluteLayout.LayoutFlags="All"
-                        BackgroundColor="#333333"
-                        Opacity=".5"/>
-
-                    <StackLayout 
-                        Padding="20"
-                        AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" 
-                        AbsoluteLayout.LayoutFlags="PositionProportional">
-                        <Frame 
-                            HasShadow="False"
-                            BackgroundColor="White"
-                            CornerRadius="6">
-                            <Frame.Content>
-                                <StackLayout Orientation="Vertical">
-                                    <Grid Margin="0,10,0,10">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"></ColumnDefinition>
-                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Label
-                                        Grid.Row="0"
-                                        TextColor="Black" 
-                                        VerticalOptions="Center" 
-                                        Text="Authenticating..."
-                                        FontSize="16"/>
-
-                                        <ActivityIndicator
-                                        HorizontalOptions="End"
-                                        IsRunning="true" 
-                                        Color="#508bf9"
-                                        Grid.Column="0"
-                                        WidthRequest="30"
-                                        HeightRequest="30"/>
-                                    </Grid>
-                                </StackLayout>
-                            </Frame.Content>
-                        </Frame>
-                    </StackLayout>
-                </AbsoluteLayout>
-            </ContentView>
-
+                AbsoluteLayout.LayoutFlags="All"
+                Message="Authenticating..."/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

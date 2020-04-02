@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -8,6 +9,7 @@ using ExpressBase.Mobile.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -15,41 +17,51 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class AppSelectViewModel : StaticBaseViewModel
+    public class MyApplicationsViewModel : StaticBaseViewModel
     {
-        public IList<AppData> Applications { get; private set; }
+        public ObservableCollection<AppData> Applications { get; private set; }
 
         public Command AppSelectedCommand => new Command(async (obj) => await ItemSelected(obj));
 
         public Command ApplicationSubmit => new Command(ResetClicked);
 
-        public AppSelectViewModel()
+        public MyApplicationsViewModel()
         {
             PageTitle = "Choose Application";
+            Applications = new ObservableCollection<AppData>();
             PullApplications();
         }
 
-        private void PullApplications()
+        public void PullApplications()
         {
-            var _apps = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
-
-            if (_apps == null || _apps.Count <= 0)
+            try
             {
-                this.Applications = RestServices.Instance.GetAppCollections();
-                this.Applications.OrderBy(x => x.AppName);
+                List<AppData> _apps = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
 
-                Store.SetJSON(AppConst.APP_COLLECTION, this.Applications);
+                if (_apps == null || _apps.Count <= 0)
+                {
+                    List<AppData> applications = RestServices.Instance.GetAppCollections();
+                    this.Applications.Clear();
+                    this.Applications.AddRange(applications);
+                    this.Applications.OrderBy(x => x.AppName);
+
+                    Store.SetJSON(AppConst.APP_COLLECTION, applications);
+                }
+                else
+                    this.Applications.AddRange(_apps);
+
+                //fill by randdom colors
+                Random random = new Random();
+                foreach (AppData appdata in this.Applications)
+                {
+                    var randomColor = ColorSet.Colors[random.Next(6)];
+                    appdata.BackgroundColor = Color.FromHex(randomColor.BackGround);
+                    appdata.TextColor = Color.FromHex(randomColor.TextColor);
+                }
             }
-            else
-                this.Applications = _apps;
-
-            //fill by randdom colors
-            Random random = new Random();
-            foreach (AppData appdata in this.Applications)
+            catch(Exception ex)
             {
-                var randomColor = ColorSet.Colors[random.Next(6)];
-                appdata.BackgroundColor = Color.FromHex(randomColor.BackGround);
-                appdata.TextColor = Color.FromHex(randomColor.TextColor);
+                Log.Write(ex.Message);
             }
         }
 
@@ -76,7 +88,7 @@ namespace ExpressBase.Mobile.ViewModels
                     await PullObjectsByApp(apData.AppId);
 
                     IsBusy = false;
-                    App.RootMaster = new RootMaster(typeof(ObjectsRenderer));
+                    App.RootMaster = new RootMaster(typeof(Views.Home));
                     Application.Current.MainPage = App.RootMaster;
                 }
                 else

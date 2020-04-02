@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace ExpressBase.Mobile.Extensions
@@ -58,7 +59,7 @@ namespace ExpressBase.Mobile.Extensions
             return source == null || source.Count < 1;
         }
 
-        public static bool HasIndex<T>(this List<T> source, int index)
+        public static bool HasLength<T>(this List<T> source, int index)
         {
             return (source.Count >= index);
         }
@@ -109,6 +110,19 @@ namespace ExpressBase.Mobile.Extensions
                 Log.Write(ex.Message);
             }
             return p;
+        }
+
+        public static void AddRange<T>(this ObservableCollection<T> observable, IEnumerable<T> enumerable)
+        {
+            try
+            {
+                foreach (T item in enumerable)
+                    observable.Add(item);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
     }
 }

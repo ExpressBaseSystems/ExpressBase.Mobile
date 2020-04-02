@@ -4,9 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             xmlns:local="clr-namespace:ExpressBase.Mobile.Views"
              x:Class="ExpressBase.Mobile.Views.Shared.SideBar"
-             xmlns:viewModel="clr-namespace:ExpressBase.Mobile.ViewModels.Shared"
              Title="SideBar">
 
     <ContentPage.Resources>
@@ -38,8 +36,9 @@
             </Style>
 
             <Style x:Key="LinkLabel" TargetType="Label">
-                <Setter Property="FontFamily" Value="{StaticResource Roboto-Medium}" />
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
                 <Setter Property="FontSize" Value="15" />
+                <Setter Property="TextColor" Value="#333" />
                 <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
             </Style>
 
