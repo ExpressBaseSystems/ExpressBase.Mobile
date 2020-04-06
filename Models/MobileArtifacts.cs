@@ -306,4 +306,11 @@ namespace ExpressBase.Mobile.Models
             }
         }
     }
+
+    public class FUPSetValueMeta
+    {
+        public string TableName { set; get; }
+
+        public int RowId { set; get; }
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
@@ -38,8 +39,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        //edit mode
-        public FormRender(EbMobilePage page, int rowId)
+        //edit/prefill mode
+        public FormRender(EbMobilePage page, int rowId, FormMode mode)
         {
             InitializeComponent();
             try
@@ -48,7 +49,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 SaveButton.IsVisible = false;
                 EditButton.IsVisible = true;
 
-                Renderer = new FormRenderViewModel(page, rowId);
+                Renderer = new FormRenderViewModel(page, rowId, mode);
                 FormScrollView.Content = Renderer.XView;
                 BindingContext = Renderer;
 
@@ -81,22 +82,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        //prefill new mode
-        public FormRender(EbMobilePage page, EbDataRow dataRow)
-        {
-            InitializeComponent();
-            try
-            {
-                Renderer = new FormRenderViewModel(page, dataRow);
-                FormScrollView.Content = Renderer.XView;
-                BindingContext = Renderer;
-            }
-            catch (Exception ex)
-            {
-                Log.Write("FormRender prefill mode" + ex.Message);
-            }
-        }
-
         private void EditButton_Clicked(object sender, EventArgs e)
         {
             if (Renderer != null)
@@ -111,7 +96,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
         {
-            if(Renderer != null && Renderer.NetworkType == NetworkMode.Online)
+            if (Renderer != null && Renderer.NetworkType == NetworkMode.Online)
             {
                 if (e.NetworkAccess == NetworkAccess.Internet)
                     HideMessage("Back to online", Color.FromHex("41d041"));

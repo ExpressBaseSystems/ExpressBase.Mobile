@@ -302,4 +302,11 @@ namespace ExpressBase.Mobile.Models
 
         public int FileRefId { set; get; }
     }
+
+    public class MobileFormLiveData
+    {
+        public string Message { set; get; }
+
+        public WebformData Data { set; get; }
+    }
 }

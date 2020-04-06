@@ -25,16 +25,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
             try
             {
                 BindingContext = ViewModel = new ListViewModel(Page);
-                if (ViewModel.DataTable.Rows.Any())
+                listContainer.Content = ViewModel.XView;
+                if (ViewModel.FilterDialog != null)
                 {
-                    listContainer.Content = ViewModel.XView;
-                    if (ViewModel.FilterDialog != null)
-                    {
-                        FilterActionBar.IsVisible = true;
-                        FilterContainer.Content = ViewModel.FilterDialog;
-                    }
+                    FilterActionBar.IsVisible = true;
+                    FilterContainer.Content = ViewModel.FilterDialog;
                 }
-                else
+
+                if (!ViewModel.DataTable.Rows.Any()) 
                     EmptyRecordLabel.IsVisible = true;
 
                 this.UpdatePaginationBar();

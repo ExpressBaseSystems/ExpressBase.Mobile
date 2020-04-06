@@ -184,6 +184,8 @@ namespace ExpressBase.Mobile
 
         public NumericBoxTypes RenderType { get; set; }
 
+        public bool IsAggragate { get; set; }
+
         private readonly Style ButtonStyles = new Style(typeof(Button))
         {
             Setters =
@@ -435,7 +437,7 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
-            this.XControl = new TextBox { IsReadOnly = true };
+            this.XControl = new TextBox { IsReadOnly = true, BackgroundColor = Color.FromHex("eeeeee") };
         }
     }
 }

@@ -135,20 +135,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 if (_page.Container is EbMobileForm)
                 {
-                    if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
-                    {
-                        FormRender Renderer = new FormRender(_page, customFrame.DataRow);//to form newmode prefill
-                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
-                    }
-                    else
-                    {
-                        int id = Convert.ToInt32(customFrame.DataRow["id"]);
-                        if (id != 0)
-                        {
-                            FormRender Renderer = new FormRender(_page, id);//to form edit mode
-                            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
-                        }
-                    }
+                    int id = Convert.ToInt32(customFrame.DataRow["id"]);
+                    if (id == 0) return;
+                    FormMode mode = this.Visualization.FormMode == WebFormDVModes.New_Mode ? FormMode.NEW : FormMode.EDIT;
+
+                    FormRender Renderer = new FormRender(_page, id, mode);
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
                 else if (_page.Container is EbMobileVisualization)
                 {
@@ -191,7 +183,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
                 this.CreateView();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }

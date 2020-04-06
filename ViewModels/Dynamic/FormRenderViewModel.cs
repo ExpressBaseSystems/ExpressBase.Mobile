@@ -1,8 +1,11 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -18,7 +21,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public EbMobileForm ParentForm { set; get; }
 
-        public EbDataTable DataOnEdit { set; get; }
+        public EbDataSet DataOnEdit { set; get; }
 
         public Command SaveCommand => new Command(async () => await OnSaveClicked());
 
@@ -37,40 +40,23 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        //edit mode
-        public FormRenderViewModel(EbMobilePage page, int RowIdLocal) : base(page)
+        //edit/prefill mode
+        public FormRenderViewModel(EbMobilePage page, int rowId, FormMode mode) : base(page)
         {
-            this.Mode = FormMode.EDIT;
+            this.Mode = mode;
             try
             {
-                this.RowId = RowIdLocal;
+                this.RowId = rowId;
                 this.Form = page.Container as EbMobileForm;
-                this.DataOnEdit = GetDataOnEdit();
+
                 this.CreateView();
-                this.FillControls(this.DataOnEdit.Rows[RowIdLocal]);
+                this.SetDataOnEdit();
+                this.FillControls();
                 this.Form.CreateTableSchema();
             }
             catch (Exception ex)
             {
                 Log.Write("Form render edit mode---" + ex.Message);
-            }
-        }
-
-        //prefill new mode
-        public FormRenderViewModel(EbMobilePage page, EbDataRow dataRow) : base(page)
-        {
-            this.Mode = FormMode.NEW;
-            try
-            {
-                this.Form = page.Container as EbMobileForm;
-
-                this.CreateView();
-                this.FillControls(dataRow);
-                this.Form.CreateTableSchema();
-            }
-            catch (Exception ex)
-            {
-                Log.Write("Form render prefill mode" + ex.Message);
             }
         }
 
@@ -92,20 +78,29 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private EbDataTable GetDataOnEdit()
+        private void SetDataOnEdit()
         {
-            EbDataTable dt;
             try
             {
-                string sql = $"SELECT * FROM {this.Form.TableName} WHERE id = {this.RowId}";
-                dt = App.DataDB.DoQuery(sql);
+                if (this.Page.NetworkMode == NetworkMode.Offline)
+                {
+                    string sql = $"SELECT * FROM {this.Form.TableName} WHERE id = {this.RowId}";
+                    this.DataOnEdit = App.DataDB.DoQueries(sql);
+                }
+                else if (this.Page.NetworkMode == NetworkMode.Online)
+                {
+                    if (string.IsNullOrEmpty(this.Form.WebFormRefId))
+                        throw new Exception("webform refid is empty");
+
+                    WebformData data = RestServices.Instance.PullFormData(this.Page.RefId, this.RowId, Settings.LocationId);
+                    this.DataOnEdit = data.ToDataSet();
+                }
             }
             catch (Exception e)
             {
                 Log.Write("form_GetDataOnEdit---" + e.Message);
-                dt = new EbDataTable();
+                this.DataOnEdit = new EbDataSet();
             }
-            return dt;
         }
 
         private void CreateView()
@@ -177,20 +172,47 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public void FillControls(EbDataRow row)
+        public void FillControls()
         {
-            foreach (var pair in this.Form.ControlDictionary)
+            try
             {
-                var data = row[pair.Value.Name];
+                if (!this.DataOnEdit.Tables.Any()) return;
 
-                if (data != null)
-                    pair.Value.SetValue(data);
-                if (this.Mode == FormMode.EDIT)
+                foreach (var pair in this.Form.ControlDictionary)
                 {
-                    pair.Value.SetAsReadOnly(true);
-                    if (pair.Value is EbMobileFileUpload)
-                        (pair.Value as EbMobileFileUpload).RenderOnEdit(this.Form.TableName, this.RowId);
+                    EbDataTable masterData = DataOnEdit.Tables.Find(table => table.TableName == this.Form.TableName);
+
+                    if (masterData != null && masterData.Rows.Any())
+                    {
+                        var data = masterData.Rows[0][pair.Value.Name];
+
+                        if (pair.Value is EbMobileFileUpload)
+                        {
+                            if (this.Mode == FormMode.EDIT)
+                            {
+                                pair.Value.SetValue(new FUPSetValueMeta
+                                {
+                                    TableName = this.Form.TableName,
+                                    RowId = this.RowId
+                                });
+                            }
+                        }
+                        if (pair.Value is ILinesEnabled)
+                        {
+                            var lines = DataOnEdit.Tables.Find(table => table.TableName == (pair.Value as ILinesEnabled).TableName);
+                            pair.Value.SetValue(lines);
+                        }
+                        else
+                            pair.Value.SetValue(data);
+                    }
+
+                    if (this.Mode == FormMode.EDIT)
+                        pair.Value.SetAsReadOnly(true);
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
             }
         }
     }

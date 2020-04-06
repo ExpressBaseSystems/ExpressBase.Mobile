@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -171,7 +172,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
                 if (id != 0)
                 {
-                    FormRender Renderer = new FormRender(_page, id);
+                    FormRender Renderer = new FormRender(_page, id, FormMode.EDIT);
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }
@@ -189,7 +190,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 int id = Convert.ToInt32((Frame as CustomFrame).DataRow["id"]);
                 if (id != 0)
                 {
-                    FormRender Renderer = new FormRender(_page, id);//to form edit mode
+                    FormRender Renderer = new FormRender(_page, id, FormMode.EDIT);//to form edit mode
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }

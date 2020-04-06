@@ -74,7 +74,8 @@ namespace ExpressBase.Mobile
                 SearchBox = new CustomSearchBar
                 {
                     Placeholder = "Seach " + this.Label + "...",
-                    FontSize = 14
+                    FontSize = 14,
+                    BackgroundColor = Color.White
                 };
 
                 SearchBox.Focused += SearchBox_Focused;

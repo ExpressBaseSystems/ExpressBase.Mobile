@@ -312,5 +312,30 @@ namespace ExpressBase.Mobile.Services
             }
             return new EbStageInfo();
         }
+
+        public WebformData PullFormData(string refid, int row_id, int loc_id)
+        {
+            try
+            {
+                RestRequest request = new RestRequest("api/get_formdata", Method.GET);
+                request.AddParameter("refid", refid);
+                request.AddParameter("row_id", row_id);
+                request.AddParameter("loc_id", loc_id);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+
+                IRestResponse iresp = Client.Execute(request);
+                MobileFormLiveData response = JsonConvert.DeserializeObject<MobileFormLiveData>(iresp.Content);
+                return response.Data;
+            }
+            catch (Exception ex)
+            {
+                Log.Write("RestService.PullFormData---" + ex.Message);
+                Log.Write("RestService.PullFormData---" + ex.StackTrace);
+            }
+            return new WebformData();
+        }
     }
 }

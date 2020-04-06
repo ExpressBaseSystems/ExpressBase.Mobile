@@ -199,9 +199,10 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public void RenderOnEdit(string TableName, int RowId)
+        public override bool SetValue(object value)
         {
-            string pattern = $"{TableName}-{RowId}-{this.Name}*";
+            FUPSetValueMeta meta = value as FUPSetValueMeta;
+            string pattern = $"{meta.TableName}-{meta.RowId}-{this.Name}*";
             List<FileWrapper> Files = HelperFunctions.GetFilesByPattern(pattern);
 
             foreach (FileWrapper file in Files)
@@ -221,6 +222,7 @@ namespace ExpressBase.Mobile
                 };
                 AddImageToGallery(Wraper);
             }
+            return true;
         }
 
         public List<FileWrapper> GetFiles()
