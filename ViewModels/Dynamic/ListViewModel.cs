@@ -124,7 +124,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             try
             {
                 if (string.IsNullOrEmpty(this.Visualization.LinkRefId)) return;
-
                 EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
 
                 if (this.NetworkType != _page.NetworkMode)
@@ -132,7 +131,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     DependencyService.Get<IToast>().Show("Link page Mode is different.");
                     return;
                 }
-
+                Device.BeginInvokeOnMainThread(() => IsBusy = true);
                 if (_page.Container is EbMobileForm)
                 {
                     int id = Convert.ToInt32(customFrame.DataRow["id"]);
@@ -152,9 +151,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     DashBoardRender Renderer = new DashBoardRender(_page, customFrame.DataRow);
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
+                Device.BeginInvokeOnMainThread(() => IsBusy = false);
             }
             catch (Exception ex)
             {
+                Device.BeginInvokeOnMainThread(() => IsBusy = false);
                 Log.Write(ex.Message);
             }
         }

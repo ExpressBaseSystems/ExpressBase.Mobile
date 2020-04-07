@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
              x:Class="ExpressBase.Mobile.Views.Dynamic.ListRender">
 
     <NavigationPage.TitleView>
@@ -18,57 +19,58 @@
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
-        <Grid RowSpacing="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
+        <Grid>
+            <Grid RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
 
-            <Grid x:Name="FilterActionBar" IsVisible="False" Grid.Row="0" Padding="20,0" BackgroundColor="{StaticResource Blue-Dark}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Frame
+                <Grid x:Name="FilterActionBar" IsVisible="False" Grid.Row="0" Padding="20,0" BackgroundColor="{StaticResource Blue-Dark}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Frame
                     Grid.Column="0"
                     x:Name="FilterButton"
                     BackgroundColor="Transparent"
                     Padding="0,0,0,10">
-                    <Frame.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="FilterButton_Clicked"></TapGestureRecognizer>
-                    </Frame.GestureRecognizers>
-                    <Frame.Content>
-                        <FlexLayout Direction="Row">
-                            <Label 
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="FilterButton_Clicked"></TapGestureRecognizer>
+                        </Frame.GestureRecognizers>
+                        <Frame.Content>
+                            <FlexLayout Direction="Row">
+                                <Label 
                                Text="&#xf0b0;"
                                FontSize="16"
                                TextColor="White"
                                FontFamily="{StaticResource FontAwesome}"
                                VerticalTextAlignment="Center"/>
-                            <Label 
+                                <Label 
                                 Text="Filters"
                                 FontSize="16"
                                 Margin="10,0,0,0"
                                 TextColor="White"
                                 VerticalTextAlignment="Center"/>
-                        </FlexLayout>
-                    </Frame.Content>
-                </Frame>
-            </Grid>
+                            </FlexLayout>
+                        </Frame.Content>
+                    </Frame>
+                </Grid>
 
-            <Grid Grid.Row="1" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
+                <Grid Grid.Row="1" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
 
-                <Label x:Name="PagingMeta"
+                    <Label x:Name="PagingMeta"
                        Grid.Column="0" 
                        Text="Showing 0 to 30 entries" 
                        VerticalTextAlignment="Center"
@@ -76,14 +78,14 @@
                        FontSize="15"
                        TextColor="#333"/>
 
-                <Frame Grid.Column="1" 
+                    <Frame Grid.Column="1" 
                        Padding="0" 
                        Margin="5"
                        BackgroundColor="Transparent"
                        HasShadow="False">
-                    <Frame.Content>
-                        <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
-                            <Button 
+                        <Frame.Content>
+                            <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
+                                <Button 
                                 x:Name="PagingPrevButton"
                                 CornerRadius="17"
                                 Padding="0"
@@ -96,7 +98,7 @@
                                 BackgroundColor="#e1e6e9"
                                 Clicked="PagingPrevButton_Clicked"/>
 
-                            <Button 
+                                <Button 
                                 x:Name="PagingPageCount"
                                 Padding="0"
                                 HeightRequest="35"
@@ -105,7 +107,7 @@
                                 BackgroundColor="Transparent"
                                 CornerRadius="0"/>
 
-                            <Button 
+                                <Button 
                                 x:Name="PagingNextButton"
                                 Margin="0,0,0,0"
                                 CornerRadius="17" 
@@ -118,45 +120,45 @@
                                 BorderWidth="1"
                                 BackgroundColor="#e1e6e9"
                                 Clicked="PagingNextButton_Clicked"/>
-                        </StackLayout>
-                    </Frame.Content>
-                </Frame>
-                <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
-            </Grid>
-            <RefreshView
+                            </StackLayout>
+                        </Frame.Content>
+                    </Frame>
+                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
+                </Grid>
+                <RefreshView
                 Grid.Row="2"
                 x:Name="ListViewRefresh"
                 Refreshing="ListViewRefresh_Refreshing">
-                <ScrollView x:Name="listContainer">
-                    <Label 
+                    <ScrollView x:Name="listContainer">
+                        <Label 
                         IsVisible="False"
                         x:Name="EmptyRecordLabel"                  
                         Text="Empty list."
                         VerticalOptions="Center"
                         FontSize="16"
                         HorizontalOptions="Center"/>
-                </ScrollView>
-            </RefreshView>
-            <ContentView 
+                    </ScrollView>
+                </RefreshView>
+                <ContentView 
                 IsVisible="False"
                 x:Name="FilterDialogView"
                 BackgroundColor="Green"
                 Grid.Row="2">
-                <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
-                    <Grid VerticalOptions="FillAndExpand">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                        </Grid.RowDefinitions>
+                    <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
+                        <Grid VerticalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
 
-                        <ScrollView x:Name="FilterContainer" Padding="10" Grid.ColumnSpan="2" Grid.Row="0"/>
+                            <ScrollView x:Name="FilterContainer" Padding="10" Grid.ColumnSpan="2" Grid.Row="0"/>
 
-                        <Button 
+                            <Button 
                             x:Name="FDCancel"
                             Text="Cancel" 
                             BackgroundColor="White" 
@@ -167,7 +169,7 @@
                             Grid.Row="1" Grid.Column="0"
                             Clicked="FDCancel_Clicked"/>
 
-                        <Button 
+                            <Button 
                             x:Name="FDApply"
                             Text="Apply" 
                             BackgroundColor="{StaticResource Blue-Dark}"
@@ -177,9 +179,17 @@
                             Grid.Column="1"
                             Clicked="FDApply_Clicked"/>
 
-                    </Grid>
-                </StackLayout>
-            </ContentView>
+                        </Grid>
+                    </StackLayout>
+                </ContentView>
+            </Grid>
+            <shared:Loader 
+                x:Name="Loader"
+                IsVisible="{Binding IsBusy}" 
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All"
+                Position="CenterAndExpand"
+                Message="Loading..."/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

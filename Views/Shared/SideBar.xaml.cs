@@ -113,5 +113,17 @@ namespace ExpressBase.Mobile.Views.Shared
                 Log.Write(ex.Message);
             }
         }
+
+        private void Setup_Tapped(object sender, EventArgs e)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
     }
 }

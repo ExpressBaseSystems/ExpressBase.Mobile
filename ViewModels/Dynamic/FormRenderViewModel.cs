@@ -5,6 +5,7 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -61,13 +62,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         }
 
         //referenced mode
-        public FormRenderViewModel(EbMobilePage page, EbMobilePage ParentPage, int ParentId) : base(page)
+        public FormRenderViewModel(EbMobilePage page, EbMobilePage parentPage, int parentId) : base(page)
         {
             this.Mode = FormMode.REF;
-            ParentForm = (ParentPage.Container as EbMobileForm);
+            ParentForm = (parentPage.Container as EbMobileForm);
             try
             {
-                this.RowId = ParentId;
+                this.RowId = parentId;
                 this.Form = page.Container as EbMobileForm;
                 this.CreateView();
                 this.Form.CreateTableSchema();
@@ -84,8 +85,23 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 if (this.Page.NetworkMode == NetworkMode.Offline)
                 {
-                    string sql = $"SELECT * FROM {this.Form.TableName} WHERE id = {this.RowId}";
-                    this.DataOnEdit = App.DataDB.DoQueries(sql);
+                    EbDataSet _set = new EbDataSet();
+
+                    EbDataTable masterData = App.DataDB.DoQuery($"SELECT * FROM {this.Form.TableName} WHERE id = {this.RowId};");
+                    masterData.TableName = this.Form.TableName;
+                    _set.Tables.Add(masterData);
+
+                    foreach (var pair in this.Form.ControlDictionary)
+                    {
+                        if (pair.Value is ILinesEnabled)
+                        {
+                            string linesQuery = $"SELECT * FROM {(pair.Value as ILinesEnabled).TableName} WHERE {this.Form.TableName}_id = {this.RowId};";
+                            EbDataTable linesData = App.DataDB.DoQuery(linesQuery);
+                            linesData.TableName = (pair.Value as ILinesEnabled).TableName;
+                            _set.Tables.Add(linesData);
+                        }
+                    }
+                    this.DataOnEdit = _set;
                 }
                 else if (this.Page.NetworkMode == NetworkMode.Online)
                 {
@@ -98,7 +114,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception e)
             {
-                Log.Write("form_GetDataOnEdit---" + e.Message);
+                Log.Write("form_SetDataOnEdit---" + e.Message);
                 this.DataOnEdit = new EbDataSet();
             }
         }
@@ -109,13 +125,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 StackLayout ScrollStack = new StackLayout { Spacing = 0 };
 
-                foreach (var ctrl in this.Form.ChildControls)
+                foreach (EbMobileControl ctrl in this.Form.ChildControls)
                 {
                     if (ctrl is EbMobileTableLayout)
                     {
                         foreach (EbMobileTableCell Tc in (ctrl as EbMobileTableLayout).CellCollection)
                         {
-                            foreach (var tbctrl in Tc.ControlCollection)
+                            foreach (EbMobileControl tbctrl in Tc.ControlCollection)
                             {
                                 tbctrl.InitXControl(this.Mode);
                                 tbctrl.NetworkType = this.NetworkType;
@@ -144,6 +160,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             IToast toast = DependencyService.Get<IToast>();
 
+            if (this.NetworkType == NetworkMode.Online && !Settings.HasInternet)
+                toast.Show("you are not connected to Internet");
+
             if (Form.Validate())
             {
                 await Task.Run(() =>
@@ -167,47 +186,41 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 });
             }
             else
-            {
                 toast.Show("Some fields are required");
-            }
         }
 
         public void FillControls()
         {
             try
             {
-                if (!this.DataOnEdit.Tables.Any()) return;
+                EbDataTable masterData = DataOnEdit.Tables.Find(table => table.TableName == this.Form.TableName);
+                if (masterData == null && !masterData.Rows.Any()) return;
+                EbDataRow masterRow = masterData.Rows.FirstOrDefault();
 
-                foreach (var pair in this.Form.ControlDictionary)
+                foreach (KeyValuePair<string, EbMobileControl> pair in this.Form.ControlDictionary)
                 {
-                    EbDataTable masterData = DataOnEdit.Tables.Find(table => table.TableName == this.Form.TableName);
+                    object data = masterRow[pair.Value.Name];
 
-                    if (masterData != null && masterData.Rows.Any())
+                    if (pair.Value is EbMobileFileUpload)
                     {
-                        var data = masterData.Rows[0][pair.Value.Name];
-
-                        if (pair.Value is EbMobileFileUpload)
+                        if (this.Mode == FormMode.EDIT)
                         {
-                            if (this.Mode == FormMode.EDIT)
+                            pair.Value.SetValue(new FUPSetValueMeta
                             {
-                                pair.Value.SetValue(new FUPSetValueMeta
-                                {
-                                    TableName = this.Form.TableName,
-                                    RowId = this.RowId
-                                });
-                            }
+                                TableName = this.Form.TableName,
+                                RowId = this.RowId
+                            });
                         }
-                        if (pair.Value is ILinesEnabled)
-                        {
-                            var lines = DataOnEdit.Tables.Find(table => table.TableName == (pair.Value as ILinesEnabled).TableName);
-                            pair.Value.SetValue(lines);
-                        }
-                        else
-                            pair.Value.SetValue(data);
                     }
+                    if (pair.Value is ILinesEnabled)
+                    {
+                        EbDataTable lines = DataOnEdit.Tables.Find(table => table.TableName == (pair.Value as ILinesEnabled).TableName);
+                        pair.Value.SetValue(lines);
+                    }
+                    else
+                        pair.Value.SetValue(data);
 
-                    if (this.Mode == FormMode.EDIT)
-                        pair.Value.SetAsReadOnly(true);
+                    if (this.Mode == FormMode.EDIT) pair.Value.SetAsReadOnly(true);
                 }
             }
             catch (Exception ex)

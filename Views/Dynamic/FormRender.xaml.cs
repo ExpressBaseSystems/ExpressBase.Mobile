@@ -1,10 +1,7 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -14,7 +11,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FormRender : ContentPage
     {
-        public FormRenderViewModel Renderer { set; get; }
+        public FormRenderViewModel ViewModel { set; get; }
 
         //new mode
         public FormRender(EbMobilePage page)
@@ -22,16 +19,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             try
             {
-                Renderer = new FormRenderViewModel(page);
-                FormScrollView.Content = Renderer.XView;
-                BindingContext = Renderer;
-
-                if (page.NetworkMode == NetworkMode.Online && !Settings.HasInternet)
-                    ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
-                else
-                    HideMessage("Back to online", Color.FromHex("41d041"));
-
-                Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
+                BindingContext = ViewModel = new FormRenderViewModel(page);
+                FormScrollView.Content = ViewModel.XView;
             }
             catch (Exception ex)
             {
@@ -45,20 +34,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             try
             {
+                BindingContext = ViewModel = new FormRenderViewModel(page, rowId, mode);
+                FormScrollView.Content = ViewModel.XView;
+
                 SaveButton.Text = "Save Changes";
                 SaveButton.IsVisible = false;
                 EditButton.IsVisible = true;
-
-                Renderer = new FormRenderViewModel(page, rowId, mode);
-                FormScrollView.Content = Renderer.XView;
-                BindingContext = Renderer;
-
-                if (page.NetworkMode == NetworkMode.Online && !Settings.HasInternet)
-                    ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
-                else
-                    HideMessage("Back to online", Color.FromHex("41d041"));
-
-                Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
             }
             catch (Exception ex)
             {
@@ -72,9 +53,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             try
             {
-                Renderer = new FormRenderViewModel(currentForm, parentForm, parentId);
-                FormScrollView.Content = Renderer.XView;
-                BindingContext = Renderer;
+                BindingContext = ViewModel = new FormRenderViewModel(currentForm, parentForm, parentId);
+                FormScrollView.Content = ViewModel.XView;
             }
             catch (Exception ex)
             {
@@ -84,41 +64,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void EditButton_Clicked(object sender, EventArgs e)
         {
-            if (Renderer != null)
+            if (ViewModel != null)
             {
                 EditButton.IsVisible = false;
                 SaveButton.IsVisible = true;
 
-                foreach (var pair in Renderer.Form.ControlDictionary)
+                foreach (var pair in ViewModel.Form.ControlDictionary)
                     pair.Value.SetAsReadOnly(false);
             }
-        }
-
-        private void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
-        {
-            if (Renderer != null && Renderer.NetworkType == NetworkMode.Online)
-            {
-                if (e.NetworkAccess == NetworkAccess.Internet)
-                    HideMessage("Back to online", Color.FromHex("41d041"));
-                else
-                    ShowMessage("You are not connected to internet!", Color.FromHex("fd6b6b"));
-            }
-        }
-
-        private void ShowMessage(string message, Color background)
-        {
-            MessageBoxFrame.BackgroundColor = background;
-            MessageBoxLabel.Text = message;
-            MessageBox.IsVisible = true;
-            SaveButton.IsVisible = false;
-        }
-
-        private void HideMessage(string message_beforehide, Color background)
-        {
-            MessageBoxFrame.BackgroundColor = background;
-            MessageBoxLabel.Text = message_beforehide;
-            MessageBox.IsVisible = false;
-            SaveButton.IsVisible = true;
         }
     }
 }

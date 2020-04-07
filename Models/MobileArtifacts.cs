@@ -83,13 +83,13 @@ namespace ExpressBase.Mobile.Models
             this.Tables[0] = item;
         }
 
-        public string GetQuery(List<DbParameter> parameters)
+        public string GetQuery(List<DbParameter> parameters, int masterRowId)
         {
             StringBuilder sb = new StringBuilder();
             try
             {
                 foreach (MobileTable table in this.Tables)
-                    sb.Append(table.GetQuery(this.MasterTable, parameters));
+                    sb.Append(table.GetQuery(this.MasterTable, parameters, masterRowId));
             }
             catch (Exception ex)
             {
@@ -116,7 +116,7 @@ namespace ExpressBase.Mobile.Models
             Files = new Dictionary<string, List<FileWrapper>>();
         }
 
-        public string GetQuery(string masterTable, List<DbParameter> parameters)
+        public string GetQuery(string masterTable, List<DbParameter> parameters, int masterRowId = 0)
         {
             StringBuilder sb = new StringBuilder();
             try
@@ -128,20 +128,20 @@ namespace ExpressBase.Mobile.Models
                         List<string> _colstrings = new List<string>();
                         foreach (MobileTableColumn col in this[i].Columns)
                         {
-                            _colstrings.Add(string.Format("{0} = @{1}_{2}", col.Name, col.Name, i));
+                            _colstrings.Add($"{col.Name} = @{this.TableName}_{col.Name}_{i}");
 
                             parameters.Add(new DbParameter
                             {
-                                ParameterName = string.Format("@{0}_{1}", col.Name, i),
+                                ParameterName = $"@{this.TableName}_{col.Name}_{i}",
                                 DbType = (int)col.Type,
                                 Value = col.Value
                             });
                         }
-                        sb.AppendFormat("UPDATE {0} SET {1} WHERE id = {2};", this.TableName, string.Join(",", _colstrings), ("@rowid" + i));
+                        sb.AppendFormat("UPDATE {0} SET {1} WHERE id = {2};", this.TableName, string.Join(",", _colstrings), $"@{this.TableName}_rowid_{i}");
 
                         parameters.Add(new DbParameter
                         {
-                            ParameterName = ("@rowid" + i),
+                            ParameterName = $"@{this.TableName}_rowid_{i}",
                             DbType = (int)EbDbTypes.Int32,
                             Value = this[i].RowId
                         });
@@ -152,7 +152,7 @@ namespace ExpressBase.Mobile.Models
                         List<string> _vals = new List<string>();
                         foreach (MobileTableColumn col in this[i].Columns)
                         {
-                            string _prm = string.Format("@{0}_{1}", col.Name, i);
+                            string _prm = $"@{this.TableName}_{col.Name}_{i}";
 
                             _vals.Add(_prm);
 
@@ -166,8 +166,19 @@ namespace ExpressBase.Mobile.Models
 
                         if (this.TableName != masterTable)
                         {
-                            _cols.Add(masterTable + "_id");
-                            _vals.Add($"(SELECT MAX(id) FROM {masterTable})");
+                            _cols.Add($"{masterTable}_id");
+                            if (masterRowId > 0)
+                            {
+                                _vals.Add($"@{masterTable}_id_{i}");
+                                parameters.Add(new DbParameter
+                                {
+                                    ParameterName = $"@{masterTable}_id_{i}",
+                                    DbType = (int)EbDbTypes.Int32,
+                                    Value = masterRowId
+                                });
+                            }
+                            else
+                                _vals.Add($"(SELECT MAX(id) FROM {masterTable})");
                         }
                         sb.AppendFormat("INSERT INTO {0}({1}) VALUES ({2});", this.TableName, string.Join(",", _cols), string.Join(",", _vals.ToArray()));
                     }

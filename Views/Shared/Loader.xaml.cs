@@ -17,10 +17,21 @@ namespace ExpressBase.Mobile.Views.Shared
             declaringType: typeof(string),
             defaultValue: default(string));
 
+        public static readonly BindableProperty PositionProperty = BindableProperty.Create(propertyName: "Position",
+            returnType: typeof(LayoutOptions),
+            declaringType: typeof(string),
+            defaultValue: LayoutOptions.CenterAndExpand);
+
         public string Message
         {
             get { return (string)GetValue(MessageProperty); }
             set { SetValue(MessageProperty, value); }
+        }
+
+        public LayoutOptions Position
+        {
+            get { return (LayoutOptions)GetValue(PositionProperty); }
+            set { SetValue(PositionProperty, value); }
         }
 
         public Loader()
@@ -34,6 +45,10 @@ namespace ExpressBase.Mobile.Views.Shared
             if (propertyName == MessageProperty.PropertyName)
             {
                 LoaderMessage.Text = Message;
+            }
+            else if(propertyName == PositionProperty.PropertyName)
+            {
+                MessageBox.VerticalOptions = Position;
             }
         }
     }

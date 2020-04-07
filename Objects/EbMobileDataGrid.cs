@@ -8,6 +8,7 @@ using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -24,7 +25,7 @@ namespace ExpressBase.Mobile
 
         public EbScript OfflineQuery { set; get; }
 
-        public FormMode Mode { set; get; }
+        public FormMode FormRenderMode { set; get; }
 
         //mobile props
         private Frame Container { set; get; }
@@ -75,7 +76,7 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode mode)
         {
-            this.Mode = mode;
+            this.FormRenderMode = mode;
             try
             {
                 Container = new Frame
@@ -228,6 +229,8 @@ namespace ExpressBase.Mobile
                 else
                 {
                     MobileTableRow row = this.GetControlValues();
+                    MobileTableRow oldRow = DataDictionary[name];
+                    row.RowId = oldRow.RowId;
                     DataDictionary[name] = row;
 
                     for (int i = 0; i < GridBody.Children.Count; i++)
@@ -356,7 +359,7 @@ namespace ExpressBase.Mobile
                 }
                 else if (this.NetworkType == NetworkMode.Offline)
                 {
-                    if (string.IsNullOrEmpty(this.OfflineQuery.Code)) 
+                    if (string.IsNullOrEmpty(this.OfflineQuery.Code))
                         return;
                     dt = App.DataDB.DoQuery(HelperFunctions.B64ToString(this.OfflineQuery.Code));
                 }
@@ -389,11 +392,11 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public void CreateAutoFillRow(EbDataRow row)
+        public MobileTableRow CreateAutoFillRow(EbDataRow row)
         {
+            MobileTableRow table_row = new MobileTableRow();
             try
             {
-                MobileTableRow table_row = new MobileTableRow();
                 foreach (EbMobileControl ctrl in this.ChildControls)
                 {
                     if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
@@ -409,6 +412,41 @@ namespace ExpressBase.Mobile
                 GridBody.Children.Add(grid);
             }
             catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return table_row;
+        }
+
+        public override bool SetValue(object value)
+        {
+            try
+            {
+                EbDataTable dt = value == null ? new EbDataTable() : (value as EbDataTable);
+
+                foreach (var row in dt.Rows)
+                {
+                    MobileTableRow mobileRow = this.CreateAutoFillRow(row);
+                    int id = Convert.ToInt32(row["id"]);
+                    mobileRow.RowId = id;
+                }
+                GridBody.IsVisible = true;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return true;
+        }
+
+        public override void SetAsReadOnly(bool enable)
+        {
+            try
+            {
+                foreach (var ctrl in this.ChildControls)
+                    ctrl.SetAsReadOnly(enable);
+            }
+            catch(Exception ex)
             {
                 Log.Write(ex.Message);
             }

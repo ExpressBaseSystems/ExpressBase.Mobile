@@ -7,11 +7,8 @@ using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -190,7 +187,7 @@ namespace ExpressBase.Mobile
             {
                 List<DbParameter> _params = new List<DbParameter>();
 
-                string query = data.GetQuery(_params);
+                string query = data.GetQuery(_params, rowId);
 
                 int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
 
@@ -252,18 +249,18 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public void FlagLocalRow(PushResponse Response, int RowId, string TableName)
+        public void FlagLocalRow(PushResponse response, int rowId, string tableName)
         {
             try
             {
-                if (Response.RowAffected > 0)
+                if (response.RowAffected > 0)
                 {
                     DbParameter[] parameter = new DbParameter[]
                     {
-                        new DbParameter{ParameterName="@rowid",Value = RowId},
-                        new DbParameter{ParameterName="@cloudrowid",Value = Response.RowId}
+                        new DbParameter{ParameterName="@rowid",Value = rowId},
+                        new DbParameter{ParameterName="@cloudrowid",Value = response.RowId}
                     };
-                    int rowAffected = App.DataDB.DoNonQuery(string.Format(StaticQueries.FLAG_LOCALROW_SYNCED, TableName), parameter);
+                    int rowAffected = App.DataDB.DoNonQuery(string.Format(StaticQueries.FLAG_LOCALROW_SYNCED, tableName), parameter);
                 }
             }
             catch (Exception ex)

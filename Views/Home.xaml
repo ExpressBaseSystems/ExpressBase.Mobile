@@ -7,8 +7,7 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Home"
              Style="{StaticResource ContentPageStyle}"
-             BackgroundColor="#ffffff"
-             BackgroundImageSource="doodlebg.png">
+             BackgroundColor="#ffffff">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">

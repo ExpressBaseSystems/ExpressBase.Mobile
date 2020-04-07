@@ -145,8 +145,8 @@ namespace ExpressBase.Mobile.ViewModels
                     var iconFrame = new CustomShadowFrame
                     {
                         Padding = 10,
-                        BorderColor = Color.FromHex("fafafa"),
-                        HasShadow = true,
+                        BorderColor = wrpr.IconBackground == Color.White ? Color.FromHex("fafafa") : wrpr.IconBackground,
+                        //HasShadow = true,
                         CornerRadius = 4,
                         PageWraper = wrpr,
                         BackgroundColor = wrpr.IconBackground
@@ -156,9 +156,21 @@ namespace ExpressBase.Mobile.ViewModels
                     var iconContainer = new FlexLayout { Direction = FlexDirection.Column };
                     iconContainer.SizeChanged += IconContainer_SizeChanged;
 
+                    string labelIcon = string.Empty;
+                    try
+                    {
+                        labelIcon = Regex.Unescape("\\u" + wrpr.ObjectIcon);
+                    }
+                    catch (Exception ex)
+                    {
+                        labelIcon = wrpr.GetDefaultIcon();
+                        Log.Write("font icon format is invalid");
+                        Log.Write(ex.Message);
+                    }
+
                     var icon = new Label
                     {
-                        Text = Regex.Unescape("\\u" + wrpr.ObjectIcon),
+                        Text = labelIcon,
                         FontSize = 30,
                         TextColor = wrpr.IconColor,
                         VerticalTextAlignment = TextAlignment.Center,

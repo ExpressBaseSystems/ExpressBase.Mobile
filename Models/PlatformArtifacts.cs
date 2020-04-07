@@ -174,22 +174,9 @@ namespace ExpressBase.Mobile.Models
             get
             {
                 if (_page == null) ToPage();
-
                 string icon = _page.Icon;
-
                 if (string.IsNullOrEmpty(icon))
-                {
-                    if (_page.Container is EbMobileForm)
-                        icon = "f298";
-                    else if (_page.Container is EbMobileVisualization)
-                        icon = "f03a";//"f022";
-                    else if (_page.Container is EbMobileDashBoard)
-                        icon = "f0e4";
-                    else if (_page.Container is EbMobilePdf)
-                        icon = "f1c1";
-                    else
-                        icon = "f0e4";
-                }
+                    icon = this.GetDefaultIcon();
                 return icon;
             }
         }
@@ -262,6 +249,22 @@ namespace ExpressBase.Mobile.Models
             string regexed = EbSerializers.JsonToNETSTD(this.Json);
             _page = EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
             return _page;
+        }
+
+        public string GetDefaultIcon()
+        {
+            if (_page == null) ToPage();
+
+            if (_page.Container is EbMobileForm)
+                return "f298";
+            else if (_page.Container is EbMobileVisualization)
+                return "f03a";//"f022";
+            else if (_page.Container is EbMobileDashBoard)
+                return "f0e4";
+            else if (_page.Container is EbMobilePdf)
+                return "f1c1";
+            else
+                return "f0e4";
         }
     }
 
