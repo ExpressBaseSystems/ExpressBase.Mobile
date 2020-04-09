@@ -33,17 +33,41 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
-            this.BuildXControl();
+            try
+            {
+                this.BuildXControl();
 
-            if (Settings.HasInternet)
-            {
-                if (Mode != FormMode.EDIT)
-                    this.SetCordinates();
+                if (this.NetworkType == NetworkMode.Online)
+                {
+                    if (Mode != FormMode.EDIT)
+                        this.SetCordinates();
+                }
+                else if (this.NetworkType == NetworkMode.Mixed)
+                {
+                    if (Mode != FormMode.EDIT)
+                    {
+                        if (Settings.HasInternet)
+                            this.SetCordinates();
+                        else
+                        {
+                            Loader.IsVisible = false;
+                            WebView.HeightRequest = 100;
+                            WebView.Source = new HtmlWebViewSource { Html = PlaceHolder };
+                            WebView.IsVisible = true;
+                        }
+                    }
+                }
+                else
+                {
+                    Loader.IsVisible = false;
+                    WebView.HeightRequest = 100;
+                    WebView.Source = new HtmlWebViewSource { Html = PlaceHolder };
+                    WebView.IsVisible = true;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                WebView.HeightRequest = 100;
-                WebView.Source = new HtmlWebViewSource { Html = PlaceHolder };
+                Log.Write(ex.Message);
             }
         }
 
@@ -81,11 +105,11 @@ namespace ExpressBase.Mobile
 
                 this.XControl = Layout;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
                 Log.Write(ex.StackTrace);
-            }      
+            }
         }
 
         private void WebView_Navigated(object sender, WebNavigatedEventArgs e)
@@ -170,7 +194,7 @@ namespace ExpressBase.Mobile
                     });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
                 Log.Write(ex.StackTrace);

@@ -48,7 +48,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.CreateView();
         }
 
-        private void SetParameters(EbDataRow row)
+        public void SetParameters(EbDataRow row)
         {
             try
             {
@@ -141,58 +141,78 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         void AddButtonClicked(object sender)
         {
-            if (string.IsNullOrEmpty(Visualization.LinkRefId))
-                return;
-
-            EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
-            if (_page.Container is EbMobileForm)
+            try
             {
-                if (string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
-                    return;
+                EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
 
-                EbMobilePage ParentForm = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
-
-                int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
-                if (id != 0)
+                if (_page != null && _page.Container is EbMobileForm)
                 {
-                    FormRender Renderer = new FormRender(_page, ParentForm, id);
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    if (string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
+                        return;
+
+                    EbMobilePage ParentForm = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
+
+                    int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
+                    if (id != 0)
+                    {
+                        FormRender Renderer = new FormRender(_page, ParentForm, id);
+                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Write("LinkedListViewModel.AddButtonClicked::" + ex.Message);
             }
         }
 
         void EditButtonClicked(object sender)
         {
-            if (string.IsNullOrEmpty(SourceVisualization.SourceFormRefId))
-                return;
-            EbMobilePage _page = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
-
-            if (_page != null)
+            try
             {
-                int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
-                if (id != 0)
+                EbMobilePage _page = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
+
+                if (_page != null)
                 {
-                    FormRender Renderer = new FormRender(_page, id, FormMode.EDIT);
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
+                    if (id != 0)
+                    {
+                        FormRender Renderer = new FormRender(_page, id, FormMode.EDIT);
+                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Write("LinkedListViewModel.EditButtonClicked::" + ex.Message);
             }
         }
 
         void ListItem_Clicked(object Frame, EventArgs args)
         {
-            if (string.IsNullOrEmpty(this.Visualization.LinkRefId))
-                return;
-
-            EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
-
-            if (_page != null && _page.Container is EbMobileForm)
+            try
             {
-                int id = Convert.ToInt32((Frame as CustomFrame).DataRow["id"]);
-                if (id != 0)
+                EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
+
+                if (_page != null && _page.Container is EbMobileForm)
                 {
-                    FormRender Renderer = new FormRender(_page, id, FormMode.EDIT);//to form edit mode
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    if (this.NetworkType != _page.NetworkMode)
+                    {
+                        DependencyService.Get<IToast>().Show("Link page Mode is different.");
+                        return;
+                    }
+
+                    int id = Convert.ToInt32((Frame as CustomFrame).DataRow["id"]);
+                    if (id != 0)
+                    {
+                        FormRender Renderer = new FormRender(_page, id, FormMode.EDIT);//to form edit mode
+                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Write("LinkedListViewModel.ListItem_Clicked::" + ex.Message);
             }
         }
     }

@@ -86,17 +86,10 @@ namespace ExpressBase.Mobile
                 }
                 else if (networkType == NetworkMode.Offline)
                 {
-                    var sqlParams = HelperFunctions.GetSqlParams(this.GetQuery);
-                    if (sqlParams.Count > 0)
-                    {
-                        List<DbParameter> dbParams = new List<DbParameter>();
-                        foreach (string s in sqlParams)
-                            dbParams.Add(new DbParameter { ParameterName = s });
-
-                        ds = this.GetLocalData(dbParams, offset);
-                    }
-                    else
+                    if (parameters == null)
                         ds = this.GetLocalData(offset);
+                    else
+                        ds = this.GetLocalData(parameters, offset);
                 }
             }
             catch (Exception ex)

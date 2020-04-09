@@ -26,9 +26,9 @@ namespace ExpressBase.Mobile.Services
             SyncResponse response = new SyncResponse();
             try
             {
-                FormCollection = GetForms();
+                FormCollection = this.GetForms();
                 WebFormData = new WebformData();
-                InitPush(response);
+                this.InitPush(response);
             }
             catch (Exception ex)
             {
@@ -64,13 +64,11 @@ namespace ExpressBase.Mobile.Services
             {
                 foreach (EbMobileForm Form in this.FormCollection)
                 {
-                    if (depT.Contains(Form.TableName))
-                        continue;
+                    if (depT.Contains(Form.TableName)) continue;
 
                     EbMobileForm DependencyForm = Form.ResolveDependency();
 
-                    if (DependencyForm != null)
-                        depT.Add(DependencyForm.TableName);
+                    if (DependencyForm != null) depT.Add(DependencyForm.TableName);
 
                     EbDataTable SourceData = Form.GetLocalData();
 
@@ -78,18 +76,15 @@ namespace ExpressBase.Mobile.Services
                     {
                         PushResponse resp = this.PushRow(Form, SourceData, SourceData.Rows[i], i);
 
-                        if (resp.RowAffected <= 0)
-                            continue;
+                        if (resp.RowAffected <= 0) continue;
 
-                        Form.FlagLocalRow(resp, resp.LocalRowId, Form.TableName);
+                        Form.FlagLocalRow(resp, resp.LocalRowId);
 
-                        if (DependencyForm != null)
-                            PushDependencyData(Form, DependencyForm, resp.RowId, resp.LocalRowId);
-
-                        response.Status = true;
-                        response.Message = "Sync complted";
+                        if (DependencyForm != null) PushDependencyData(Form, DependencyForm, resp.RowId, resp.LocalRowId);
                     }
                 }
+                response.Status = true;
+                response.Message = "Sync complted";
             }
             catch (Exception ex)
             {
@@ -183,7 +178,7 @@ namespace ExpressBase.Mobile.Services
                         PushResponse resp = PushRow(DependencyForm, dt, dt.Rows[i], i);
                         if (resp.RowAffected <= 0)
                             continue;
-                        DependencyForm.FlagLocalRow(resp, resp.LocalRowId, SourceForm.TableName);
+                        DependencyForm.FlagLocalRow(resp, resp.LocalRowId);
                     }
                 }
             }

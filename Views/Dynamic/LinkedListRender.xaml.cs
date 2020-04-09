@@ -110,9 +110,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
+                ViewModel.SetParameters(ViewModel.HeaderFrame.DataRow);
                 ViewModel.SetData(Offset);
                 ViewModel.CreateView();
-                ScrollContainer.Content = ViewModel.XView;
+
+                if (ViewModel.DataTable.Rows.Any())
+                    ScrollContainer.Content = ViewModel.XView;
+                else
+                    EmptyRecordLabel.IsVisible = true;
 
                 this.UpdatePaginationBar();
             }

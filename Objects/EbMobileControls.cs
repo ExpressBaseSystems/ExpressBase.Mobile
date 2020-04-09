@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.CustomControls;
+﻿using ExpressBase.Mobile.Behavior;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -234,12 +235,13 @@ namespace ExpressBase.Mobile
             }
             else
             {
-                this.XControl = new TextBox
+                this.XControl = new NumericTextBox
                 {
                     IsReadOnly = this.ReadOnly,
-                    BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
+                    BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White,
+                    Keyboard = Keyboard.Numeric,
+                    Behaviors = { new NumericBoxBehavior() }
                 };
-                (this.XControl as TextBox).Keyboard = Keyboard.Numeric;
             }
         }
 
@@ -262,7 +264,7 @@ namespace ExpressBase.Mobile
             if (RenderType == NumericBoxTypes.ButtonType)
                 return ValueBoxNumber.ToString();
             else
-                return (this.XControl as TextBox).Text;
+                return (this.XControl as NumericTextBox).Text;
         }
 
         public override bool SetValue(object value)
@@ -276,7 +278,7 @@ namespace ExpressBase.Mobile
                 ValueBox.Text = ValueBoxNumber.ToString();
             }
             else
-                (this.XControl as TextBox).Text = value.ToString();
+                (this.XControl as NumericTextBox).Text = value.ToString();
 
             return true;
         }
@@ -289,7 +291,7 @@ namespace ExpressBase.Mobile
                 ValueBoxNumber = 0;
             }
             else
-                (this.XControl as TextBox).ClearValue(TextBox.TextProperty);
+                (this.XControl as NumericTextBox).ClearValue(NumericTextBox.TextProperty);
         }
     }
 
@@ -317,10 +319,12 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
-            this.XControl = new CustomDatePicker { IsEnabled = !this.ReadOnly };
-
-            (this.XControl as CustomDatePicker).Date = DateTime.Now;
-            (this.XControl as CustomDatePicker).Format = "yyyy-MM-dd";
+            this.XControl = new CustomDatePicker
+            {
+                IsEnabled = !this.ReadOnly,
+                Date = DateTime.Now,
+                Format = "yyyy-MM-dd"
+            };
         }
 
         public override object GetValue()

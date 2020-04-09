@@ -22,11 +22,13 @@ namespace ExpressBase.Mobile.Helpers
             EbMobilePage page = null;
             try
             {
+                if (string.IsNullOrEmpty(Refid)) return null;
+
                 var wraper = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
                 MobilePagesWraper wrpr = wraper?.Find(item => item.RefId == Refid);
                 page = wrpr?.ToPage();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write("HelperFunctions.GetPage---" + ex.Message);
             }
@@ -35,19 +37,36 @@ namespace ExpressBase.Mobile.Helpers
 
         public static string WrapSelectQuery(string sql, List<DbParameter> Parameters = null)
         {
-            sql = string.Format("SELECT COUNT(*) AS count FROM ({0}); SELECT * FROM ({0}) AS WRAPER", sql.TrimEnd(';'));
-
-            if (!Parameters.IsNullOrEmpty())
+            string query = string.Empty;
+            sql = sql.TrimEnd(';');
+            try
             {
-                List<string> conditions = new List<string>();
-                sql += " WHERE ";
-                foreach (DbParameter param in Parameters)
-                    conditions.Add($"WRAPER.{param.ParameterName} = @{param.ParameterName}");
+                List<string> sqlParam = HelperFunctions.GetSqlParams(sql);
 
-                sql += string.Join(" AND ", conditions.ToArray());
+                query = string.Format("SELECT COUNT(*) AS count FROM ({0}); SELECT * FROM ({0}) AS WRAPER", sql);
+
+                if (!Parameters.IsNullOrEmpty())
+                {
+                    List<string> conditions = new List<string>();
+                    foreach (DbParameter param in Parameters)
+                    {
+                        if (!sqlParam.Contains(param.ParameterName))
+                            conditions.Add($"WRAPER.{param.ParameterName} = @{param.ParameterName}");
+                    }
+
+                    if (conditions.Count > 0)
+                    {
+                        query += " WHERE ";
+                        query += string.Join(" AND ", conditions.ToArray());
+                    }
+                }
+                query += " LIMIT @limit OFFSET @offset;";
             }
-
-            return sql + " LIMIT @limit OFFSET @offset;";
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return query;
         }
 
         public static string WrapSelectQueryUnPaged(string sql, List<DbParameter> Parameters = null)

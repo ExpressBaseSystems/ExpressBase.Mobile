@@ -84,7 +84,7 @@ namespace ExpressBase.Mobile
                     BorderColor = Color.FromHex("cccccc"),
                     CornerRadius = 4,
                     HasShadow = false,
-                    Padding = 1
+                    Padding = 2
                 };
 
                 GridHeader = new StackLayout { Spacing = 0 };
@@ -210,7 +210,13 @@ namespace ExpressBase.Mobile
                 if (el.ClassId == button.ClassId)
                 {
                     GridBody.Children.Remove(el);
-                    DataDictionary.Remove(el.ClassId);
+                    if (this.FormRenderMode == FormMode.EDIT)
+                    {
+                        if (DataDictionary.TryGetValue(el.ClassId, out MobileTableRow row))
+                            if (row.RowId == 0) DataDictionary.Remove(el.ClassId); else row.IsDelete = true;
+                    }
+                    else
+                        DataDictionary.Remove(el.ClassId);
                     break;
                 }
             }
@@ -443,10 +449,12 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                foreach (var ctrl in this.ChildControls)
-                    ctrl.SetAsReadOnly(enable);
+                if (enable)
+                    Container.IsEnabled = false;
+                else
+                    Container.IsEnabled = true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }

@@ -249,7 +249,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public void FlagLocalRow(PushResponse response, int rowId, string tableName)
+        public void FlagLocalRow(PushResponse response, int rowId)
         {
             try
             {
@@ -260,7 +260,7 @@ namespace ExpressBase.Mobile
                         new DbParameter{ParameterName="@rowid",Value = rowId},
                         new DbParameter{ParameterName="@cloudrowid",Value = response.RowId}
                     };
-                    int rowAffected = App.DataDB.DoNonQuery(string.Format(StaticQueries.FLAG_LOCALROW_SYNCED, tableName), parameter);
+                    int rowAffected = App.DataDB.DoNonQuery(string.Format(StaticQueries.FLAG_LOCALROW_SYNCED, this.TableName), parameter);
                 }
             }
             catch (Exception ex)

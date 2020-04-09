@@ -123,7 +123,7 @@ namespace ExpressBase.Mobile.Models
             {
                 for (int i = 0; i < this.Count; i++)
                 {
-                    if (this[i].IsUpdate)//update
+                    if (this[i].IsUpdate && !this[i].IsDelete)//update
                     {
                         List<string> _colstrings = new List<string>();
                         foreach (MobileTableColumn col in this[i].Columns)
@@ -142,6 +142,16 @@ namespace ExpressBase.Mobile.Models
                         parameters.Add(new DbParameter
                         {
                             ParameterName = $"@{this.TableName}_rowid_{i}",
+                            DbType = (int)EbDbTypes.Int32,
+                            Value = this[i].RowId
+                        });
+                    }
+                    else if (this[i].IsDelete)//delete
+                    {
+                        sb.AppendLine($"DELETE FROM {this.TableName} WHERE id = @{this.TableName}_deleterow_{i};");
+                        parameters.Add(new DbParameter
+                        {
+                            ParameterName = $"@{this.TableName}_deleterow_{i}",
                             DbType = (int)EbDbTypes.Int32,
                             Value = this[i].RowId
                         });
@@ -167,9 +177,11 @@ namespace ExpressBase.Mobile.Models
                         if (this.TableName != masterTable)
                         {
                             _cols.Add($"{masterTable}_id");
+
                             if (masterRowId > 0)
                             {
                                 _vals.Add($"@{masterTable}_id_{i}");
+
                                 parameters.Add(new DbParameter
                                 {
                                     ParameterName = $"@{masterTable}_id_{i}",
@@ -197,6 +209,8 @@ namespace ExpressBase.Mobile.Models
         public int RowId { set; get; }
 
         public bool IsUpdate { get { return (RowId > 0); } }
+
+        public bool IsDelete { set; get; }
 
         public List<MobileTableColumn> Columns { set; get; }
 

@@ -25,26 +25,17 @@ namespace ExpressBase.Mobile.CustomControls
 
     public class NumericTextBox : Entry
     {
+        public int BorderThickness { set; get; } = 1;
+
+        public float BorderRadius { set; get; } = 10.0f;
+
+        public string BorderColor { set; get; } = "#cccccc";
+
+        public bool HasBorder { set; get; } = true;
+
+        public bool HasBackground { set; get; } = true;
+
         public NumericTextBox() { }
-    }
-
-    public class XButton : Button
-    {
-        public XButton() { }
-    }
-
-    public class CustomToolBar
-    {
-        public IList<ToolbarItem> ToolBar { set; get; }
-
-        public CustomToolBar()
-        {
-            this.ToolBar = new List<ToolbarItem>();
-            this.ToolBar.Add(new ToolbarItem
-            {
-                Text = "item1"
-            });
-        }
     }
 
     public class CustomDatePicker : DatePicker

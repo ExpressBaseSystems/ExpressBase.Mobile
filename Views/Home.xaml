@@ -15,38 +15,28 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
-            <Button 
-                Text="&#xf021;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1"
-                Command="{Binding SyncButtonCommand}"/>
+            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}"/>
         </Grid>
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
-        <RefreshView 
+        <Grid>
+            <RefreshView 
                 x:Name="RootRefreshView" 
                 Refreshing="RefreshView_Refreshing">
-            <Grid>
-                <ScrollView
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
+                <ScrollView>
                     <StackLayout VerticalOptions="FillAndExpand">
-                        <!--<BoxView HeightRequest="15" BackgroundColor="#eeeeee" />-->
-                        <Grid Padding="5" Margin="0,15,0,0">
+                        <Grid Padding="10,5" Margin="0,15,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="*"></RowDefinition>
                             </Grid.RowDefinitions>
-
                             <Label Text="Links" 
                                    Grid.Row="0"
                                    HorizontalOptions="Start"
                                    FontSize="16"
                                    Margin="5,0,5,0"
                                    Style="{StaticResource MediumLabel}"/>
-
                             <Label HorizontalOptions="End"
                                    Margin="5,0,5,0"
                                    Grid.Row="0">
@@ -58,7 +48,6 @@
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
-
                             <Frame CornerRadius="4" Grid.Row="1" BackgroundColor="Transparent">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -74,11 +63,9 @@
                                                Padding="0"
                                                HorizontalOptions="Center"
                                                x:Name="MyActions">
-
                                             <Frame.GestureRecognizers>
                                                 <TapGestureRecognizer Tapped="MyActions_Tapped"/>
                                             </Frame.GestureRecognizers>
-
                                             <Label Text="&#xf25a;" 
                                                    FontFamily="{StaticResource FontAwesome}"
                                                    HorizontalOptions="Center"
@@ -88,22 +75,47 @@
                                         </Frame>
                                         <Label Text="My Actions" HorizontalOptions="Center"></Label>
                                     </StackLayout>
+                                    <StackLayout Grid.Column="1">
+                                        <Frame BackgroundColor="#e8953e"
+                                               WidthRequest="60"
+                                               HeightRequest="60"
+                                               CornerRadius="30"
+                                               Padding="0"
+                                               HorizontalOptions="Center"
+                                               x:Name="Sync">
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="PushButton_Tapped"/>
+                                            </Frame.GestureRecognizers>
+                                            <Label Text="&#xf0ee;" 
+                                                   FontFamily="{StaticResource FontAwesome}"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"
+                                                   TextColor="White"
+                                                   FontSize="30"/>
+                                        </Frame>
+                                        <Label Text="Push" HorizontalOptions="Center"></Label>
+                                    </StackLayout>
                                 </Grid>
                             </Frame>
                         </Grid>
-                        <!--<BoxView HeightRequest="15" BackgroundColor="#eeeeee" />-->
-                        <Frame Padding="5" 
+                        <Frame Padding="10,5" 
                                BackgroundColor="Transparent" 
                                x:Name="ObjectContainer"/>
                     </StackLayout>
                 </ScrollView>
-                <!--loader-->
-                <shared:Loader 
+            </RefreshView>
+            <!--loader-->
+            <shared:Loader 
                     IsVisible="{Binding IsBusy}"
-                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
                     AbsoluteLayout.LayoutFlags="All"
                     Message="{Binding LoaderMessage}"/>
-            </Grid>
-        </RefreshView>
+
+            <shared:ConfirmBox
+                x:Name="PushConfirmBox"
+                Title="Confirm"
+                Message="Do you really want to push your local data to cloud?"
+                ConfirmClicked="{Binding SyncButtonCommand}"/>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

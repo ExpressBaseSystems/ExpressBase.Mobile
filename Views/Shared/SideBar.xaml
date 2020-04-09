@@ -54,7 +54,7 @@
                     Spacing="0"
                     VerticalOptions="FillAndExpand"
                     x:Name="SideBarLayout">
-                    <StackLayout VerticalOptions="Start" >
+                    <StackLayout VerticalOptions="Start">
                         <Grid BackgroundColor="#eeeeee" Padding="10" ColumnSpacing="10">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -109,6 +109,7 @@
                                 <Label Grid.Column="1" Text="Change Solution" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
+                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="ChangeApplication_Tapped"/>
@@ -124,6 +125,7 @@
                                 <Label Grid.Column="1" Text="Switch Application" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
+                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="ChangeLocation_Tapped"/>
@@ -139,8 +141,10 @@
                                 <Label Grid.Column="1" Text="Locations" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
+                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                     </StackLayout>
-                    <StackLayout VerticalOptions="End" Padding="0">
+                    <StackLayout VerticalOptions="End" Padding="0" Spacing="0">
+                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer x:Name="Setup" Tapped="Setup_Tapped"/>
@@ -156,6 +160,7 @@
                                 <Label Grid.Column="1" Text="Settings" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
+                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer x:Name="About" Tapped="About_Tapped"/>
@@ -171,6 +176,7 @@
                                 <Label Grid.Column="1" Text="About" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
+                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="Logout_Tapped"/>

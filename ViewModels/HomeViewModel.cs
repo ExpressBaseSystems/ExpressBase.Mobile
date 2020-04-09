@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Behavior;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -17,18 +18,6 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class HomeViewModel : StaticBaseViewModel
     {
-        private bool _isRefreshing;
-
-        public bool IsRefreshing
-        {
-            get { return this._isRefreshing; }
-            set
-            {
-                this._isRefreshing = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
         private string _loaderMessage;
 
         public string LoaderMessage
@@ -123,8 +112,8 @@ namespace ExpressBase.Mobile.ViewModels
                 Grid grid = new Grid
                 {
                     Padding = 5,
-                    RowSpacing = 10,
-                    ColumnSpacing = 10,
+                    RowSpacing = 15,
+                    ColumnSpacing = 15,
                     RowDefinitions =
                     {
                         new RowDefinition{Height= GridLength.Auto}
@@ -146,8 +135,7 @@ namespace ExpressBase.Mobile.ViewModels
                     {
                         Padding = 10,
                         BorderColor = wrpr.IconBackground == Color.White ? Color.FromHex("fafafa") : wrpr.IconBackground,
-                        //HasShadow = true,
-                        CornerRadius = 4,
+                        CornerRadius = 8,
                         PageWraper = wrpr,
                         BackgroundColor = wrpr.IconBackground
                     };
@@ -171,13 +159,13 @@ namespace ExpressBase.Mobile.ViewModels
                     var icon = new Label
                     {
                         Text = labelIcon,
-                        FontSize = 30,
+                        FontSize = 40,
                         TextColor = wrpr.IconColor,
                         VerticalTextAlignment = TextAlignment.Center,
                         HorizontalTextAlignment = TextAlignment.Center,
                         FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
                     };
-                    icon.SizeChanged += Icon_SizeChanged;
+
                     iconContainer.Children.Add(icon);
                     FlexLayout.SetAlignSelf(icon, FlexAlignSelf.Center);
                     FlexLayout.SetGrow(icon, 1);
@@ -211,12 +199,6 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 Log.Write("ObjectRenderViewModel.AddGroupElement---" + ex.Message);
             }
-        }
-
-        private void Icon_SizeChanged(object sender, EventArgs e)
-        {
-            var icon = (sender as Label);
-            icon.FontSize = icon.Height * .4;
         }
 
         private void IconContainer_SizeChanged(object sender, EventArgs e)

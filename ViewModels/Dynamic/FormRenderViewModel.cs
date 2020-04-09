@@ -133,8 +133,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         {
                             foreach (EbMobileControl tbctrl in Tc.ControlCollection)
                             {
-                                tbctrl.InitXControl(this.Mode);
                                 tbctrl.NetworkType = this.NetworkType;
+                                tbctrl.InitXControl(this.Mode);
                                 ScrollStack.Children.Add(tbctrl.XView);
                                 this.Form.ControlDictionary.Add(tbctrl.Name, tbctrl);
                             }
@@ -142,8 +142,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     }
                     else
                     {
-                        ctrl.InitXControl(this.Mode);
                         ctrl.NetworkType = this.NetworkType;
+                        ctrl.InitXControl(this.Mode);
                         ScrollStack.Children.Add(ctrl.XView);
                         this.Form.ControlDictionary.Add(ctrl.Name, ctrl);
                     }

@@ -126,5 +126,10 @@ namespace ExpressBase.Mobile.Views
                 Log.Write(ex.Message);
             }
         }
+
+        private void PushButton_Tapped(object sender, EventArgs e)
+        {
+            PushConfirmBox.Show();
+        }
     }
 }
