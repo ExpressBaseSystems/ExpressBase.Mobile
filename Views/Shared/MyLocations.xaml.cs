@@ -14,34 +14,70 @@ namespace ExpressBase.Mobile.Views.Shared
     {
         public ObservableCollection<EbLocation> Locations { get; private set; }
 
+        public MyApplications MyApplicationsPage { set; get; }
+
         public MyLocations()
         {
             InitializeComponent();
 
-            Locations = new ObservableCollection<EbLocation>(Settings.Locations);
+            SetLocations();
+            BindingContext = this;
+        }
 
-            int _current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
+        public MyLocations(MyApplications appPage)
+        {
+            InitializeComponent();
 
-            foreach (EbLocation _loc in Locations)
+            NavigationPage.SetHasNavigationBar(this, true);
+            MyApplicationsPage = appPage;
+            SetLocations();
+            BackButton.IsVisible = true;
+            BindingContext = this;
+        }
+
+        public void SetLocations()
+        {
+            try
             {
-                if (_loc.LocId == _current)
+                Locations = new ObservableCollection<EbLocation>(Settings.Locations);
+
+                int _current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
+
+                foreach (EbLocation _loc in Locations)
                 {
-                    _loc.Selected = true;
-                    break;
+                    if (_loc.LocId == _current)
+                    {
+                        _loc.Selected = true;
+                        break;
+                    }
                 }
             }
-            BindingContext = this;
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
         private async void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            EbLocation _loc = (e.Item as EbLocation);
-            if (_loc.LocId != Settings.LocationId)
+            EbLocation loc = (e.Item as EbLocation);
+            if (loc.LocId != Settings.LocationId)
             {
-                _loc.Selected = true;
-                Store.SetValue(AppConst.CURRENT_LOCATION, _loc.LocId.ToString());
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                loc.Selected = true;
+                Store.SetValue(AppConst.CURRENT_LOCATION, loc.LocId.ToString());
+                if (MyApplicationsPage == null)
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                else
+                {
+                    MyApplicationsPage.LocationPagePoped();
+                    await Application.Current.MainPage.Navigation.PopModalAsync(true);
+                }
             }
+        }
+
+        private void BackButton_Clicked(object sender, EventArgs e)
+        {
+            Application.Current.MainPage.Navigation.PopModalAsync(true);
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace ExpressBase.Mobile.Views.Shared
+namespace ExpressBase.Mobile.CustomControls
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Loader : ContentView

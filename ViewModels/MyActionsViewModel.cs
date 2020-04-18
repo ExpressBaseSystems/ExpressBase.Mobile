@@ -19,6 +19,7 @@ namespace ExpressBase.Mobile.ViewModels
         public MyActionsViewModel(MyActionsResponse actionResp)
         {
             Actions = actionResp.Actions;
+            PageTitle = $"My Actions ({Actions.Count})";
         }
 
         private async Task ItemSelected(object selected)

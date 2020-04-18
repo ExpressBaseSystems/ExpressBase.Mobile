@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Shared.ConfirmBox"
+             x:Class="ExpressBase.Mobile.CustomControls.ImagePopup"
              IsVisible="False"
              AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
              AbsoluteLayout.LayoutFlags="All">
@@ -16,7 +16,7 @@
                 BackgroundColor="#333333"
                 Opacity=".5"/>
             <StackLayout 
-                Padding="15"
+                Padding="10"
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
                 <Frame 
@@ -28,7 +28,7 @@
                     CornerRadius="6"
                     VerticalOptions="CenterAndExpand">
                     <Frame.Content>
-                        <Grid RowSpacing="0" ColumnSpacing="1" BackgroundColor="#eeeeee">
+                        <Grid RowSpacing="0" ColumnSpacing="1">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"></RowDefinition>
                                 <RowDefinition Height="Auto"></RowDefinition>
@@ -38,49 +38,21 @@
                                 <ColumnDefinition Width="*"></ColumnDefinition>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <StackLayout Padding="15" Grid.Row="0" Grid.ColumnSpan="2" BackgroundColor="White">
-                                <Label 
-                                    x:Name="ConfirmTitle"
-                                    HorizontalTextAlignment="Center"
-                                    Text="Confirm"
-                                    FontFamily="{StaticResource Roboto-Regular}"
-                                    FontSize="18"
-                                    TextColor="#333"/>
-                                <Label
-                                    LineHeight="1.2"
-                                    FontFamily="{StaticResource Roboto-Light}"
-                                    Margin="0,20,0,20"
-                                    x:Name="ConfirmMessage"
-                                    Grid.Row="0"
-                                    Grid.ColumnSpan="2"
-                                    TextColor="#333333" 
-                                    VerticalOptions="Center" 
-                                    HorizontalTextAlignment="Center"
-                                    Text="Are you sure you want to continue?"/>
+                            <StackLayout Padding="10" Grid.Row="0" Grid.ColumnSpan="2" BackgroundColor="White">
+                                <Image x:Name="FullScreenImage" Aspect="AspectFill"/>
                             </StackLayout>
                             <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#eee" HeightRequest="1"/>
-                            <Button
-                                x:Name="CancelButton"
+                            <Button 
+                                x:Name="CloseButton"
                                 CornerRadius="0"
                                 Padding="0"
                                 Grid.Row="2"
-                                Grid.Column="0"
-                                Text="Cancel"
+                                Grid.ColumnSpan="2"
+                                Text="Close"
                                 BackgroundColor="White"
                                 TextColor="#0076ff"
-                                HorizontalOptions="FillAndExpand"
-                                Clicked="CancelButton_Clicked"/>
-                            <Button
-                                x:Name="ConfirmButton"
-                                CornerRadius="0"
-                                Padding="0"
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Text="Ok"
-                                BackgroundColor="White"
-                                TextColor="#0076ff"
-                                HorizontalOptions="FillAndExpand"
-                                Clicked="ConfirmButton_Clicked"/>
+                                HorizontalOptions="CenterAndExpand"
+                                Clicked="CloseButton_Clicked"/>
                         </Grid>
                     </Frame.Content>
                 </Frame>

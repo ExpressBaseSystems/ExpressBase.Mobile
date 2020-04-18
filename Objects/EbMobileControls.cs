@@ -126,6 +126,9 @@ namespace ExpressBase.Mobile
             {
                 XControl = new TextArea()
                 {
+                    BorderColor = "#cccccc",
+                    BorderThickness = 1,
+                    BorderRadius = 10.0f,
                     HeightRequest = 100,
                     IsReadOnly = this.ReadOnly,
                     BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
@@ -134,6 +137,9 @@ namespace ExpressBase.Mobile
             else
                 XControl = new TextBox
                 {
+                    BorderColor = "#cccccc",
+                    BorderThickness = 1,
+                    BorderRadius = 10.0f,
                     IsReadOnly = this.ReadOnly,
                     BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
                 };
@@ -224,7 +230,7 @@ namespace ExpressBase.Mobile
                 minus.Clicked += Minus_Clicked;
                 grid.Children.Add(minus, 0, 0);
 
-                ValueBox = new TextBox { Text = ValueBoxNumber.ToString(), IsReadOnly = true };
+                ValueBox = new TextBox { Text = ValueBoxNumber.ToString(), IsReadOnly = true, BorderColor = "#cccccc", BorderThickness = 1, BorderRadius = 10.0f };
                 grid.Children.Add(ValueBox, 1, 0);
 
                 var plus = new Button { Style = ButtonStyles, Text = "\uf067" };
@@ -237,6 +243,9 @@ namespace ExpressBase.Mobile
             {
                 this.XControl = new NumericTextBox
                 {
+                    BorderColor = "#cccccc",
+                    BorderThickness = 1,
+                    BorderRadius = 10.0f,
                     IsReadOnly = this.ReadOnly,
                     BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White,
                     Keyboard = Keyboard.Numeric,
@@ -307,6 +316,8 @@ namespace ExpressBase.Mobile
 
         public DateShowFormat ShowDateAs_ { get; set; }
 
+        public CustomDatePicker Picker { set; get; }
+
         public override object SQLiteToActual(object value)
         {
             if (this.EbDbType == EbDbTypes.Date)
@@ -319,30 +330,41 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
-            this.XControl = new CustomDatePicker
+            Picker = new CustomDatePicker
             {
                 IsEnabled = !this.ReadOnly,
                 Date = DateTime.Now,
                 Format = "yyyy-MM-dd"
             };
+
+            var icon = new Label
+            {
+                Padding = 10,
+                FontSize = 18,
+                VerticalOptions = LayoutOptions.Center,
+                Text = "\uf073",
+                FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+            };
+
+            this.XControl = new InputGroup(Picker, icon) { BorderThickness = 1, BorderColor = "#cccccc", BorderRadius = 10.0f };
         }
 
         public override object GetValue()
         {
-            return (this.XControl as CustomDatePicker).Date.ToString("yyyy-MM-dd");
+            return Picker.Date.ToString("yyyy-MM-dd");
         }
 
         public override bool SetValue(object value)
         {
             if (value == null)
                 return false;
-            (this.XControl as CustomDatePicker).Date = Convert.ToDateTime(value);
+            Picker.Date = Convert.ToDateTime(value);
             return true;
         }
 
         public override void Reset()
         {
-            (this.XControl as CustomDatePicker).ClearValue(CustomDatePicker.DateProperty);
+            Picker.ClearValue(CustomDatePicker.DateProperty);
         }
     }
 

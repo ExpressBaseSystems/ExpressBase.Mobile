@@ -31,10 +31,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
                     FilterActionBar.IsVisible = true;
                     FilterContainer.Content = ViewModel.FilterDialog;
                 }
-
-                if (!ViewModel.DataTable.Rows.Any()) 
-                    EmptyRecordLabel.IsVisible = true;
-
                 this.UpdatePaginationBar();
             }
             catch (Exception ex)
@@ -75,7 +71,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 if (paramDict.Any())
                 {
-                    List<DbParameter> parameters = paramDict.Select(item => new DbParameter { ParameterName = item.Key, Value = item.Value }).ToList();                 
+                    List<DbParameter> parameters = paramDict.Select(item => new DbParameter { ParameterName = item.Key, Value = item.Value }).ToList();
                     ViewModel.Refresh(parameters);
                     listContainer.Content = ViewModel.XView;
                     this.Offset = 0;
@@ -169,18 +165,20 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
+                int pageLength = ViewModel.Visualization.PageLength;
                 int totalEntries = ViewModel.DataCount;
                 int offset = this.Offset + 1;
-                int length = ViewModel.Visualization.PageLength + offset - 1;
+                int length = pageLength + offset - 1;
 
-                if (totalEntries < ViewModel.Visualization.PageLength)
+                if (totalEntries < pageLength)
                     length = totalEntries;
 
-                if (ViewModel.Visualization.PageLength + offset > totalEntries)
+                if (pageLength + offset > totalEntries)
                     length = totalEntries;
 
-                PagingMeta.Text = $"Showing {offset} to {length} of {totalEntries} entries";
-                PagingPageCount.Text = PageCount.ToString();
+                PagingMeta.Text = $"{offset}-{length}/{totalEntries}";
+                int totalpages = (int)Math.Ceiling((double)totalEntries / pageLength);
+                PagingPageCount.Text = $"{PageCount}/{totalpages}";
             }
             catch (Exception ex)
             {

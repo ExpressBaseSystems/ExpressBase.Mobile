@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Home"
              Style="{StaticResource ContentPageStyle}"
-             BackgroundColor="#ffffff">
+             BackgroundColor="White">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -86,14 +86,14 @@
                                             <Frame.GestureRecognizers>
                                                 <TapGestureRecognizer Tapped="PushButton_Tapped"/>
                                             </Frame.GestureRecognizers>
-                                            <Label Text="&#xf0ee;" 
+                                            <Label Text="&#xf021;" 
                                                    FontFamily="{StaticResource FontAwesome}"
                                                    HorizontalOptions="Center"
                                                    VerticalOptions="Center"
                                                    TextColor="White"
                                                    FontSize="30"/>
                                         </Frame>
-                                        <Label Text="Push" HorizontalOptions="Center"></Label>
+                                        <Label Text="Sync" HorizontalOptions="Center"></Label>
                                     </StackLayout>
                                 </Grid>
                             </Frame>
@@ -105,17 +105,23 @@
                 </ScrollView>
             </RefreshView>
             <!--loader-->
-            <shared:Loader 
+            <control:Loader 
                     IsVisible="{Binding IsBusy}"
                     AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
                     AbsoluteLayout.LayoutFlags="All"
                     Message="{Binding LoaderMessage}"/>
 
-            <shared:ConfirmBox
+            <control:ConfirmBox
                 x:Name="PushConfirmBox"
                 Title="Confirm"
                 Message="Do you really want to push your local data to cloud?"
                 ConfirmClicked="{Binding SyncButtonCommand}"/>
+
+            <control:ConfirmBox
+                x:Name="LogoutDialog"
+                Title="Confirm"
+                Message="Do you want to logout?"
+                ConfirmClicked="{Binding LogoutCommand}"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -40,7 +40,8 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (_apps == null || _apps.Count <= 0)
                 {
-                    List<AppData> applications = RestServices.Instance.GetAppCollections();
+                    int locid = Store.GetValue<int>(AppConst.CURRENT_LOCATION);
+                    List<AppData> applications = RestServices.Instance.GetAppCollections(locid);
                     this.Applications.Clear();
                     this.Applications.AddRange(applications);
                     this.Applications.OrderBy(x => x.AppName);
@@ -59,7 +60,7 @@ namespace ExpressBase.Mobile.ViewModels
                     appdata.TextColor = Color.FromHex(randomColor.TextColor);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }

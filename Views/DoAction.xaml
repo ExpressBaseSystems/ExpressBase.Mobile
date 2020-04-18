@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
-             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.DoAction">
     <NavigationPage.TitleView>
@@ -42,7 +41,7 @@
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <customcontrols:CustomShadowFrame 
+                <control:CustomShadowFrame 
                     BackgroundColor="#d7e9f3"
                     Padding="15"
                     Grid.Row="0" 
@@ -81,12 +80,12 @@
                             </BindableLayout.ItemTemplate>
                         </StackLayout>
                     </ScrollView>
-                </customcontrols:CustomShadowFrame>
+                </control:CustomShadowFrame>
                 <StackLayout 
                     Grid.Row="1" 
                     Padding="15">
                     <Label Text="Status"></Label>
-                    <customcontrols:CustomPicker Title="Select status"
+                    <control:CustomPicker Title="Select status"
                                             Margin="0,0,0,10"
                                             TitleColor="{StaticResource Blue-Dark}"
                                             ItemsSource="{Binding StageActions}"
@@ -94,17 +93,17 @@
                                             SelectedItem="{Binding Status}"/>
                     
                     <Label Text="Comments"></Label>
-                    <customcontrols:TextArea Text="{Binding Comments}" HeightRequest="100"/>
+                    <control:TextArea Text="{Binding Comments}" HeightRequest="100"/>
                 </StackLayout>
                 <Button Grid.Row="2"
-                    Text="Save"
+                    Text="Finish Review"
                     TextColor="White"
                     CornerRadius="0"
                     BackgroundColor="{StaticResource Blue-Dark}"
                     VerticalOptions="EndAndExpand"
                     Command="{Binding SubmitCommand}"/>
             </Grid>
-            <shared:Loader 
+            <control:Loader 
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 

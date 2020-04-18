@@ -73,5 +73,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
                     pair.Value.SetAsReadOnly(false);
             }
         }
+
+        public void ShowFullScreenImage(object tapedImage)
+        {
+            if(tapedImage != null)
+            {
+                ImageFullScreen.Source = (tapedImage as Image).Source;
+                ImageFullScreen.Show();
+            }
+        }
     }
 }

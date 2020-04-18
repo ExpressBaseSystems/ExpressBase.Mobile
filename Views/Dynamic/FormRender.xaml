@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Dynamic.FormRender">
     
@@ -48,13 +48,16 @@
                     TextColor="White"
                     Command="{Binding SaveCommand}"/>
             </Grid>
-            <shared:Loader 
+            <control:Loader 
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All"
                 Position="EndAndExpand"
                 Message="Saving record..."/>
+
+            <control:ImagePopup
+                x:Name="ImageFullScreen"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

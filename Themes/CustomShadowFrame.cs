@@ -1,7 +1,4 @@
 ﻿using ExpressBase.Mobile.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
@@ -68,6 +65,17 @@ namespace ExpressBase.Mobile.CustomControls
         {
             get { return (float)GetValue(ShadowOffSetHeightProperty); }
             set { this.SetValue(ShadowOffSetHeightProperty, value); }
+        }
+
+        public CustomShadowFrame() { }
+
+        public CustomShadowFrame(MobilePagesWraper wrpr)
+        {
+            PageWraper = wrpr;
+            this.BackgroundColor = wrpr.IconBackground;
+            this.Padding = 10;
+            this.CornerRadius = 8;
+            this.BorderColor = wrpr.IconBackground == Color.White ? Color.FromHex("fafafa") : wrpr.IconBackground;
         }
     }
 }

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Shared.PowerSelectView">
     <ContentPage.Content>
@@ -17,7 +17,7 @@
                 <StackLayout 
                 Spacing="0"
                 Grid.Row="0" 
-                BackgroundColor="#eeeeee">
+                BackgroundColor="#f7fafc">
                     <Grid Padding="10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -35,7 +35,7 @@
                             Text="&#xf177;"
                             Clicked="BackButton_Clicked"/>
 
-                        <customcontrols:TextBox 
+                        <control:TextBox 
                             Grid.Column="1"
                             x:Name="SelectSearchBox"
                             FontSize="14"

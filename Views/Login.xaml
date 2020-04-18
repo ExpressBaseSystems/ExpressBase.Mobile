@@ -4,8 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              mc:Ignorable="d"
-             xmlns:local="clr-namespace:ExpressBase.Mobile.CustomControls"
-             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Login"
              Style="{StaticResource ContentPageStyle}">
 
@@ -22,7 +21,7 @@
             <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Command="{Binding ResetConfig}" Grid.Column="2"/>
         </Grid>
     </NavigationPage.TitleView>
-    
+
     <ContentPage.Content>
         <Grid>
             <ScrollView 
@@ -82,16 +81,51 @@
                                        FontFamily="{StaticResource Roboto-Regular}"
                                        Style="{StaticResource LabelStyle}"/>
 
-                                <local:TextBox x:Name="Email" Completed="Email_Completed" Text="{Binding Email}"/>
+                                <control:TextBox x:Name="Email" 
+                                                 BackgroundColor="White"
+                                                 BorderThickness="1"
+                                                 BorderRadius="10.0"
+                                                 BorderColor="#cccccc"
+                                                 Completed="Email_Completed" 
+                                                 Text="{Binding Email}"/>
                             </StackLayout>
                             <StackLayout Margin="0,5,0,20">
-
                                 <Label Text="Password" 
                                        VerticalOptions="Center"
                                        FontFamily="{StaticResource Roboto-Regular}"
                                        Style="{StaticResource LabelStyle}"/>
 
-                                <local:TextBox x:Name="PassWord" IsPassword="True" Text="{Binding PassWord}"/>
+                                <AbsoluteLayout>
+                                    <control:TextBox 
+                                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                                        AbsoluteLayout.LayoutFlags="All"
+                                        BorderColor="#cccccc"
+                                        BorderThickness="1"
+                                        BorderRadius="10.0"
+                                        x:Name="PassWord" 
+                                        IsPassword="True" Text="{Binding PassWord}"/>
+                                    <Button 
+                                        x:Name="ShowPassword"
+                                        AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
+                                        AbsoluteLayout.LayoutFlags="PositionProportional"
+                                        Text="&#xf06e;"
+                                        FontSize="18"
+                                        BackgroundColor="Transparent"
+                                        FontFamily="{StaticResource FontAwesome}"
+                                        WidthRequest="50"
+                                        Clicked="ShowPassword_Clicked"/>
+                                    <Button 
+                                        IsVisible="False"
+                                        x:Name="HidePassword"
+                                        AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
+                                        AbsoluteLayout.LayoutFlags="PositionProportional"
+                                        Text="&#xf070;"
+                                        FontSize="18"
+                                        BackgroundColor="Transparent"
+                                        FontFamily="{StaticResource FontAwesome}"
+                                        WidthRequest="50"
+                                        Clicked="HidePassword_Clicked"/>
+                                </AbsoluteLayout>
                             </StackLayout>
                         </StackLayout>
 
@@ -110,7 +144,7 @@
             </ScrollView>
 
             <!--loader-->
-            <shared:Loader 
+            <control:Loader 
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All"

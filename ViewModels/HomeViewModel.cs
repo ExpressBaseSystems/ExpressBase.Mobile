@@ -1,10 +1,10 @@
-﻿using ExpressBase.Mobile.Behavior;
-using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
@@ -38,23 +38,20 @@ namespace ExpressBase.Mobile.ViewModels
 
         public HomeViewModel()
         {
-            LoaderMessage = "Opening page...";
             PageTitle = Settings.AppName;
 
-            SetUpData();
-            BuildView();
+            this.SetUpData();
+            this.BuildView();
 
             //deploy tables for forms
-            DeployFormTables();
+            this.DeployFormTables();
         }
 
         public void DeployFormTables()
         {
             Task.Run(() =>
             {
-                var pages = Settings.Objects;
-
-                foreach (MobilePagesWraper _p in pages)
+                foreach (MobilePagesWraper _p in this.ObjectList)
                 {
                     EbMobilePage mpage = _p.ToPage();
 
@@ -69,7 +66,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public void SetUpData()
         {
-            var _objlist = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
+            List<MobilePagesWraper> _objlist = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
 
             if (_objlist != null)
                 this.ObjectList = _objlist;
@@ -79,28 +76,29 @@ namespace ExpressBase.Mobile.ViewModels
 
         public void BuildView()
         {
-            var stack = new StackLayout();
-            var tapGesture = new TapGestureRecognizer();
+            StackLayout stack = new StackLayout();
+            TapGestureRecognizer tapGesture = new TapGestureRecognizer();
             tapGesture.Tapped += ObjFrame_Clicked;
-            var grouped = ObjectList.Group();
-            foreach (KeyValuePair<string, List<MobilePagesWraper>> pair in grouped)
-            {
-                if (!pair.Value.Any())
-                    continue;
-                var groupLayout = new StackLayout
-                {
-                    Children =
-                    {
-                        new Label
-                        {
-                            FontSize = 16, Text = pair.Key + $" ({pair.Value.Count})", Padding = 5,
-                            Style = (Style)HelperFunctions.GetResourceValue("MediumLabel")
-                        }
-                    }
-                };
+            Dictionary<string, List<MobilePagesWraper>> grouped = ObjectList.Group();
 
-                AddGroupElement(groupLayout, pair.Value, tapGesture);
-                stack.Children.Add(groupLayout);
+            foreach (string label in ContainerLabels.ListOrder)
+            {
+                if (grouped.ContainsKey(label) && grouped[label].Any())
+                {
+                    StackLayout groupLayout = new StackLayout
+                    {
+                        Children =
+                        {
+                            new Label
+                            {
+                                FontSize = 16, Text = label + $" ({grouped[label].Count})", Padding = 5,
+                                Style = (Style)HelperFunctions.GetResourceValue("MediumLabel")
+                            }
+                        }
+                    };
+                    this.AddGroupElement(groupLayout, grouped[label], tapGesture);
+                    stack.Children.Add(groupLayout);
+                }
             }
             this.View = stack;
         }
@@ -114,11 +112,9 @@ namespace ExpressBase.Mobile.ViewModels
                     Padding = 5,
                     RowSpacing = 15,
                     ColumnSpacing = 15,
-                    RowDefinitions =
-                    {
-                        new RowDefinition{Height= GridLength.Auto}
-                    },
+                    RowDefinitions = { new RowDefinition() },
                     ColumnDefinitions = {
+                        new ColumnDefinition(),
                         new ColumnDefinition(),
                         new ColumnDefinition()
                     }
@@ -128,69 +124,22 @@ namespace ExpressBase.Mobile.ViewModels
 
                 foreach (MobilePagesWraper wrpr in pageWrapers)
                 {
-                    if (wrpr.IsHidden)
-                        continue;
+                    if (wrpr.IsHidden) continue;
 
-                    var iconFrame = new CustomShadowFrame
-                    {
-                        Padding = 10,
-                        BorderColor = wrpr.IconBackground == Color.White ? Color.FromHex("fafafa") : wrpr.IconBackground,
-                        CornerRadius = 8,
-                        PageWraper = wrpr,
-                        BackgroundColor = wrpr.IconBackground
-                    };
-                    iconFrame.GestureRecognizers.Add(gesture);
+                    StackLayout objectTitle = this.GetObjectTile(wrpr, gesture);
 
-                    var iconContainer = new FlexLayout { Direction = FlexDirection.Column };
-                    iconContainer.SizeChanged += IconContainer_SizeChanged;
-
-                    string labelIcon = string.Empty;
-                    try
-                    {
-                        labelIcon = Regex.Unescape("\\u" + wrpr.ObjectIcon);
-                    }
-                    catch (Exception ex)
-                    {
-                        labelIcon = wrpr.GetDefaultIcon();
-                        Log.Write("font icon format is invalid");
-                        Log.Write(ex.Message);
-                    }
-
-                    var icon = new Label
-                    {
-                        Text = labelIcon,
-                        FontSize = 40,
-                        TextColor = wrpr.IconColor,
-                        VerticalTextAlignment = TextAlignment.Center,
-                        HorizontalTextAlignment = TextAlignment.Center,
-                        FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
-                    };
-
-                    iconContainer.Children.Add(icon);
-                    FlexLayout.SetAlignSelf(icon, FlexAlignSelf.Center);
-                    FlexLayout.SetGrow(icon, 1);
-
-                    var name = new Label
-                    {
-                        Text = wrpr.DisplayName,
-                        HorizontalTextAlignment = TextAlignment.Center,
-                        TextColor = wrpr.TextColor
-                    };
-                    iconContainer.Children.Add(name);
-
-                    iconFrame.Content = iconContainer;
-                    grid.Children.Add(iconFrame, colnum, rownum);
+                    grid.Children.Add(objectTitle, colnum, rownum);
 
                     if (wrpr != pageWrapers.Last())
                     {
-                        if (colnum == 1)
+                        if (colnum == 2)
                         {
-                            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                            grid.RowDefinitions.Add(new RowDefinition());
                             rownum++;
                             colnum = 0;
                         }
                         else
-                            colnum = 1;
+                            colnum += 1;
                     }
                 }
                 groupLayout.Children.Add(grid);
@@ -201,41 +150,90 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        private StackLayout GetObjectTile(MobilePagesWraper wrpr, TapGestureRecognizer gesture)
+        {
+            StackLayout container = new StackLayout { Orientation = StackOrientation.Vertical };
+            try
+            {
+                CustomShadowFrame iconFrame = new CustomShadowFrame(wrpr) { GestureRecognizers = { gesture } };
+                container.Children.Add(iconFrame);
+
+                string labelIcon = string.Empty;
+                try
+                {
+                    if (wrpr.ObjectIcon.Length != 4) throw new Exception();
+                    labelIcon = Regex.Unescape("\\u" + wrpr.ObjectIcon);
+                }
+                catch (Exception ex)
+                {
+                    labelIcon = Regex.Unescape("\\u" + wrpr.GetDefaultIcon());
+                    Log.Write("font icon format is invalid." + ex.Message);
+                }
+
+                Label icon = new Label
+                {
+                    Text = labelIcon,
+                    FontSize = 35,
+                    TextColor = wrpr.IconColor,
+                    VerticalTextAlignment = TextAlignment.Center,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                };
+                icon.SizeChanged += IconContainer_SizeChanged;
+                iconFrame.Content = icon;
+
+                Label name = new Label
+                {
+                    FontSize = 13,
+                    Text = wrpr.DisplayName,
+                    HorizontalTextAlignment = TextAlignment.Center
+                };
+                container.Children.Add(name);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+            return container;
+        }
+
         private void IconContainer_SizeChanged(object sender, EventArgs e)
         {
-            var lay = (sender as FlexLayout);
-            lay.HeightRequest = lay.Width;
+            Label lay = (sender as Label);
+            if (lay.Width != lay.Height)
+                lay.HeightRequest = lay.Width;
         }
 
         private void OnSyncClick(object sender)
         {
             IToast toast = DependencyService.Get<IToast>();
-            if (Settings.HasInternet)
+            if (!Settings.HasInternet)
             {
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Pushing from local data..."; });
-
-                        Auth.AuthIfTokenExpired();
-
-                        SyncResponse response = SyncServices.Instance.Sync();
-
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            toast.Show(response.Message);
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Write("ObjectRender_OnSyncClick" + ex.Message);
-                    }
-                });
-            }
-            else
                 toast.Show("You are not connected to internet !");
+                return;
+            }
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Pushing from local data..."; });
+
+                    Auth.AuthIfTokenExpired();
+
+                    SyncResponse response = SyncServices.Instance.Sync();
+
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        IsBusy = false;
+                        toast.Show(response.Message);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("ObjectRender_OnSyncClick" + ex.Message);
+                }
+            });
         }
 
         private void ObjFrame_Clicked(object obj, EventArgs e)

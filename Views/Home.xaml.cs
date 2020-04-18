@@ -131,5 +131,10 @@ namespace ExpressBase.Mobile.Views
         {
             PushConfirmBox.Show();
         }
+
+        public void ConfirmLogout()
+        {
+            LogoutDialog.Show();
+        }
     }
 }

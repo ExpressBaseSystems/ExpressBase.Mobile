@@ -21,5 +21,23 @@ namespace ExpressBase.Mobile.Views
         {
             PassWord.Focus();
         }
+
+        private void ShowPassword_Clicked(object sender, EventArgs e)
+        {
+            PassWord.IsPassword = false;
+            ShowPassword.IsVisible = false;
+            HidePassword.IsVisible = true;
+            if (PassWord.Text != null)
+                PassWord.CursorPosition = PassWord.Text.Length;
+        }
+
+        private void HidePassword_Clicked(object sender, EventArgs e)
+        {
+            PassWord.IsPassword = true;
+            ShowPassword.IsVisible = true;
+            HidePassword.IsVisible = false;
+            if (PassWord.Text != null)
+                PassWord.CursorPosition = PassWord.Text.Length;
+        }
     }
 }

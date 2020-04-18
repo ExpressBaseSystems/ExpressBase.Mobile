@@ -8,6 +8,7 @@ using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
@@ -125,16 +126,31 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             var tapGestureRecognizer = new TapGestureRecognizer();
             tapGestureRecognizer.Tapped += ListItem_Clicked;
-
-            foreach (EbDataRow _row in this.DataTable.Rows)
+            int rowColCount = 1;
+            if (this.DataTable.Rows.Any())
             {
-                CustomFrame CustFrame = new CustomFrame(_row, this.Visualization);
+                foreach (EbDataRow _row in this.DataTable.Rows)
+                {
+                    CustomFrame CustFrame = new CustomFrame(_row, this.Visualization);
+                    CustFrame.SetBackGroundColor(rowColCount);
 
-                if (this.NetworkType == NetworkMode.Offline)
-                    CustFrame.ShowSyncFlag(this.DataTable.Columns);
+                    if (this.NetworkType == NetworkMode.Offline)
+                        CustFrame.ShowSyncFlag(this.DataTable.Columns);
 
-                CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
-                StackL.Children.Add(CustFrame);
+                    CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
+                    StackL.Children.Add(CustFrame);
+                    rowColCount++;
+                }
+            }
+            else
+            {
+                StackL.Children.Add(new Label
+                {
+                    Text = "Empty list.",
+                    FontSize = 16,
+                    VerticalOptions = LayoutOptions.CenterAndExpand,
+                    HorizontalOptions = LayoutOptions.Center
+                });
             }
             this.XView = StackL;
         }

@@ -116,15 +116,8 @@
                 Grid.Row="2"
                 x:Name="ListViewRefresh"
                 Refreshing="ListViewRefresh_Refreshing">
-                <ScrollView x:Name="ScrollContainer" Grid.Row="2">
-                    <Label 
-                        IsVisible="False"
-                        x:Name="EmptyRecordLabel"                  
-                        Text="Empty list."
-                        VerticalOptions="Center"
-                        FontSize="16"
-                        HorizontalOptions="Center"/>
-                </ScrollView>
+                <ScrollView 
+                    x:Name="ScrollContainer"/>
             </RefreshView>
             <Button
                 Grid.Row="2"

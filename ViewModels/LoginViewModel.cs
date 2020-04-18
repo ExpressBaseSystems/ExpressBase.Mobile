@@ -83,7 +83,7 @@ namespace ExpressBase.Mobile.ViewModels
                 else
                 {
                     IsBusy = false;
-                    toast.Show("User does not exist");
+                    toast.Show("wrong username or password.");
                 }
             }
             else

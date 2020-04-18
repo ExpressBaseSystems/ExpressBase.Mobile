@@ -106,10 +106,9 @@
                                 <Frame Grid.Column="0" Style="{StaticResource LinkIcon}" BackgroundColor="#33b762">
                                     <Label Text="&#xf140;" Style="{StaticResource SideBarIconStyle}"/>
                                 </Frame>
-                                <Label Grid.Column="1" Text="Change Solution" Style="{StaticResource LinkLabel}"/>
+                                <Label Grid.Column="1" Text="Switch Solution" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
-                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="ChangeApplication_Tapped"/>
@@ -125,7 +124,6 @@
                                 <Label Grid.Column="1" Text="Switch Application" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
-                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="ChangeLocation_Tapped"/>
@@ -141,10 +139,8 @@
                                 <Label Grid.Column="1" Text="Locations" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
-                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                     </StackLayout>
                     <StackLayout VerticalOptions="End" Padding="0" Spacing="0">
-                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer x:Name="Setup" Tapped="Setup_Tapped"/>
@@ -160,7 +156,6 @@
                                 <Label Grid.Column="1" Text="Settings" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
-                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer x:Name="About" Tapped="About_Tapped"/>
@@ -176,7 +171,6 @@
                                 <Label Grid.Column="1" Text="About" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
-                        <BoxView Color="#eeeeee" HeightRequest="1"></BoxView>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="Logout_Tapped"/>

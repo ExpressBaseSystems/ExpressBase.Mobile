@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile.Views.Shared
             try
             {
                 App.RootMaster.IsPresented = false;
-                await App.RootMaster.Detail.Navigation.PushAsync(new MyApplications());
+                await App.RootMaster.Detail.Navigation.PushAsync(new MyApplications(true));
             }
             catch (Exception ex)
             {
@@ -90,23 +90,10 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             try
             {
-                Store.Remove(AppConst.BTOKEN);
-                Store.Remove(AppConst.RTOKEN);
-                Store.Remove(AppConst.USER_ID);
-                Store.Remove(AppConst.PASSWORD);
-                Store.RemoveJSON(AppConst.USER_OBJECT);
-                Store.RemoveJSON(AppConst.USER_LOCATIONS);
-                Store.Remove(AppConst.CURRENT_LOCATION);
-
-                Store.Remove(AppConst.APPID);
-                Store.Remove(AppConst.APPNAME);
-                Store.RemoveJSON(AppConst.OBJ_COLLECTION);
-                Store.RemoveJSON(AppConst.APP_COLLECTION);
-                Application.Current.MainPage = new NavigationPage(new Login())
-                {
-                    BarBackgroundColor = Color.FromHex("0046bb"),
-                    BarTextColor = Color.White
-                };
+                App.RootMaster.IsPresented = false;
+                Page navigator = (Application.Current.MainPage as MasterDetailPage).Detail;
+                Home current = (navigator as NavigationPage).CurrentPage as Home;
+                current.ConfirmLogout();
             }
             catch (Exception ex)
             {

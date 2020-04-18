@@ -53,33 +53,50 @@ namespace ExpressBase.Mobile
         public List<Param> Parameters { set; get; }
 
         //mobile props
-        public CustomSearchBar SearchBox { set; get; }
+        public TextBox SearchBox { set; get; }
 
         public ComboBoxLabel Selected { set; get; }
+
+        public CustomPicker Picker { set; get; }
 
         public override void InitXControl(FormMode Mode)
         {
             if (string.IsNullOrEmpty(this.DataSourceRefId))
             {
-                this.XControl = new CustomPicker
+                Picker = new CustomPicker
                 {
-                    Title = "Select",
+                    Title = $"Select {this.Label}",
                     TitleColor = Color.DarkBlue,
                     ItemsSource = this.Options,
                     ItemDisplayBinding = new Binding("DisplayName")
                 };
+                var icon = new Label
+                {
+                    Padding = 10,
+                    FontSize = 16,
+                    VerticalOptions = LayoutOptions.Center,
+                    Text = "\uf078",
+                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                };
+                this.XControl = new InputGroup(Picker, icon) { BorderThickness = 1, BorderColor = "#cccccc", BorderRadius = 10.0f };
             }
             else
             {
-                SearchBox = new CustomSearchBar
+                SearchBox = new TextBox
                 {
-                    Placeholder = "Seach " + this.Label + "...",
-                    FontSize = 14,
-                    BackgroundColor = Color.White
+                    Placeholder = $"Seach {this.Label}...",
+                    FontSize = 14
                 };
-
                 SearchBox.Focused += SearchBox_Focused;
-                this.XControl = SearchBox;
+                var icon = new Label
+                {
+                    Padding = 10,
+                    FontSize = 16,
+                    VerticalOptions = LayoutOptions.Center,
+                    Text = "\uf002",
+                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                };
+                this.XControl = new InputGroup(SearchBox, icon) { BorderThickness = 1, BorderColor = "#cccccc", BorderRadius = 10.0f };
             }
         }
 
@@ -93,8 +110,8 @@ namespace ExpressBase.Mobile
         {
             if (string.IsNullOrEmpty(this.DataSourceRefId))
             {
-                if ((this.XControl as CustomPicker).SelectedItem != null)
-                    return ((this.XControl as CustomPicker).SelectedItem as EbMobileSSOption).Value;
+                if (Picker.SelectedItem != null)
+                    return (Picker.SelectedItem as EbMobileSSOption).Value;
                 else
                     return null;
             }
@@ -108,7 +125,7 @@ namespace ExpressBase.Mobile
                 return false;
 
             if (string.IsNullOrEmpty(this.DataSourceRefId))
-                (this.XControl as CustomPicker).SelectedItem = this.Options.Find(i => i.Value == value.ToString());
+                Picker.SelectedItem = this.Options.Find(i => i.Value == value.ToString());
             else
             {
                 EbDataTable dt = this.GetDisplayFromValue(value.ToString());
@@ -146,7 +163,7 @@ namespace ExpressBase.Mobile
                 dt = new EbDataTable();
             }
             return dt;
-        }      
+        }
     }
 
     public class EbMobileSSOption : EbMobilePageBase

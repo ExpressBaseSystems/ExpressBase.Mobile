@@ -2,6 +2,8 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.Views.Dynamic;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
@@ -33,9 +35,27 @@ namespace ExpressBase.Mobile
 
         public Dictionary<string, byte[]> Gallery { set; get; }
 
+        public TapGestureRecognizer Recognizer { set; get; }
+
         public EbMobileFileUpload()
         {
             this.Gallery = new Dictionary<string, byte[]>();
+            this.Recognizer = new TapGestureRecognizer();
+            this.Recognizer.Tapped += Recognizer_Tapped;
+        }
+
+        private void Recognizer_Tapped(object sender, EventArgs e)
+        {
+            try
+            {
+                Page navigator = (Application.Current.MainPage as MasterDetailPage).Detail;
+                FormRender current = (navigator as NavigationPage).CurrentPage as FormRender;
+                current.ShowFullScreenImage(sender);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
         public override void InitXControl(FormMode Mode)
@@ -156,23 +176,60 @@ namespace ExpressBase.Mobile
 
         private void RenderImage(MediaFile Media)
         {
-            string filename = "file" + Guid.NewGuid().ToString("N") + Counter++;
-            CustomImageWraper Wraper = new CustomImageWraper(filename)
+            try
             {
-                BackgroundColor = Color.FromHex("eeeeee"),
-                Children =
-                    {
-                        new Image
-                        {
-                            Aspect = Aspect.AspectFill,
-                            HeightRequest = 160,
-                            Source = ImageSource.FromStream(() => { return Media.GetStream(); })
-                        }
-                    }
-            };
+                string filename = "file" + Guid.NewGuid().ToString("N") + Counter++;
+                CustomImageWraper Wraper = new CustomImageWraper(filename);
+                var image = new Image
+                {
+                    Aspect = Aspect.AspectFill,
+                    HeightRequest = 160,
+                    Source = ImageSource.FromStream(() => { return Media.GetStream(); }),
+                    GestureRecognizers = { this.Recognizer }
+                };
+                AbsoluteLayout.SetLayoutBounds(image, new Rectangle(0, 0, 1, 1));
+                AbsoluteLayout.SetLayoutFlags(image, AbsoluteLayoutFlags.All);
+                Wraper.Children.Add(image);
 
-            AddImageToGallery(Wraper);
-            Gallery.Add(Wraper.Name, HelperFunctions.StreamToBytea(Media.GetStream()));
+                var closeBtn = new Button
+                {
+                    ClassId = filename,
+                    Padding = 0,
+                    WidthRequest = 24,
+                    HeightRequest = 24,
+                    CornerRadius = 12,
+                    TextColor = Color.White,
+                    FontSize = 24,
+                    BackgroundColor = Color.Transparent,
+                    Text = "\uf057",
+                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                };
+                closeBtn.Clicked += CloseBtn_Clicked;
+                AbsoluteLayout.SetLayoutBounds(closeBtn, new Rectangle(0.95, 0.05, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
+                AbsoluteLayout.SetLayoutFlags(closeBtn, AbsoluteLayoutFlags.PositionProportional);
+                Wraper.Children.Add(closeBtn);
+
+                AddImageToGallery(Wraper);
+                Gallery.Add(filename, HelperFunctions.StreamToBytea(Media.GetStream()));
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        private void CloseBtn_Clicked(object sender, EventArgs e)
+        {
+            string classid = (sender as Button).ClassId;
+            foreach (var item in this.Container.Children)
+            {
+                if (item.ClassId == classid && item is CustomImageWraper)
+                {
+                    (item as CustomImageWraper).Children.Clear();
+                    Gallery.Remove(classid);
+                    break;
+                }
+            }
         }
 
         public void AddImageToGallery(CustomImageWraper Wrapper)
@@ -202,25 +259,39 @@ namespace ExpressBase.Mobile
         public override bool SetValue(object value)
         {
             FUPSetValueMeta meta = value as FUPSetValueMeta;
-            string pattern = $"{meta.TableName}-{meta.RowId}-{this.Name}*";
-            List<FileWrapper> Files = HelperFunctions.GetFilesByPattern(pattern);
-
-            foreach (FileWrapper file in Files)
+            try
             {
-                CustomImageWraper Wraper = new CustomImageWraper(file.FileName)
+                if (this.NetworkType == NetworkMode.Offline)
                 {
-                    BackgroundColor = Color.FromHex("eeeeee"),
-                    Children =
+                    string pattern = $"{meta.TableName}-{meta.RowId}-{this.Name}*";
+                    List<FileWrapper> Files = HelperFunctions.GetFilesByPattern(pattern);
+
+                    foreach (FileWrapper file in Files)
                     {
-                        new Image
+                        CustomImageWraper Wraper = new CustomImageWraper(file.FileName)
                         {
-                            Aspect = Aspect.AspectFill,
-                            HeightRequest = 160,
-                            Source = ImageSource.FromStream(() => new MemoryStream(file.Bytea))
-                        }
+                            BackgroundColor = Color.FromHex("eeeeee"),
+                            Children =
+                            {
+                                new Image
+                                {
+                                    Aspect = Aspect.AspectFill,
+                                    HeightRequest = 160,
+                                    Source = ImageSource.FromStream(() => new MemoryStream(file.Bytea))
+                                }
+                            }
+                        };
+                        AddImageToGallery(Wraper);
                     }
-                };
-                AddImageToGallery(Wraper);
+                }
+                else if (this.NetworkType == NetworkMode.Online)
+                {
+                    RestServices.Instance.GetFile($"{meta.RowId}.jpg");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
             }
             return true;
         }

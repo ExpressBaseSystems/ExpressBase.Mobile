@@ -3,6 +3,7 @@ using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -26,6 +27,30 @@ namespace ExpressBase.Mobile.Helpers
             {
                 Log.Write("Store.GetValue::" + ex.Message);
                 return null;
+            }
+        }
+
+        public static T GetValue<T>(string key)
+        {
+            try
+            {
+                string temp = SecureStorage.GetAsync(key).Result;
+                if (temp == null || temp == "null")
+                    return default;
+                else
+                {
+                    var converter = TypeDescriptor.GetConverter(typeof(T));
+                    if (converter != null)
+                    {
+                        return (T)converter.ConvertFromString(temp);
+                    }
+                    return default;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Store.GetValue::" + ex.Message);
+                return default;
             }
         }
 

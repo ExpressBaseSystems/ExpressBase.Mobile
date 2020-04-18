@@ -43,7 +43,7 @@ namespace ExpressBase.Mobile.Services
             return Vresp;
         }
 
-        public List<AppData> GetAppCollections()
+        public List<AppData> GetAppCollections(int locid)
         {
             List<AppData> _Apps = null;
             try
@@ -52,11 +52,11 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.BTOKEN, Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, Settings.RToken);
 
+                request.AddParameter("locid", locid);
+
                 var response = Client.Execute(request);
                 if (response.StatusCode == HttpStatusCode.OK)
-                {
                     _Apps = JsonConvert.DeserializeObject<AppCollection>(response.Content).Applications;
-                }
             }
             catch (Exception ex)
             {
@@ -336,6 +336,25 @@ namespace ExpressBase.Mobile.Services
                 Log.Write("RestService.PullFormData---" + ex.StackTrace);
             }
             return new WebformData();
+        }
+
+        public void GetFile(string filename)
+        {
+            try
+            {
+                RestRequest request = new RestRequest($"api/files/{filename}", Method.GET);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+
+                IRestResponse iresp = Client.Execute(request);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("RestService.PullFormData---" + ex.Message);
+                Log.Write("RestService.PullFormData---" + ex.StackTrace);
+            }
         }
     }
 }

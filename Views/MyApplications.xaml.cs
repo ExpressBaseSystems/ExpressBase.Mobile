@@ -1,8 +1,8 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
+using ExpressBase.Mobile.Views.Shared;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -14,10 +14,32 @@ namespace ExpressBase.Mobile.Views
     {
         public MyApplicationsViewModel ViewModel { set; get; }
 
-        public MyApplications()
+        public bool IsInternal { set; get; }
+
+        public MyApplications(bool isInternal = false)
         {
             InitializeComponent();
+            IsInternal = isInternal;
             BindingContext = ViewModel = new MyApplicationsViewModel();
+            if (isInternal)
+                ResetButton.IsVisible = false;
+            else
+                NavigationPage.SetHasBackButton(this, true);
+
+            if (ViewModel.Applications.Count <= 0)
+                LocSwitchOverlay.IsVisible = true;
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            int _current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
+            EbLocation loc = Settings.Locations.Find(item => item.LocId == _current);
+            if (loc != null)
+                CurrentLocation.Text = loc.ShortName;
+            else
+                CurrentLocation.Text = "Default";
         }
 
         private void ApplicationsRefresh_Refreshing(object sender, System.EventArgs e)
@@ -33,12 +55,41 @@ namespace ExpressBase.Mobile.Views
                 Store.RemoveJSON(AppConst.APP_COLLECTION);
                 ViewModel.PullApplications();
                 ApplicationsRefresh.IsRefreshing = false;
+
+                if (ViewModel.Applications.Count <= 0)
+                    LocSwitchOverlay.IsVisible = true;
+                else
+                    LocSwitchOverlay.IsVisible = false;
             }
             catch (Exception ex)
             {
                 ApplicationsRefresh.IsRefreshing = false;
                 Log.Write(ex.Message);
             }
+        }
+
+        private void ResetButton_Clicked(object sender, EventArgs e)
+        {
+            ConfimReset.Show();
+        }
+
+        private async void LocSwitch_Clicked(object sender, EventArgs e)
+        {
+            var nav = new NavigationPage(new MyLocations(this))
+            {
+                BarBackgroundColor = Color.FromHex("0046bb"),
+                BarTextColor = Color.White
+            };
+
+            if (IsInternal)
+                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushModalAsync(nav);
+            else
+                await Application.Current.MainPage.Navigation.PushModalAsync(nav);
+        }
+
+        public void LocationPagePoped()
+        {
+            this.ApplicationsRefresh_Refreshing(null, null);
         }
     }
 }

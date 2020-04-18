@@ -15,10 +15,16 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MyActions : ContentPage
     {
+        public MyActionsViewModel ViewModel { set; get; }
+
         public MyActions(MyActionsResponse actionResp)
         {
             InitializeComponent();
-            BindingContext = new MyActionsViewModel(actionResp);
+            BindingContext = ViewModel = new MyActionsViewModel(actionResp);
+            if (!ViewModel.Actions.Any())
+            {
+
+            }
         }
     }
 }

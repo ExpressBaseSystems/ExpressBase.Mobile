@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Dynamic.ListRender">
 
     <NavigationPage.TitleView>
@@ -126,18 +126,11 @@
                     <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
                 </Grid>
                 <RefreshView
-                Grid.Row="2"
-                x:Name="ListViewRefresh"
-                Refreshing="ListViewRefresh_Refreshing">
-                    <ScrollView x:Name="listContainer">
-                        <Label 
-                        IsVisible="False"
-                        x:Name="EmptyRecordLabel"                  
-                        Text="Empty list."
-                        VerticalOptions="Center"
-                        FontSize="16"
-                        HorizontalOptions="Center"/>
-                    </ScrollView>
+                    Grid.Row="2"
+                    x:Name="ListViewRefresh"
+                    Refreshing="ListViewRefresh_Refreshing">
+                    <ScrollView 
+                        x:Name="listContainer"/>
                 </RefreshView>
                 <ContentView 
                 IsVisible="False"
@@ -183,7 +176,7 @@
                     </StackLayout>
                 </ContentView>
             </Grid>
-            <shared:Loader 
+            <control:Loader 
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 

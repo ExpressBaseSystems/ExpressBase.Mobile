@@ -1,9 +1,9 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
@@ -186,17 +186,7 @@ namespace ExpressBase.Mobile.Models
             get
             {
                 if (_page == null) ToPage();
-
-                if (_page.Container is EbMobileForm)
-                    return "Forms";
-                else if (_page.Container is EbMobileVisualization)
-                    return "List";
-                else if (_page.Container is EbMobileDashBoard)
-                    return "DashBoards";
-                else if (_page.Container is EbMobilePdf)
-                    return "Pdf";
-                else
-                    return "Miscellaneous";
+                return ContainerLabels.GetLabel(_page.Container);
             }
         }
 
@@ -230,17 +220,6 @@ namespace ExpressBase.Mobile.Models
                     return Color.White;
                 else
                     return Color.FromHex(_page.IconBackground);
-            }
-        }
-
-        public Color TextColor
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_page.IconColor))
-                    return Color.FromHex("333333");
-                else
-                    return Color.FromHex(_page.IconColor);
             }
         }
 

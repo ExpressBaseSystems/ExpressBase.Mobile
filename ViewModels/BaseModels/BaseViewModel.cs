@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views;
 using System;
 using System.ComponentModel;
@@ -59,6 +60,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command ResetConfig => new Command(ResetClicked);
 
+        public Command LogoutCommand => new Command(LogoutClicked);
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void Dispose()
@@ -74,7 +77,6 @@ namespace ExpressBase.Mobile.ViewModels
         public void ResetClicked()
         {
             Store.Remove(AppConst.SID);
-            Store.RemoveJSON(AppConst.MYSOLUTIONS);
             Store.Remove(AppConst.ROOT_URL);
             Store.Remove(AppConst.APPID);
             Store.Remove(AppConst.USERNAME);
@@ -88,6 +90,34 @@ namespace ExpressBase.Mobile.ViewModels
                 BarBackgroundColor = Color.FromHex("0046bb"),
                 BarTextColor = Color.White
             };
+        }
+
+        public void LogoutClicked()
+        {
+            try
+            {
+                Store.Remove(AppConst.BTOKEN);
+                Store.Remove(AppConst.RTOKEN);
+                Store.Remove(AppConst.USER_ID);
+                Store.Remove(AppConst.PASSWORD);
+                Store.RemoveJSON(AppConst.USER_OBJECT);
+                Store.RemoveJSON(AppConst.USER_LOCATIONS);
+                Store.Remove(AppConst.CURRENT_LOCATION);
+
+                Store.Remove(AppConst.APPID);
+                Store.Remove(AppConst.APPNAME);
+                Store.RemoveJSON(AppConst.OBJ_COLLECTION);
+                Store.RemoveJSON(AppConst.APP_COLLECTION);
+                Application.Current.MainPage = new NavigationPage(new Login())
+                {
+                    BarBackgroundColor = Color.FromHex("0046bb"),
+                    BarTextColor = Color.White
+                };
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
         public virtual void RefreshPage() { }
