@@ -5,7 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Dynamic.FormRender">
+             x:Class="ExpressBase.Mobile.Views.Dynamic.FormRender"
+             BackgroundColor="White">
     
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="0" Padding="0" BackgroundColor="Transparent">

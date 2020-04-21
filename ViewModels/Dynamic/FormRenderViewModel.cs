@@ -174,8 +174,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                     if (this.Mode == FormMode.REF)
                         saveResponse = this.Form.SaveFormWParent(this.RowId, ParentForm.TableName);
-                    else
+                    else if (this.Mode == FormMode.EDIT)
                         saveResponse = this.Form.SaveForm(this.RowId);
+                    else
+                        saveResponse = this.Form.SaveForm(0);
 
                     Device.BeginInvokeOnMainThread(() =>
                     {

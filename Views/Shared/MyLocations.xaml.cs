@@ -2,7 +2,6 @@
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -41,13 +40,13 @@ namespace ExpressBase.Mobile.Views.Shared
             {
                 Locations = new ObservableCollection<EbLocation>(Settings.Locations);
 
-                int _current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
+                int current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
 
-                foreach (EbLocation _loc in Locations)
+                foreach (EbLocation loc in Locations)
                 {
-                    if (_loc.LocId == _current)
+                    if (loc.LocId == current)
                     {
-                        _loc.Selected = true;
+                        loc.Selected = true;
                         break;
                     }
                 }
@@ -65,14 +64,18 @@ namespace ExpressBase.Mobile.Views.Shared
             {
                 loc.Selected = true;
                 Store.SetValue(AppConst.CURRENT_LOCATION, loc.LocId.ToString());
+
                 if (MyApplicationsPage == null)
                     await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
                 else
-                {
-                    MyApplicationsPage.LocationPagePoped();
-                    await Application.Current.MainPage.Navigation.PopModalAsync(true);
-                }
+                    await Application.Current.MainPage.Navigation.PopModalAsync();
             }
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            if (MyApplicationsPage != null) MyApplicationsPage.LocationPagePoped();
         }
 
         private void BackButton_Clicked(object sender, EventArgs e)

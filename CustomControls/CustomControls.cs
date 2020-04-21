@@ -11,49 +11,59 @@ namespace ExpressBase.Mobile.CustomControls
 
         float BorderRadius { set; get; }
 
-        string BorderColor { set; get; }
+        Color BorderColor { set; get; }
+
+        Color BgColor { set; get; }
     }
 
     public class TextBox : Entry, IEbCustomControl
     {
-        public int BorderThickness { set; get; }
+        public int BorderThickness { set; get; } = 1;
 
-        public float BorderRadius { set; get; }
+        public float BorderRadius { set; get; } = 10.0f;
 
-        public string BorderColor { set; get; }
+        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
+
+        public Color BgColor { set; get; }
 
         public TextBox() { }
     }
 
     public class TextArea : Editor, IEbCustomControl
     {
-        public int BorderThickness { set; get; }
+        public int BorderThickness { set; get; } = 1;
 
-        public float BorderRadius { set; get; }
+        public float BorderRadius { set; get; } = 10.0f;
 
-        public string BorderColor { set; get; }
+        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
+
+        public Color BgColor { set; get; }
 
         public TextArea() { }
     }
 
     public class NumericTextBox : Entry, IEbCustomControl
     {
-        public int BorderThickness { set; get; }
+        public int BorderThickness { set; get; } = 1;
 
-        public float BorderRadius { set; get; }
+        public float BorderRadius { set; get; } = 10.0f;
 
-        public string BorderColor { set; get; }
+        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
+
+        public Color BgColor { set; get; }
 
         public NumericTextBox() { }
     }
 
     public class CustomDatePicker : DatePicker, IEbCustomControl
     {
-        public int BorderThickness { set; get; }
+        public int BorderThickness { set; get; } = 1;
 
-        public float BorderRadius { set; get; }
+        public float BorderRadius { set; get; } = 10.0f;
 
-        public string BorderColor { set; get; }
+        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
+
+        public Color BgColor { set; get; }
 
         public CustomDatePicker() { }
     }
@@ -64,29 +74,35 @@ namespace ExpressBase.Mobile.CustomControls
 
         public float BorderRadius { set; get; }
 
-        public string BorderColor { set; get; }
+        public Color BorderColor { set; get; }
+
+        public Color BgColor { set; get; }
 
         public CustomCheckBox() { }
     }
 
     public class CustomPicker : Picker, IEbCustomControl
     {
-        public int BorderThickness { set; get; }
+        public int BorderThickness { set; get; } = 1;
 
-        public float BorderRadius { set; get; }
+        public float BorderRadius { set; get; } = 10.0f;
 
-        public string BorderColor { set; get; }
+        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
+
+        public Color BgColor { set; get; }
 
         public CustomPicker() { }
     }
 
     public class CustomSearchBar : SearchBar, IEbCustomControl
     {
-        public int BorderThickness { set; get; }
+        public int BorderThickness { set; get; } = 1;
 
-        public float BorderRadius { set; get; }
+        public float BorderRadius { set; get; } = 10.0f;
 
-        public string BorderColor { set; get; }
+        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
+
+        public Color BgColor { set; get; }
 
         public CustomSearchBar() { }
     }
@@ -126,11 +142,13 @@ namespace ExpressBase.Mobile.CustomControls
 
     public class InputGroup : Frame, IEbCustomControl
     {
-        public int BorderThickness { set; get; }
+        public int BorderThickness { set; get; } = 1;
 
-        public float BorderRadius { set; get; }
+        public float BorderRadius { set; get; } = 10.0f;
 
-        public new string BorderColor { set; get; }
+        public new Color BorderColor { set; get; } = Color.FromHex("cccccc");
+
+        public Color BgColor { set; get; }
 
         public View Input { set; get; }
 

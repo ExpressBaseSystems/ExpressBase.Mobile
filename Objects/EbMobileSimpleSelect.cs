@@ -61,14 +61,19 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
+            var bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
+
             if (string.IsNullOrEmpty(this.DataSourceRefId))
             {
                 Picker = new CustomPicker
                 {
                     Title = $"Select {this.Label}",
-                    TitleColor = Color.DarkBlue,
+                    FontSize = 15,
+                    TextColor = (Color)HelperFunctions.GetResourceValue("Gray-900"),
                     ItemsSource = this.Options,
-                    ItemDisplayBinding = new Binding("DisplayName")
+                    ItemDisplayBinding = new Binding("DisplayName"),
+                    IsEnabled = !this.ReadOnly,
+                    BorderColor = Color.Transparent
                 };
                 var icon = new Label
                 {
@@ -78,14 +83,16 @@ namespace ExpressBase.Mobile
                     Text = "\uf078",
                     FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
                 };
-                this.XControl = new InputGroup(Picker, icon) { BorderThickness = 1, BorderColor = "#cccccc", BorderRadius = 10.0f };
+                this.XControl = new InputGroup(Picker, icon) { BgColor = bg };
             }
             else
             {
                 SearchBox = new TextBox
                 {
+                    IsReadOnly = this.ReadOnly,
                     Placeholder = $"Seach {this.Label}...",
-                    FontSize = 14
+                    FontSize = 14,
+                    BorderColor = Color.Transparent
                 };
                 SearchBox.Focused += SearchBox_Focused;
                 var icon = new Label
@@ -96,7 +103,7 @@ namespace ExpressBase.Mobile
                     Text = "\uf002",
                     FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
                 };
-                this.XControl = new InputGroup(SearchBox, icon) { BorderThickness = 1, BorderColor = "#cccccc", BorderRadius = 10.0f };
+                this.XControl = new InputGroup(SearchBox, icon) { BgColor = bg };
             }
         }
 
@@ -129,7 +136,7 @@ namespace ExpressBase.Mobile
             else
             {
                 EbDataTable dt = this.GetDisplayFromValue(value.ToString());
-                if (dt.Rows.Any())
+                if (dt != null && dt.Rows.Any())
                 {
                     var display_membertext = dt.Rows[0][DisplayMember.ColumnName].ToString();
                     Selected = new ComboBoxLabel { Text = display_membertext, Value = value };
@@ -148,14 +155,30 @@ namespace ExpressBase.Mobile
 
         private EbDataTable GetDisplayFromValue(string value)
         {
-            EbDataTable dt;
+            EbDataTable dt = null;
             try
             {
-                string sql = HelperFunctions.B64ToString(this.OfflineQuery.Code).TrimEnd(';');
+                if (this.NetworkType == NetworkMode.Offline)
+                {
+                    string sql = HelperFunctions.B64ToString(this.OfflineQuery.Code).TrimEnd(';');
 
-                string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{this.ValueMember.ColumnName} = {value} LIMIT 1";
+                    string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{this.ValueMember.ColumnName} = {value} LIMIT 1";
 
-                dt = App.DataDB.DoQuery(WrpdQuery);
+                    dt = App.DataDB.DoQuery(WrpdQuery);
+                }
+                else if (this.NetworkType == NetworkMode.Online)
+                {
+                    Param p = new Param
+                    {
+                        Name = this.ValueMember.ColumnName,
+                        Type = ((int)this.ValueMember.Type).ToString(),
+                        Value = value
+                    };
+                    var response = RestServices.Instance.PullReaderData(this.DataSourceRefId, new List<Param> { p }, 0, 0, false);
+
+                    if (response.Data != null && response.Data.Tables.Count >= 2)
+                        dt = response.Data.Tables[1];
+                }
             }
             catch (Exception ex)
             {

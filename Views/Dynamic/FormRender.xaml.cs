@@ -37,13 +37,16 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 BindingContext = ViewModel = new FormRenderViewModel(page, rowId, mode);
                 FormScrollView.Content = ViewModel.XView;
 
-                SaveButton.Text = "Save Changes";
-                SaveButton.IsVisible = false;
-                EditButton.IsVisible = true;
+                if(mode== FormMode.EDIT)
+                {
+                    SaveButton.Text = "Save Changes";
+                    SaveButton.IsVisible = false;
+                    EditButton.IsVisible = true;
+                }
             }
             catch (Exception ex)
             {
-                Log.Write("FormRender edit mode" + ex.Message);
+                Log.Write("FormRender edit/prefill mode" + ex.Message);
             }
         }
 

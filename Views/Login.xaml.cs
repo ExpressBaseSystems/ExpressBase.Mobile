@@ -15,6 +15,7 @@ namespace ExpressBase.Mobile.Views
 
             SolutionName.Text = Settings.SolutionId;
             BindingContext = new LoginViewModel();
+            NavigationPage.SetHasBackButton(this, false);
         }
 
         private void Email_Completed(object sender, EventArgs e)
@@ -38,6 +39,11 @@ namespace ExpressBase.Mobile.Views
             HidePassword.IsVisible = false;
             if (PassWord.Text != null)
                 PassWord.CursorPosition = PassWord.Text.Length;
+        }
+
+        private void ResetButton_Clicked(object sender, EventArgs e)
+        {
+            ConfimReset.Show();
         }
     }
 }

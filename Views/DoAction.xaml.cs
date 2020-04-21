@@ -9,6 +9,8 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DoAction : ContentPage
     {
+        public DoActionViewModel ViewModel { set; get; }
+
         public DoAction()
         {
             InitializeComponent();
@@ -16,7 +18,10 @@ namespace ExpressBase.Mobile.Views
         public DoAction(EbMyAction action)
         {
             InitializeComponent();
-            BindingContext = new DoActionViewModel(action);
+            BindingContext = ViewModel = new DoActionViewModel(action);
+
+            if (action != null && action.StageInfo != null)
+                CurrentStage.Text = action.StageInfo.StageName;
         }
     }
 }

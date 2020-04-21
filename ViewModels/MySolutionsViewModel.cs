@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
@@ -54,6 +55,7 @@ namespace ExpressBase.Mobile.ViewModels
                 this.ClearCached();
                 App.DataDB.CreateDB(tapedInfo.SolutionName);
                 HelperFunctions.CreatePlatFormDir();
+                RestServices.Instance.UpdateBaseUrl();
 
                 Application.Current.MainPage.Navigation.PushAsync(new Login());
             }
@@ -89,6 +91,7 @@ namespace ExpressBase.Mobile.ViewModels
                 this.ClearCached();
                 App.DataDB.CreateDB(_sid);
                 HelperFunctions.CreatePlatFormDir();
+                RestServices.Instance.UpdateBaseUrl();
 
                 if (response.Logo != null)
                     this.SaveLogo(response.Logo);

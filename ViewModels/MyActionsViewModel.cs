@@ -4,6 +4,7 @@ using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -12,22 +13,22 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class MyActionsViewModel : StaticBaseViewModel
     {
-        public List<EbMyAction> Actions { get; set; }
+        public ObservableCollection<EbMyAction> Actions { get; set; }
 
         public Command ItemSelectedCommand => new Command(async (obj) => await ItemSelected(obj));
 
         public MyActionsViewModel(MyActionsResponse actionResp)
         {
-            Actions = actionResp.Actions;
+            Actions = new ObservableCollection<EbMyAction>(actionResp.Actions);
             PageTitle = $"My Actions ({Actions.Count})";
+            this.FillRandomColor();
         }
 
         private async Task ItemSelected(object selected)
         {
             try
             {
-                if (selected == null)
-                    return;
+                if (selected == null) return;
 
                 EbMyAction action = selected as EbMyAction;
 
@@ -49,6 +50,18 @@ namespace ExpressBase.Mobile.ViewModels
             catch (Exception ex)
             {
                 Log.Write("AppSelect_ItemSelected---" + ex.Message);
+            }
+        }
+
+        public void FillRandomColor()
+        {
+            //fill by randdom colors
+            Random random = new Random();
+            foreach (EbMyAction action in this.Actions)
+            {
+                var randomColor = ColorSet.Colors[random.Next(6)];
+                action.BackgroundColor = Color.FromHex(randomColor.BackGround);
+                action.TextColor = Color.FromHex(randomColor.TextColor);
             }
         }
     }

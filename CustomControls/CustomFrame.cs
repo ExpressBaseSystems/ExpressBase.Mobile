@@ -26,6 +26,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             this.CreateGrid(Visualization.DataLayout.CellCollection, Visualization.DataLayout.RowCount, Visualization.DataLayout.ColumCount);
             FillData(Visualization.DataLayout.CellCollection);
+            if (!string.IsNullOrEmpty(Visualization.LinkRefId) && !IsHeader) this.ShowLinkIcon();
             this.Content = ContentGrid;
 
             if (!IsHeader)
@@ -177,9 +178,22 @@ namespace ExpressBase.Mobile.CustomControls
             ContentGrid.Children.Add(lbl, colLength - 1, 0);
         }
 
-        public void UpdateGrid(MobileTableRow row)
+        public void ShowLinkIcon()
         {
+            ContentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
+            var lbl = new Label
+            {
+                FontSize = 18,
+                VerticalOptions = LayoutOptions.Center,
+                TextColor = Color.FromHex("aba8a8"),
+                Text = "\uf105",
+                FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+            };
+
+            ContentGrid.Children.Add(lbl);
+            Grid.SetColumn(lbl, ContentGrid.ColumnDefinitions.Count - 1);
+            Grid.SetRowSpan(lbl, ContentGrid.RowDefinitions.Count);
         }
     }
 }

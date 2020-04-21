@@ -17,34 +17,37 @@
     </NavigationPage.TitleView>
     <ContentPage.Content>
         <Grid BackgroundColor="White">
-            <ScrollView x:Name="scrollView">
-                <StackLayout
+            <RefreshView 
+                x:Name="MyActionsRefresh"
+                Refreshing="MyActionsRefresh_Refreshing">
+                <ScrollView x:Name="scrollView">
+                    <StackLayout
                     x:Name="actionList"
                     BindableLayout.ItemsSource="{Binding Actions}"
                     Spacing="0">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <Frame
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Frame
                                 Margin="0"
                                 Padding="0"
                                 BorderColor="{DynamicResource Gray-White}"
                                 CornerRadius="0"
                                 HasShadow="false">
-                                <Frame.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemSelectedCommand, Source={x:Reference actionList}}" CommandParameter="{Binding .}" />
-                                </Frame.GestureRecognizers>
-                                <StackLayout Orientation="Vertical">
-                                    <Grid ColumnSpacing="10" Padding="10,5,10,5">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"></RowDefinition>
-                                            <RowDefinition Height="Auto"></RowDefinition>
-                                        </Grid.RowDefinitions>
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemSelectedCommand, Source={x:Reference actionList}}" CommandParameter="{Binding .}" />
+                                    </Frame.GestureRecognizers>
+                                    <StackLayout Orientation="Vertical">
+                                        <Grid ColumnSpacing="10" Padding="10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"></RowDefinition>
+                                                <RowDefinition Height="*"></RowDefinition>
+                                            </Grid.RowDefinitions>
 
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                            <ColumnDefinition Width="*"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Frame 
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Frame 
                                             Grid.Row="0"
                                             Grid.RowSpan="2"
                                             Grid.Column="0"
@@ -52,37 +55,44 @@
                                             VerticalOptions="Center"
                                             WidthRequest="50"
                                             Padding="0"
-                                            BackgroundColor="#dddee0"
-                                            BorderColor="#d4d5d8"
-                                            HasShadow="False"
+                                            BackgroundColor="{Binding BackgroundColor}"
+                                            HasShadow="True"
                                             CornerRadius="25">
-                                            <Label 
-                                                Text="{Binding DescriptionL1}"
-                                                FontSize="20"
+                                                <Label 
+                                                Text="{Binding AppNotation}"
+                                                TextColor="{Binding TextColor}"
+                                                FontSize="16"
                                                 VerticalOptions="Center"
                                                 HorizontalOptions="Center"
                                                 FontFamily="{StaticResource Roboto-Bold}"/>
-                                        </Frame>
-                                        <Label 
+                                            </Frame>
+                                            <Label 
                                             Text="{Binding Description}"
                                             Grid.Row="0"
                                             Grid.Column="1"
-                                            FontSize="16"
+                                            FontSize="15"
                                             FontFamily="{StaticResource Roboto-Medium}"
                                             TextColor="{DynamicResource Gray-900}"/>
-                                        <Label 
+                                            <Label 
                                             Text="{Binding EndsOn}" 
-                                            FontAttributes="Bold" 
+                                            FontFamily="{StaticResource Roboto-Regular}" 
                                             Grid.Row="1" 
                                             Grid.Column="1"/>
-                                    </Grid>
-                                    <BoxView Color="#eee" HeightRequest="1"></BoxView>
-                                </StackLayout>
-                            </Frame>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </StackLayout>
-            </ScrollView>
+                                        </Grid>
+                                        <BoxView Color="#eee" HeightRequest="1"></BoxView>
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+            </RefreshView>
+            <Label 
+                IsVisible="False"
+                x:Name="EmptyLabel"
+                VerticalOptions="Center"
+                Text="You have no pending Actions"
+                HorizontalTextAlignment="Center"/>
             <!--loader-->
             <control:Loader 
                 x:Name="Loader"

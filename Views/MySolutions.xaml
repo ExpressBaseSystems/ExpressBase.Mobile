@@ -74,19 +74,21 @@
                                                     VerticalOptions="Center"
                                                     WidthRequest="55"
                                                     Padding="0"
-                                                    BackgroundColor="#dddee0"
+                                                    BackgroundColor="#eeeeee"
                                                     BorderColor="#d4d5d8"
                                                     HasShadow="False"
                                                     CornerRadius="30">
                                                     <Image Source="{Binding Logo}"/>
                                                 </Frame>
-                                                <BoxView
+                                                <Frame
+                                                    IsVisible="{Binding IsCurrent}"
                                                     CornerRadius="8"
-                                                    WidthRequest="15"
-                                                    HeightRequest="15"
+                                                    BorderColor="White"
+                                                    Padding="0"
+                                                    HasShadow="False"
                                                     AbsoluteLayout.LayoutFlags="PositionProportional"   
-                                                    AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
-                                                    BackgroundColor="{Binding StatusColor}"/>
+                                                    AbsoluteLayout.LayoutBounds="1,1,15,15"
+                                                    BackgroundColor="#26bd26"/>
                                             </AbsoluteLayout>
                                             <Label 
                                                 Text="{Binding SolutionName}"
@@ -129,6 +131,7 @@
                         </Grid.ColumnDefinitions>
                         <control:TextBox
                             x:Name="SolutionName"
+                            BorderColor="Transparent"
                             FontSize="18"
                             VerticalTextAlignment="Center"
                             Grid.Column="0"

@@ -304,17 +304,6 @@ namespace ExpressBase.Mobile.Models
 
         public bool IsCurrent { set; get; }
 
-        public Color StatusColor
-        {
-            get
-            {
-                if (IsCurrent)
-                    return Color.FromHex("26bd26");
-                else
-                    return Color.Transparent;
-            }
-        }
-
         public void SetLogo()
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();

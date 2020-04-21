@@ -24,10 +24,9 @@ namespace ExpressBase.Mobile.Views
             if (isInternal)
                 ResetButton.IsVisible = false;
             else
-                NavigationPage.SetHasBackButton(this, true);
+                NavigationPage.SetHasBackButton(this, false);
 
-            if (ViewModel.Applications.Count <= 0)
-                LocSwitchOverlay.IsVisible = true;
+            ToggleLocationSwitcher();
         }
 
         protected override void OnAppearing()
@@ -56,10 +55,7 @@ namespace ExpressBase.Mobile.Views
                 ViewModel.PullApplications();
                 ApplicationsRefresh.IsRefreshing = false;
 
-                if (ViewModel.Applications.Count <= 0)
-                    LocSwitchOverlay.IsVisible = true;
-                else
-                    LocSwitchOverlay.IsVisible = false;
+                ToggleLocationSwitcher();
             }
             catch (Exception ex)
             {
@@ -89,7 +85,24 @@ namespace ExpressBase.Mobile.Views
 
         public void LocationPagePoped()
         {
-            this.ApplicationsRefresh_Refreshing(null, null);
+            try
+            {
+                Store.RemoveJSON(AppConst.APP_COLLECTION);
+                ViewModel.PullApplications();
+                ToggleLocationSwitcher();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        private void ToggleLocationSwitcher()
+        {
+            if (ViewModel.Applications.Count <= 0)
+                LocSwitchOverlay.IsVisible = true;
+            else
+                LocSwitchOverlay.IsVisible = false;
         }
     }
 }

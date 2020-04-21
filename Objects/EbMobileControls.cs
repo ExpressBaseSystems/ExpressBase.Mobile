@@ -122,26 +122,21 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
+            Color bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White;
             if (TextMode == TextMode.MultiLine)
             {
                 XControl = new TextArea()
                 {
-                    BorderColor = "#cccccc",
-                    BorderThickness = 1,
-                    BorderRadius = 10.0f,
                     HeightRequest = 100,
                     IsReadOnly = this.ReadOnly,
-                    BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
+                    BgColor = bg
                 };
             }
             else
                 XControl = new TextBox
                 {
-                    BorderColor = "#cccccc",
-                    BorderThickness = 1,
-                    BorderRadius = 10.0f,
                     IsReadOnly = this.ReadOnly,
-                    BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
+                    BgColor = bg
                 };
         }
 
@@ -226,14 +221,14 @@ namespace ExpressBase.Mobile
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-                var minus = new Button { Style = ButtonStyles, Text = "\uf068" };
+                var minus = new Button { Style = ButtonStyles, Text = "\uf068", IsEnabled = !this.ReadOnly };
                 minus.Clicked += Minus_Clicked;
                 grid.Children.Add(minus, 0, 0);
 
-                ValueBox = new TextBox { Text = ValueBoxNumber.ToString(), IsReadOnly = true, BorderColor = "#cccccc", BorderThickness = 1, BorderRadius = 10.0f };
+                ValueBox = new TextBox { Text = ValueBoxNumber.ToString(), IsReadOnly = true };
                 grid.Children.Add(ValueBox, 1, 0);
 
-                var plus = new Button { Style = ButtonStyles, Text = "\uf067" };
+                var plus = new Button { Style = ButtonStyles, Text = "\uf067", IsEnabled = !this.ReadOnly };
                 plus.Clicked += Plus_Clicked;
                 grid.Children.Add(plus, 2, 0);
 
@@ -243,11 +238,8 @@ namespace ExpressBase.Mobile
             {
                 this.XControl = new NumericTextBox
                 {
-                    BorderColor = "#cccccc",
-                    BorderThickness = 1,
-                    BorderRadius = 10.0f,
                     IsReadOnly = this.ReadOnly,
-                    BackgroundColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White,
+                    BgColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White,
                     Keyboard = Keyboard.Numeric,
                     Behaviors = { new NumericBoxBehavior() }
                 };
@@ -330,11 +322,14 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
+            var bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
+
             Picker = new CustomDatePicker
             {
                 IsEnabled = !this.ReadOnly,
                 Date = DateTime.Now,
-                Format = "yyyy-MM-dd"
+                Format = "yyyy-MM-dd",
+                BorderColor = Color.Transparent
             };
 
             var icon = new Label
@@ -346,7 +341,7 @@ namespace ExpressBase.Mobile
                 FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
             };
 
-            this.XControl = new InputGroup(Picker, icon) { BorderThickness = 1, BorderColor = "#cccccc", BorderRadius = 10.0f };
+            this.XControl = new InputGroup(Picker, icon) { BgColor = bg };
         }
 
         public override object GetValue()
@@ -463,7 +458,11 @@ namespace ExpressBase.Mobile
 
         public override void InitXControl(FormMode Mode)
         {
-            this.XControl = new TextBox { IsReadOnly = true, BackgroundColor = Color.FromHex("eeeeee") };
+            this.XControl = new TextBox
+            {
+                IsReadOnly = this.ReadOnly,
+                BgColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
+            };
         }
     }
 }

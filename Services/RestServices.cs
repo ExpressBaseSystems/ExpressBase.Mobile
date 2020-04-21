@@ -24,6 +24,11 @@ namespace ExpressBase.Mobile.Services
             Client = new RestClient(Settings.RootUrl);
         }
 
+        public void UpdateBaseUrl()
+        {
+            Client.BaseUrl = new Uri(Settings.RootUrl);
+        }
+
         public static async Task<ValidateSidResponse> ValidateSid(string url)
         {
             ValidateSidResponse Vresp = new ValidateSidResponse();
@@ -95,8 +100,6 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                RestClient client = new RestClient(Settings.RootUrl);
-
                 RestRequest request = new RestRequest("api/push_data", Method.POST);
                 request.AddParameter("webform_data", JsonConvert.SerializeObject(WebFormData));
                 request.AddParameter("rowid", RowId);
@@ -107,7 +110,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.BTOKEN, Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, Settings.RToken);
 
-                IRestResponse response = client.Execute(request);
+                IRestResponse response = Client.Execute(request);
                 return JsonConvert.DeserializeObject<PushResponse>(response.Content);
             }
             catch (Exception e)

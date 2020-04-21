@@ -31,9 +31,9 @@
     </NavigationPage.TitleView>
     <ContentPage.Content>
         <ListView 
-                ItemsSource="{Binding Locations}"
-                HasUnevenRows="true"
-                ItemTapped="ListView_ItemTapped">
+            ItemsSource="{Binding Locations}"
+            HasUnevenRows="true"
+            ItemTapped="ListView_ItemTapped">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>

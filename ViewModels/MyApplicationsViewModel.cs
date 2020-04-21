@@ -51,14 +51,7 @@ namespace ExpressBase.Mobile.ViewModels
                 else
                     this.Applications.AddRange(_apps);
 
-                //fill by randdom colors
-                Random random = new Random();
-                foreach (AppData appdata in this.Applications)
-                {
-                    var randomColor = ColorSet.Colors[random.Next(6)];
-                    appdata.BackgroundColor = Color.FromHex(randomColor.BackGround);
-                    appdata.TextColor = Color.FromHex(randomColor.TextColor);
-                }
+                FillRandomColor();
             }
             catch (Exception ex)
             {
@@ -115,6 +108,18 @@ namespace ExpressBase.Mobile.ViewModels
             catch (Exception ex)
             {
                 Log.Write("AppSelect_PullObjectsByApp---" + ex.Message);
+            }
+        }
+
+        private void FillRandomColor()
+        {
+            //fill by randdom colors
+            Random random = new Random();
+            foreach (AppData appdata in this.Applications)
+            {
+                var randomColor = ColorSet.Colors[random.Next(6)];
+                appdata.BackgroundColor = Color.FromHex(randomColor.BackGround);
+                appdata.TextColor = Color.FromHex(randomColor.TextColor);
             }
         }
     }

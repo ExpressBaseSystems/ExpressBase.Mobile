@@ -11,7 +11,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    class DoActionViewModel : StaticBaseViewModel
+    public class DoActionViewModel : StaticBaseViewModel
     {
         private EbStageActions _status;
 
@@ -54,7 +54,6 @@ namespace ExpressBase.Mobile.ViewModels
                 StageActions = Action.StageInfo.StageActions ?? new List<EbStageActions>();
                 ActionData = Action.StageInfo.Data ?? new List<Param>();
             }
-
             SubmitCommand = new Command(async () => await SubmitButton_Clicked());
         }
 

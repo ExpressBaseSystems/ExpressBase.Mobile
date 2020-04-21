@@ -119,13 +119,20 @@ namespace ExpressBase.Mobile.Models
             }
         }
 
-        public string DescriptionL1
+        public string AppNotation
         {
             get
             {
-                return (Description == null) ? "?" : Description[0].ToString().ToUpper();
+                string notation = string.Empty;
+                foreach (var item in Description.Split(' ').Take(2))
+                    notation += item[0];
+                return notation.ToUpper();
             }
         }
+
+        public Color BackgroundColor { set; get; }
+
+        public Color TextColor { set; get; }
     }
 
     public class MyActionsResponse

@@ -64,9 +64,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public void CreateView()
         {
             StackLayout StackL = new StackLayout { Spacing = 1, BackgroundColor = Color.FromHex("eeeeee") };
-
-            var tapGestureRecognizer = new TapGestureRecognizer();
-            tapGestureRecognizer.Tapped += ListItem_Clicked;
             int rowColCount = 1;
 
             if (this.DataTable.Rows.Any())
@@ -75,6 +72,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     CustomFrame CustFrame = new CustomFrame(_row, this.Visualization);
                     CustFrame.SetBackGroundColor(rowColCount);
+                    var tapGestureRecognizer = new TapGestureRecognizer();
+                    tapGestureRecognizer.Tapped += ListItem_Clicked;
 
                     if (this.NetworkType == NetworkMode.Offline)
                         CustFrame.ShowSyncFlag(this.DataTable.Columns);
@@ -137,7 +136,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         void ListItem_Clicked(object Frame, EventArgs args)
         {
-            var customFrame = Frame as CustomFrame;
+            IToast toast = DependencyService.Get<IToast>();
+            CustomFrame customFrame = Frame as CustomFrame;
             try
             {
                 if (string.IsNullOrEmpty(this.Visualization.LinkRefId)) return;
@@ -145,14 +145,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 if (this.NetworkType != _page.NetworkMode)
                 {
-                    DependencyService.Get<IToast>().Show("Link page Mode is different.");
+                    toast.Show("Link page Mode is different.");
                     return;
                 }
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
                 if (_page.Container is EbMobileForm)
                 {
                     int id = Convert.ToInt32(customFrame.DataRow["id"]);
-                    if (id == 0) return;
+                    if (id == 0) throw new Exception("id has ivalid value" + id);
                     FormMode mode = this.Visualization.FormMode == WebFormDVModes.New_Mode ? FormMode.NEW : FormMode.EDIT;
 
                     FormRender Renderer = new FormRender(_page, id, mode);
@@ -174,6 +174,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
                 Log.Write(ex.Message);
+                toast.Show("something went wrong");
             }
         }
 
