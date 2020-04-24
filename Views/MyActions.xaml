@@ -88,7 +88,7 @@
                 </ScrollView>
             </RefreshView>
             <Label 
-                IsVisible="False"
+                IsVisible="{Binding ShowEmptyLabel}"
                 x:Name="EmptyLabel"
                 VerticalOptions="Center"
                 Text="You have no pending Actions"

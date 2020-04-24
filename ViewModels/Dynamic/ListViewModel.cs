@@ -151,11 +151,15 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
                 if (_page.Container is EbMobileForm)
                 {
-                    int id = Convert.ToInt32(customFrame.DataRow["id"]);
-                    if (id == 0) throw new Exception("id has ivalid value" + id);
-                    FormMode mode = this.Visualization.FormMode == WebFormDVModes.New_Mode ? FormMode.NEW : FormMode.EDIT;
-
-                    FormRender Renderer = new FormRender(_page, id, mode);
+                    FormRender Renderer;
+                    if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
+                        Renderer = new FormRender(_page, customFrame.DataRow);
+                    else
+                    {
+                        int id = Convert.ToInt32(customFrame.DataRow["id"]);
+                        if (id <= 0) throw new Exception("id has ivalid value" + id);
+                        Renderer = new FormRender(_page, id);
+                    }
                     (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
                 else if (_page.Container is EbMobileVisualization)

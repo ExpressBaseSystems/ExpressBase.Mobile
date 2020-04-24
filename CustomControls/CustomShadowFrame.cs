@@ -1,8 +1,10 @@
 ﻿using ExpressBase.Mobile.Models;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace ExpressBase.Mobile.CustomControls
 {
+    [Preserve(AllMembers = true)]
     public class CustomShadowFrame : Frame
     {
         public MobilePagesWraper PageWraper { set; get; }

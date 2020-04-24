@@ -193,7 +193,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
                     if (id != 0)
                     {
-                        FormRender Renderer = new FormRender(_page, id, FormMode.EDIT);
+                        FormRender Renderer = new FormRender(_page, id);
                         (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                     }
                 }
@@ -206,24 +206,29 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         void ListItem_Clicked(object Frame, EventArgs args)
         {
+            CustomFrame customFrame = Frame as CustomFrame;
             try
             {
-                EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
+                EbMobilePage _page = HelperFunctions.GetPage(this.Visualization.LinkRefId);
+
+                if (this.NetworkType != _page.NetworkMode)
+                {
+                    DependencyService.Get<IToast>().Show("Link page Mode is different.");
+                    return;
+                }
 
                 if (_page != null && _page.Container is EbMobileForm)
                 {
-                    if (this.NetworkType != _page.NetworkMode)
+                    FormRender Renderer;
+                    if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
+                        Renderer = new FormRender(_page, customFrame.DataRow);
+                    else
                     {
-                        DependencyService.Get<IToast>().Show("Link page Mode is different.");
-                        return;
+                        int id = Convert.ToInt32(customFrame.DataRow["id"]);
+                        if (id <= 0) throw new Exception("id has ivalid value" + id);
+                        Renderer = new FormRender(_page, id);
                     }
-
-                    int id = Convert.ToInt32((Frame as CustomFrame).DataRow["id"]);
-                    if (id != 0)
-                    {
-                        FormRender Renderer = new FormRender(_page, id, FormMode.EDIT);//to form edit mode
-                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
-                    }
+                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
             }
             catch (Exception ex)

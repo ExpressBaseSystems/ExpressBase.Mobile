@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Models;
@@ -41,10 +42,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        //edit/prefill mode
-        public FormRenderViewModel(EbMobilePage page, int rowId, FormMode mode) : base(page)
+        //edit
+        public FormRenderViewModel(EbMobilePage page, int rowId) : base(page)
         {
-            this.Mode = mode;
+            this.Mode = FormMode.EDIT;
             try
             {
                 this.RowId = rowId;
@@ -58,6 +59,24 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             catch (Exception ex)
             {
                 Log.Write("Form render edit mode---" + ex.Message);
+            }
+        }
+
+        //prefill mode
+        public FormRenderViewModel(EbMobilePage page, EbDataRow currentRow) : base(page)
+        {
+            this.Mode = FormMode.NEW;
+            try
+            {
+                this.Form = page.Container as EbMobileForm;
+
+                this.CreateView();
+                this.FillControlsFlat(currentRow);//for prefill without heirarcy
+                this.Form.CreateTableSchema();
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Form render prefill mode---" + ex.Message);
             }
         }
 
@@ -205,14 +224,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                     if (pair.Value is EbMobileFileUpload)
                     {
-                        if (this.Mode == FormMode.EDIT)
+                        pair.Value.SetValue(new FUPSetValueMeta
                         {
-                            pair.Value.SetValue(new FUPSetValueMeta
-                            {
-                                TableName = this.Form.TableName,
-                                RowId = this.RowId
-                            });
-                        }
+                            TableName = this.Form.TableName,
+                            RowId = this.RowId
+                        });
                     }
                     if (pair.Value is ILinesEnabled)
                     {
@@ -222,7 +238,25 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     else
                         pair.Value.SetValue(data);
 
-                    if (this.Mode == FormMode.EDIT) pair.Value.SetAsReadOnly(true);
+                    pair.Value.SetAsReadOnly(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        private void FillControlsFlat(EbDataRow row)
+        {
+            try
+            {
+                foreach (KeyValuePair<string, EbMobileControl> pair in this.Form.ControlDictionary)
+                {
+                    object data = row[pair.Value.Name];
+                    if (pair.Value is INonPersistControl || pair.Value is ILinesEnabled) continue;
+                    else
+                        pair.Value.SetValue(data);
                 }
             }
             catch (Exception ex)

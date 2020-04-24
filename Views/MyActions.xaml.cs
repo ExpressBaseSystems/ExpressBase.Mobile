@@ -43,11 +43,9 @@ namespace ExpressBase.Mobile.Views
                     DependencyService.Get<IToast>().Show("Not connected to internet!");
                     return;
                 }
+
                 MyActionsRefresh.IsRefreshing = true;
-                MyActionsResponse actionResp = await RestServices.Instance.GetMyActionsAsync();
-                ViewModel.Actions.Clear();
-                ViewModel.Actions.AddRange(actionResp.Actions);
-                ViewModel.FillRandomColor();
+                await ViewModel.RefreshMyActions();
                 MyActionsRefresh.IsRefreshing = false;
             }
             catch (Exception ex)

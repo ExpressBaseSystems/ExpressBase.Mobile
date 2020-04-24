@@ -1,4 +1,6 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
@@ -28,21 +30,33 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        //edit/prefill mode
-        public FormRender(EbMobilePage page, int rowId, FormMode mode)
+        //edit
+        public FormRender(EbMobilePage page, int rowId)
         {
             InitializeComponent();
             try
             {
-                BindingContext = ViewModel = new FormRenderViewModel(page, rowId, mode);
+                BindingContext = ViewModel = new FormRenderViewModel(page, rowId);
                 FormScrollView.Content = ViewModel.XView;
 
-                if(mode== FormMode.EDIT)
-                {
-                    SaveButton.Text = "Save Changes";
-                    SaveButton.IsVisible = false;
-                    EditButton.IsVisible = true;
-                }
+                SaveButton.Text = "Save Changes";
+                SaveButton.IsVisible = false;
+                EditButton.IsVisible = true;
+            }
+            catch (Exception ex)
+            {
+                Log.Write("FormRender edit/prefill mode" + ex.Message);
+            }
+        }
+
+        //prefill mode
+        public FormRender(EbMobilePage page, EbDataRow currentRow)
+        {
+            InitializeComponent();
+            try
+            {
+                BindingContext = ViewModel = new FormRenderViewModel(page, currentRow);
+                FormScrollView.Content = ViewModel.XView;
             }
             catch (Exception ex)
             {
@@ -79,7 +93,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         public void ShowFullScreenImage(object tapedImage)
         {
-            if(tapedImage != null)
+            if (tapedImage != null)
             {
                 ImageFullScreen.Source = (tapedImage as Image).Source;
                 ImageFullScreen.Show();

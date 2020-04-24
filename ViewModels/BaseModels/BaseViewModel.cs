@@ -12,7 +12,16 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged, IDisposable
     {
-        public string PageTitle { set; get; }
+        private string _pageTitle;
+        public string PageTitle
+        {
+            get { return this._pageTitle; }
+            set
+            {
+                this._pageTitle = value;
+                this.NotifyPropertyChanged();
+            }
+        }
 
         private bool _isBusy;
         public bool IsBusy

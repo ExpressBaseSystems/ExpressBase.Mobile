@@ -8,32 +8,10 @@
              x:Class="ExpressBase.Mobile.Views.DoAction"
              BackgroundColor="#ffffff">
     <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+        <Grid RowSpacing="0" Padding="0,0,10,0" BackgroundColor="Transparent">
+            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}"/>
         </Grid>
     </NavigationPage.TitleView>
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <Style x:Key="ActionDataColName" TargetType="Label">
-                <Setter Property="FontFamily" Value="{StaticResource Roboto-Medium}" />
-                <Setter Property="FontSize" Value="16" />
-                <Setter Property="VerticalOptions" Value="Center"></Setter>
-                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
-                <Setter Property="Margin" Value="0"></Setter>
-            </Style>
-            <Style x:Key="ActionDataColValue" TargetType="Label">
-                <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
-                <Setter Property="FontSize" Value="16" />
-                <Setter Property="VerticalOptions" Value="Center"></Setter>
-                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
-                <Setter Property="Margin" Value="5,0,0,0"></Setter>
-            </Style>
-        </ResourceDictionary>
-    </ContentPage.Resources>
     <ContentPage.Content>
         <Grid>
             <Grid>
@@ -55,77 +33,54 @@
                         Text="Current Stage"/>
                     <Label Text="Default" x:Name="CurrentStage" TextColor="#508bf9"/>
                 </FlexLayout>
-                <ScrollView Grid.Row="1" Padding="15">
+                <ScrollView Grid.Row="1">
                     <StackLayout>
-                        <control:CustomShadowFrame 
-                            BackgroundColor="#d7e9f3"
-                            Padding="15"
+                        <control:CustomShadowFrame
+                            Padding="0"
                             Grid.Row="0"
-                            HasShadow="False"
-                            BorderColor="#b2ccda"
-                            BorderWidth="1"
-                            Margin="0,0,0,15"
-                            CornerRadius="4">
-                            <StackLayout 
-                                BindableLayout.ItemsSource="{Binding ActionData}" 
-                                Spacing="0">
-                                <BindableLayout.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin="0,3">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                            </Grid.ColumnDefinitions>
-                                            <Label 
-                                            Grid.Column="0"                                              
-                                            Style="{StaticResource ActionDataColName}">
-                                                <Label.FormattedText>
-                                                    <FormattedString>
-                                                        <Span Text="{Binding Name}"/>
-                                                        <Span Text=" : "/>
-                                                    </FormattedString>
-                                                </Label.FormattedText>
-                                            </Label>
-                                            <Label 
-                                            Grid.Column="1"
-                                            Text="{Binding Value}"
-                                            Style="{StaticResource ActionDataColValue}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </BindableLayout.ItemTemplate>
-                            </StackLayout>
+                            HasShadow="true"
+                            BackgroundColor="White"
+                            BorderColor="White"
+                            Margin="15"
+                            CornerRadius="6">
+                            <StackLayout
+                                Margin="3"
+                                x:Name="DataContainer"
+                                BackgroundColor="#cccccc"/>
                         </control:CustomShadowFrame>
-                        <Label Text="Status"/>
-                        <AbsoluteLayout Margin="0,0,0,5">
-                            <control:CustomPicker 
-                                AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                                AbsoluteLayout.LayoutFlags="All"
+                        <StackLayout Margin="15,0">
+                            <Label Text="Status"/>
+                            <AbsoluteLayout>
+                                <control:CustomPicker 
+                                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                                    AbsoluteLayout.LayoutFlags="All"
+                                    BorderColor="#cccccc"
+                                    BorderThickness="1"
+                                    BorderRadius="10.0"
+                                    Title="Select status"
+                                    FontSize="15"
+                                    TitleColor="{StaticResource Gray-900}"
+                                    ItemsSource="{Binding StageActions}"
+                                    ItemDisplayBinding="{Binding ActionName}"
+                                    SelectedItem="{Binding Status}"/>
+                                <Button
+                                    AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
+                                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                                    Text="&#xf078;"
+                                    FontSize="18"
+                                    TextColor="{StaticResource Gray-900}"
+                                    BackgroundColor="Transparent"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    WidthRequest="50"/>
+                            </AbsoluteLayout>
+                            <Label Text="Comments"/>
+                            <control:TextArea 
                                 BorderColor="#cccccc"
                                 BorderThickness="1"
                                 BorderRadius="10.0"
-                                Title="Select status"
-                                FontSize="15"
-                                TitleColor="{StaticResource Gray-900}"
-                                ItemsSource="{Binding StageActions}"
-                                ItemDisplayBinding="{Binding ActionName}"
-                                SelectedItem="{Binding Status}"/>
-                            <Button
-                                AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
-                                AbsoluteLayout.LayoutFlags="PositionProportional"
-                                Text="&#xf078;"
-                                FontSize="18"
-                                TextColor="{StaticResource Gray-900}"
-                                BackgroundColor="Transparent"
-                                FontFamily="{StaticResource FontAwesome}"
-                                WidthRequest="50"/>
-                        </AbsoluteLayout>
-                        <Label Text="Comments"/>
-                        <control:TextArea 
-                            BorderColor="#cccccc"
-                            BorderThickness="1"
-                            BorderRadius="10.0"
-                            Text="{Binding Comments}" 
-                            HeightRequest="100"/>
+                                Text="{Binding Comments}" 
+                                HeightRequest="100"/>
+                        </StackLayout>
                     </StackLayout>
                 </ScrollView>
                 <Button Grid.Row="2"
