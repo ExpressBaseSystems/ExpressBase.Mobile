@@ -460,9 +460,18 @@ namespace ExpressBase.Mobile
         {
             this.XControl = new TextBox
             {
-                IsReadOnly = this.ReadOnly,
-                BgColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White
+                IsReadOnly = true,
+                BgColor = Color.FromHex("eeeeee")
             };
+        }
+
+        public override bool SetValue(object value)
+        {
+            if (value == null)
+                return false;
+
+            (this.XControl as TextBox).Text = value.ToString();
+            return true;
         }
     }
 }

@@ -18,7 +18,7 @@
 
             <Label Text="{Binding PageTitle}" Grid.Column="1" FontSize="16" TextColor="White" VerticalOptions="Center"/>
 
-            <Button Text="&#xf013;" x:Name="ResetButton" Style="{StaticResource ToolBarButtonStyle}" Clicked="ResetButton_Clicked" Grid.Column="2"/>
+            <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Grid.Column="2" Command="{Binding ResetConfig}"/>
         </Grid>
     </NavigationPage.TitleView>
 
@@ -146,12 +146,7 @@
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All"
                 Message="Authenticating..."/>
-
-            <control:ConfirmBox
-                x:Name="ConfimReset"
-                Title="Confirm"
-                Message="Are you sure, you want to Reset?"
-                ConfirmClicked="{Binding ResetConfig}"/>
+            
         </Grid>
     </ContentPage.Content>
 </ContentPage>

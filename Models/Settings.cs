@@ -39,7 +39,7 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                return Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
+                return Store.GetValue<int>(AppConst.CURRENT_LOCATION);
             }
         }
 

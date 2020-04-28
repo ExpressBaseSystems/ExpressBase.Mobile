@@ -48,7 +48,25 @@ namespace ExpressBase.Mobile.Views
             PopupContainer.IsVisible = false;
         }
 
-        private async void AddSolution_Clicked(object sender, EventArgs e)
+        void AddSolution_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                AddSolution.IsVisible = false;
+                SaveSolution.IsVisible = true;
+                InputArea.BackgroundColor = Color.FromHex("dddddd");
+                SolutionName.IsVisible = true;
+                SolutionName.Focus();
+
+                scrollView.ScrollToAsync(0, this.Height, true);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        private async void SaveSolution_Clicked(object sender, EventArgs e)
         {
             try
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
 {
@@ -113,7 +114,7 @@ namespace ExpressBase.Mobile.Models
         public string ShortDate { set; get; }
 
         public string ShortTimePattern { set; get; }
-       
+
         public string ShortTime { set; get; }
     }
 
@@ -129,7 +130,23 @@ namespace ExpressBase.Mobile.Models
 
         public string Logo { get; set; }
 
-        public bool Selected { set; get; } = false;
+        public bool Selected { set; get; }
+
+        public Color SelectionColor
+        {
+            get
+            {
+                return Selected ? Color.FromHex("0046bb") : Color.White;
+            }
+        }
+
+        public Color Bordercolor
+        {
+            get
+            {
+                return Selected ? Color.FromHex("0046bb") : Color.FromHex("cccccc");
+            }
+        }
     }
 }
 

@@ -136,7 +136,7 @@
                                 <Frame Grid.Column="0" Style="{StaticResource LinkIcon}" BackgroundColor="#429ad8">
                                     <Label Text="&#xf041;" Style="{StaticResource SideBarIconStyle}"/>
                                 </Frame>
-                                <Label Grid.Column="1" Text="Locations" Style="{StaticResource LinkLabel}"/>
+                                <Label Grid.Column="1" Text="Switch Location" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
                     </StackLayout>

@@ -35,7 +35,7 @@
                                     FontFamily="{StaticResource Roboto-Regular}"
                                     HorizontalOptions="StartAndExpand"
                                     FontSize="32"
-                                    Text="Configure"
+                                    Text="Solution"
                                     TextColor="White" />
                                 <Label
                                     x:Name="HeaderText"
@@ -43,7 +43,7 @@
                                     FontFamily="{StaticResource Roboto-Regular}"
                                     FontSize="22"
                                     HorizontalOptions="StartAndExpand"
-                                    Text="Solution URL"
+                                    Text="Switcher"
                                     TextColor="White" />
                             </StackLayout>
                         </Grid>
@@ -118,8 +118,9 @@
                     </StackLayout>
                 </ScrollView>
                 <Frame 
+                    x:Name="InputArea"
                     HasShadow="False"
-                    BackgroundColor="#dddddd"
+                    BackgroundColor="Transparent"
                     Margin="10"
                     Grid.Row="1"
                     CornerRadius="30"
@@ -130,12 +131,14 @@
                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <control:TextBox
+                            IsVisible="False"
                             x:Name="SolutionName"
                             BorderColor="Transparent"
                             FontSize="18"
                             VerticalTextAlignment="Center"
                             Grid.Column="0"
                             Placeholder="solution.expressbase.com"/>
+
                         <Button
                             x:Name="AddSolution"
                             Grid.Column="1"
@@ -150,6 +153,22 @@
                             WidthRequest="50"
                             FontFamily="{StaticResource FontAwesome}"
                             Clicked="AddSolution_Clicked"/>
+
+                        <Button
+                            IsVisible="False"
+                            x:Name="SaveSolution"
+                            Grid.Column="1"
+                            Padding="0"
+                            FontSize="15"
+                            Margin="0"
+                            Text="&#xf0c7;"
+                            BackgroundColor="{StaticResource Blue-Dark}"
+                            BorderColor="{StaticResource Blue-Dark}"
+                            TextColor="White"
+                            CornerRadius="25"
+                            WidthRequest="50"
+                            FontFamily="{StaticResource FontAwesome}"
+                            Clicked="SaveSolution_Clicked"/>
                     </Grid>
                 </Frame>
             </Grid>

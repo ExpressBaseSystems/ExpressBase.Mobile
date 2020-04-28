@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -13,24 +14,28 @@ namespace ExpressBase.Mobile.Views.Shared
     {
         public ObservableCollection<EbLocation> Locations { get; private set; }
 
+        public List<EbLocation> All { set; get; }
+
         public MyApplications MyApplicationsPage { set; get; }
+
+        public EbLocation SelectedLocation { set; get; }
 
         public MyLocations()
         {
             InitializeComponent();
 
-            SetLocations();
+            this.SetLocations();
             BindingContext = this;
         }
 
         public MyLocations(MyApplications appPage)
         {
             InitializeComponent();
-
             NavigationPage.SetHasNavigationBar(this, true);
-            MyApplicationsPage = appPage;
-            SetLocations();
             BackButton.IsVisible = true;
+
+            MyApplicationsPage = appPage;
+            this.SetLocations();
             BindingContext = this;
         }
 
@@ -38,14 +43,15 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             try
             {
-                Locations = new ObservableCollection<EbLocation>(Settings.Locations);
-
-                int current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
+                All = Settings.Locations;
+                Locations = new ObservableCollection<EbLocation>(All);
+                int current = Settings.LocationId;
 
                 foreach (EbLocation loc in Locations)
                 {
                     if (loc.LocId == current)
                     {
+                        SelectedLocation = loc;
                         loc.Selected = true;
                         break;
                     }
@@ -57,18 +63,23 @@ namespace ExpressBase.Mobile.Views.Shared
             }
         }
 
-        private async void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
+        private void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             EbLocation loc = (e.Item as EbLocation);
-            if (loc.LocId != Settings.LocationId)
-            {
-                loc.Selected = true;
-                Store.SetValue(AppConst.CURRENT_LOCATION, loc.LocId.ToString());
 
-                if (MyApplicationsPage == null)
-                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
-                else
-                    await Application.Current.MainPage.Navigation.PopModalAsync();
+            if (loc != SelectedLocation)
+            {
+                this.Locations.Clear();
+                foreach (EbLocation location in All)
+                {
+                    if (location.LocId == loc.LocId)
+                    {
+                        location.Selected = true;
+                        SelectedLocation = loc;
+                    }
+                    else location.Selected = false;
+                    this.Locations.Add(location);
+                }
             }
         }
 
@@ -81,6 +92,18 @@ namespace ExpressBase.Mobile.Views.Shared
         private void BackButton_Clicked(object sender, EventArgs e)
         {
             Application.Current.MainPage.Navigation.PopModalAsync(true);
+        }
+
+        private async void ApplyButton_Clicked(object sender, EventArgs e)
+        {
+            if (SelectedLocation != null)
+            {
+                Store.SetValue(AppConst.CURRENT_LOCATION, SelectedLocation.LocId.ToString());
+                if (MyApplicationsPage == null)
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                else
+                    await Application.Current.MainPage.Navigation.PopModalAsync();
+            }
         }
     }
 }

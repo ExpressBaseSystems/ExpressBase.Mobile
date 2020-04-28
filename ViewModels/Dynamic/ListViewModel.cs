@@ -66,19 +66,21 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             StackLayout StackL = new StackLayout { Spacing = 1, BackgroundColor = Color.FromHex("eeeeee") };
             int rowColCount = 1;
 
+            var tapGestureRecognizer = new TapGestureRecognizer();
+            tapGestureRecognizer.Tapped += ListItem_Clicked;
+            bool IsClickable = !string.IsNullOrEmpty(this.Visualization.LinkRefId);
+
             if (this.DataTable.Rows.Any())
             {
                 foreach (EbDataRow _row in this.DataTable.Rows)
                 {
                     CustomFrame CustFrame = new CustomFrame(_row, this.Visualization);
-                    CustFrame.SetBackGroundColor(rowColCount);
-                    var tapGestureRecognizer = new TapGestureRecognizer();
-                    tapGestureRecognizer.Tapped += ListItem_Clicked;
+                    CustFrame.SetBackGroundColor(rowColCount);             
 
                     if (this.NetworkType == NetworkMode.Offline)
                         CustFrame.ShowSyncFlag(this.DataTable.Columns);
 
-                    CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
+                    if(IsClickable) CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
                     StackL.Children.Add(CustFrame);
                     rowColCount++;
                 }
@@ -134,13 +136,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 return new TextBox();
         }
 
-        void ListItem_Clicked(object Frame, EventArgs args)
+        private bool _IsTapped;
+
+        async void ListItem_Clicked(object Frame, EventArgs args)
         {
+            if (_IsTapped) return;
+
             IToast toast = DependencyService.Get<IToast>();
             CustomFrame customFrame = Frame as CustomFrame;
             try
             {
-                if (string.IsNullOrEmpty(this.Visualization.LinkRefId)) return;
                 EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
 
                 if (this.NetworkType != _page.NetworkMode)
@@ -148,6 +153,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     toast.Show("Link page Mode is different.");
                     return;
                 }
+                _IsTapped = true;
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
                 if (_page.Container is EbMobileForm)
                 {
@@ -160,25 +166,27 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         if (id <= 0) throw new Exception("id has ivalid value" + id);
                         Renderer = new FormRender(_page, id);
                     }
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
                 else if (_page.Container is EbMobileVisualization)
                 {
                     LinkedListRender Renderer = new LinkedListRender(_page, this.Visualization, customFrame);
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
                 else if (_page.Container is EbMobileDashBoard)
                 {
                     DashBoardRender Renderer = new DashBoardRender(_page, customFrame.DataRow);
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
+                _IsTapped = false;
             }
             catch (Exception ex)
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
                 Log.Write(ex.Message);
                 toast.Show("something went wrong");
+                _IsTapped = false;
             }
         }
 

@@ -40,10 +40,5 @@ namespace ExpressBase.Mobile.Views
             if (PassWord.Text != null)
                 PassWord.CursorPosition = PassWord.Text.Length;
         }
-
-        private void ResetButton_Clicked(object sender, EventArgs e)
-        {
-            ConfimReset.Show();
-        }
     }
 }

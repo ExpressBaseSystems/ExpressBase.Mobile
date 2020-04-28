@@ -27,9 +27,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private List<DbParameter> Parameters { set; get; }
 
-        public Command AddCommand => new Command(AddButtonClicked);
+        public Command AddCommand { get; set; }
 
-        public Command EditCommand => new Command(EditButtonClicked);
+        public Command EditCommand { get; set; }
 
         public LinkedListViewModel() { }
 
@@ -47,6 +47,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.SetParameters(CustFrame.DataRow);
             this.SetData(); //set query result
             this.CreateView();
+            AddCommand = new Command(AddButtonClicked);
+            EditCommand = new Command(EditButtonClicked);
         }
 
         public void SetParameters(EbDataRow row)
@@ -126,6 +128,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             var tapGestureRecognizer = new TapGestureRecognizer();
             tapGestureRecognizer.Tapped += ListItem_Clicked;
+            bool IsClickable = !string.IsNullOrEmpty(this.Visualization.LinkRefId);
+
             int rowColCount = 1;
             if (this.DataTable.Rows.Any())
             {
@@ -137,7 +141,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     if (this.NetworkType == NetworkMode.Offline)
                         CustFrame.ShowSyncFlag(this.DataTable.Columns);
 
-                    CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
+                    if (IsClickable) CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
                     StackL.Children.Add(CustFrame);
                     rowColCount++;
                 }
@@ -204,8 +208,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        void ListItem_Clicked(object Frame, EventArgs args)
+        private bool _IsTapped;
+
+        async void ListItem_Clicked(object Frame, EventArgs args)
         {
+            if (_IsTapped) return;
             CustomFrame customFrame = Frame as CustomFrame;
             try
             {
@@ -216,7 +223,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     DependencyService.Get<IToast>().Show("Link page Mode is different.");
                     return;
                 }
-
+                _IsTapped = true;
                 if (_page != null && _page.Container is EbMobileForm)
                 {
                     FormRender Renderer;
@@ -228,12 +235,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         if (id <= 0) throw new Exception("id has ivalid value" + id);
                         Renderer = new FormRender(_page, id);
                     }
-                    (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                 }
+                _IsTapped = false;
             }
             catch (Exception ex)
             {
                 Log.Write("LinkedListViewModel.ListItem_Clicked::" + ex.Message);
+                _IsTapped = false;
             }
         }
     }

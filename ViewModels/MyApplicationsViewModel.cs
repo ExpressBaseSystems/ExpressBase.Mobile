@@ -27,7 +27,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public MyApplicationsViewModel()
         {
-            PageTitle = "Choose Application";
+            PageTitle = "Application Switcher";
             Applications = new ObservableCollection<AppData>();
             PullApplications();
         }
