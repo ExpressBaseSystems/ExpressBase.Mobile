@@ -3,9 +3,7 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
-using Newtonsoft.Json;
 using System;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -107,11 +105,7 @@ namespace ExpressBase.Mobile.Views
                     DependencyService.Get<IToast>().Show("You are not connected to internet.");
                     return;
                 }
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    ViewModel.LoaderMessage = "Loading...";
-                    ViewModel.IsBusy = true;
-                });
+                Device.BeginInvokeOnMainThread(() => { ViewModel.IsBusy = true; });
 
                 await Auth.AuthIfTokenExpiredAsync();//authenticate if token expired
 

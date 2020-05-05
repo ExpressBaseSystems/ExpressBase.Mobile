@@ -124,7 +124,7 @@
                     Margin="10"
                     Grid.Row="1"
                     CornerRadius="30"
-                    Padding="15,10,10,10">
+                    Padding="10,5,5,5">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -143,14 +143,15 @@
                             x:Name="AddSolution"
                             Grid.Column="1"
                             Padding="0"
-                            FontSize="15"
+                            FontSize="16"
                             Margin="0"
                             Text="&#xf067;"
                             BackgroundColor="{StaticResource Blue-Dark}"
                             BorderColor="{StaticResource Blue-Dark}"
                             TextColor="White"
-                            CornerRadius="25"
-                            WidthRequest="50"
+                            CornerRadius="28"
+                            HeightRequest="55"
+                            WidthRequest="55"
                             FontFamily="{StaticResource FontAwesome}"
                             Clicked="AddSolution_Clicked"/>
 
@@ -159,31 +160,39 @@
                             x:Name="SaveSolution"
                             Grid.Column="1"
                             Padding="0"
-                            FontSize="15"
+                            FontSize="16"
                             Margin="0"
                             Text="&#xf0c7;"
                             BackgroundColor="{StaticResource Blue-Dark}"
                             BorderColor="{StaticResource Blue-Dark}"
                             TextColor="White"
-                            CornerRadius="25"
-                            WidthRequest="50"
+                            CornerRadius="28"
+                            HeightRequest="55"
+                            WidthRequest="55"
                             FontFamily="{StaticResource FontAwesome}"
                             Clicked="SaveSolution_Clicked"/>
                     </Grid>
                 </Frame>
             </Grid>
             <!--loader-->
+            <control:LoaderIconed 
+                x:Name="Loader"
+                IsVisible="{Binding IsBusy}" 
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All"/>
+            
+            <!--message box-->
             <ContentView 
                 x:Name="PopupContainer"
-                IsVisible="{Binding IsBusy}" 
+                IsVisible="False" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
                 <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                     <BoxView
                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                         AbsoluteLayout.LayoutFlags="All"
-                        BackgroundColor="#333333"
-                        Opacity=".5"/>
+                        BackgroundColor="Black"
+                        Opacity=".7"/>
                     <StackLayout 
                         Padding="15"
                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
@@ -193,70 +202,49 @@
                             HasShadow="False"
                             BackgroundColor="White"
                             CornerRadius="6"
-                            VerticalOptions="EndAndExpand">
+                            VerticalOptions="CenterAndExpand">
                             <Frame.Content>
-                                <StackLayout Orientation="Vertical" Padding="0">
-                                    <Grid x:Name="Loader" IsVisible="True" Padding="20">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"></ColumnDefinition>
-                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                        </Grid.ColumnDefinitions>
-                                        <Label
-                                            Grid.Row="0"
-                                            TextColor="Black" 
-                                            VerticalOptions="Center" 
-                                            Text="Validating solution..."
-                                            FontSize="16"/>
-                                        <ActivityIndicator
-                                            HorizontalOptions="End"
-                                            IsRunning="true" 
-                                            Color="{StaticResource Blue-Dark}"
-                                            Grid.Column="0"
-                                            WidthRequest="30"
-                                            HeightRequest="30"/>
-                                    </Grid>
-                                    <Grid x:Name="SolutionMetaGrid" RowSpacing="0" ColumnSpacing="1" IsVisible="False" BackgroundColor="#eeeeee">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"></RowDefinition>
-                                            <RowDefinition Height="Auto"></RowDefinition>
-                                            <RowDefinition Height="50"></RowDefinition>
-                                        </Grid.RowDefinitions>
-                                        <StackLayout Padding="15" Grid.Row="0" Grid.ColumnSpan="2" BackgroundColor="White">
-                                            <Label 
-                                                x:Name="SolutionLabel"
-                                                HorizontalTextAlignment="Center"
-                                                Text="xxxxxx.expressbase.com"
-                                                FontFamily="{StaticResource Roboto-Regular}"
-                                                FontSize="18"
-                                                TextColor="#333"/>
-                                            <Image 
-                                                x:Name="SolutionLogoPrompt"
-                                                Grid.Row="1" 
-                                                HeightRequest="100"
-                                                Source="icon.png"
-                                                HorizontalOptions="Center"/>
-                                        </StackLayout>
-                                        <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#eee" HeightRequest="1"/>
-                                        <Button 
-                                            Grid.Row="2"
-                                            Grid.Column="0"
-                                            x:Name="PopupCancel"
-                                            Text="Cancel"
-                                            Padding="0"
-                                            CornerRadius="0"   
-                                            BackgroundColor="White"
-                                            Clicked="PopupCancel_Clicked"/>
-                                        <Button 
-                                            Grid.Row="2"
-                                            Grid.Column="1"
-                                            Text="Continue" 
-                                            BackgroundColor="White"
-                                            TextColor="#0076ff"
-                                            Padding="0" 
-                                            CornerRadius="0"
-                                            Clicked="ConfirmButton_Clicked"/>
-                                    </Grid>
-                                </StackLayout>
+                                <Grid RowSpacing="0" ColumnSpacing="1" BackgroundColor="#eeeeee">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="50"></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <StackLayout Padding="15" Grid.Row="0" Grid.ColumnSpan="2" BackgroundColor="White">
+                                        <Label 
+                                            x:Name="SolutionLabel"
+                                            HorizontalTextAlignment="Center"
+                                            Text="xxxxxx.expressbase.com"
+                                            FontFamily="{StaticResource Roboto-Regular}"
+                                            FontSize="18"
+                                            TextColor="#333"/>
+                                        <Image 
+                                            x:Name="SolutionLogoPrompt"
+                                            Grid.Row="1" 
+                                            HeightRequest="100"
+                                            Source="icon.png"
+                                            HorizontalOptions="Center"/>
+                                    </StackLayout>
+                                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#eee" HeightRequest="1"/>
+                                    <Button 
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        x:Name="PopupCancel"
+                                        Text="Cancel"
+                                        Padding="0"
+                                        CornerRadius="0"   
+                                        BackgroundColor="White"
+                                        Clicked="PopupCancel_Clicked"/>
+                                    <Button 
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Text="Continue" 
+                                        BackgroundColor="White"
+                                        TextColor="#0076ff"
+                                        Padding="0" 
+                                        CornerRadius="0"
+                                        Clicked="ConfirmButton_Clicked"/>
+                                </Grid>
                             </Frame.Content>
                         </Frame>
                     </StackLayout>

@@ -176,13 +176,11 @@
                     </StackLayout>
                 </ContentView>
             </Grid>
-            <control:Loader 
+            <control:LoaderIconed 
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"
-                Position="CenterAndExpand"
-                Message="Loading..."/>
+                AbsoluteLayout.LayoutFlags="All"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

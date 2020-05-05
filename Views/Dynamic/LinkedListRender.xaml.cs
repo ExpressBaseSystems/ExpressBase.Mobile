@@ -35,10 +35,31 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 ScrollContainer.Content = ViewModel.XView;
                 this.UpdatePaginationBar();
+                this.ToggleLinks();
             }
             catch (Exception ex)
             {
                 Log.Write("LinkedListViewRender.Constructor---" + ex.Message);
+            }
+        }
+
+        void ToggleLinks()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(ViewModel.SourceVisualization.SourceFormRefId))
+                {
+                    SourceDataEdit.IsVisible = false;
+                }
+
+                if (string.IsNullOrEmpty(ViewModel.Visualization.LinkRefId))
+                {
+                    AddLinkData.IsVisible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
             }
         }
 

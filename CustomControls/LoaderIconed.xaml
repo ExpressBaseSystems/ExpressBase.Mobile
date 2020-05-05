@@ -10,8 +10,8 @@
             <BoxView
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All"
-                BackgroundColor="White"
-                Opacity=".5"/>
+                BackgroundColor="Black"
+                Opacity=".7"/>
             <StackLayout 
                 Padding="10"
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
@@ -20,7 +20,7 @@
                     VerticalOptions="CenterAndExpand"
                         HorizontalOptions="Center"
                         IsRunning="true" 
-                        Color="{StaticResource Blue-Dark}"
+                        Color="#3579f9"
                         Grid.Column="0"
                         WidthRequest="35"
                         HeightRequest="35"/>

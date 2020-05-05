@@ -44,7 +44,6 @@ namespace ExpressBase.Mobile.Views
 
         private void PopupCancel_Clicked(object sender, EventArgs e)
         {
-            SolutionMetaGrid.IsVisible = false;
             PopupContainer.IsVisible = false;
         }
 
@@ -79,18 +78,18 @@ namespace ExpressBase.Mobile.Views
                 if (string.IsNullOrEmpty(SolutionName.Text)) return;
                 if (ViewModel.MySolutions.Any(item => item.SolutionName == SolutionName.Text.Trim().Split('.')[0])) return;
 
-                PopupContainer.IsVisible = true;
+                Loader.IsVisible = true;
                 Response = await RestServices.ValidateSid(SolutionName.Text);
                 if (Response.IsValid)
                 {
                     Loader.IsVisible = false;
                     SolutionLogoPrompt.Source = ImageSource.FromStream(() => new MemoryStream(Response.Logo));
                     SolutionLabel.Text = SolutionName.Text;
-                    SolutionMetaGrid.IsVisible = true;
+                    PopupContainer.IsVisible = true;
                 }
                 else
                 {
-                    PopupContainer.IsVisible = false;
+                    Loader.IsVisible = false;
                     toast.Show("Invalid solution URL");
                 }
             }
@@ -107,7 +106,6 @@ namespace ExpressBase.Mobile.Views
                 await ViewModel.AddSolution(SolutionName.Text, Response);
 
                 Loader.IsVisible = true;
-                SolutionMetaGrid.IsVisible = false;
                 PopupContainer.IsVisible = false;
 
                 await Application.Current.MainPage.Navigation.PushAsync(new Login());

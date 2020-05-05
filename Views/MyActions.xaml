@@ -94,12 +94,11 @@
                 Text="You have no pending Actions"
                 HorizontalTextAlignment="Center"/>
             <!--loader-->
-            <control:Loader 
+            <control:LoaderIconed 
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"
-                Message="Loading..."/>
+                AbsoluteLayout.LayoutFlags="All"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

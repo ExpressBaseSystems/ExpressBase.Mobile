@@ -40,5 +40,10 @@ namespace ExpressBase.Mobile.Views
             if (PassWord.Text != null)
                 PassWord.CursorPosition = PassWord.Text.Length;
         }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
     }
 }

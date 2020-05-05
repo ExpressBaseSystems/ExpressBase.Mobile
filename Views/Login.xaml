@@ -9,19 +9,15 @@
              Style="{StaticResource ContentPageStyle}">
 
     <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-
-            <Label Text="{Binding PageTitle}" Grid.Column="1" FontSize="16" TextColor="White" VerticalOptions="Center"/>
-
-            <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Grid.Column="2" Command="{Binding ResetConfig}"/>
+            <Label Text="{Binding PageTitle}" Grid.Column="0" FontSize="16" TextColor="White" VerticalOptions="Center"/>
+            <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Grid.Column="1" Command="{Binding ResetConfig}"/>
         </Grid>
     </NavigationPage.TitleView>
-
     <ContentPage.Content>
         <Grid>
             <ScrollView 
@@ -32,7 +28,6 @@
                         Default="CenterAndExpand"
                         Phone="FillAndExpand" />
                 </ScrollView.VerticalOptions>
-
                 <StackLayout Margin="20" VerticalOptions="FillAndExpand">
                     <Grid RowSpacing="0" VerticalOptions="CenterAndExpand">
                         <Grid.RowDefinitions>
@@ -43,7 +38,6 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-
                         <!--  Label to display the title of this page  -->
                         <Label 
                             Text="Login" 
@@ -52,13 +46,11 @@
                             Style="{StaticResource LabelStyle}"
                             FontSize="22"
                             HorizontalTextAlignment="Center"/>
-
                         <Label
                             Margin="0,5"
                             Grid.Row="1"
                             HorizontalTextAlignment="Center"
                             Text="to"/>
-
                         <Label
                             x:Name="SolutionName"
                             Grid.Row="2"
@@ -66,21 +58,17 @@
                             FontFamily="{StaticResource Roboto-Regular}"
                             FontSize="18"
                             HorizontalTextAlignment="Center"/>
-
                         <Image x:Name="LogoUrl"
                                Grid.Row="3" 
                                Source="{Binding LogoUrl}" 
                                Margin="20" 
                                HorizontalOptions="Center" HeightRequest="100"/>
-
                         <StackLayout Grid.Row="4">
                             <StackLayout Margin="0,5,0,5">
-
                                 <Label Text="Username" 
                                        VerticalOptions="Center"
                                        FontFamily="{StaticResource Roboto-Regular}"
                                        Style="{StaticResource LabelStyle}"/>
-
                                 <control:TextBox x:Name="Email" 
                                                  Completed="Email_Completed" 
                                                  Text="{Binding Email}"/>
@@ -90,7 +78,6 @@
                                        VerticalOptions="Center"
                                        FontFamily="{StaticResource Roboto-Regular}"
                                        Style="{StaticResource LabelStyle}"/>
-
                                 <AbsoluteLayout>
                                     <control:TextBox 
                                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
@@ -124,7 +111,6 @@
                                 </AbsoluteLayout>
                             </StackLayout>
                         </StackLayout>
-
                         <!--  next button  -->
                         <Button Grid.Row="5"
                                 Margin="0,15,0,0"
@@ -135,18 +121,14 @@
                                 BackgroundColor="{StaticResource Blue-Dark}"
                                 TextColor="White"
                                 Command="{Binding LoginCommand}"/>
-
                     </Grid>
                 </StackLayout>
             </ScrollView>
-
             <!--loader-->
-            <control:Loader 
+            <control:LoaderIconed 
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"
-                Message="Authenticating..."/>
-            
+                AbsoluteLayout.LayoutFlags="All"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

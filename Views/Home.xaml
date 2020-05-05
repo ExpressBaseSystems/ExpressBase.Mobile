@@ -105,11 +105,10 @@
                 </ScrollView>
             </RefreshView>
             <!--loader-->
-            <control:Loader 
+            <control:LoaderIconed 
                     IsVisible="{Binding IsBusy}"
                     AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                    AbsoluteLayout.LayoutFlags="All"
-                    Message="{Binding LoaderMessage}"/>
+                    AbsoluteLayout.LayoutFlags="All"/>
 
             <control:ConfirmBox
                 x:Name="PushConfirmBox"

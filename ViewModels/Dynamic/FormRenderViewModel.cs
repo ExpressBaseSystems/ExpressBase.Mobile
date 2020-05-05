@@ -25,6 +25,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public EbDataSet DataOnEdit { set; get; }
 
+        public Dictionary<string, List<FileMetaInfo>> FilesOnEdit { set; get; }
+
         public Command SaveCommand => new Command(async () => await OnSaveClicked());
 
         //new mode
@@ -129,6 +131,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                     WebformData data = RestServices.Instance.PullFormData(this.Page.RefId, this.RowId, Settings.LocationId);
                     this.DataOnEdit = data.ToDataSet();
+                    this.FilesOnEdit = data.ToFilesMeta();
                 }
             }
             catch (Exception e)
@@ -224,11 +227,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                     if (pair.Value is EbMobileFileUpload)
                     {
-                        pair.Value.SetValue(new FUPSetValueMeta
+                        var fup = new FUPSetValueMeta
                         {
                             TableName = this.Form.TableName,
                             RowId = this.RowId
-                        });
+                        };
+
+                        if (this.FilesOnEdit != null && this.FilesOnEdit.ContainsKey(pair.Value.Name))
+                        {
+                            fup.Files = this.FilesOnEdit[pair.Value.Name];
+                        }
+                        pair.Value.SetValue(fup);
                     }
                     if (pair.Value is ILinesEnabled)
                     {

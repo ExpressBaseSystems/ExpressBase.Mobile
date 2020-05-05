@@ -10,6 +10,7 @@ using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
@@ -75,12 +76,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 foreach (EbDataRow _row in this.DataTable.Rows)
                 {
                     CustomFrame CustFrame = new CustomFrame(_row, this.Visualization);
-                    CustFrame.SetBackGroundColor(rowColCount);             
+                    CustFrame.SetBackGroundColor(rowColCount);
 
                     if (this.NetworkType == NetworkMode.Offline)
                         CustFrame.ShowSyncFlag(this.DataTable.Columns);
 
-                    if(IsClickable) CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
+                    if (IsClickable) CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
                     StackL.Children.Add(CustFrame);
                     rowColCount++;
                 }
@@ -136,14 +137,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 return new TextBox();
         }
 
-        private bool _IsTapped;
+        private bool IsTapped;
 
         async void ListItem_Clicked(object Frame, EventArgs args)
         {
-            if (_IsTapped) return;
+            if (IsTapped) return;
 
             IToast toast = DependencyService.Get<IToast>();
-            CustomFrame customFrame = Frame as CustomFrame;
+            CustomFrame customFrame = (CustomFrame)Frame;
             try
             {
                 EbMobilePage _page = HelperFunctions.GetPage(Visualization.LinkRefId);
@@ -153,40 +154,65 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     toast.Show("Link page Mode is different.");
                     return;
                 }
-                _IsTapped = true;
-                Device.BeginInvokeOnMainThread(() => IsBusy = true);
-                if (_page.Container is EbMobileForm)
-                {
-                    FormRender Renderer;
-                    if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
-                        Renderer = new FormRender(_page, customFrame.DataRow);
-                    else
-                    {
-                        int id = Convert.ToInt32(customFrame.DataRow["id"]);
-                        if (id <= 0) throw new Exception("id has ivalid value" + id);
-                        Renderer = new FormRender(_page, id);
-                    }
-                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
-                }
-                else if (_page.Container is EbMobileVisualization)
-                {
-                    LinkedListRender Renderer = new LinkedListRender(_page, this.Visualization, customFrame);
-                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
-                }
-                else if (_page.Container is EbMobileDashBoard)
-                {
-                    DashBoardRender Renderer = new DashBoardRender(_page, customFrame.DataRow);
-                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
-                }
-                Device.BeginInvokeOnMainThread(() => IsBusy = false);
-                _IsTapped = false;
+                IsTapped = true;
+                IsBusy = true;
+
+                //navigate to renderer by link page container type
+                await NavigateToLinkPage(customFrame, _page);
+
+                IsBusy = false;
+                IsTapped = false;
             }
             catch (Exception ex)
             {
-                Device.BeginInvokeOnMainThread(() => IsBusy = false);
+                IsTapped = false;
+                IsBusy = false;
                 Log.Write(ex.Message);
-                toast.Show("something went wrong");
-                _IsTapped = false;
+                toast.Show("something went wrong");          
+            }
+        }
+
+        private async Task NavigateToLinkPage(CustomFrame frame, EbMobilePage page)
+        {
+            try
+            {
+                ContentPage renderer;
+
+                switch (page.Container)
+                {
+                    case EbMobileForm f:
+
+                        if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
+                            renderer = new FormRender(page, frame.DataRow);
+                        else
+                        {
+                            int id = Convert.ToInt32(frame.DataRow["id"]);
+                            if (id <= 0) throw new Exception("id has ivalid value" + id);
+                            renderer = new FormRender(page, id);
+                        }
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+
+                        break;
+                    case EbMobileVisualization v:
+
+                        renderer = new LinkedListRender(page, this.Visualization, frame);
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+
+                        break;
+                    case EbMobileDashBoard d:
+
+                        renderer = new DashBoardRender(page, frame.DataRow);
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+
+                        break;
+                    default:
+                        Log.Write("inavlid container type");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
             }
         }
 

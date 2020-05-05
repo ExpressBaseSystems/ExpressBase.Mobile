@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
@@ -326,5 +327,22 @@ namespace ExpressBase.Mobile.Models
         public string TableName { set; get; }
 
         public int RowId { set; get; }
+
+        public List<FileMetaInfo> Files { set; get; }
+    }
+
+    public class FileMetaInfo
+    {
+        public string FileName { get; set; }
+
+        public int FileSize { get; set; }
+
+        public int FileRefId { get; set; }
+
+        public Dictionary<string, List<string>> Meta { set; get; }
+
+        public string UploadTime { get; set; }
+
+        public EbFileCategory FileCategory { set; get; }
     }
 }

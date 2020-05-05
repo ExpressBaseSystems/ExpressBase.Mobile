@@ -2,9 +2,9 @@
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ExpressBase.Mobile.Extensions
 {
@@ -85,6 +85,33 @@ namespace ExpressBase.Mobile.Extensions
                 Log.Write(ex.StackTrace);
             }
             return ds;
+        }
+
+        public static Dictionary<string, List<FileMetaInfo>> ToFilesMeta(this WebformData data)
+        {
+            //<control name,file collection>
+            Dictionary<string, List<FileMetaInfo>> files = new Dictionary<string, List<FileMetaInfo>>();
+            try
+            {
+                foreach (KeyValuePair<string, SingleTable> st in data.ExtendedTables)
+                {
+                    foreach (SingleRow row in st.Value)
+                    {
+                        if (row.Columns.Count > 0)
+                        {
+                            SingleColumn info = row.Columns[0];
+                            List<FileMetaInfo> fileMeta = JsonConvert.DeserializeObject<List<FileMetaInfo>>(info.Value.ToString());
+                            files.Add(st.Key, fileMeta);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+                Log.Write(ex.StackTrace);
+            }
+            return files;
         }
     }
 }

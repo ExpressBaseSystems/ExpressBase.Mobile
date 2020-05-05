@@ -18,18 +18,6 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class HomeViewModel : StaticBaseViewModel
     {
-        private string _loaderMessage;
-
-        public string LoaderMessage
-        {
-            get { return this._loaderMessage; }
-            set
-            {
-                this._loaderMessage = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
         public View View { set; get; }
 
         public List<MobilePagesWraper> ObjectList { set; get; }
@@ -217,7 +205,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 try
                 {
-                    Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Pushing from local data..."; });
+                    Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
 
                     Auth.AuthIfTokenExpired();
 
@@ -236,51 +224,69 @@ namespace ExpressBase.Mobile.ViewModels
             });
         }
 
-        private void ObjFrame_Clicked(object obj, EventArgs e)
-        {
-            MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
-            Task.Run(() =>
-            {
-                IToast toast = DependencyService.Get<IToast>();
-                Device.BeginInvokeOnMainThread(() => { IsBusy = true; LoaderMessage = "Loading page..."; });
-                try
-                {
-                    EbMobilePage page = HelperFunctions.GetPage(item.RefId);
-                    if (page == null)
-                    {
-                        toast.Show("This page is no longer available.");
-                        return;
-                    }
+        private bool IsTapped;
 
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        switch (page.Container)
-                        {
-                            case EbMobileForm f:
-                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
-                                break;
-                            case EbMobileVisualization v:
-                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListRender(page));
-                                break;
-                            case EbMobileDashBoard d:
-                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DashBoardRender(page));
-                                break;
-                            case EbMobilePdf p:
-                                (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new PdfRender(page));
-                                break;
-                            default:
-                                toast.Show("This page is no longer available.");
-                                break;
-                        }
-                        IsBusy = false;
-                    });
-                }
-                catch (Exception ex)
+        private async void ObjFrame_Clicked(object obj, EventArgs e)
+        {
+            if (IsTapped) return;
+
+            MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
+            IToast toast = DependencyService.Get<IToast>();
+            
+            try
+            {
+                IsBusy = true; 
+
+                EbMobilePage page = HelperFunctions.GetPage(item.RefId);
+                if (page == null)
                 {
-                    Device.BeginInvokeOnMainThread(() => IsBusy = false);
-                    Log.Write("ObjectRender_ObjFrame_Clicked" + ex.Message);
+                    toast.Show("This page is no longer available.");
+                    return;
                 }
-            });
+
+                IsTapped = true;
+
+                //navigate to renderer by container type
+                await NavigateByContainer(page);
+
+                IsBusy = false;
+                IsTapped = false;
+            }
+            catch (Exception ex)
+            {
+                IsBusy = false;
+                IsTapped = false;
+                Log.Write("ObjectRender_ObjFrame_Clicked" + ex.Message);
+            }
+        }
+
+        private async Task NavigateByContainer(EbMobilePage page)
+        {
+            try
+            {
+                switch (page.Container)
+                {
+                    case EbMobileForm f:
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
+                        break;
+                    case EbMobileVisualization v:
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListRender(page));
+                        break;
+                    case EbMobileDashBoard d:
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DashBoardRender(page));
+                        break;
+                    case EbMobilePdf p:
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new PdfRender(page));
+                        break;
+                    default:
+                        Log.Write("inavlid container type");
+                        break;
+                }
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
     }
 }

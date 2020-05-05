@@ -53,10 +53,21 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                string notation = string.Empty;
-                foreach (var item in AppName.Split(' ').Take(2))
-                    notation += item[0];
-                return notation.ToUpper();
+                try
+                {
+                    string notation = string.Empty;
+                    foreach (var item in AppName.Split(' ').Take(2))
+                    {
+                        if (string.IsNullOrEmpty(item)) continue;
+                        notation += item[0];
+                    }
+                    return notation.ToUpper();
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(ex.Message);
+                    return "??";
+                }
             }
         }
 
