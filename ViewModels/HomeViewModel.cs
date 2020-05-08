@@ -232,61 +232,61 @@ namespace ExpressBase.Mobile.ViewModels
 
             MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
             IToast toast = DependencyService.Get<IToast>();
-            
+
             try
             {
-                IsBusy = true; 
-
                 EbMobilePage page = HelperFunctions.GetPage(item.RefId);
                 if (page == null)
                 {
                     toast.Show("This page is no longer available.");
                     return;
                 }
+                IsTapped = IsBusy = true;
 
-                IsTapped = true;
+                ContentPage renderer = await GetPageByContainer(page);
+                if (renderer != null)
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
 
-                //navigate to renderer by container type
-                await NavigateByContainer(page);
-
-                IsBusy = false;
-                IsTapped = false;
+                IsTapped = IsBusy = false;
             }
             catch (Exception ex)
             {
-                IsBusy = false;
-                IsTapped = false;
+                IsTapped = IsBusy = false;
                 Log.Write("ObjectRender_ObjFrame_Clicked" + ex.Message);
             }
         }
 
-        private async Task NavigateByContainer(EbMobilePage page)
+        private async Task<ContentPage> GetPageByContainer(EbMobilePage page)
         {
+            ContentPage renderer = null;
             try
             {
+                await Task.Delay(100);
+
                 switch (page.Container)
                 {
                     case EbMobileForm f:
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new FormRender(page));
+                        renderer = new FormRender(page);
                         break;
                     case EbMobileVisualization v:
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new ListRender(page));
+                        renderer = new ListRender(page);
                         break;
                     case EbMobileDashBoard d:
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DashBoardRender(page));
+                        renderer = new DashBoardRender(page);
                         break;
                     case EbMobilePdf p:
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new PdfRender(page));
+                        renderer = new PdfRender(page);
                         break;
                     default:
                         Log.Write("inavlid container type");
                         break;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }
+            return renderer;
         }
     }
 }

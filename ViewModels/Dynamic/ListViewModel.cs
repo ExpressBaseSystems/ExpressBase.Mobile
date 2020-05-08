@@ -154,29 +154,28 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     toast.Show("Link page Mode is different.");
                     return;
                 }
-                IsTapped = true;
-                IsBusy = true;
+                IsTapped = IsBusy = true;
 
-                //navigate to renderer by link page container type
-                await NavigateToLinkPage(customFrame, _page);
+                ContentPage renderer = await GetPageByContainer(customFrame, _page);
+                if (renderer != null)
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
 
-                IsBusy = false;
-                IsTapped = false;
+                IsBusy = IsBusy = false;
             }
             catch (Exception ex)
             {
-                IsTapped = false;
-                IsBusy = false;
+                IsTapped = IsBusy = false;
                 Log.Write(ex.Message);
-                toast.Show("something went wrong");          
+                toast.Show("something went wrong");
             }
         }
 
-        private async Task NavigateToLinkPage(CustomFrame frame, EbMobilePage page)
+        private async Task<ContentPage> GetPageByContainer(CustomFrame frame, EbMobilePage page)
         {
+            ContentPage renderer = null;
             try
             {
-                ContentPage renderer;
+                await Task.Delay(100);
 
                 switch (page.Container)
                 {
@@ -190,20 +189,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                             if (id <= 0) throw new Exception("id has ivalid value" + id);
                             renderer = new FormRender(page, id);
                         }
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
-
                         break;
                     case EbMobileVisualization v:
-
                         renderer = new LinkedListRender(page, this.Visualization, frame);
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
-
                         break;
                     case EbMobileDashBoard d:
-
                         renderer = new DashBoardRender(page, frame.DataRow);
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
-
                         break;
                     default:
                         Log.Write("inavlid container type");
@@ -214,6 +205,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 Log.Write(ex.Message);
             }
+            return renderer;
         }
 
         public void Refresh(List<DbParameter> parameters)

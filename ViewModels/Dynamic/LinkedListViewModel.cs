@@ -227,8 +227,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
                 IsTapped = true;
 
-                //navigate to renderer by link page container type
-                await NavigateToLinkPage(customFrame, _page);
+                ContentPage renderer = await GetPageByContainer(customFrame, _page);
+                if (renderer != null)
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
 
                 IsTapped = false;
             }
@@ -239,16 +240,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private async Task NavigateToLinkPage(CustomFrame frame, EbMobilePage page)
+        private async Task<ContentPage> GetPageByContainer(CustomFrame frame, EbMobilePage page)
         {
+            ContentPage renderer = null;
             try
             {
-                ContentPage renderer;
+                await Task.Delay(100);
 
                 switch (page.Container)
                 {
                     case EbMobileForm f:
-
                         if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
                             renderer = new FormRender(page, frame.DataRow);
                         else
@@ -257,14 +258,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                             if (id <= 0) throw new Exception("id has ivalid value" + id);
                             renderer = new FormRender(page, id);
                         }
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
-
                         break;
                     case EbMobileDashBoard d:
-
                         renderer = new DashBoardRender(page, frame.DataRow);
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
-
                         break;
                     default:
                         Log.Write("inavlid container type");
@@ -275,6 +271,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 Log.Write(ex.Message);
             }
+            return renderer;
         }
     }
 }

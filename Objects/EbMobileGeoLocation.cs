@@ -97,8 +97,7 @@ namespace ExpressBase.Mobile
                     BackgroundColor = Color.Transparent,
                     Children = { Loader }
                 };
-
-                WebView = new WebView { HeightRequest = 300, IsVisible = false };
+                WebView = new WebView { HeightRequest = 300, IsVisible = false }; 
                 WebView.Navigated += WebView_Navigated;
                 Layout.Children.Add(WebView);
                 _frame.Content = Layout;
