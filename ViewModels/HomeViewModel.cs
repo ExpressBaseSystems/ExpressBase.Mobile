@@ -192,7 +192,7 @@ namespace ExpressBase.Mobile.ViewModels
                 lay.HeightRequest = lay.Width;
         }
 
-        private void OnSyncClick(object sender)
+        private async void OnSyncClick(object sender)
         {
             IToast toast = DependencyService.Get<IToast>();
             if (!Settings.HasInternet)
@@ -201,7 +201,7 @@ namespace ExpressBase.Mobile.ViewModels
                 return;
             }
 
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 try
                 {
@@ -241,17 +241,17 @@ namespace ExpressBase.Mobile.ViewModels
                     toast.Show("This page is no longer available.");
                     return;
                 }
-                IsTapped = IsBusy = true;
+                IsTapped = true;
 
                 ContentPage renderer = await GetPageByContainer(page);
                 if (renderer != null)
                     await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
 
-                IsTapped = IsBusy = false;
+                IsTapped = false;
             }
             catch (Exception ex)
             {
-                IsTapped = IsBusy = false;
+                IsTapped = false;
                 Log.Write("ObjectRender_ObjFrame_Clicked" + ex.Message);
             }
         }

@@ -53,21 +53,23 @@ namespace ExpressBase.Mobile
     {
         public string DataSourceRefId { set; get; }
 
-        public List<Param> DataSourceParams { get; set; }
-
         public string SourceFormRefId { set; get; }
+
+        public string LinkRefId { get; set; }
+
+        public int PageLength { set; get; } = 30;
+
+        public WebFormDVModes FormMode { set; get; }
 
         public EbScript OfflineQuery { set; get; }
 
         public EbMobileTableLayout DataLayout { set; get; }
 
-        public string LinkRefId { get; set; }
+        public List<Param> DataSourceParams { get; set; }
 
-        public List<EbMobileDataColumn> Filters { set; get; }
+        public List<EbMobileControl> FilterControls { set; get; }
 
-        public WebFormDVModes FormMode { set; get; }
-
-        public int PageLength { set; get; } = 30;
+        public List<EbMobileDataColumn> SortColumns { set; get; }
 
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
@@ -182,8 +184,9 @@ namespace ExpressBase.Mobile
         public EbMobileVisualization()
         {
             OfflineQuery = new EbScript();
-            Filters = new List<EbMobileDataColumn>();
             DataSourceParams = new List<Param>();
+            FilterControls = new List<EbMobileControl>();
+            SortColumns = new List<EbMobileDataColumn>();
         }
     }
 

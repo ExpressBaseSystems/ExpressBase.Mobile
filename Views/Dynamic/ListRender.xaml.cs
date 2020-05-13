@@ -7,6 +7,9 @@ using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using System.Linq;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Enums;
+using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
@@ -19,23 +22,121 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         public ListViewModel ViewModel { set; get; }
 
+        private TapGestureRecognizer TapGesture { set; get; }
+
         public ListRender(EbMobilePage Page)
         {
             InitializeComponent();
+
+            BindingContext = ViewModel = new ListViewModel(Page);
+            TapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+            TapGesture.Tapped += Tap_Tapped;
+            Loader.IsVisible = true;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (this.ViewModel.DataTable == null)
+            {
+                await this.ViewModel.SetData();
+                this.AppendListItems();
+                this.AppendFilterControls();
+            }
+            Loader.IsVisible = false;
+        }
+
+        private void AppendListItems()
+        {
             try
             {
-                BindingContext = ViewModel = new ListViewModel(Page);
-                listContainer.Content = ViewModel.XView;
-                if (ViewModel.FilterDialog != null)
+                bool flag = !string.IsNullOrEmpty(this.ViewModel.Visualization.LinkRefId);
+                int counter = 1;
+
+                this.ListContainer.Children.Clear();
+
+                if (this.ViewModel.DataTable.Rows.Any())
                 {
-                    FilterActionBar.IsVisible = true;
-                    FilterContainer.Content = ViewModel.FilterDialog;
+                    foreach (EbDataRow row in this.ViewModel.DataTable.Rows)
+                    {
+                        CustomFrame customFrame = new CustomFrame(row, this.ViewModel.Visualization, false);
+                        customFrame.SetBackGroundColor(counter);
+
+                        if (this.ViewModel.NetworkType == NetworkMode.Offline)
+                            customFrame.ShowSyncFlag(this.ViewModel.DataTable.Columns);
+
+                        if (flag) customFrame.GestureRecognizers.Add(this.TapGesture);
+
+                        this.ListContainer.Children.Add(customFrame);
+                        counter++;
+                    }
+                }
+                else
+                {
+                    ListContainer.Children.Add(new Label
+                    {
+                        Text = "Empty list",
+                        VerticalOptions = LayoutOptions.CenterAndExpand,
+                        HorizontalTextAlignment = TextAlignment.Center
+                    });
                 }
                 this.UpdatePaginationBar();
             }
             catch (Exception ex)
             {
-                Log.Write("ListViewRender.Constructor invoke---" + ex.Message);
+                Log.Write(ex.Message);
+            }
+        }
+
+        private void AppendFilterControls()
+        {
+            try
+            {
+                foreach (EbMobileControl ctrl in this.ViewModel.FilterControls)
+                {
+                    Label lbl = new Label { Text = ctrl.Name };
+
+                    ctrl.NetworkType = this.ViewModel.NetworkType;
+                    ctrl.InitXControl(FormMode.NEW);
+
+                    this.FilterContainer.Children.Add(lbl);
+                    this.FilterContainer.Children.Add(ctrl.XControl);
+                }
+
+                if (this.ViewModel.FilterControls.Any())
+                {
+                    this.FilterActionBar.IsVisible = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message, LogTypes.EXCEPTION);
+            }
+        }
+
+        private async void Tap_Tapped(object sender, EventArgs e)
+        {
+            IToast toast = DependencyService.Get<IToast>();
+            try
+            {
+                CustomFrame customFrame = (CustomFrame)sender;
+                EbMobilePage page = HelperFunctions.GetPage(this.ViewModel.Visualization.LinkRefId);
+                if (this.ViewModel.NetworkType != page.NetworkMode)
+                {
+                    toast.Show("Link page Mode is different.");
+                    return;
+                }
+                else
+                {
+                    ContentPage renderer = await this.ViewModel.GetPageByContainer(customFrame, page);
+                    if (renderer != null)
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -51,75 +152,37 @@ namespace ExpressBase.Mobile.Views.Dynamic
             PagingContainer.IsVisible = true;
         }
 
-        private void FDApply_Clicked(object sender, EventArgs e)
+        private async void FDApply_Clicked(object sender, EventArgs e)
         {
             try
             {
-                var paramDict = new Dictionary<string, object>();
-
-                foreach (KeyValuePair<string, View> pair in ViewModel.FilterControls)
+                this.Loader.IsVisible = true;
+                List<DbParameter> p = this.ViewModel.GetFilterValues();
+                if (p != null && p.Any())
                 {
-                    if (paramDict.ContainsKey(pair.Key))
-                        continue;
-                    var ctrlValue = GetControlValue(pair.Value);
-                    if (ctrlValue != null)
-                        paramDict.Add(pair.Key, ctrlValue);
-                }
-
-                FilterDialogView.IsVisible = false;
-                PagingContainer.IsVisible = true;
-
-                if (paramDict.Any())
-                {
-                    List<DbParameter> parameters = paramDict.Select(item => new DbParameter { ParameterName = item.Key, Value = item.Value }).ToList();
-                    ViewModel.Refresh(parameters);
-                    listContainer.Content = ViewModel.XView;
                     this.Offset = 0;
-                    this.UpdatePaginationBar();
+                    await this.ViewModel.Refresh(p);
+                    this.AppendListItems();
                 }
+                this.Loader.IsVisible = false;
+                this.FilterDialogView.IsVisible = false;
+                this.PagingContainer.IsVisible = true;
             }
             catch (Exception ex)
             {
-                Log.Write("ListViewRender.FDApply_Clicked---" + ex.Message);
+                this.Loader.IsVisible = false;
+                Log.Write(ex.Message);
             }
         }
 
-        private object GetControlValue(View ctrl)
-        {
-            object value = null;
-
-            if (ctrl is TextBox)
-            {
-                if (!string.IsNullOrEmpty((ctrl as TextBox).Text))
-                    value = (ctrl as TextBox).Text;
-            }
-            else if (ctrl is NumericTextBox)
-            {
-                if (!string.IsNullOrEmpty((ctrl as NumericTextBox).Text))
-                    value = (ctrl as NumericTextBox).Text;
-            }
-            else if (ctrl is CustomDatePicker)
-            {
-                value = (ctrl as CustomDatePicker).Date.ToString("yyyy-MM-dd");
-            }
-            else if (ctrl is CustomCheckBox)
-            {
-                value = (ctrl as CustomCheckBox).IsChecked;
-            }
-            return value;
-        }
-
-        private void PagingPrevButton_Clicked(object sender, EventArgs e)
+        private async void PagingPrevButton_Clicked(object sender, EventArgs e)
         {
             try
             {
-                if (ViewModel != null)
-                {
-                    if (Offset <= 0) return;
-                    Offset -= ViewModel.Visualization.PageLength;
-                    PageCount--;
-                    this.RefreshListView();
-                }
+                if (Offset <= 0) return;
+                Offset -= ViewModel.Visualization.PageLength;
+                PageCount--;
+                await this.RefreshListView();
             }
             catch (Exception ex)
             {
@@ -127,17 +190,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        private void PagingNextButton_Clicked(object sender, EventArgs e)
+        private async void PagingNextButton_Clicked(object sender, EventArgs e)
         {
             try
             {
-                if (ViewModel != null)
-                {
-                    if (Offset + ViewModel.Visualization.PageLength >= ViewModel.DataCount) return;
-                    Offset += ViewModel.Visualization.PageLength;
-                    PageCount++;
-                    this.RefreshListView();
-                }
+                if (Offset + ViewModel.Visualization.PageLength >= ViewModel.DataCount) return;
+                Offset += ViewModel.Visualization.PageLength;
+                PageCount++;
+                await this.RefreshListView();
             }
             catch (Exception ex)
             {
@@ -145,20 +205,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        private void RefreshListView()
+        private async Task RefreshListView()
         {
-            try
-            {
-                ViewModel.SetData(Offset);
-                ViewModel.CreateView();
-                listContainer.Content = ViewModel.XView;
-
-                this.UpdatePaginationBar();
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
+            await this.ViewModel.SetData(0);
+            this.AppendListItems();
         }
 
         private void UpdatePaginationBar()
@@ -186,23 +236,27 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        private void ListViewRefresh_Refreshing(object sender, EventArgs e)
+        private async void ListViewRefresh_Refreshing(object sender, EventArgs e)
         {
             IToast toast = DependencyService.Get<IToast>();
             try
             {
-                ListViewRefresh.IsRefreshing = true;
+                this.ListViewRefresh.IsRefreshing = true;
                 this.Offset = 0;
-                this.RefreshListView();
-                ListViewRefresh.IsRefreshing = false;
+                await this.RefreshListView();
+                this.ListViewRefresh.IsRefreshing = false;
                 toast.Show("Refreshed");
             }
             catch (Exception ex)
             {
-                ListViewRefresh.IsRefreshing = false;
-                toast.Show("Something went wrong. Please try again");
+                this.ListViewRefresh.IsRefreshing = false;
                 Log.Write(ex.Message);
             }
+        }
+
+        private void SortButton_Tapped(object sender, EventArgs e)
+        {
+
         }
     }
 }

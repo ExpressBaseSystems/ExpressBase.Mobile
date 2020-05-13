@@ -1,4 +1,6 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
@@ -17,12 +19,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         public LinkedListViewModel ViewModel { set; get; }
 
-        public LinkedListRender()
-        {
-            InitializeComponent();
-            this.BindingContext = ViewModel = new LinkedListViewModel();
-        }
-
         public LinkedListRender(EbMobilePage LinkPage, EbMobileVisualization SourceVis, CustomFrame CustFrame)
         {
             InitializeComponent();
@@ -32,14 +28,89 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 HeaderContainer.Children.Add(ViewModel.HeaderFrame);
                 Grid.SetRow(ViewModel.HeaderFrame, 0);
-
-                ScrollContainer.Content = ViewModel.XView;
-                this.UpdatePaginationBar();
-                this.ToggleLinks();
+                Loader.IsVisible = true;
+                ToggleLinks();
             }
             catch (Exception ex)
             {
                 Log.Write("LinkedListViewRender.Constructor---" + ex.Message);
+            }
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (ViewModel.DataTable == null)
+            {
+                await ViewModel.SetData();
+                this.AppendListItems();
+            }
+        }
+
+        private void AppendListItems()
+        {
+            try
+            {
+                TapGestureRecognizer tap = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+                tap.Tapped += Tap_Tapped;
+                bool IsClickable = !string.IsNullOrEmpty(ViewModel.Visualization.LinkRefId);
+                int rowColCount = 1;
+
+                if (ViewModel.DataTable.Rows.Any())
+                {
+                    foreach (EbDataRow row in ViewModel.DataTable.Rows)
+                    {
+                        CustomFrame CustFrame = new CustomFrame(row, ViewModel.Visualization);
+                        CustFrame.SetBackGroundColor(rowColCount);
+
+                        if (ViewModel.NetworkType == NetworkMode.Offline)
+                            CustFrame.ShowSyncFlag(ViewModel.DataTable.Columns);
+
+                        if (IsClickable) CustFrame.GestureRecognizers.Add(tap);
+                        ListContainer.Children.Add(CustFrame);
+
+                        rowColCount++;
+                    }
+                }
+                else
+                {
+                    ListContainer.Children.Add(new Label
+                    {
+                        Text = "Empty list",
+                        VerticalOptions = LayoutOptions.CenterAndExpand,
+                        HorizontalTextAlignment = TextAlignment.Center
+                    });
+                }
+                this.UpdatePaginationBar();
+                Loader.IsVisible = false;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        private async void Tap_Tapped(object sender, EventArgs e)
+        {
+            IToast toast = DependencyService.Get<IToast>();
+            try
+            {
+                CustomFrame customFrame = (CustomFrame)sender;
+                EbMobilePage page = HelperFunctions.GetPage(ViewModel.Visualization.LinkRefId);
+
+                if (ViewModel.NetworkType != page.NetworkMode)
+                {
+                    toast.Show("Link page Mode is different.");
+                    return;
+                }
+                ContentPage renderer = await ViewModel.GetPageByContainer(customFrame, page);
+                if (renderer != null)
+                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -130,11 +201,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                ViewModel.SetParameters(ViewModel.HeaderFrame.DataRow);
-                ViewModel.SetData(Offset);
-                ViewModel.CreateView();
-                ScrollContainer.Content = ViewModel.XView;
-
                 this.UpdatePaginationBar();
             }
             catch (Exception ex)

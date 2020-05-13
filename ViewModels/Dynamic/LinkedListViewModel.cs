@@ -26,7 +26,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public EbDataTable DataTable { set; get; }
 
-        private List<DbParameter> Parameters { set; get; }
+        public List<DbParameter> Parameters { set; get; }
 
         public Command AddCommand { get; set; }
 
@@ -37,7 +37,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public LinkedListViewModel(EbMobilePage LinkPage, EbMobileVisualization SourceVis, CustomFrame CustFrame) : base(LinkPage)
         {
             this.Visualization = LinkPage.Container as EbMobileVisualization;
-            SourceVisualization = SourceVis;
+            this.SourceVisualization = SourceVis;
 
             this.HeaderFrame = new CustomFrame(CustFrame.DataRow, SourceVis, true)
             {
@@ -46,8 +46,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Margin = 0
             };
             this.SetParameters(CustFrame.DataRow);
-            this.SetData(); //set query result
-            this.CreateView();
+
             AddCommand = new Command(AddButtonClicked);
             EditCommand = new Command(EditButtonClicked);
         }
@@ -98,7 +97,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public void SetData(int offset = 0)
+        public async Task SetData(int offset = 0)
         {
             try
             {
@@ -108,14 +107,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     throw new Exception("no internet");
                 }
 
-                EbDataSet ds = this.Visualization.GetData(this.Page.NetworkMode, offset, this.Parameters);
-                if (ds != null && ds.Tables.HasLength(2))
+                await Task.Run(() =>
                 {
-                    DataTable = ds.Tables[1];
-                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
-                }
-                else
-                    throw new Exception("no internet");
+                    EbDataSet ds = this.Visualization.GetData(this.Page.NetworkMode, offset, this.Parameters);
+                    if (ds != null && ds.Tables.HasLength(2))
+                    {
+                        DataTable = ds.Tables[1];
+                        DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
+                    }
+                    else
+                        throw new Exception("no internet");
+                });
             }
             catch (Exception ex)
             {
@@ -123,44 +125,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public void CreateView()
-        {
-            StackLayout StackL = new StackLayout { Spacing = 1, BackgroundColor = Color.FromHex("eeeeee") };
-
-            var tapGestureRecognizer = new TapGestureRecognizer();
-            tapGestureRecognizer.Tapped += ListItem_Clicked;
-            bool IsClickable = !string.IsNullOrEmpty(this.Visualization.LinkRefId);
-
-            int rowColCount = 1;
-            if (this.DataTable.Rows.Any())
-            {
-                foreach (EbDataRow _row in this.DataTable.Rows)
-                {
-                    CustomFrame CustFrame = new CustomFrame(_row, this.Visualization);
-                    CustFrame.SetBackGroundColor(rowColCount);
-
-                    if (this.NetworkType == NetworkMode.Offline)
-                        CustFrame.ShowSyncFlag(this.DataTable.Columns);
-
-                    if (IsClickable) CustFrame.GestureRecognizers.Add(tapGestureRecognizer);
-                    StackL.Children.Add(CustFrame);
-                    rowColCount++;
-                }
-            }
-            else
-            {
-                StackL.Children.Add(new Label
-                {
-                    Text = "Empty list.",
-                    FontSize = 16,
-                    VerticalOptions = LayoutOptions.CenterAndExpand,
-                    HorizontalOptions = LayoutOptions.Center
-                });
-            }
-            this.XView = StackL;
-        }
-
-        void AddButtonClicked(object sender)
+        async void AddButtonClicked(object sender)
         {
             try
             {
@@ -177,7 +142,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     if (id != 0)
                     {
                         FormRender Renderer = new FormRender(_page, ParentForm, id);
-                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                     }
                 }
             }
@@ -187,7 +152,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        void EditButtonClicked(object sender)
+        async void EditButtonClicked(object sender)
         {
             try
             {
@@ -199,7 +164,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     if (id != 0)
                     {
                         FormRender Renderer = new FormRender(_page, id);
-                        (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
                     }
                 }
             }
@@ -209,43 +174,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private bool IsTapped;
-
-        async void ListItem_Clicked(object Frame, EventArgs args)
-        {
-            if (IsTapped) return;
-            CustomFrame customFrame = (CustomFrame)Frame;
-
-            try
-            {
-                EbMobilePage _page = HelperFunctions.GetPage(this.Visualization.LinkRefId);
-
-                if (this.NetworkType != _page.NetworkMode)
-                {
-                    DependencyService.Get<IToast>().Show("Link page Mode is different.");
-                    return;
-                }
-                IsTapped = true;
-
-                ContentPage renderer = await GetPageByContainer(customFrame, _page);
-                if (renderer != null)
-                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
-
-                IsTapped = false;
-            }
-            catch (Exception ex)
-            {
-                Log.Write("LinkedListViewModel.ListItem_Clicked::" + ex.Message);
-                IsTapped = false;
-            }
-        }
-
-        private async Task<ContentPage> GetPageByContainer(CustomFrame frame, EbMobilePage page)
+        public async Task<ContentPage> GetPageByContainer(CustomFrame frame, EbMobilePage page)
         {
             ContentPage renderer = null;
             try
             {
-                await Task.Delay(100);
+                await Task.Delay(10);
 
                 switch (page.Container)
                 {

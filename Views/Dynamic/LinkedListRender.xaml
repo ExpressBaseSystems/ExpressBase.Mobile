@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Dynamic.LinkedListRender">
 
@@ -21,20 +22,21 @@
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
-        <Grid RowSpacing="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <Grid Grid.Row="0" BackgroundColor="{StaticResource Blue-Dark}" x:Name="HeaderContainer">
+        <Grid>
+            <Grid RowSpacing="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Button
+                <Grid Grid.Row="0" BackgroundColor="{StaticResource Blue-Dark}" x:Name="HeaderContainer">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Button
                     x:Name="SourceDataEdit"
                     Grid.Row="1"
                     Text="Edit"
@@ -45,35 +47,34 @@
                     HeightRequest="30"
                     BackgroundColor="White"
                     Command="{Binding EditCommand}"/>
-            </Grid>
+                </Grid>
 
-            <Grid Grid.Row="1" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
+                <Grid Grid.Row="1" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
 
-                <Label x:Name="PagingMeta"
+                    <Label x:Name="PagingMeta"
                        Grid.Column="0" 
-                       Text="Showing 0 to 30 entries" 
                        VerticalTextAlignment="Center"
                        Margin="5,0"
                        FontSize="15"
                        TextColor="#333"/>
 
-                <Frame Grid.Column="1" 
+                    <Frame Grid.Column="1" 
                        Padding="0" 
                        Margin="5"
                        BackgroundColor="Transparent"
                        HasShadow="False">
-                    <Frame.Content>
-                        <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
-                            <Button 
+                        <Frame.Content>
+                            <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
+                                <Button 
                                 x:Name="PagingPrevButton"
                                 CornerRadius="17"
                                 Padding="0"
@@ -86,16 +87,15 @@
                                 BackgroundColor="#e1e6e9"
                                 Clicked="PagingPrevButton_Clicked"/>
 
-                            <Button 
+                                <Button 
                                 x:Name="PagingPageCount"
                                 Padding="0"
                                 HeightRequest="35"
                                 WidthRequest="35"
-                                Text="1" 
                                 BackgroundColor="Transparent"
                                 CornerRadius="0"/>
 
-                            <Button 
+                                <Button 
                                 x:Name="PagingNextButton"
                                  Margin="0,0,0,0"
                                 CornerRadius="17" 
@@ -108,19 +108,22 @@
                                 BorderWidth="1"
                                 BackgroundColor="#e1e6e9"
                                 Clicked="PagingNextButton_Clicked"/>
-                        </StackLayout>
-                    </Frame.Content>
-                </Frame>
-                <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
-            </Grid>
-            <RefreshView
+                            </StackLayout>
+                        </Frame.Content>
+                    </Frame>
+                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
+                </Grid>
+                <RefreshView
                 Grid.Row="2"
                 x:Name="ListViewRefresh"
                 Refreshing="ListViewRefresh_Refreshing">
-                <ScrollView 
-                    x:Name="ScrollContainer"/>
-            </RefreshView>
-            <Button
+                    <ScrollView>
+                        <StackLayout x:Name="ListContainer" Spacing="1" BackgroundColor="#eeeeee">
+                            
+                        </StackLayout>
+                    </ScrollView>
+                </RefreshView>
+                <Button
                 x:Name="AddLinkData"
                 Grid.Row="2"
                 Text="&#xf067;"
@@ -134,6 +137,12 @@
                 CornerRadius="30"
                 FontFamily="{StaticResource FontAwesome}"
                 Command="{Binding AddCommand}"/>
+            </Grid>
+            <control:LoaderIconed 
+                x:Name="Loader"
+                IsVisible="{Binding IsBusy}" 
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
