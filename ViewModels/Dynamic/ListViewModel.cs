@@ -24,21 +24,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<EbMobileControl> FilterControls { set; get; }
 
-        public ObservableCollection<SortColumn> SortColumns { set; get; }
+        public List<SortColumn> SortColumns { set; get; }
 
-        private SortColumn CurrentSort;
+        public Command ApplyFilterCommand { set; get; }
+
+        public Action ViewAction { set; get; }
 
         public ListViewModel(EbMobilePage page) : base(page)
         {
             this.Visualization = this.Page.Container as EbMobileVisualization;
             this.FilterControls = this.Visualization.FilterControls;
+            this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
 
-            //convert EbDataColumn to sortColumn
-            this.SortColumns = new ObservableCollection<SortColumn>();
-            foreach (var col in this.Visualization.SortColumns)
-            {
-                this.SortColumns.Add(new SortColumn { Name = col.ColumnName, Order = col.SortOrder });
-            }
+            ApplyFilterCommand = new Command(ApplyFilterClicked);
         }
 
         public async Task SetData(int offset = 0)
@@ -108,27 +106,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             return renderer;
         }
 
-        public List<DbParameter> GetFilterValues()
-        {
-            List<DbParameter> p = new List<DbParameter>();
-
-            foreach (EbMobileControl ctrl in FilterControls)
-            {
-                object value = ctrl.GetValue();
-
-                if (value != null)
-                {
-                    p.Add(new DbParameter
-                    {
-                        DbType = (int)ctrl.EbDbType,
-                        ParameterName = ctrl.Name,
-                        Value = value
-                    });
-                }
-            }
-            return p.Any() ? p : null;
-        }
-
         public async Task Refresh(List<DbParameter> parameters)
         {
             try
@@ -153,49 +130,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public async Task UpdateSortView(SortColumn column)
+        public void BindMethod(Action method)
         {
-            try
-            {
-                await Task.Run(() =>
-                {
-                    if (column != CurrentSort)
-                    {
-                        this.CurrentSort = column;
-                        List<SortColumn> temp = new List<SortColumn>(this.SortColumns);
-
-                        this.SortColumns.Clear();
-                        foreach (var item in temp)
-                        {
-                            if (item.Name == column.Name)
-                                item.Selected = true;
-                            else
-                                item.Selected = false;
-
-                            this.SortColumns.Add(item);
-                        }
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
+            ViewAction = method;
         }
 
-        public async Task SortList()
+        private void ApplyFilterClicked()
         {
-            try
-            {
-                await Task.Delay(1);
-
-                this.DataTable.Sort(CurrentSort.Name, CurrentSort.Order);
-
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
+            if (ViewAction != null) ViewAction.Invoke();
         }
     }
 }

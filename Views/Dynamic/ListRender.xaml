@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
              x:Class="ExpressBase.Mobile.Views.Dynamic.ListRender">
 
     <NavigationPage.TitleView>
@@ -12,9 +13,10 @@
             </Grid.ColumnDefinitions>
             <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
             <Button 
-                Text="&#xf002;" 
+                Text="&#xf0b0;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1"/>
+                Grid.Column="1"
+                Clicked="FilterButton_Clicked"/>
         </Grid>
     </NavigationPage.TitleView>
 
@@ -23,68 +25,10 @@
             <Grid RowSpacing="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <Grid x:Name="FilterActionBar" IsVisible="False" Grid.Row="0" Padding="20,0" BackgroundColor="{StaticResource Blue-Dark}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Frame
-                        Grid.Column="0"
-                        x:Name="FilterButton"
-                        BackgroundColor="Transparent"
-                        Padding="0,0,0,10">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="FilterButton_Clicked"></TapGestureRecognizer>
-                        </Frame.GestureRecognizers>
-                        <Frame.Content>
-                            <FlexLayout Direction="Row">
-                                <Label 
-                                   Text="&#xf0b0;"
-                                   FontSize="16"
-                                   TextColor="White"
-                                   FontFamily="{StaticResource FontAwesome}"
-                                   VerticalTextAlignment="Center"/>
-                                <Label 
-                                    Text="Filters"
-                                    FontSize="16"
-                                    Margin="10,0,0,0"
-                                    TextColor="White"
-                                    VerticalTextAlignment="Center"/>
-                            </FlexLayout>
-                        </Frame.Content>
-                    </Frame>
-                    <Frame
-                        Grid.Column="1"
-                        x:Name="SortButton"
-                        BackgroundColor="Transparent"
-                        Padding="0,0,0,10">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="SortButton_Tapped"></TapGestureRecognizer>
-                        </Frame.GestureRecognizers>
-                        <Frame.Content>
-                            <FlexLayout Direction="RowReverse">
-                                <Label 
-                                    Text="Sort"
-                                    FontSize="16"
-                                    Margin="10,0,0,0"
-                                    TextColor="White"
-                                    VerticalTextAlignment="Center"/>
-                                <Label 
-                                   Text="&#xf0dc;"
-                                   FontSize="16"
-                                   TextColor="White"
-                                   FontFamily="{StaticResource FontAwesome}"
-                                   VerticalTextAlignment="Center"/>
-                            </FlexLayout>
-                        </Frame.Content>
-                    </Frame>
-                </Grid>
-
-                <Grid Grid.Row="1" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
+                <Grid Grid.Row="0" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
@@ -94,14 +38,14 @@
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="Auto"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-
-                    <Label x:Name="PagingMeta"
-                       Grid.Column="0"
-                       VerticalTextAlignment="Center"
-                       Margin="5,0"
-                       FontSize="15"
-                       TextColor="#333"/>
-
+                    <Label 
+                        x:Name="PagingMeta"
+                        Grid.Column="0"
+                        VerticalTextAlignment="Center"
+                        Margin="5,0"
+                        FontSize="15"
+                        TextColor="#333">
+                    </Label>
                     <Frame Grid.Column="1" 
                        Padding="0" 
                        Margin="5"
@@ -110,47 +54,47 @@
                         <Frame.Content>
                             <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
                                 <Button 
-                                x:Name="PagingPrevButton"
-                                CornerRadius="17"
-                                Padding="0"
-                                BorderColor="#e1e6e9"
-                                BorderWidth="1"
-                                HeightRequest="35"
-                                WidthRequest="35"
-                                Text="&#xf053;"
-                                FontFamily="{StaticResource FontAwesome}"
-                                BackgroundColor="#e1e6e9"
-                                Clicked="PagingPrevButton_Clicked"/>
-
+                                    x:Name="PagingPrevButton"
+                                    CornerRadius="17"
+                                    Padding="0"
+                                    BorderColor="#e1e6e9"
+                                    BorderWidth="1"
+                                    HeightRequest="35"
+                                    WidthRequest="35"
+                                    Text="&#xf053;"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    BackgroundColor="#e1e6e9"
+                                    Clicked="PagingPrevButton_Clicked">
+                                </Button>
                                 <Button 
-                                x:Name="PagingPageCount"
-                                Padding="0"
-                                HeightRequest="35"
-                                WidthRequest="35"
-                                BackgroundColor="Transparent"
-                                CornerRadius="0"/>
-
+                                    x:Name="PagingPageCount"
+                                    Padding="0"
+                                    HeightRequest="35"
+                                    WidthRequest="35"
+                                    BackgroundColor="Transparent"
+                                    CornerRadius="0">
+                                </Button>
                                 <Button 
-                                x:Name="PagingNextButton"
-                                Margin="0,0,0,0"
-                                CornerRadius="17" 
-                                Padding="0"
-                                HeightRequest="35"
-                                WidthRequest="35"
-                                Text="&#xf054;" 
-                                FontFamily="{StaticResource FontAwesome}"
-                                BorderColor="#e1e6e9"
-                                BorderWidth="1"
-                                BackgroundColor="#e1e6e9"
-                                Clicked="PagingNextButton_Clicked"/>
+                                    x:Name="PagingNextButton"
+                                    Margin="0,0,0,0"
+                                    CornerRadius="17" 
+                                    Padding="0"
+                                    HeightRequest="35"
+                                    WidthRequest="35"
+                                    Text="&#xf054;" 
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    BorderColor="#e1e6e9"
+                                    BorderWidth="1"
+                                    BackgroundColor="#e1e6e9"
+                                    Clicked="PagingNextButton_Clicked">
+                                </Button>
                             </StackLayout>
                         </Frame.Content>
                     </Frame>
                     <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
                 </Grid>
-
                 <RefreshView
-                    Grid.Row="2"
+                    Grid.Row="1"
                     x:Name="ListViewRefresh"
                     Refreshing="ListViewRefresh_Refreshing">
                     <ScrollView>
@@ -161,151 +105,12 @@
                 </RefreshView>
             </Grid>
 
-            <ContentView IsVisible="False" x:Name="FilterDialogView">
-                <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
-                    <Grid VerticalOptions="FillAndExpand">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <Label 
-                            Grid.Row="0"
-                            Grid.ColumnSpan="2"
-                            BackgroundColor="#eee"
-                            Padding="15,5"
-                            TextColor="#333"
-                            Text="Filter"
-                            FontSize="16"/>
-
-                        <ScrollView Padding="10" Grid.ColumnSpan="2" Grid.Row="1">
-                            <StackLayout x:Name="FilterContainer">
-
-                            </StackLayout>
-                        </ScrollView>
-                        <Button 
-                            x:Name="FDCancel"
-                            Text="Cancel" 
-                            BackgroundColor="White" 
-                            TextColor="{StaticResource Blue-Dark}"
-                            Margin="10,0,0,10" 
-                            BorderColor="{StaticResource Blue-Dark}" 
-                            BorderWidth="1"
-                            Grid.Row="2" Grid.Column="0"
-                            Clicked="FDCancel_Clicked"/>
-
-                        <Button 
-                            x:Name="FDApply"
-                            Text="Apply" 
-                            BackgroundColor="{StaticResource Blue-Dark}"
-                            Margin="0,0,10,10"
-                            TextColor="White"
-                            Grid.Row="2" 
-                            Grid.Column="1"
-                            Clicked="FDApply_Clicked"/>
-                    </Grid>
-                </StackLayout>
-            </ContentView>
-
-            <ContentView x:Name="SortView" IsVisible="False">
-                <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        <Label 
-                            Grid.Row="0"
-                            Grid.ColumnSpan="2"
-                            BackgroundColor="#eee"
-                            Padding="15,5"
-                            TextColor="#333"
-                            Text="Sort By"
-                            FontSize="16"/>
-
-                        <ListView 
-                            Grid.Row="1" 
-                            Grid.ColumnSpan="2"
-                            ItemsSource="{Binding SortColumns}"
-                            BackgroundColor="White"
-                            HasUnevenRows="true"
-                            ItemTapped="SortView_ItemTapped">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <ViewCell>
-                                        <Grid Padding="10">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="*" />
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Frame 
-                                                Grid.RowSpan="2"
-                                                VerticalOptions="Center"
-                                                HorizontalOptions="Center"
-                                                HasShadow="False"
-                                                Padding="0"
-                                                Margin="10,0,15,0"
-                                                BorderColor="{Binding Bordercolor}"
-                                                HeightRequest="20"
-                                                WidthRequest="20"
-                                                CornerRadius="10"
-                                                BackgroundColor="{Binding SelectionColor}">
-                                                <BoxView 
-                                                    BackgroundColor="White"
-                                                    WidthRequest="8"
-                                                    HeightRequest="8"
-                                                    VerticalOptions="Center"
-                                                    HorizontalOptions="Center"
-                                                    CornerRadius="4"/>
-                                            </Frame>
-                                            <Label 
-                                                Grid.Row="0" 
-                                                Grid.Column="1" 
-                                                Text="{Binding Name}"
-                                                FontFamily="{StaticResource Roboto-Medium}"
-                                                FontSize="14"/>
-                                        </Grid>
-                                    </ViewCell>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                        <Button
-                            x:Name="CancelButton"
-                            Text="Cancel" 
-                            BackgroundColor="White" 
-                            TextColor="{StaticResource Blue-Dark}"
-                            Margin="10,0,0,10" 
-                            BorderColor="{StaticResource Blue-Dark}" 
-                            BorderWidth="1"
-                            Grid.Row="2" Grid.Column="0"
-                            Clicked="SortCancel_Clicked"/>
-                        <Button
-                            x:Name="ConfirmButton"
-                            Text="Apply" 
-                            BackgroundColor="{StaticResource Blue-Dark}"
-                            Margin="0,0,10,10"
-                            TextColor="White"
-                            Grid.Row="2" 
-                            Grid.Column="1"
-                            Clicked="SortConfirm_Clicked"/>
-                    </Grid>
-                </StackLayout>
-            </ContentView>
+            <shared:FilterView 
+                x:Name="FilterView"
+                NetWorkType="{Binding NetworkType}"
+                SortColumns="{Binding SortColumns}"
+                FilterControls="{Binding FilterControls}"
+                ConfirmClicked="{Binding ApplyFilterCommand}"/>
 
             <control:LoaderIconed 
                 x:Name="Loader"

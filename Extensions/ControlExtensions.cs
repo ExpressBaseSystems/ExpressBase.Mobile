@@ -115,18 +115,5 @@ namespace ExpressBase.Mobile.Extensions
             }
             return files;
         }
-
-        public static void Sort(this EbDataTable dt, string columnname, SortOrder order)
-        {
-            try
-            {
-                var col = dt.Columns.Find(item => item.ColumnName == columnname);
-                if (col == null) return;
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
-        }
     }
 }

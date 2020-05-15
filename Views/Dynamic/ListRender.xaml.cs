@@ -29,6 +29,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
 
             BindingContext = ViewModel = new ListViewModel(Page);
+            ViewModel.BindMethod(BindableMethod);
+
             TapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
             TapGesture.Tapped += Tap_Tapped;
             Loader.IsVisible = true;
@@ -42,7 +44,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 await this.ViewModel.SetData();
                 this.AppendListItems();
-                this.AppendFilterControls();
             }
             Loader.IsVisible = false;
         }
@@ -89,32 +90,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        private void AppendFilterControls()
-        {
-            try
-            {
-                foreach (EbMobileControl ctrl in this.ViewModel.FilterControls)
-                {
-                    Label lbl = new Label { Text = ctrl.Name };
-
-                    ctrl.NetworkType = this.ViewModel.NetworkType;
-                    ctrl.InitXControl(FormMode.NEW);
-
-                    this.FilterContainer.Children.Add(lbl);
-                    this.FilterContainer.Children.Add(ctrl.XControl);
-                }
-
-                if (this.ViewModel.FilterControls.Any())
-                {
-                    this.FilterActionBar.IsVisible = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message, LogTypes.EXCEPTION);
-            }
-        }
-
         private async void Tap_Tapped(object sender, EventArgs e)
         {
             IToast toast = DependencyService.Get<IToast>();
@@ -142,47 +117,21 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void FilterButton_Clicked(object sender, EventArgs e)
         {
-            FilterDialogView.IsVisible = true;
-            PagingContainer.IsVisible = false;
-        }
-
-        private void FDCancel_Clicked(object sender, EventArgs e)
-        {
-            FilterDialogView.IsVisible = false;
-            PagingContainer.IsVisible = true;
-        }
-
-        private async void FDApply_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                this.Loader.IsVisible = true;
-                List<DbParameter> p = this.ViewModel.GetFilterValues();
-                if (p != null && p.Any())
-                {
-                    this.Offset = 0;
-                    await this.ViewModel.Refresh(p);
-                    this.AppendListItems();
-                }
-                this.Loader.IsVisible = false;
-                this.FilterDialogView.IsVisible = false;
-                this.PagingContainer.IsVisible = true;
-            }
-            catch (Exception ex)
-            {
-                this.Loader.IsVisible = false;
-                Log.Write(ex.Message);
-            }
+            FilterView.Show();
         }
 
         private async void PagingPrevButton_Clicked(object sender, EventArgs e)
         {
             try
             {
-                if (Offset <= 0) return;
-                Offset -= ViewModel.Visualization.PageLength;
-                PageCount--;
-                await this.RefreshListView();
+                if (Offset <= 0) 
+                    return;
+                else
+                {
+                    Offset -= ViewModel.Visualization.PageLength;
+                    PageCount--;
+                    await this.RefreshListView();
+                }
             }
             catch (Exception ex)
             {
@@ -194,10 +143,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                if (Offset + ViewModel.Visualization.PageLength >= ViewModel.DataCount) return;
-                Offset += ViewModel.Visualization.PageLength;
-                PageCount++;
-                await this.RefreshListView();
+                if (Offset + ViewModel.Visualization.PageLength >= ViewModel.DataCount)
+                    return;
+                else
+                {
+                    Offset += ViewModel.Visualization.PageLength;
+                    PageCount++;
+                    await this.RefreshListView();
+                }
             }
             catch (Exception ex)
             {
@@ -254,25 +207,20 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        private void SortButton_Tapped(object sender, EventArgs e)
+        public async void BindableMethod()
         {
-            SortView.IsVisible = true;
-        }
-
-        private void SortCancel_Clicked(object sender, EventArgs e)
-        {
-            SortView.IsVisible = false;
-        }
-
-        private async void SortConfirm_Clicked(object sender, EventArgs e)
-        {
-            SortView.IsVisible = false;
-            await ViewModel.SortList();
-        }
-
-        private async void SortView_ItemTapped(object sender, ItemTappedEventArgs e)
-        {
-            await ViewModel.UpdateSortView(e.Item as SortColumn);
+            try
+            {
+                Loader.IsVisible = true;
+                var parameters = FilterView.GetFilterValues();
+                await ViewModel.Refresh(parameters);
+                this.AppendListItems();
+                Loader.IsVisible = false;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
     }
 }

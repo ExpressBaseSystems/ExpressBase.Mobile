@@ -4,8 +4,164 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Shared.FilterView">
+             x:Class="ExpressBase.Mobile.Views.Shared.FilterView"
+             BackgroundColor="White"
+             IsVisible="False"
+             x:Name="x_this">
   <ContentView.Content>
-      
+        <Grid BackgroundColor="#eee" RowSpacing="1" ColumnSpacing="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Frame
+                Grid.Row="0"
+                Grid.Column="0"
+                x:Name="FilterButton"
+                BackgroundColor="White"
+                Padding="0">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="FilterButton_Tapped"></TapGestureRecognizer>
+                </Frame.GestureRecognizers>
+                <Frame.Content>
+                    <StackLayout>
+                        <FlexLayout Direction="Row" JustifyContent="Center" VerticalOptions="FillAndExpand">
+                            <Label 
+                            Text="&#xf0b0;"
+                            FontSize="16"
+                            FontFamily="{StaticResource FontAwesome}"
+                            VerticalTextAlignment="Center"/>
+                            <Label 
+                            Text="Filter"
+                            FontSize="16"
+                            Margin="10,0,0,0"
+                            VerticalTextAlignment="Center"/>
+                        </FlexLayout>
+                        <BoxView HeightRequest="2" x:Name="FilterSelection" VerticalOptions="End" Color="{StaticResource Blue-Dark}"></BoxView>
+                    </StackLayout>
+                </Frame.Content>
+            </Frame>
+
+            <Frame
+                Grid.Row="0"
+                Grid.Column="1"
+                x:Name="SortButton"
+                BackgroundColor="White"
+                Padding="0">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="SortButton_Tapped"></TapGestureRecognizer>
+                </Frame.GestureRecognizers>
+                <Frame.Content>
+                    <StackLayout>
+                        <FlexLayout Direction="Row" JustifyContent="Center" VerticalOptions="FillAndExpand">
+                            <Label 
+                            Text="&#xf0dc;"
+                            FontSize="16"
+                            FontFamily="{StaticResource FontAwesome}"
+                            VerticalTextAlignment="Center"/>
+                            <Label 
+                            Text="Sort"
+                            FontSize="16"
+                            Margin="10,0,0,0"
+                            VerticalTextAlignment="Center"/>
+                        </FlexLayout>
+                        <BoxView HeightRequest="2" x:Name="SortSelection" IsVisible="False" VerticalOptions="End" Color="{StaticResource Blue-Dark}"></BoxView>
+                    </StackLayout>
+                </Frame.Content>
+            </Frame>
+
+            <ScrollView 
+                x:Name="FilterTab"
+                Padding="10" 
+                Grid.ColumnSpan="2" 
+                BackgroundColor="White"
+                Grid.Row="1">
+                <StackLayout x:Name="FilterContainer">
+
+                </StackLayout>
+            </ScrollView>
+
+            <ListView 
+                x:Name="SortTab"
+                IsVisible="False"
+                Grid.Row="1" 
+                Grid.ColumnSpan="2"
+                ItemsSource="{Binding SortColumns,Source={Reference x_this}}"
+                BackgroundColor="White"
+                HasUnevenRows="true">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox 
+                                    Grid.Column="0"
+                                    Color="{StaticResource Blue-Dark}"
+                                    IsChecked="{Binding Selected}">
+                                </CheckBox>
+                                <Label 
+                                    Grid.Row="0" 
+                                    Grid.Column="1" 
+                                    Text="{Binding Name}"
+                                    VerticalTextAlignment="Center"
+                                    FontFamily="{StaticResource Roboto-Medium}"
+                                    FontSize="14">
+                                </Label>
+                                <StackLayout Grid.Column="2" Orientation="Horizontal">
+                                    <Label Text="ASC" FontSize="12" VerticalTextAlignment="Center"></Label>
+                                    <Switch 
+                                        x:Name="OrderSwitch"
+                                        IsToggled="{Binding IsToggled}"
+                                        ThumbColor="{StaticResource Blue-Dark}"
+                                        OnColor="#afafaf">
+                                    </Switch>
+                                </StackLayout>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <FlexLayout 
+                Grid.Row="2" 
+                Grid.ColumnSpan="2" 
+                Direction="Row"
+                BackgroundColor="White">
+                <Button
+                    x:Name="CancelButton"
+                    Text="Cancel" 
+                    BackgroundColor="White" 
+                    TextColor="{StaticResource Blue-Dark}"
+                    Margin="0" 
+                    BorderColor="{StaticResource Blue-Dark}" 
+                    BorderWidth="1"
+                    CornerRadius="0"
+                    FlexLayout.Grow="1"
+                    Clicked="CancelButton_Clicked"/>
+                <Button
+                    x:Name="ConfirmButton"
+                    Text="Apply" 
+                    BackgroundColor="{StaticResource Blue-Dark}"
+                    Margin="0"
+                    TextColor="White"
+                    CornerRadius="0"
+                    BorderColor="{StaticResource Blue-Dark}" 
+                    BorderWidth="1"
+                    FlexLayout.Grow="1"
+                    Clicked="ConfirmButton_Clicked"/>
+            </FlexLayout>
+
+        </Grid>
   </ContentView.Content>
 </ContentView>

@@ -351,24 +351,19 @@ namespace ExpressBase.Mobile.Models
     {
         public string Name { set; get; }
 
-        public SortOrder Order { set; get; }
+        public SortOrder Order
+        {
+            get
+            {
+                if (IsToggled)
+                    return SortOrder.Descending;
+                else
+                    return SortOrder.Ascending;
+            }
+        }
 
         public bool Selected { set; get; }
 
-        public Color SelectionColor
-        {
-            get
-            {
-                return Selected ? Color.FromHex("0046bb") : Color.White;
-            }
-        }
-
-        public Color Bordercolor
-        {
-            get
-            {
-                return Selected ? Color.FromHex("0046bb") : Color.FromHex("cccccc");
-            }
-        }
+        public bool IsToggled { set; get; } = false;
     }
 }
