@@ -148,39 +148,47 @@
                     </Frame>
                     <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
                 </Grid>
+
                 <RefreshView
                     Grid.Row="2"
                     x:Name="ListViewRefresh"
                     Refreshing="ListViewRefresh_Refreshing">
                     <ScrollView>
                         <StackLayout x:Name="ListContainer" BackgroundColor="#eeeeee" Spacing="1">
-                            
+
                         </StackLayout>
                     </ScrollView>
                 </RefreshView>
-                <ContentView 
-                IsVisible="False"
-                x:Name="FilterDialogView"
-                BackgroundColor="Green"
-                Grid.Row="2">
-                    <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
-                        <Grid VerticalOptions="FillAndExpand">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"></RowDefinition>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                            </Grid.RowDefinitions>
+            </Grid>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
+            <ContentView IsVisible="False" x:Name="FilterDialogView">
+                <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
+                    <Grid VerticalOptions="FillAndExpand">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
 
-                            <ScrollView Padding="10" Grid.ColumnSpan="2" Grid.Row="0">
-                                <StackLayout x:Name="FilterContainer">
+                        <Label 
+                            Grid.Row="0"
+                            Grid.ColumnSpan="2"
+                            BackgroundColor="#eee"
+                            Padding="15,5"
+                            TextColor="#333"
+                            Text="Filter"
+                            FontSize="16"/>
 
-                                </StackLayout>
-                            </ScrollView>
-                            <Button 
+                        <ScrollView Padding="10" Grid.ColumnSpan="2" Grid.Row="1">
+                            <StackLayout x:Name="FilterContainer">
+
+                            </StackLayout>
+                        </ScrollView>
+                        <Button 
                             x:Name="FDCancel"
                             Text="Cancel" 
                             BackgroundColor="White" 
@@ -188,23 +196,117 @@
                             Margin="10,0,0,10" 
                             BorderColor="{StaticResource Blue-Dark}" 
                             BorderWidth="1"
-                            Grid.Row="1" Grid.Column="0"
+                            Grid.Row="2" Grid.Column="0"
                             Clicked="FDCancel_Clicked"/>
 
-                            <Button 
+                        <Button 
                             x:Name="FDApply"
                             Text="Apply" 
                             BackgroundColor="{StaticResource Blue-Dark}"
                             Margin="0,0,10,10"
                             TextColor="White"
-                            Grid.Row="1" 
+                            Grid.Row="2" 
                             Grid.Column="1"
                             Clicked="FDApply_Clicked"/>
+                    </Grid>
+                </StackLayout>
+            </ContentView>
 
-                        </Grid>
-                    </StackLayout>
-                </ContentView>
-            </Grid>
+            <ContentView x:Name="SortView" IsVisible="False">
+                <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Label 
+                            Grid.Row="0"
+                            Grid.ColumnSpan="2"
+                            BackgroundColor="#eee"
+                            Padding="15,5"
+                            TextColor="#333"
+                            Text="Sort By"
+                            FontSize="16"/>
+
+                        <ListView 
+                            Grid.Row="1" 
+                            Grid.ColumnSpan="2"
+                            ItemsSource="{Binding SortColumns}"
+                            BackgroundColor="White"
+                            HasUnevenRows="true"
+                            ItemTapped="SortView_ItemTapped">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Grid Padding="10">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Frame 
+                                                Grid.RowSpan="2"
+                                                VerticalOptions="Center"
+                                                HorizontalOptions="Center"
+                                                HasShadow="False"
+                                                Padding="0"
+                                                Margin="10,0,15,0"
+                                                BorderColor="{Binding Bordercolor}"
+                                                HeightRequest="20"
+                                                WidthRequest="20"
+                                                CornerRadius="10"
+                                                BackgroundColor="{Binding SelectionColor}">
+                                                <BoxView 
+                                                    BackgroundColor="White"
+                                                    WidthRequest="8"
+                                                    HeightRequest="8"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="Center"
+                                                    CornerRadius="4"/>
+                                            </Frame>
+                                            <Label 
+                                                Grid.Row="0" 
+                                                Grid.Column="1" 
+                                                Text="{Binding Name}"
+                                                FontFamily="{StaticResource Roboto-Medium}"
+                                                FontSize="14"/>
+                                        </Grid>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <Button
+                            x:Name="CancelButton"
+                            Text="Cancel" 
+                            BackgroundColor="White" 
+                            TextColor="{StaticResource Blue-Dark}"
+                            Margin="10,0,0,10" 
+                            BorderColor="{StaticResource Blue-Dark}" 
+                            BorderWidth="1"
+                            Grid.Row="2" Grid.Column="0"
+                            Clicked="SortCancel_Clicked"/>
+                        <Button
+                            x:Name="ConfirmButton"
+                            Text="Apply" 
+                            BackgroundColor="{StaticResource Blue-Dark}"
+                            Margin="0,0,10,10"
+                            TextColor="White"
+                            Grid.Row="2" 
+                            Grid.Column="1"
+                            Clicked="SortConfirm_Clicked"/>
+                    </Grid>
+                </StackLayout>
+            </ContentView>
+
             <control:LoaderIconed 
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 

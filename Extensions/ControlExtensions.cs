@@ -5,6 +5,8 @@ using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace ExpressBase.Mobile.Extensions
 {
@@ -112,6 +114,19 @@ namespace ExpressBase.Mobile.Extensions
                 Log.Write(ex.StackTrace);
             }
             return files;
+        }
+
+        public static void Sort(this EbDataTable dt, string columnname, SortOrder order)
+        {
+            try
+            {
+                var col = dt.Columns.Find(item => item.ColumnName == columnname);
+                if (col == null) return;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
     }
 }

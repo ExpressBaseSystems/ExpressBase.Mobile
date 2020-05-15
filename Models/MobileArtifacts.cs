@@ -345,4 +345,30 @@ namespace ExpressBase.Mobile.Models
 
         public EbFileCategory FileCategory { set; get; }
     }
+
+    //for sort listview
+    public class SortColumn
+    {
+        public string Name { set; get; }
+
+        public SortOrder Order { set; get; }
+
+        public bool Selected { set; get; }
+
+        public Color SelectionColor
+        {
+            get
+            {
+                return Selected ? Color.FromHex("0046bb") : Color.White;
+            }
+        }
+
+        public Color Bordercolor
+        {
+            get
+            {
+                return Selected ? Color.FromHex("0046bb") : Color.FromHex("cccccc");
+            }
+        }
+    }
 }

@@ -1,10 +1,7 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

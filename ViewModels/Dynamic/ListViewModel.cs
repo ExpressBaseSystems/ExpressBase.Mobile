@@ -7,6 +7,7 @@ using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -23,10 +24,21 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<EbMobileControl> FilterControls { set; get; }
 
+        public ObservableCollection<SortColumn> SortColumns { set; get; }
+
+        private SortColumn CurrentSort;
+
         public ListViewModel(EbMobilePage page) : base(page)
         {
             this.Visualization = this.Page.Container as EbMobileVisualization;
             this.FilterControls = this.Visualization.FilterControls;
+
+            //convert EbDataColumn to sortColumn
+            this.SortColumns = new ObservableCollection<SortColumn>();
+            foreach (var col in this.Visualization.SortColumns)
+            {
+                this.SortColumns.Add(new SortColumn { Name = col.ColumnName, Order = col.SortOrder });
+            }
         }
 
         public async Task SetData(int offset = 0)
@@ -134,6 +146,51 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
                     }
                 });
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        public async Task UpdateSortView(SortColumn column)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    if (column != CurrentSort)
+                    {
+                        this.CurrentSort = column;
+                        List<SortColumn> temp = new List<SortColumn>(this.SortColumns);
+
+                        this.SortColumns.Clear();
+                        foreach (var item in temp)
+                        {
+                            if (item.Name == column.Name)
+                                item.Selected = true;
+                            else
+                                item.Selected = false;
+
+                            this.SortColumns.Add(item);
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        public async Task SortList()
+        {
+            try
+            {
+                await Task.Delay(1);
+
+                this.DataTable.Sort(CurrentSort.Name, CurrentSort.Order);
+
             }
             catch (Exception ex)
             {

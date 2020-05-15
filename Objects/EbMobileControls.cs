@@ -448,6 +448,8 @@ namespace ExpressBase.Mobile
         public EbDbTypes Type { get; set; }
 
         public EbFont Font { get; set; }
+
+        public SortOrder SortOrder { set; get; }
     }
 
     public class EbMobileAutoId : EbMobileControl

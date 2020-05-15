@@ -37,6 +37,13 @@ namespace ExpressBase.Mobile
         ButtonType = 1
     }
 
+    public enum SortOrder
+    {
+        Ascending = 0,
+        Descending = 1
+    }
+
+
     public abstract class EbMobilePageBase : EbObject
     {
 

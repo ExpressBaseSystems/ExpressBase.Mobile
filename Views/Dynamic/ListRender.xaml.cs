@@ -256,7 +256,23 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void SortButton_Tapped(object sender, EventArgs e)
         {
+            SortView.IsVisible = true;
+        }
 
+        private void SortCancel_Clicked(object sender, EventArgs e)
+        {
+            SortView.IsVisible = false;
+        }
+
+        private async void SortConfirm_Clicked(object sender, EventArgs e)
+        {
+            SortView.IsVisible = false;
+            await ViewModel.SortList();
+        }
+
+        private async void SortView_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            await ViewModel.UpdateSortView(e.Item as SortColumn);
         }
     }
 }
