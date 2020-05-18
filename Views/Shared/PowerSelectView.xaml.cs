@@ -152,7 +152,7 @@ namespace ExpressBase.Mobile.Views.Shared
                     Value = search
                 };
 
-                var response = await RestServices.Instance.PullReaderDataAsync(PowerSelect.DataSourceRefId, new List<Param> { p }, 50, 0, true);
+                var response = await RestServices.Instance.PullReaderDataAsync(PowerSelect.DataSourceRefId, new List<Param> { p }, null, 50, 0, true);
 
                 if (response.Data != null && response.Data.Tables.Count >= 2)
                     dt = response.Data.Tables[1];

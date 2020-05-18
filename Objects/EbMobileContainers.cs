@@ -74,57 +74,27 @@ namespace ExpressBase.Mobile
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
 
-        public EbDataSet GetData(NetworkMode networkType, int offset = 0, List<DbParameter> parameters = null)
+        public EbDataSet GetData(NetworkMode networkType, int offset, List<DbParameter> parameters = null, List<SortColumn> sortOrder = null)
         {
-            EbDataSet ds = null;
             try
             {
                 if (networkType == NetworkMode.Online)
-                {
-                    if (parameters == null)
-                        ds = this.GetLiveData(offset);
-                    else
-                        ds = this.GetLiveData(parameters, offset);
-                }
+                    return this.GetLiveData(parameters, sortOrder, offset);
                 else if (networkType == NetworkMode.Offline)
-                {
-                    if (parameters == null)
-                        ds = this.GetLocalData(offset);
-                    else
-                        ds = this.GetLocalData(parameters, offset);
-                }
+                    return this.GetLocalData(parameters, sortOrder, offset);
+                else
+                    return null;
             }
             catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }
-            return ds;
+            return null;
         }
 
-        public EbDataSet GetLocalData(int offset = 0)
+        public EbDataSet GetLocalData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, int offset)
         {
-            EbDataSet Data = new EbDataSet();
-            try
-            {
-                string sql = HelperFunctions.WrapSelectQuery(GetQuery);
-
-                DbParameter[] dbParameters = {
-                    new DbParameter{ ParameterName = "@limit", Value = PageLength, DbType = (int)EbDbTypes.Int32 },
-                    new DbParameter{ ParameterName = "@offset", Value = offset, DbType = (int)EbDbTypes.Int32 },
-                };
-
-                Data = App.DataDB.DoQueries(sql, dbParameters);
-            }
-            catch (Exception ex)
-            {
-                Log.Write("EbMobileVisualization.GetData---" + ex.Message);
-            }
-            return Data;
-        }
-
-        public EbDataSet GetLocalData(List<DbParameter> dbParameters, int offset = 0)
-        {
-            EbDataSet Data = new EbDataSet();
+            EbDataSet Data = null;
             try
             {
                 var userParam = dbParameters.Find(item => item.ParameterName == "current_userid");
@@ -149,29 +119,13 @@ namespace ExpressBase.Mobile
             return Data;
         }
 
-        public EbDataSet GetLiveData(int offset = 0)
+        public EbDataSet GetLiveData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, int offset)
         {
             EbDataSet Data = null;
             try
             {
                 Auth.AuthIfTokenExpired();
-                VisualizationLiveData vd = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, this.PageLength, offset);
-                Data = vd.Data;
-            }
-            catch (Exception ex)
-            {
-                Log.Write("EbMobileVisualization.GetLiveData---" + ex.Message);
-            }
-            return Data;
-        }
-
-        public EbDataSet GetLiveData(List<DbParameter> dbParameters, int offset = 0)
-        {
-            EbDataSet Data = null;
-            try
-            {
-                Auth.AuthIfTokenExpired();
-                VisualizationLiveData vd = RestServices.Instance.PullReaderData(this.DataSourceRefId, dbParameters.ToParams(), this.PageLength, offset);
+                VisualizationLiveData vd = RestServices.Instance.PullReaderData(this.DataSourceRefId, dbParameters.ToParams(), sortOrder, this.PageLength, offset);
                 Data = vd.Data;
             }
             catch (Exception ex)

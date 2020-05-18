@@ -76,16 +76,18 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+        }
+
         private void EditButton_Clicked(object sender, EventArgs e)
         {
-            if (ViewModel != null)
-            {
-                EditButton.IsVisible = false;
-                SaveButton.IsVisible = true;
+            EditButton.IsVisible = false;
+            SaveButton.IsVisible = true;
 
-                foreach (var pair in ViewModel.Form.ControlDictionary)
-                    pair.Value.SetAsReadOnly(false);
-            }
+            foreach (var pair in ViewModel.Form.ControlDictionary)
+                pair.Value.SetAsReadOnly(false);
         }
 
         public void ShowFullScreenImage(object tapedImage)

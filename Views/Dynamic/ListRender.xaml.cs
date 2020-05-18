@@ -29,11 +29,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
 
             BindingContext = ViewModel = new ListViewModel(Page);
-            ViewModel.BindMethod(BindableMethod);
+            this.ViewModel.BindMethod(BindableMethod);
 
-            TapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
-            TapGesture.Tapped += Tap_Tapped;
-            Loader.IsVisible = true;
+            this.TapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+            this.TapGesture.Tapped += Tap_Tapped;
+            this.Loader.IsVisible = true;
         }
 
         protected override async void OnAppearing()
@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 await this.ViewModel.SetData();
                 this.AppendListItems();
             }
-            Loader.IsVisible = false;
+            this.Loader.IsVisible = false;
         }
 
         private void AppendListItems()
@@ -75,7 +75,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 }
                 else
                 {
-                    ListContainer.Children.Add(new Label
+                    this.ListContainer.Children.Add(new Label
                     {
                         Text = "Empty list",
                         VerticalOptions = LayoutOptions.CenterAndExpand,
@@ -117,19 +117,19 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void FilterButton_Clicked(object sender, EventArgs e)
         {
-            FilterView.Show();
+            this.FilterView.Show();
         }
 
         private async void PagingPrevButton_Clicked(object sender, EventArgs e)
         {
             try
             {
-                if (Offset <= 0) 
+                if (this.Offset <= 0)
                     return;
                 else
                 {
-                    Offset -= ViewModel.Visualization.PageLength;
-                    PageCount--;
+                    this.Offset -= this.ViewModel.Visualization.PageLength;
+                    this.PageCount--;
                     await this.RefreshListView();
                 }
             }
@@ -143,12 +143,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                if (Offset + ViewModel.Visualization.PageLength >= ViewModel.DataCount)
+                if (this.Offset + this.ViewModel.Visualization.PageLength >= this.ViewModel.DataCount)
                     return;
                 else
                 {
-                    Offset += ViewModel.Visualization.PageLength;
-                    PageCount++;
+                    this.Offset += this.ViewModel.Visualization.PageLength;
+                    this.PageCount++;
                     await this.RefreshListView();
                 }
             }
@@ -168,20 +168,16 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                int pageLength = ViewModel.Visualization.PageLength;
-                int totalEntries = ViewModel.DataCount;
+                int pageLength = this.ViewModel.Visualization.PageLength;
+                int totalEntries = this.ViewModel.DataCount;
                 int offset = this.Offset + 1;
                 int length = pageLength + offset - 1;
 
-                if (totalEntries < pageLength)
+                if (totalEntries < pageLength || pageLength + offset > totalEntries)
                     length = totalEntries;
 
-                if (pageLength + offset > totalEntries)
-                    length = totalEntries;
-
-                PagingMeta.Text = $"{offset}-{length}/{totalEntries}";
-                int totalpages = (int)Math.Ceiling((double)totalEntries / pageLength);
-                PagingPageCount.Text = $"{PageCount}/{totalpages}";
+                this.PagingMeta.Text = $"{offset} - {length}/{totalEntries}";
+                this.PagingPageCount.Text = $"{PageCount}/{(int)Math.Ceiling((double)totalEntries / pageLength)}";
             }
             catch (Exception ex)
             {
@@ -211,11 +207,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                Loader.IsVisible = true;
-                var parameters = FilterView.GetFilterValues();
-                await ViewModel.Refresh(parameters);
+                this.Loader.IsVisible = true;
+                var parameters = this.FilterView.GetFilterValues();
+                await this.ViewModel.Refresh(parameters);
                 this.AppendListItems();
-                Loader.IsVisible = false;
+                this.Loader.IsVisible = false;
             }
             catch (Exception ex)
             {

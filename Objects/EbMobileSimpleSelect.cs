@@ -174,7 +174,7 @@ namespace ExpressBase.Mobile
                         Type = ((int)this.ValueMember.Type).ToString(),
                         Value = value
                     };
-                    var response = RestServices.Instance.PullReaderData(this.DataSourceRefId, new List<Param> { p }, 0, 0, false);
+                    var response = RestServices.Instance.PullReaderData(this.DataSourceRefId, new List<Param> { p }, null, 0, 0, false);
 
                     if (response.Data != null && response.Data.Tables.Count >= 2)
                         dt = response.Data.Tables[1];

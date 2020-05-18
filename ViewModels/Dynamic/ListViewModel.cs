@@ -115,7 +115,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     DataTable.Rows.Clear();
                     DataCount = 0;
 
-                    EbDataSet ds = this.Visualization.GetData(this.Page.NetworkMode, 0, parameters);
+                    List<SortColumn> sort = this.SortColumns.FindAll(item => item.Selected);
+
+                    EbDataSet ds = this.Visualization.GetData(this.Page.NetworkMode, 0, parameters, sort);
 
                     if (ds != null && ds.Tables.HasLength(2))
                     {

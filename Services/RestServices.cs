@@ -196,16 +196,19 @@ namespace ExpressBase.Mobile.Services
             return FileData;
         }
 
-        public VisualizationLiveData PullReaderData(string datasorce_ref, List<Param> parameters, int limit, int offset, bool is_powerselect = false)
+        public VisualizationLiveData PullReaderData(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false)
         {
             try
             {
                 RestRequest request = new RestRequest("api/get_data", Method.GET);
                 request.AddParameter("refid", datasorce_ref);
+
                 if (parameters != null)
-                {
                     request.AddParameter("param", JsonConvert.SerializeObject(parameters));
-                }
+
+                if (sortOrder != null)
+                    request.AddParameter("sort_order", JsonConvert.SerializeObject(sortOrder));
+
                 request.AddParameter("limit", limit);
                 request.AddParameter("offset", offset);
                 request.AddParameter("is_powerselect", is_powerselect);
@@ -224,16 +227,19 @@ namespace ExpressBase.Mobile.Services
             return new VisualizationLiveData();
         }
 
-        public async Task<VisualizationLiveData> PullReaderDataAsync(string datasorce_ref, List<Param> parameters, int limit, int offset, bool is_powerselect = false)
+        public async Task<VisualizationLiveData> PullReaderDataAsync(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false)
         {
             try
             {
                 RestRequest request = new RestRequest("api/get_data", Method.GET);
                 request.AddParameter("refid", datasorce_ref);
+
                 if (parameters != null)
-                {
                     request.AddParameter("param", JsonConvert.SerializeObject(parameters));
-                }
+
+                if (sortOrder != null)
+                    request.AddParameter("sort_order", JsonConvert.SerializeObject(sortOrder));
+
                 request.AddParameter("limit", limit);
                 request.AddParameter("offset", offset);
                 request.AddParameter("is_powerselect", is_powerselect);

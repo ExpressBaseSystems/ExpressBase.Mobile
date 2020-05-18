@@ -359,7 +359,7 @@ namespace ExpressBase.Mobile
                 {
                     if (string.IsNullOrEmpty(this.DataSourceRefId))
                         return;
-                    VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, 0, 0);
+                    VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, null, 0, 0);
                     if (data.Data != null && data.Data.Tables.Count >= 2)
                         dt = data.Data.Tables[1];
                 }
@@ -373,7 +373,7 @@ namespace ExpressBase.Mobile
                 {
                     if (Settings.HasInternet && !string.IsNullOrEmpty(this.DataSourceRefId))
                     {
-                        VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, 0, 0);
+                        VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, null, 0, 0);
                         if (data.Data != null && data.Data.Tables.Count >= 2)
                             dt = data.Data.Tables[1];
                     }
