@@ -17,7 +17,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
     {
         public EbMobileForm Form { set; get; }
 
-        private FormMode Mode { set; get; } = FormMode.NEW;
+        public FormMode Mode { set; get; }
 
         private int RowId { set; get; } = 0;
 
@@ -32,11 +32,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         //new mode
         public FormRenderViewModel(EbMobilePage page) : base(page)
         {
+            this.Mode = FormMode.NEW;
             try
             {
                 this.Form = this.Page.Container as EbMobileForm;
                 this.CreateView();
-                this.Form.CreateTableSchema();
+                this.DeployTables();
             }
             catch (Exception ex)
             {
@@ -54,9 +55,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 this.Form = page.Container as EbMobileForm;
 
                 this.CreateView();
-                this.SetDataOnEdit();
-                this.FillControls();
-                this.Form.CreateTableSchema();
+                this.DeployTables();
             }
             catch (Exception ex)
             {
@@ -67,14 +66,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         //prefill mode
         public FormRenderViewModel(EbMobilePage page, EbDataRow currentRow) : base(page)
         {
-            this.Mode = FormMode.NEW;
+            this.Mode = FormMode.PREFILL;
             try
             {
                 this.Form = page.Container as EbMobileForm;
 
                 this.CreateView();
-                this.FillControlsFlat(currentRow);//for prefill without heirarcy
-                this.Form.CreateTableSchema();
+                this.FillControlsFlat(currentRow);
+                this.DeployTables();
             }
             catch (Exception ex)
             {
@@ -92,7 +91,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 this.RowId = parentId;
                 this.Form = page.Container as EbMobileForm;
                 this.CreateView();
-                this.Form.CreateTableSchema();
+                this.DeployTables();
             }
             catch (Exception ex)
             {
@@ -100,45 +99,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private void SetDataOnEdit()
+        public void DeployTables()
         {
-            try
+            Task.Run(() =>
             {
-                if (this.Page.NetworkMode == NetworkMode.Offline)
-                {
-                    EbDataSet _set = new EbDataSet();
-
-                    EbDataTable masterData = App.DataDB.DoQuery($"SELECT * FROM {this.Form.TableName} WHERE id = {this.RowId};");
-                    masterData.TableName = this.Form.TableName;
-                    _set.Tables.Add(masterData);
-
-                    foreach (var pair in this.Form.ControlDictionary)
-                    {
-                        if (pair.Value is ILinesEnabled)
-                        {
-                            string linesQuery = $"SELECT * FROM {(pair.Value as ILinesEnabled).TableName} WHERE {this.Form.TableName}_id = {this.RowId};";
-                            EbDataTable linesData = App.DataDB.DoQuery(linesQuery);
-                            linesData.TableName = (pair.Value as ILinesEnabled).TableName;
-                            _set.Tables.Add(linesData);
-                        }
-                    }
-                    this.DataOnEdit = _set;
-                }
-                else if (this.Page.NetworkMode == NetworkMode.Online)
-                {
-                    if (string.IsNullOrEmpty(this.Form.WebFormRefId))
-                        throw new Exception("webform refid is empty");
-
-                    WebformData data = RestServices.Instance.PullFormData(this.Page.RefId, this.RowId, Settings.LocationId);
-                    this.DataOnEdit = data.ToDataSet();
-                    this.FilesOnEdit = data.ToFilesMeta();
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Write("form_SetDataOnEdit---" + e.Message);
-                this.DataOnEdit = new EbDataSet();
-            }
+                if (this.NetworkType != NetworkMode.Online)
+                    this.Form.CreateTableSchema();
+            });
         }
 
         private void CreateView()
@@ -155,19 +122,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         {
                             foreach (EbMobileControl tbctrl in Tc.ControlCollection)
                             {
-                                tbctrl.NetworkType = this.NetworkType;
-                                tbctrl.InitXControl(this.Mode);
-                                ScrollStack.Children.Add(tbctrl.XView);
-                                this.Form.ControlDictionary.Add(tbctrl.Name, tbctrl);
+                                this.Draw(ScrollStack, tbctrl);
                             }
                         }
                     }
                     else
                     {
-                        ctrl.NetworkType = this.NetworkType;
-                        ctrl.InitXControl(this.Mode);
-                        ScrollStack.Children.Add(ctrl.XView);
-                        this.Form.ControlDictionary.Add(ctrl.Name, ctrl);
+                        this.Draw(ScrollStack, ctrl);
                     }
                 }
                 this.XView = ScrollStack;
@@ -175,6 +136,61 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             catch (Exception ex)
             {
                 Log.Write("Form_CreateView---" + ex.Message);
+            }
+        }
+
+        private void Draw(StackLayout container, EbMobileControl ctrl)
+        {
+            try
+            {
+                ctrl.InitXControl(this.Mode, this.NetworkType);
+                container.Children.Add(ctrl.XView);
+                this.Form.ControlDictionary.Add(ctrl.Name, ctrl);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
+        }
+
+        public async Task SetDataOnEdit()
+        {
+            try
+            {
+                if (this.Page.NetworkMode == NetworkMode.Offline)
+                {
+                    EbDataSet ds = new EbDataSet();
+
+                    EbDataTable masterData = App.DataDB.DoQuery($"SELECT * FROM {this.Form.TableName} WHERE id = {this.RowId};");
+                    masterData.TableName = this.Form.TableName;
+                    ds.Tables.Add(masterData);
+
+                    foreach (var pair in this.Form.ControlDictionary)
+                    {
+                        if (pair.Value is ILinesEnabled)
+                        {
+                            string linesQuery = $"SELECT * FROM {(pair.Value as ILinesEnabled).TableName} WHERE {this.Form.TableName}_id = {this.RowId};";
+                            EbDataTable linesData = App.DataDB.DoQuery(linesQuery);
+                            linesData.TableName = (pair.Value as ILinesEnabled).TableName;
+                            ds.Tables.Add(linesData);
+                        }
+                    }
+                    this.DataOnEdit = ds;
+                }
+                else if (this.Page.NetworkMode == NetworkMode.Online)
+                {
+                    if (string.IsNullOrEmpty(this.Form.WebFormRefId))
+                        throw new Exception("webform refid is empty");
+
+                    WebformData data = await RestServices.Instance.PullFormDataAsync(this.Page.RefId, this.RowId, Settings.LocationId);
+                    this.DataOnEdit = data.ToDataSet();
+                    this.FilesOnEdit = data.ToFilesMeta();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Write("form_SetDataOnEdit---" + e.Message);
+                this.DataOnEdit = new EbDataSet();
             }
         }
 
@@ -210,10 +226,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 });
             }
             else
-                toast.Show("Some fields are required");
+                toast.Show("Fields required");
         }
 
-        public void FillControls()
+        public void FillControlsValues()
         {
             try
             {

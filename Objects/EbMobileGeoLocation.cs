@@ -20,8 +20,6 @@ namespace ExpressBase.Mobile
 
         private Location Cordinates { set; get; }
 
-        public string Place { set; get; }
-
         private WebView WebView { set; get; }
 
         private ActivityIndicator Loader { set; get; }
@@ -31,8 +29,10 @@ namespace ExpressBase.Mobile
                                     <container style='line-height:1.5'><p style='text-align: center;'>
                                     You are not connected to internet</p> </container></body></html>";
 
-        public override void InitXControl(FormMode Mode)
+        public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
+            base.InitXControl(Mode, Network);
+
             try
             {
                 this.BuildXControl();
@@ -97,7 +97,7 @@ namespace ExpressBase.Mobile
                     BackgroundColor = Color.Transparent,
                     Children = { Loader }
                 };
-                WebView = new WebView { HeightRequest = 300, IsVisible = false }; 
+                WebView = new WebView { HeightRequest = 300, IsVisible = false };
                 WebView.Navigated += WebView_Navigated;
                 Layout.Children.Add(WebView);
                 _frame.Content = Layout;
@@ -122,28 +122,18 @@ namespace ExpressBase.Mobile
             if (Cordinates == null)
             {
                 Cordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
-
-                if (Cordinates != null)
-                {
-                    Placemark plc = await GeoLocation.Instance.GetAddressByCordinates(Cordinates.Latitude, Cordinates.Longitude);
-                    if (plc != null)
-                    {
-                        Place = $"{plc.FeatureName},{plc.Locality},{plc.Locality}";
-                        this.SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
-                    }
-                }
+                this.SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude);
             }
             else
-                this.SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude, this.Place);
+                this.SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude);
         }
 
-        private void SetWebViewUrl(double lat, double lon, string place)
+        private void SetWebViewUrl(double lat, double lon)
         {
             Auth.AuthIfTokenExpired();//auth again if token expires
 
-            string url = $"{Settings.RootUrl}/api/map?bToken={Settings.BToken}&rToken={Settings.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}&place={place}";
+            string url = $"{Settings.RootUrl}/api/map?bToken={Settings.BToken}&rToken={Settings.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}";
             this.WebView.Source = new UrlWebViewSource { Url = url };
-            //this.WebView.Reload();
         }
 
         public override object GetValue()
@@ -184,13 +174,7 @@ namespace ExpressBase.Mobile
                     double lat = Convert.ToDouble(cordinates[0]);
                     double lng = Convert.ToDouble(cordinates[1]);
 
-                    Task.Run(async () =>
-                    {
-                        Placemark plc = await GeoLocation.Instance.GetAddressByCordinates(lat, lng);
-                        this.Place = $"{plc.FeatureName},{plc.Locality},{plc.Locality}";
-
-                        SetWebViewUrl(lat, lng, this.Place);
-                    });
+                    this.SetWebViewUrl(lat, lng);
                 }
             }
             catch (Exception ex)

@@ -5,6 +5,7 @@ using Xamarin.Forms;
 using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
+using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile
 {
@@ -22,18 +23,15 @@ namespace ExpressBase.Mobile
             DbPath = dbPath;
             if (DataDB == null)
                 DataDB = DependencyService.Get<IDataBase>();
-
-            this.InitNavigation();
         }
 
         public App()
         {
             InitializeComponent();
             DataDB = DependencyService.Get<IDataBase>();
-            this.InitNavigation();
         }
 
-        void InitNavigation()
+        async Task InitNavigation()
         {
             MainPage = new NavigationPage
             {
@@ -43,7 +41,7 @@ namespace ExpressBase.Mobile
 
             string sid = Store.GetValue(AppConst.SID);
             if (sid == null)
-                MainPage.Navigation.PushAsync(new MySolutions());
+                await MainPage.Navigation.PushAsync(new MySolutions());
             else
             {
                 string rtoken = Store.GetValue(AppConst.RTOKEN);
@@ -60,29 +58,29 @@ namespace ExpressBase.Mobile
                             MainPage = RootMaster;
                         }
                         else
-                            MainPage.Navigation.PushAsync(new Login());
+                            await MainPage.Navigation.PushAsync(new Login());
                     }
                     else
                     {
                         string apid = Store.GetValue(AppConst.APPID);
 
                         if (apid == null)
-                            MainPage.Navigation.PushAsync(new MyApplications());
+                            await MainPage.Navigation.PushAsync(new MyApplications());
                         else
                         {
                             RootMaster = new RootMaster(typeof(Home));
                             MainPage = RootMaster;
-                        } 
+                        }
                     }
                 }
                 else
-                    MainPage.Navigation.PushAsync(new Login());
+                    await MainPage.Navigation.PushAsync(new Login());
             }
         }
 
-        protected override void OnStart()
+        protected override async void OnStart()
         {
-
+            await InitNavigation();
         }
 
         protected override void OnSleep()

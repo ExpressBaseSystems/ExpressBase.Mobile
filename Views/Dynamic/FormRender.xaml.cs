@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
@@ -10,6 +11,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FormRender : ContentPage
     {
+        private bool IsRendered;
+
         public FormRenderViewModel ViewModel { set; get; }
 
         //new mode
@@ -76,9 +79,21 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
+
+            LoaderIconed.IsVisible = true;
+            if (!IsRendered)
+            {
+                if(ViewModel.Mode == FormMode.EDIT)
+                {
+                    await ViewModel.SetDataOnEdit();
+                    ViewModel.FillControlsValues();
+                }
+                IsRendered = true;
+            }
+            LoaderIconed.IsVisible = false;
         }
 
         private void EditButton_Clicked(object sender, EventArgs e)

@@ -19,7 +19,7 @@
         </Grid>
     </NavigationPage.TitleView>
     <ContentPage.Content>
-        <Grid>
+        <Grid BackgroundColor="White">
             <ScrollView 
                 x:Name="scrollView">
                 <ScrollView.VerticalOptions>

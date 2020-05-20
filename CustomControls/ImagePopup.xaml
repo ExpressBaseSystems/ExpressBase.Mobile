@@ -5,58 +5,42 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.CustomControls.ImagePopup"
-             IsVisible="False"
-             AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-             AbsoluteLayout.LayoutFlags="All">
+             IsVisible="False">
     <ContentView.Content>
-        <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-            <BoxView
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"
-                BackgroundColor="#333333"
-                Opacity=".5"/>
-            <StackLayout 
-                Padding="10"
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-                <Frame 
-                    x:Name="ConfirmBoxFrame"
-                    HasShadow="True"
-                    BackgroundColor="White"
-                    BorderColor="#fafafa"
-                    Padding="0"
-                    CornerRadius="6"
-                    VerticalOptions="CenterAndExpand">
-                    <Frame.Content>
-                        <Grid RowSpacing="0" ColumnSpacing="1">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"></RowDefinition>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition Height="50"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <StackLayout Padding="10" Grid.Row="0" Grid.ColumnSpan="2" BackgroundColor="White">
-                                <Image x:Name="FullScreenImage" Aspect="AspectFill"/>
-                            </StackLayout>
-                            <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#eee" HeightRequest="1"/>
-                            <Button 
-                                x:Name="CloseButton"
-                                CornerRadius="0"
-                                Padding="0"
-                                Grid.Row="2"
-                                Grid.ColumnSpan="2"
-                                Text="Close"
-                                BackgroundColor="White"
-                                TextColor="#0076ff"
-                                HorizontalOptions="CenterAndExpand"
-                                Clicked="CloseButton_Clicked"/>
-                        </Grid>
-                    </Frame.Content>
-                </Frame>
-            </StackLayout>
-        </AbsoluteLayout>
+        <Grid>
+            <Frame 
+                x:Name="ConfirmBoxFrame"
+                BackgroundColor="White"
+                Padding="0"
+                VerticalOptions="FillAndExpand"
+                CornerRadius="0">
+                <Frame.Content>
+                    <Grid RowSpacing="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="50"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <StackLayout Grid.Row="0" VerticalOptions="CenterAndExpand">
+                            <Image 
+                                x:Name="FullScreenImage" 
+                                Aspect="AspectFill">
+                            </Image>
+                        </StackLayout>
+                        <BoxView Grid.Row="1" HeightRequest="1" Color="#eeeeee"></BoxView>
+                        <Button 
+                            x:Name="CloseButton"
+                            CornerRadius="0"
+                            Padding="0"
+                            Grid.Row="2"
+                            Text="Close"
+                            BackgroundColor="White"
+                            TextColor="#0076ff"
+                            HorizontalOptions="FillAndExpand"
+                            Clicked="CloseButton_Clicked"/>
+                    </Grid>
+                </Frame.Content>
+            </Frame>
+        </Grid>
     </ContentView.Content>
 </ContentView>

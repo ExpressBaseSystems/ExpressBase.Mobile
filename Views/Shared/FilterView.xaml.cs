@@ -56,7 +56,7 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             base.OnPropertyChanged(propertyName);
 
-            if(propertyName == FilterControlsProperty.PropertyName)
+            if (propertyName == FilterControlsProperty.PropertyName)
             {
                 Task.Run(() =>
                 {
@@ -73,8 +73,7 @@ namespace ExpressBase.Mobile.Views.Shared
                 {
                     Label lbl = new Label { Text = ctrl.Label };
 
-                    ctrl.NetworkType = this.NetWorkType;
-                    ctrl.InitXControl(FormMode.NEW);
+                    ctrl.InitXControl(FormMode.NEW, this.NetWorkType);
                     ctrl.XControl.Margin = new Thickness(0, 0, 0, 10);
                     this.FilterContainer.Children.Add(lbl);
                     this.FilterContainer.Children.Add(ctrl.XControl);

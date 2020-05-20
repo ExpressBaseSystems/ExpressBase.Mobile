@@ -57,6 +57,12 @@
                 Position="EndAndExpand"
                 Message="Saving record..."/>
 
+            <control:LoaderIconed 
+                IsVisible="False"
+                x:Name="LoaderIconed"
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All"/>
+
             <control:ImagePopup
                 x:Name="ImageFullScreen"/>
         </Grid>

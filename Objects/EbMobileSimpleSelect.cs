@@ -59,8 +59,10 @@ namespace ExpressBase.Mobile
 
         public CustomPicker Picker { set; get; }
 
-        public override void InitXControl(FormMode Mode)
+        public override void InitXControl(FormMode Mode,NetworkMode Network)
         {
+            base.InitXControl(Mode, Network);
+
             var bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
 
             if (string.IsNullOrEmpty(this.DataSourceRefId))

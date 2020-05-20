@@ -74,8 +74,10 @@ namespace ExpressBase.Mobile
             };
         }
 
-        public override void InitXControl(FormMode mode)
+        public override void InitXControl(FormMode mode,NetworkMode network)
         {
+            base.InitXControl(mode, network);
+
             this.FormRenderMode = mode;
             try
             {

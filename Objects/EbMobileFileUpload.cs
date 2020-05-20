@@ -58,8 +58,10 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public override void InitXControl(FormMode Mode)
+        public override void InitXControl(FormMode Mode,NetworkMode Network)
         {
+            base.InitXControl(Mode, Network);
+
             this.BuildXControl();
             this.AppendButtons();
 

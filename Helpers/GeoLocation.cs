@@ -23,8 +23,7 @@ namespace ExpressBase.Mobile.Helpers
             Location _loc = null;
             try
             {
-                var request = new GeolocationRequest(GeolocationAccuracy.Best);
-                _loc = await Geolocation.GetLocationAsync(request);
+                _loc = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10)));
 
                 if (_loc != null)
                 {

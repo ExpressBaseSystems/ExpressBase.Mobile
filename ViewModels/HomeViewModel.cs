@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                     if (mpage != null && mpage.Container is EbMobileForm)
                     {
-                        if (mpage.NetworkMode == NetworkMode.Offline || mpage.NetworkMode == NetworkMode.Mixed)
+                        if (mpage.NetworkMode != NetworkMode.Online)
                             (mpage.Container as EbMobileForm).CreateTableSchema();
                     }
                 }

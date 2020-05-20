@@ -75,7 +75,8 @@ namespace ExpressBase.Mobile.Enums
     {
         NEW = 0,
         EDIT = 1,
-        REF = 2
+        REF = 2,
+        PREFILL = 3
     }
 
     public enum WebFormDVModes

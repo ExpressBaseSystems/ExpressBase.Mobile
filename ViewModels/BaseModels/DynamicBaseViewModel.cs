@@ -26,14 +26,5 @@ namespace ExpressBase.Mobile.ViewModels.BaseModels
             this.PageTitle = page.DisplayName;
             this.NetworkType = page.NetworkMode;
         }
-
-        public DynamicBaseViewModel(EbMobilePage page, ColumnColletion contextCollumn, EbDataRow contextRow)
-        {
-            this.Page = page;
-            this.PageTitle = page.DisplayName;
-            this.NetworkType = page.NetworkMode;
-            this.ContextColumns = contextCollumn;
-            this.ContextRow = contextRow;
-        }
     }
 }

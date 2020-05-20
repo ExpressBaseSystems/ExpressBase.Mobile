@@ -51,7 +51,11 @@ namespace ExpressBase.Mobile
         //mobile prop
         public View XControl { set; get; }
 
-        public virtual void InitXControl(FormMode Mode) { }
+        public virtual void InitXControl(FormMode mode, NetworkMode network)
+        {
+            this.FormMode = mode;
+            this.NetworkType = network;
+        }
 
         public virtual StackLayout XView
         {
@@ -74,6 +78,8 @@ namespace ExpressBase.Mobile
                 };
             }
         }
+
+        public FormMode FormMode { set; get; }
 
         public NetworkMode NetworkType { set; get; }
 
@@ -120,8 +126,10 @@ namespace ExpressBase.Mobile
 
         public bool AutoSuggestion { get; set; }
 
-        public override void InitXControl(FormMode Mode)
+        public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
+            base.InitXControl(Mode, Network);
+
             Color bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White;
             if (TextMode == TextMode.MultiLine)
             {
@@ -212,8 +220,10 @@ namespace ExpressBase.Mobile
 
         private int ValueBoxNumber { set; get; } = 0;
 
-        public override void InitXControl(FormMode Mode)
+        public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
+            base.InitXControl(Mode, Network);
+
             if (RenderType == NumericBoxTypes.ButtonType)
             {
                 Grid grid = new Grid { ColumnSpacing = 10, IsEnabled = !this.ReadOnly };
@@ -320,8 +330,10 @@ namespace ExpressBase.Mobile
             return value.ToString();
         }
 
-        public override void InitXControl(FormMode Mode)
+        public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
+            base.InitXControl(Mode, Network);
+
             var bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
 
             Picker = new CustomDatePicker
@@ -375,8 +387,10 @@ namespace ExpressBase.Mobile
                 return true;
         }
 
-        public override void InitXControl(FormMode Mode)
+        public override void InitXControl(FormMode Mode,NetworkMode Network)
         {
+            base.InitXControl(Mode, Network);
+
             this.XControl = new CheckBox();
         }
 
@@ -456,8 +470,10 @@ namespace ExpressBase.Mobile
 
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
 
-        public override void InitXControl(FormMode Mode)
+        public override void InitXControl(FormMode Mode,NetworkMode Network)
         {
+            base.InitXControl(Mode, Network);
+
             this.XControl = new TextBox
             {
                 IsReadOnly = true,
