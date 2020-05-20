@@ -251,11 +251,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                         if (this.FilesOnEdit != null && this.FilesOnEdit.ContainsKey(pair.Value.Name))
                         {
-                            fup.Files = this.FilesOnEdit[pair.Value.Name];
+                            fup.Files.AddRange(this.FilesOnEdit[pair.Value.Name]);
                         }
                         pair.Value.SetValue(fup);
                     }
-                    if (pair.Value is ILinesEnabled)
+                    else if (pair.Value is ILinesEnabled)
                     {
                         EbDataTable lines = DataOnEdit.Tables.Find(table => table.TableName == (pair.Value as ILinesEnabled).TableName);
                         pair.Value.SetValue(lines);

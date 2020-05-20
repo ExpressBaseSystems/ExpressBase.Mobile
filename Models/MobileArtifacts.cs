@@ -329,6 +329,11 @@ namespace ExpressBase.Mobile.Models
         public int RowId { set; get; }
 
         public List<FileMetaInfo> Files { set; get; }
+
+        public FUPSetValueMeta()
+        {
+            Files = new List<FileMetaInfo>();
+        }
     }
 
     public class FileMetaInfo

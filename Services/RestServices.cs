@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -372,23 +373,31 @@ namespace ExpressBase.Mobile.Services
             return new WebformData();
         }
 
-        public void GetFile(string filename)
+        public Tuple<string, byte[]> GetFile(EbFileCategory category, string filename)
         {
             try
             {
-                RestRequest request = new RestRequest($"api/files/{filename}", Method.GET);
+                string imgType = category == EbFileCategory.File ? "files" : "images";
+
+                RestRequest request = new RestRequest($"api/{imgType}/{filename}", Method.GET);
 
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, Settings.RToken);
 
                 IRestResponse iresp = Client.Execute(request);
+
+                if(iresp.StatusCode == HttpStatusCode.OK)
+                {
+                    return new Tuple<string, byte[]>(iresp.ContentType, iresp.RawBytes);
+                }
             }
             catch (Exception ex)
             {
                 Log.Write("RestService.PullFormData---" + ex.Message);
                 Log.Write("RestService.PullFormData---" + ex.StackTrace);
             }
+            return null;
         }
     }
 }

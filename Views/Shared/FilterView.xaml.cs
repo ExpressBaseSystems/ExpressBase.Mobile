@@ -69,6 +69,9 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             try
             {
+                if (FilterControls.Any())
+                    this.FilterContainer.Children.Clear();
+
                 foreach (EbMobileControl ctrl in this.FilterControls)
                 {
                     Label lbl = new Label { Text = ctrl.Label };

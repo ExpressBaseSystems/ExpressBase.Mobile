@@ -84,7 +84,10 @@
                 BackgroundColor="White"
                 Grid.Row="1">
                 <StackLayout x:Name="FilterContainer">
-
+                    <Label Text="Empty"
+                           VerticalOptions="Center"
+                           HorizontalTextAlignment="Center">
+                    </Label>
                 </StackLayout>
             </ScrollView>
 

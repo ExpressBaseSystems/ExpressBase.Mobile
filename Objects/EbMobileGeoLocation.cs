@@ -27,7 +27,7 @@ namespace ExpressBase.Mobile
         private string PlaceHolder => @"<html><head><style>body{height:100%;width:100%;display:flex;justify-content:center;
                                     align-items:center;flex-direction:column}</style></head><body style='background:#eee'> 
                                     <container style='line-height:1.5'><p style='text-align: center;'>
-                                    You are not connected to internet</p> </container></body></html>";
+                                    @content@ </p> </container></body></html>";
 
         public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
@@ -52,7 +52,10 @@ namespace ExpressBase.Mobile
                         {
                             Loader.IsVisible = false;
                             WebView.HeightRequest = 100;
-                            WebView.Source = new HtmlWebViewSource { Html = PlaceHolder };
+                            WebView.Source = new HtmlWebViewSource
+                            {
+                                Html = PlaceHolder.Replace("@content@", "You are not connected to internet")
+                            };
                             WebView.IsVisible = true;
                         }
                     }
@@ -61,7 +64,10 @@ namespace ExpressBase.Mobile
                 {
                     Loader.IsVisible = false;
                     WebView.HeightRequest = 100;
-                    WebView.Source = new HtmlWebViewSource { Html = PlaceHolder };
+                    WebView.Source = new HtmlWebViewSource
+                    {
+                        Html = PlaceHolder.Replace("@content@", "Offline")
+                    };
                     WebView.IsVisible = true;
                 }
             }

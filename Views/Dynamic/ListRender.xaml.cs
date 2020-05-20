@@ -160,8 +160,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private async Task RefreshListView()
         {
-            await this.ViewModel.SetData(0);
+            this.Loader.IsVisible = true;
+            await this.ViewModel.SetData(this.Offset);
             this.AppendListItems();
+            this.Loader.IsVisible = false;
         }
 
         private void UpdatePaginationBar()

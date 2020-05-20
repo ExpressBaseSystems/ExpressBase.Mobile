@@ -58,7 +58,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public override void InitXControl(FormMode Mode,NetworkMode Network)
+        public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
             base.InitXControl(Mode, Network);
 
@@ -270,25 +270,18 @@ namespace ExpressBase.Mobile
 
                     foreach (FileWrapper file in Files)
                     {
-                        CustomImageWraper Wraper = new CustomImageWraper(file.FileName)
-                        {
-                            BackgroundColor = Color.FromHex("eeeeee"),
-                            Children =
-                            {
-                                new Image
-                                {
-                                    Aspect = Aspect.AspectFill,
-                                    HeightRequest = 160,
-                                    Source = ImageSource.FromStream(() => new MemoryStream(file.Bytea))
-                                }
-                            }
-                        };
-                        AddImageToGallery(Wraper);
+                        this.AddImage(file.FileName, file.Bytea);
                     }
                 }
                 else if (this.NetworkType == NetworkMode.Online)
                 {
-                    RestServices.Instance.GetFile($"{meta.RowId}.jpg");
+                    foreach (FileMetaInfo info in meta.Files)
+                    {
+                        var tuple = RestServices.Instance.GetFile(info.FileCategory, $"{meta.RowId}.jpg");
+                        if (tuple == null) continue;
+
+                        this.AddImage(info.FileName, tuple.Item2);
+                    }
                 }
             }
             catch (Exception ex)
@@ -296,6 +289,25 @@ namespace ExpressBase.Mobile
                 Log.Write(ex.Message);
             }
             return true;
+        }
+
+
+        private void AddImage(string filename, byte[] bytea)
+        {
+            CustomImageWraper Wraper = new CustomImageWraper(filename)
+            {
+                Children =
+                {
+                    new Image
+                    {
+                        Aspect = Aspect.AspectFill,
+                        HeightRequest = 160,
+                        Source = ImageSource.FromStream(() => new MemoryStream(bytea)),
+                        GestureRecognizers = { this.Recognizer }
+                    }
+                }
+            };
+            AddImageToGallery(Wraper);
         }
 
         public List<FileWrapper> GetFiles()
