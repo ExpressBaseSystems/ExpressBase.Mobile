@@ -132,6 +132,19 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
+        public static async Task SetJSONAsync(string key, object value)
+        {
+            try
+            {
+                Application.Current.Properties[key] = JsonConvert.SerializeObject(value);
+                await Application.Current.SavePropertiesAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Store.SetJSON::" + ex.Message);
+            }
+        }
+
         public static T GetJSON<T>(string key)
         {
             try

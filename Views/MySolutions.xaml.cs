@@ -14,6 +14,8 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MySolutions : ContentPage
     {
+        private bool isRendered;
+
         public MySolutionsViewModel ViewModel { set; get; }
 
         public ValidateSidResponse Response { set; get; }
@@ -24,11 +26,15 @@ namespace ExpressBase.Mobile.Views
             BindingContext = ViewModel = new MySolutionsViewModel();
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            if (ViewModel != null && ViewModel.MySolutions.Count <= 0)
-                SolutionName.Focus();
+
+            if (!isRendered)
+            {
+                await ViewModel.InitializeAsync();
+                isRendered = true;
+            }
         }
 
         protected override bool OnBackButtonPressed()
@@ -47,7 +53,7 @@ namespace ExpressBase.Mobile.Views
             PopupContainer.IsVisible = false;
         }
 
-        void AddSolution_Clicked(object sender, EventArgs e)
+        async void AddSolution_Clicked(object sender, EventArgs e)
         {
             try
             {
@@ -57,7 +63,7 @@ namespace ExpressBase.Mobile.Views
                 SolutionName.IsVisible = true;
                 SolutionName.Focus();
 
-                scrollView.ScrollToAsync(0, this.Height, true);
+                await scrollView.ScrollToAsync(0, this.Height, true);
             }
             catch (Exception ex)
             {
@@ -116,27 +122,12 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        private void DeleteSolution_Clicked(object sender, EventArgs e)
+        private async void DeleteSolution_Clicked(object sender, EventArgs e)
         {
             try
             {
                 string sname = (sender as Button).ClassId;
-                SolutionInfo info = ViewModel.MySolutions.Single(item => item.SolutionName == sname);
-                if (info != null)
-                {
-                    ViewModel.MySolutions.Remove(info);
-                    Store.SetJSON(AppConst.MYSOLUTIONS, new List<SolutionInfo>(ViewModel.MySolutions));
-                }
-
-                if (sname == ViewModel.CurrentSolution)
-                {
-                    Store.ResetSolution();
-                    Application.Current.MainPage = new NavigationPage(new MySolutions())
-                    {
-                        BarBackgroundColor = Color.FromHex("0046bb"),
-                        BarTextColor = Color.White
-                    };
-                }
+                await ViewModel.RemoveSolution(sname);
             }
             catch (Exception ex)
             {

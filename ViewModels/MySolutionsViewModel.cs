@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -16,48 +17,51 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class MySolutionsViewModel : StaticBaseViewModel
     {
+        private readonly ISolutionService solutionService;
+
         public string CurrentSolution { set; get; }
 
-        public ObservableCollection<SolutionInfo> MySolutions { set; get; }
+        private ObservableCollection<SolutionInfo> _mysolution;
 
-        public Command SolutionTapedCommand => new Command(SolutionTapedEvent);
+        public ObservableCollection<SolutionInfo> MySolutions
+        {
+            set
+            {
+                _mysolution = value;
+                NotifyPropertyChanged();
+            }
+            get { return _mysolution; }
+        }
+
+        public Command SolutionTapedCommand => new Command<object>(async (o) => await SolutionTapedEvent(o));
 
         public MySolutionsViewModel()
         {
-            try
-            {
-                List<SolutionInfo> solutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
-                this.MySolutions = new ObservableCollection<SolutionInfo>(solutions);
-
-                CurrentSolution = Store.GetValue(AppConst.SID);
-                foreach (var info in this.MySolutions)
-                {
-                    info.SetLogo();
-                    info.IsCurrent = info.SolutionName == CurrentSolution ? true : false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
+            solutionService = new SolutionService();
         }
 
-        private void SolutionTapedEvent(object obj)
+        public override async Task InitializeAsync()
+        {
+            CurrentSolution = await Store.GetValueAsync(AppConst.SID);
+
+            MySolutions = await solutionService.GetDataAsync();
+        }
+
+        private async Task SolutionTapedEvent(object obj)
         {
             try
             {
-                SolutionInfo tapedInfo = obj as SolutionInfo;
+                SolutionInfo tapedInfo = (SolutionInfo)obj;
                 if (tapedInfo.SolutionName == CurrentSolution) return;
 
-                Store.SetValue(AppConst.SID, tapedInfo.SolutionName);
-                Store.SetValue(AppConst.ROOT_URL, tapedInfo.RootUrl);
+                await Store.SetValueAsync(AppConst.SID, tapedInfo.SolutionName);
+                await Store.SetValueAsync(AppConst.ROOT_URL, tapedInfo.RootUrl);
 
-                this.ClearCached();
-                App.DataDB.CreateDB(tapedInfo.SolutionName);
-                HelperFunctions.CreatePlatFormDir();
-                RestServices.Instance.UpdateBaseUrl();
+                await solutionService.ClearCached();
+                await solutionService.CreateDB(CurrentSolution);
+                await solutionService.CreateDirectory();
 
-                Application.Current.MainPage.Navigation.PushAsync(new Login());
+                await Application.Current.MainPage.Navigation.PushAsync(new Login());
             }
             catch (Exception ex)
             {
@@ -78,23 +82,19 @@ namespace ExpressBase.Mobile.ViewModels
                     RootUrl = solutionUrl
                 };
 
-                List<SolutionInfo> sol = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
-                sol.Add(info);
-                Store.SetJSON(AppConst.MYSOLUTIONS, sol);
-                await Store.SetValueAsync(AppConst.SID, _sid);
-                await Store.SetValueAsync(AppConst.ROOT_URL, solutionUrl);
+                await solutionService.SetDataAsync(info);
 
-                //update page with newly added solution
                 info.IsCurrent = true;
                 this.MySolutions.Add(info);
 
-                this.ClearCached();
-                App.DataDB.CreateDB(_sid);
-                HelperFunctions.CreatePlatFormDir();
+                await solutionService.ClearCached();
+                await solutionService.CreateDB(CurrentSolution);
+                await solutionService.CreateDirectory();
+
                 RestServices.Instance.UpdateBaseUrl();
 
                 if (response.Logo != null)
-                    this.SaveLogo(response.Logo);
+                    await solutionService.SaveLogoAsync(CurrentSolution, response.Logo);
             }
             catch (Exception ex)
             {
@@ -102,30 +102,18 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        void SaveLogo(byte[] imageByte)
+        public async Task RemoveSolution(string sname)
         {
-            INativeHelper helper = DependencyService.Get<INativeHelper>();
-            try
-            {
-                if (!helper.DirectoryOrFileExist($"ExpressBase/{CurrentSolution}/logo.png", SysContentType.File))
-                    File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{CurrentSolution}/logo.png", imageByte);
-            }
-            catch (Exception ex)
-            {
-                Log.Write("SolutionSelect_SaveLogo" + ex.Message);
-            }
-        }
+            if (sname == this.CurrentSolution)
+                return;
 
-        void ClearCached()
-        {
-            Store.RemoveJSON(AppConst.OBJ_COLLECTION);//remove obj collection
-            Store.RemoveJSON(AppConst.APP_COLLECTION);
-            Store.RemoveJSON(AppConst.USER_LOCATIONS);
-            Store.RemoveJSON(AppConst.USER_OBJECT);
-            Store.Remove(AppConst.APPID);
-            Store.Remove(AppConst.USERNAME);
-            Store.Remove(AppConst.BTOKEN);
-            Store.Remove(AppConst.RTOKEN);
+            SolutionInfo info = this.MySolutions.Single(item => item.SolutionName == sname);
+
+            if (info != null)
+            {
+                this.MySolutions.Remove(info);
+                await solutionService.RemoveSolution(info);
+            }
         }
     }
 }

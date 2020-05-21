@@ -6,6 +6,7 @@ using ExpressBase.Mobile.Views;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
@@ -30,39 +31,6 @@ namespace ExpressBase.Mobile.ViewModels
             set
             {
                 this._isBusy = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        private bool _show_message;
-        public bool ShowMessage
-        {
-            get { return this._show_message; }
-            set
-            {
-                this._show_message = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        private string _message;
-        public string Message
-        {
-            get { return this._message; }
-            set
-            {
-                this._message = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        private Color _message_color;
-        public Color MessageColor
-        {
-            get { return this._message_color; }
-            set
-            {
-                this._message_color = value;
                 this.NotifyPropertyChanged();
             }
         }
@@ -132,19 +100,9 @@ namespace ExpressBase.Mobile.ViewModels
 
         public virtual void RefreshPage() { }
 
-        public void ShowMessageBox(string message, Color background)
+        public virtual Task InitializeAsync()
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                this.MessageColor = background;
-                this.Message = message;
-                this.ShowMessage = true;
-            });
-        }
-
-        public void HideMessageBox()
-        {
-            Device.BeginInvokeOnMainThread(() => this.ShowMessage = false );
+            return Task.FromResult(false);
         }
     }
 }

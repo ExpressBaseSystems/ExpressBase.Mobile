@@ -84,8 +84,8 @@
                 BackgroundColor="White"
                 Grid.Row="1">
                 <StackLayout x:Name="FilterContainer">
-                    <Label Text="Empty"
-                           VerticalOptions="Center"
+                    <Label Text="No Filter"
+                           VerticalOptions="CenterAndExpand"
                            HorizontalTextAlignment="Center">
                     </Label>
                 </StackLayout>
