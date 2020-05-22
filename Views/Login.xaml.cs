@@ -9,13 +9,27 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Login : ContentPage
     {
+        private bool isRendered;
+
+        private LoginViewModel ViewModel { set; get; }
+
         public Login()
         {
             InitializeComponent();
+            BindingContext = ViewModel = new LoginViewModel();
+        }
 
-            SolutionName.Text = Settings.SolutionId;
-            BindingContext = new LoginViewModel();
-            NavigationPage.SetHasBackButton(this, false);
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (!isRendered)
+            {
+                SolutionName.Text = Settings.SolutionId;
+
+                await ViewModel.InitializeAsync();
+                isRendered = true;
+            }
         }
 
         private void Email_Completed(object sender, EventArgs e)

@@ -12,6 +12,8 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Home : ContentPage
     {
+        private bool isRendered;
+
         public int BackButtonCount { set; get; } = 0;
 
         public HomeViewModel ViewModel { set; get; }
@@ -20,19 +22,29 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
             BindingContext = ViewModel = new HomeViewModel();
-            ObjectContainer.Content = ViewModel.View;
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
+            try
+            {
+                EbLocation loc = Settings.CurrentLocObject;
+                if (loc != null)
+                    CurrentLocation.Text = loc.ShortName;
+                else
+                    CurrentLocation.Text = "Default";
 
-            int _current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
-            EbLocation loc = Settings.Locations.Find(item => item.LocId == _current);
-            if (loc != null)
-                CurrentLocation.Text = loc.ShortName;
-            else
-                CurrentLocation.Text = "Default";
+                if (!isRendered)
+                {
+                    await ViewModel.InitializeAsync();
+                    isRendered = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
         protected override bool OnBackButtonPressed()
@@ -53,11 +65,6 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        public void RefreshComplete(View view)
-        {
-            ObjectContainer.Content = view;
-        }
-
         private async void RefreshView_Refreshing(object sender, System.EventArgs e)
         {
             IToast toast = DependencyService.Get<IToast>();
@@ -66,25 +73,18 @@ namespace ExpressBase.Mobile.Views
                 if (!Settings.HasInternet)
                 {
                     toast.Show("Not connected to Internet!");
-                    RootRefreshView.IsRefreshing = false;
                     return;
                 }
                 else
                 {
-                    await Auth.AuthIfTokenExpiredAsync();//authenticate if token expired
+                    await IdentityService.AuthIfTokenExpiredAsync();
 
                     RootRefreshView.IsRefreshing = true;
-                    var Coll = await RestServices.Instance.GetEbObjects(Settings.AppId, Settings.LocationId, true);
-                    if (Coll != null)
-                    {
-                        Store.SetJSON(AppConst.OBJ_COLLECTION, Coll.Pages);
-                        var vm = (BindingContext as HomeViewModel);
-                        vm.ObjectList = Coll.Pages;
-                        vm.BuildView();
-                        ObjectContainer.Content = vm.View;
-                        vm.DeployFormTables();
-                        await CommonServices.Instance.LoadLocalData(Coll.Data);//load pulled data to local
-                    }
+                    Store.RemoveJSON(AppConst.OBJ_COLLECTION);
+
+                    await ViewModel.Refresh();
+                    MenuView.Notify("ItemSource");
+
                     RootRefreshView.IsRefreshing = false;
                     toast.Show("Refreshed");
                 }
@@ -92,7 +92,7 @@ namespace ExpressBase.Mobile.Views
             catch (Exception ex)
             {
                 toast.Show("Something went wrong. Please try again");
-                Log.Write("ROOT MENU REFRESH-" + ex.Message);
+                Log.Write(ex.Message);
             }
         }
 

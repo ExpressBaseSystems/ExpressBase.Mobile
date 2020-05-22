@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Login"
-             Style="{StaticResource ContentPageStyle}">
+             NavigationPage.HasBackButton="False">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0">

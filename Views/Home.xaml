@@ -6,7 +6,6 @@
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Home"
-             Style="{StaticResource ContentPageStyle}"
              BackgroundColor="White">
 
     <NavigationPage.TitleView>
@@ -98,9 +97,13 @@
                                 </Grid>
                             </Frame>
                         </Grid>
-                        <Frame Padding="10,5" 
-                               BackgroundColor="Transparent" 
-                               x:Name="ObjectContainer"/>
+                        
+                        <control:Menu
+                            x:Name="MenuView"
+                            ItemSource="{Binding ObjectList}"
+                            ItemTaped="{Binding MenuItemTappedCommand}">
+                        </control:Menu>
+                        
                     </StackLayout>
                 </ScrollView>
             </RefreshView>

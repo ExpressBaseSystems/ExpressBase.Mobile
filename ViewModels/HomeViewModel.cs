@@ -18,178 +18,57 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class HomeViewModel : StaticBaseViewModel
     {
-        public View View { set; get; }
+        private readonly IMenuServices menuServices;
 
-        public List<MobilePagesWraper> ObjectList { set; get; }
+        private List<MobilePagesWraper> _objectList;
+
+        public List<MobilePagesWraper> ObjectList
+        {
+            get { return _objectList; }
+            set
+            {
+                _objectList = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public Command SyncButtonCommand => new Command(OnSyncClick);
+
+        public Command MenuItemTappedCommand => new Command<object>(async (o) => await ItemTapedEvent(o));
 
         public HomeViewModel()
         {
             PageTitle = Settings.AppName;
-
-            this.SetUpData();
-            this.BuildView();
-
-            //deploy tables for forms
-            this.DeployFormTables();
+            menuServices = new MenuServices();
         }
 
-        public void DeployFormTables()
-        {
-            Task.Run(() =>
-            {
-                foreach (MobilePagesWraper _p in this.ObjectList)
-                {
-                    EbMobilePage mpage = _p.ToPage();
-
-                    if (mpage != null && mpage.Container is EbMobileForm)
-                    {
-                        if (mpage.NetworkMode != NetworkMode.Online)
-                            (mpage.Container as EbMobileForm).CreateTableSchema();
-                    }
-                }
-            });
-        }
-
-        public void SetUpData()
-        {
-            List<MobilePagesWraper> _objlist = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
-
-            if (_objlist != null)
-                this.ObjectList = _objlist;
-            else
-                this.ObjectList = new List<MobilePagesWraper>();
-        }
-
-        public void BuildView()
-        {
-            StackLayout stack = new StackLayout();
-            TapGestureRecognizer tapGesture = new TapGestureRecognizer();
-            tapGesture.Tapped += ObjFrame_Clicked;
-            Dictionary<string, List<MobilePagesWraper>> grouped = ObjectList.Group();
-
-            foreach (string label in ContainerLabels.ListOrder)
-            {
-                if (grouped.ContainsKey(label) && grouped[label].Any())
-                {
-                    StackLayout groupLayout = new StackLayout
-                    {
-                        Children =
-                        {
-                            new Label
-                            {
-                                FontSize = 16, Text = label + $" ({grouped[label].Count})", Padding = 5,
-                                Style = (Style)HelperFunctions.GetResourceValue("MediumLabel")
-                            }
-                        }
-                    };
-                    this.AddGroupElement(groupLayout, grouped[label], tapGesture);
-                    stack.Children.Add(groupLayout);
-                }
-            }
-            this.View = stack;
-        }
-
-        private void AddGroupElement(StackLayout groupLayout, List<MobilePagesWraper> pageWrapers, TapGestureRecognizer gesture)
+        public override async Task InitializeAsync()
         {
             try
             {
-                Grid grid = new Grid
-                {
-                    Padding = 5,
-                    RowSpacing = 15,
-                    ColumnSpacing = 15,
-                    RowDefinitions = { new RowDefinition() },
-                    ColumnDefinitions = {
-                        new ColumnDefinition(),
-                        new ColumnDefinition(),
-                        new ColumnDefinition()
-                    }
-                };
-                int rownum = 0;
-                int colnum = 0;
-
-                foreach (MobilePagesWraper wrpr in pageWrapers)
-                {
-                    if (wrpr.IsHidden) continue;
-
-                    StackLayout objectTitle = this.GetObjectTile(wrpr, gesture);
-
-                    grid.Children.Add(objectTitle, colnum, rownum);
-
-                    if (wrpr != pageWrapers.Last())
-                    {
-                        if (colnum == 2)
-                        {
-                            grid.RowDefinitions.Add(new RowDefinition());
-                            rownum++;
-                            colnum = 0;
-                        }
-                        else
-                            colnum += 1;
-                    }
-                }
-                groupLayout.Children.Add(grid);
-            }
-            catch (Exception ex)
-            {
-                Log.Write("ObjectRenderViewModel.AddGroupElement---" + ex.Message);
-            }
-        }
-
-        private StackLayout GetObjectTile(MobilePagesWraper wrpr, TapGestureRecognizer gesture)
-        {
-            StackLayout container = new StackLayout { Orientation = StackOrientation.Vertical };
-            try
-            {
-                CustomShadowFrame iconFrame = new CustomShadowFrame(wrpr) { GestureRecognizers = { gesture } };
-                container.Children.Add(iconFrame);
-
-                string labelIcon = string.Empty;
-                try
-                {
-                    if (wrpr.ObjectIcon.Length != 4) throw new Exception();
-                    labelIcon = Regex.Unescape("\\u" + wrpr.ObjectIcon);
-                }
-                catch (Exception ex)
-                {
-                    labelIcon = Regex.Unescape("\\u" + wrpr.GetDefaultIcon());
-                    Log.Write("font icon format is invalid." + ex.Message);
-                }
-
-                Label icon = new Label
-                {
-                    Text = labelIcon,
-                    FontSize = 35,
-                    TextColor = wrpr.IconColor,
-                    VerticalTextAlignment = TextAlignment.Center,
-                    HorizontalTextAlignment = TextAlignment.Center,
-                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
-                };
-                icon.SizeChanged += IconContainer_SizeChanged;
-                iconFrame.Content = icon;
-
-                Label name = new Label
-                {
-                    FontSize = 13,
-                    Text = wrpr.DisplayName,
-                    HorizontalTextAlignment = TextAlignment.Center
-                };
-                container.Children.Add(name);
+                ObjectList = await menuServices.GetDataAsync(Settings.AppId, Settings.LocationId);
+                await menuServices.DeployFormTables(ObjectList);
             }
             catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }
-            return container;
         }
 
-        private void IconContainer_SizeChanged(object sender, EventArgs e)
+        public async Task Refresh()
         {
-            Label lay = (sender as Label);
-            if (lay.Width != lay.Height)
-                lay.HeightRequest = lay.Width;
+            try
+            {
+                List<MobilePagesWraper> objList = await menuServices.GetDataAsync(Settings.AppId, Settings.LocationId);
+
+                ObjectList.Clear();
+                ObjectList.AddRange(objList);
+                await menuServices.DeployFormTables(ObjectList);
+            }
+            catch(Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
         private async void OnSyncClick(object sender)
@@ -226,7 +105,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         private bool IsTapped;
 
-        private async void ObjFrame_Clicked(object obj, EventArgs e)
+        private async Task ItemTapedEvent(object obj)
         {
             if (IsTapped) return;
 

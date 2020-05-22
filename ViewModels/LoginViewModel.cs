@@ -11,7 +11,6 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class LoginViewModel : StaticBaseViewModel
     {
-
         private string email;
 
         public string Email
@@ -48,46 +47,66 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public Command LoginCommand { set; get; }
+        private readonly IIdentityService identityService;
+
+        public Command LoginCommand => new Command(async () => await LoginAction());
 
         public LoginViewModel()
         {
-            this.Email = Settings.UserName; // fill email on redirect
-            this.LoginCommand = new Command(async () => await LoginAction());
-            this.SetLogo();
+            identityService = new IdentityService();
+        }
+
+        public override async Task InitializeAsync()
+        {
+            try
+            {
+                this.Email = Settings.UserName;
+                LogoUrl = await identityService.GetLogo(Settings.SolutionId);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
         private async Task LoginAction()
         {
-            IToast toast = DependencyService.Get<IToast>();
-
-            if (!Settings.HasInternet)
+            try
             {
-                toast.Show("Not connected to internet!");
-                return;
-            }
+                IToast toast = DependencyService.Get<IToast>();
 
-            string _username = this.Email.Trim();
-            string _password = this.PassWord.Trim();
-
-            if (CanLogin())
-            {
-                IsBusy = true;
-                ApiAuthResponse response = await Auth.TryAuthenticateAsync(_username, _password);
-                if (response.IsValid)
+                if (!Settings.HasInternet)
                 {
-                    Auth.UpdateStore(response, _username, password);
-                    IsBusy = false;
-                    await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+                    toast.Show("Not connected to internet!");
+                    return;
+                }
+
+                string _username = this.Email.Trim();
+                string _password = this.PassWord.Trim();
+
+                if (this.CanLogin())
+                {
+                    IsBusy = true;
+                    ApiAuthResponse response = await identityService.AuthenticateAsync(_username, _password);
+                    if (response.IsValid)
+                    {
+                        await identityService.UpdateAuthInfo(response, _username, password);
+                        IsBusy = false;
+                        await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+                    }
+                    else
+                    {
+                        IsBusy = false;
+                        toast.Show("wrong username or password.");
+                    }
                 }
                 else
-                {
-                    IsBusy = false;
-                    toast.Show("wrong username or password.");
-                }
+                    toast.Show("Email/Password cannot be empty");
             }
-            else
-                toast.Show("Email/Password cannot be empty");
+            catch (Exception ex)
+            {
+                Log.Write("login clicked : " + ex.Message);
+            }
         }
 
         bool CanLogin()
@@ -95,22 +114,6 @@ namespace ExpressBase.Mobile.ViewModels
             if ((string.IsNullOrEmpty(this.Email) || string.IsNullOrEmpty(this.PassWord)))
                 return false;
             return true;
-        }
-
-        void SetLogo()
-        {
-            INativeHelper helper = DependencyService.Get<INativeHelper>();
-            string sid = Settings.SolutionId;
-            try
-            {
-                var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
-                if (bytes != null)
-                    LogoUrl = ImageSource.FromStream(() => new MemoryStream(bytes));
-            }
-            catch (Exception ex)
-            {
-                Log.Write("Login_SetLogo" + ex.Message);
-            }
         }
     }
 }

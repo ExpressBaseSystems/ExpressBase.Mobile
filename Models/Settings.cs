@@ -43,6 +43,14 @@ namespace ExpressBase.Mobile.Models
             }
         }
 
+        public static EbLocation CurrentLocObject
+        {
+            get
+            {
+                return Locations.Find(item => item.LocId == LocationId);
+            }
+        }
+
         public static int UserId
         {
             get

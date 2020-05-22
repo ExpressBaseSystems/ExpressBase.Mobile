@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Shared;
 using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -12,6 +13,8 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MyApplications : ContentPage
     {
+        public bool isRendered;
+
         public MyApplicationsViewModel ViewModel { set; get; }
 
         public bool IsInternal { set; get; }
@@ -25,23 +28,36 @@ namespace ExpressBase.Mobile.Views
                 ResetButton.IsVisible = false;
             else
                 NavigationPage.SetHasBackButton(this, false);
-
-            ToggleLocationSwitcher();
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
 
-            int _current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
-            EbLocation loc = Settings.Locations.Find(item => item.LocId == _current);
-            if (loc != null)
-                CurrentLocation.Text = loc.ShortName;
-            else
-                CurrentLocation.Text = "Default";
+            try
+            {
+                int _current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
+                EbLocation loc = Settings.Locations.Find(item => item.LocId == _current);
+
+                if (loc != null)
+                    CurrentLocation.Text = loc.ShortName;
+                else
+                    CurrentLocation.Text = "Default";
+
+                if (!isRendered)
+                {
+                    await ViewModel.InitializeAsync();
+                    this.ToggleLocationSwitcher();
+                    isRendered = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
 
-        private void ApplicationsRefresh_Refreshing(object sender, System.EventArgs e)
+        private async void ApplicationsRefresh_Refreshing(object sender, System.EventArgs e)
         {
             try
             {
@@ -52,7 +68,7 @@ namespace ExpressBase.Mobile.Views
                 }
                 ApplicationsRefresh.IsRefreshing = true;
                 Store.RemoveJSON(AppConst.APP_COLLECTION);
-                ViewModel.PullApplications();
+                await ViewModel.Refresh();
                 ApplicationsRefresh.IsRefreshing = false;
 
                 ToggleLocationSwitcher();
@@ -88,7 +104,7 @@ namespace ExpressBase.Mobile.Views
             try
             {
                 Store.RemoveJSON(AppConst.APP_COLLECTION);
-                ViewModel.PullApplications();
+                Task.Run(async () => await ViewModel.Refresh());
                 ToggleLocationSwitcher();
             }
             catch (Exception ex)

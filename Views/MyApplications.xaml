@@ -5,8 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.MyApplications"
-             Style="{StaticResource ContentPageStyle}">
+             x:Class="ExpressBase.Mobile.Views.MyApplications">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -14,7 +13,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+            <Label Text="Application Switcher" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
             <Button Text="&#xf013;" x:Name="ResetButton" Style="{StaticResource ToolBarButtonStyle}" Clicked="ResetButton_Clicked" Grid.Column="1"/>
         </Grid>
     </NavigationPage.TitleView>

@@ -9,7 +9,7 @@ namespace ExpressBase.Mobile.Extensions
 {
     public static class ListExtension
     {
-        public static Dictionary<string, List<MobilePagesWraper>> Group(this IList<MobilePagesWraper> Pages)
+        public static Dictionary<string, List<MobilePagesWraper>> Group(this IEnumerable<MobilePagesWraper> Pages)
         {
             Dictionary<string, List<MobilePagesWraper>> dict = new Dictionary<string, List<MobilePagesWraper>>();
 

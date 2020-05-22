@@ -19,7 +19,19 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class MyApplicationsViewModel : StaticBaseViewModel
     {
-        public ObservableCollection<AppData> Applications { get; private set; }
+        private readonly IApplicationService applicationService;
+
+        private ObservableCollection<AppData> _applications;
+
+        public ObservableCollection<AppData> Applications
+        {
+            get { return _applications; }
+            set
+            {
+                _applications = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public Command AppSelectedCommand => new Command(async (obj) => await ItemSelected(obj));
 
@@ -27,36 +39,21 @@ namespace ExpressBase.Mobile.ViewModels
 
         public MyApplicationsViewModel()
         {
-            PageTitle = "Application Switcher";
-            Applications = new ObservableCollection<AppData>();
-            PullApplications();
+            applicationService = new ApplicationService();
         }
 
-        public void PullApplications()
+        public override async Task InitializeAsync()
         {
-            try
-            {
-                List<AppData> _apps = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
+            Applications = await applicationService.GetDataAsync();
+            await FillRandomColor();
+        }
 
-                if (_apps == null || _apps.Count <= 0)
-                {
-                    int locid = Store.GetValue<int>(AppConst.CURRENT_LOCATION);
-                    List<AppData> applications = RestServices.Instance.GetAppCollections(locid);
-                    this.Applications.Clear();
-                    this.Applications.AddRange(applications);
-                    this.Applications.OrderBy(x => x.AppName);
-
-                    Store.SetJSON(AppConst.APP_COLLECTION, applications);
-                }
-                else
-                    this.Applications.AddRange(_apps);
-
-                FillRandomColor();
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
+        public async Task Refresh()
+        {
+            ObservableCollection<AppData> apps = await applicationService.GetDataAsync();
+            Applications.Clear();
+            Applications.AddRange(apps);
+            await FillRandomColor();
         }
 
         private async Task ItemSelected(object selected)
@@ -111,8 +108,10 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private void FillRandomColor()
+        private async Task FillRandomColor()
         {
+            await Task.Delay(1);
+
             //fill by randdom colors
             Random random = new Random();
             foreach (AppData appdata in this.Applications)

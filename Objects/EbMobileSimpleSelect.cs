@@ -24,7 +24,7 @@ namespace ExpressBase.Mobile
                 if (!string.IsNullOrEmpty(DataSourceRefId))
                 {
                     if (this.ValueMember != null)
-                        return this.ValueMember.EbDbType;
+                        return this.ValueMember.Type;
                     else
                         return EbDbTypes.String;
                 }
@@ -71,7 +71,7 @@ namespace ExpressBase.Mobile
                 {
                     Title = $"Select {this.Label}",
                     FontSize = 15,
-                    TextColor = (Color)HelperFunctions.GetResourceValue("Gray-900"),
+                    TextColor = Color.FromHex("333942"),
                     ItemsSource = this.Options,
                     ItemDisplayBinding = new Binding("DisplayName"),
                     IsEnabled = !this.ReadOnly,
