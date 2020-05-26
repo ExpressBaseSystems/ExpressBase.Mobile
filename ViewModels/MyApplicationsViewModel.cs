@@ -1,18 +1,13 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
@@ -45,7 +40,7 @@ namespace ExpressBase.Mobile.ViewModels
         public override async Task InitializeAsync()
         {
             Applications = await applicationService.GetDataAsync();
-            await FillRandomColor();
+            FillRandomColor();
         }
 
         public async Task Refresh()
@@ -53,32 +48,28 @@ namespace ExpressBase.Mobile.ViewModels
             ObservableCollection<AppData> apps = await applicationService.GetDataAsync();
             Applications.Clear();
             Applications.AddRange(apps);
-            await FillRandomColor();
+            FillRandomColor();
         }
 
         private async Task ItemSelected(object selected)
         {
             try
             {
-                var apData = selected as AppData;
+                AppData apData = (AppData)selected;
 
-                if (Settings.AppId != apData.AppId)
+                if (App.Settings.AppId != apData.AppId)
                 {
                     Store.Remove(AppConst.OBJ_COLLECTION);
 
-                    if (!Settings.HasInternet)
+                    if (!Utils.HasInternet)
                     {
                         DependencyService.Get<IToast>().Show("Not connected to internet!");
                         return;
                     }
 
-                    await Store.SetValueAsync(AppConst.APPID, apData.AppId.ToString());
-                    await Store.SetValueAsync(AppConst.APPNAME, apData.AppName);
+                    await Store.SetJSONAsync(AppConst.CURRENT_APP, apData);
+                    App.Settings.CurrentApplication = apData;
 
-                    IsBusy = true;
-                    await PullObjectsByApp(apData.AppId);
-
-                    IsBusy = false;
                     App.RootMaster = new RootMaster(typeof(Views.Home));
                     Application.Current.MainPage = App.RootMaster;
                 }
@@ -91,29 +82,11 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private async Task PullObjectsByApp(int appid)
+        private void FillRandomColor()
         {
-            try
-            {
-                MobilePageCollection Coll = await RestServices.Instance.GetEbObjects(appid, Settings.LocationId, true);
-
-                Store.SetJSON(AppConst.OBJ_COLLECTION, Coll.Pages);
-
-                if (Coll.TableNames?.Count > 0)
-                    await CommonServices.Instance.LoadLocalData(Coll.Data);
-            }
-            catch (Exception ex)
-            {
-                Log.Write("AppSelect_PullObjectsByApp---" + ex.Message);
-            }
-        }
-
-        private async Task FillRandomColor()
-        {
-            await Task.Delay(1);
-
             //fill by randdom colors
             Random random = new Random();
+
             foreach (AppData appdata in this.Applications)
             {
                 var randomColor = ColorSet.Colors[random.Next(6)];

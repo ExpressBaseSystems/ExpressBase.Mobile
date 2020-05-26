@@ -152,6 +152,7 @@
             </Grid>
 
             <control:LoaderIconed 
+                x:Name="Loader"
                 IsVisible="{Binding IsBusy}"
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All"/>

@@ -373,7 +373,7 @@ namespace ExpressBase.Mobile
                 }
                 else
                 {
-                    if (Settings.HasInternet && !string.IsNullOrEmpty(this.DataSourceRefId))
+                    if (Utils.HasInternet && !string.IsNullOrEmpty(this.DataSourceRefId))
                     {
                         VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, null, 0, 0);
                         if (data.Data != null && data.Data.Tables.Count >= 2)

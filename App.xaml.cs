@@ -17,21 +17,28 @@ namespace ExpressBase.Mobile
 
         public static MasterDetailPage RootMaster { set; get; }
 
+        public static SettingsServices Settings { set; get; }
+
         public App(string dbPath)
         {
             InitializeComponent();
+
             DbPath = dbPath;
             if (DataDB == null)
                 DataDB = DependencyService.Get<IDataBase>();
+
+            Settings = new SettingsServices();
         }
 
         public App()
         {
             InitializeComponent();
+
             DataDB = DependencyService.Get<IDataBase>();
+            Settings = new SettingsServices();
         }
 
-        async Task InitNavigation()
+        private async Task InitNavigation()
         {
             MainPage = new NavigationPage
             {
@@ -39,19 +46,21 @@ namespace ExpressBase.Mobile
                 BarTextColor = Color.White
             };
 
-            string sid = Store.GetValue(AppConst.SID);
-            if (sid == null)
+            await Settings.Resolve();
+
+            if (Settings.Sid == null)
                 await MainPage.Navigation.PushAsync(new MySolutions());
             else
             {
-                string rtoken = Store.GetValue(AppConst.RTOKEN);
-                if (rtoken != null)
+                if (Settings.RToken != null)
                 {
-                    if (Settings.HasInternet && Auth.IsTokenExpired(rtoken))
+                    if (Utils.HasInternet && IdentityService.IsTokenExpired(Settings.RToken))
                     {
-                        string username = Store.GetValue(AppConst.USERNAME);
-                        string password = Store.GetValue(AppConst.PASSWORD);
-                        ApiAuthResponse authresponse = Auth.TryAuthenticate(username, password);
+                        string username = await Store.GetValueAsync(AppConst.USERNAME);
+                        string password = await Store.GetValueAsync(AppConst.PASSWORD);
+
+                        ApiAuthResponse authresponse = await IdentityService.Instance.AuthenticateAsync(username, password);
+
                         if (authresponse.IsValid)
                         {
                             RootMaster = new RootMaster(typeof(Home));
@@ -62,9 +71,7 @@ namespace ExpressBase.Mobile
                     }
                     else
                     {
-                        string apid = Store.GetValue(AppConst.APPID);
-
-                        if (apid == null)
+                        if (Settings.AppId <= 0)
                             await MainPage.Navigation.PushAsync(new MyApplications());
                         else
                         {

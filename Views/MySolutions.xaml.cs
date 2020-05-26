@@ -1,12 +1,8 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
@@ -16,9 +12,9 @@ namespace ExpressBase.Mobile.Views
     {
         private bool isRendered;
 
-        public MySolutionsViewModel ViewModel { set; get; }
+        public MySolutionsViewModel ViewModel { private set; get; }
 
-        public ValidateSidResponse Response { set; get; }
+        public ValidateSidResponse Response { private set; get; }
 
         public MySolutions()
         {
@@ -76,16 +72,17 @@ namespace ExpressBase.Mobile.Views
             try
             {
                 IToast toast = DependencyService.Get<IToast>();
-                if (!Settings.HasInternet)
+                if (!Utils.HasInternet)
                 {
                     toast.Show("Not connected to internet!");
                     return;
                 }
-                if (string.IsNullOrEmpty(SolutionName.Text)) return;
-                if (ViewModel.MySolutions.Any(item => item.SolutionName == SolutionName.Text.Trim().Split('.')[0])) return;
+                if (string.IsNullOrEmpty(SolutionName.Text) || ViewModel.IsSolutionExist(SolutionName.Text))
+                    return;
 
                 Loader.IsVisible = true;
-                Response = await RestServices.ValidateSid(SolutionName.Text);
+                Response = await ViewModel.Validate(SolutionName.Text.Trim());
+
                 if (Response.IsValid)
                 {
                     Loader.IsVisible = false;
@@ -115,19 +112,6 @@ namespace ExpressBase.Mobile.Views
                 PopupContainer.IsVisible = false;
 
                 await Application.Current.MainPage.Navigation.PushAsync(new Login());
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
-        }
-
-        private async void DeleteSolution_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                string sname = (sender as Button).ClassId;
-                await ViewModel.RemoveSolution(sname);
             }
             catch (Exception ex)
             {

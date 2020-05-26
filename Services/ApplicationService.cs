@@ -30,11 +30,8 @@ namespace ExpressBase.Mobile.Services
 
                 if (applications == null || applications.Count <= 0)
                 {
-                    int locid = Store.GetValue<int>(AppConst.CURRENT_LOCATION);
-
-                    applications = await this.GetAppCollections(locid);
+                    applications = await this.GetAppCollections(App.Settings.CurrentLocId);
                     applications.OrderBy(x => x.AppName);
-
                     await Store.SetJSONAsync(AppConst.APP_COLLECTION, applications);
                 }
             }
@@ -50,11 +47,11 @@ namespace ExpressBase.Mobile.Services
             List<AppData> _Apps = null;
             try
             {
-                RestClient client = new RestClient(Settings.RootUrl);
+                RestClient client = new RestClient(App.Settings.RootUrl);
 
                 RestRequest request = new RestRequest("api/menu", Method.GET);
-                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
-                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
+                request.AddHeader(AppConst.BTOKEN, Utils.BToken);
+                request.AddHeader(AppConst.RTOKEN, Utils.RToken);
 
                 request.AddParameter("locid", locid);
 

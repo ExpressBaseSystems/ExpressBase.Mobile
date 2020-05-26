@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
@@ -60,8 +61,8 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                this.Email = Settings.UserName;
-                LogoUrl = await identityService.GetLogo(Settings.SolutionId);
+                this.Email = App.Settings.CurrentSolution?.LastUser;
+                LogoUrl = await identityService.GetLogo(App.Settings.Sid);
             }
             catch (Exception ex)
             {
@@ -75,7 +76,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 IToast toast = DependencyService.Get<IToast>();
 
-                if (!Settings.HasInternet)
+                if (!Utils.HasInternet)
                 {
                     toast.Show("Not connected to internet!");
                     return;
@@ -90,7 +91,8 @@ namespace ExpressBase.Mobile.ViewModels
                     ApiAuthResponse response = await identityService.AuthenticateAsync(_username, _password);
                     if (response.IsValid)
                     {
-                        await identityService.UpdateAuthInfo(response, _username, password);
+                        await identityService.UpdateAuthInfo(response, _username, password, true);
+                        await identityService.UpdateLastUser(_username);
                         IsBusy = false;
                         await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
                     }

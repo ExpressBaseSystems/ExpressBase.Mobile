@@ -103,13 +103,12 @@
                                                 Padding="0"
                                                 FontSize="15"
                                                 Margin="0"
-                                                ClassId="{Binding SolutionName}"
                                                 Text="&#xf014;"
                                                 TextColor="Red"
                                                 BackgroundColor="Transparent"
                                                 WidthRequest="50"
                                                 FontFamily="{StaticResource FontAwesome}"
-                                                Clicked="DeleteSolution_Clicked"/>
+                                                Command="{Binding BindingContext.SolutionRemoveCommand,Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}"/>
                                         </Grid>
                                     </Frame>
                                 </DataTemplate>
@@ -180,7 +179,7 @@
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All"/>
-            
+
             <!--message box-->
             <ContentView 
                 x:Name="PopupContainer"

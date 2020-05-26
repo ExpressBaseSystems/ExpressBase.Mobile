@@ -21,16 +21,20 @@ namespace ExpressBase.Mobile.Services
 
         Task<ImageSource> GetLogo(string sid);
 
-        Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password);
+        Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password, bool update_loc = false);
+
+        Task UpdateLastUser(string username);
     }
 
     public class IdentityService : IIdentityService
     {
         public RestClient Client { set; get; }
 
+        public static IdentityService Instance => new IdentityService();
+
         public IdentityService()
         {
-            Client = new RestClient(Settings.RootUrl);
+            Client = new RestClient(App.Settings.RootUrl);
         }
 
         public async Task<ApiAuthResponse> AuthenticateAsync(string username, string password)
@@ -77,28 +81,39 @@ namespace ExpressBase.Mobile.Services
             return null;
         }
 
-        public async Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password)
+        public async Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password, bool update_loc = false)
         {
             try
             {
                 //primitive data
                 await Store.SetValueAsync(AppConst.BTOKEN, resp.BToken);
                 await Store.SetValueAsync(AppConst.RTOKEN, resp.RToken);
-                await Store.SetValueAsync(AppConst.USER_ID, resp.UserId.ToString());
-                await Store.SetValueAsync(AppConst.DISPLAY_NAME, resp.DisplayName);
-                await Store.SetValueAsync(AppConst.USERNAME, username.Trim());
+
+                App.Settings.RToken = resp.RToken;
+                App.Settings.BToken = resp.BToken;
+                App.Settings.CurrentUser = resp.User;
+
                 await Store.SetValueAsync(AppConst.PASSWORD, password.Trim());
-                await Store.SetValueAsync(AppConst.CURRENT_LOCATION, resp.User.Preference.DefaultLocation.ToString());
+
+                //await Store.SetValueAsync(AppConst.USER_ID, resp.UserId.ToString());
+                //await Store.SetValueAsync(AppConst.DISPLAY_NAME, resp.DisplayName);
+                //await Store.SetValueAsync(AppConst.USERNAME, username.Trim());
+
+                if (update_loc)
+                {
+                    EbLocation loc = resp.Locations.Find(item => item.LocId == resp.User.Preference.DefaultLocation);
+                    await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, loc);
+                    App.Settings.CurrentLocation = loc;
+                }
 
                 //json data
                 await Store.SetJSONAsync(AppConst.USER_OBJECT, resp.User);
                 await Store.SetJSONAsync(AppConst.USER_LOCATIONS, resp.Locations);
 
-
                 if (resp.DisplayPicture != null)
                 {
                     INativeHelper helper = DependencyService.Get<INativeHelper>();
-                    string url = helper.NativeRoot + $"/ExpressBase/{Settings.SolutionId.ToUpper()}/user.png";
+                    string url = helper.NativeRoot + $"/ExpressBase/{Utils.SolutionId.ToUpper()}/user.png";
                     File.WriteAllBytes(url, resp.DisplayPicture);
                 }
             }
@@ -120,17 +135,35 @@ namespace ExpressBase.Mobile.Services
 
         public static async Task AuthIfTokenExpiredAsync()
         {
-            if (IsTokenExpired(Settings.RToken))
+            if (IsTokenExpired(App.Settings.RToken))
             {
-                string _username = Settings.UserName;
-                string _password = Settings.PassWord;
+                string _username = App.Settings.UserName;
+                string _password = Utils.PassWord;
 
-                IdentityService service = new IdentityService();
+                IdentityService service = IdentityService.Instance;
 
                 ApiAuthResponse response = await service.AuthenticateAsync(_username, _password);
                 if (response.IsValid)
                     await service.UpdateAuthInfo(response, _username, _password);
             }
+        }
+
+        public async Task UpdateLastUser(string username)
+        {
+            List<SolutionInfo> solutions = Utils.Solutions;
+            SolutionInfo current = App.Settings.CurrentSolution;
+            current.LastUser = username;
+
+            foreach (var sol in solutions)
+            {
+                if (sol.SolutionName == current.SolutionName && sol.RootUrl == current.RootUrl)
+                {
+                    sol.LastUser = username;
+                    break;
+                }
+            }
+
+            await Store.SetJSONAsync(AppConst.MYSOLUTIONS, solutions);
         }
     }
 }

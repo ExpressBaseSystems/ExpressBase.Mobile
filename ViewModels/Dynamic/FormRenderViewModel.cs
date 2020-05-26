@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
@@ -182,7 +183,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     if (string.IsNullOrEmpty(this.Form.WebFormRefId))
                         throw new Exception("webform refid is empty");
 
-                    WebformData data = await RestServices.Instance.PullFormDataAsync(this.Page.RefId, this.RowId, Settings.LocationId);
+                    WebformData data = await RestServices.Instance.PullFormDataAsync(this.Page.RefId, this.RowId, Utils.LocationId);
                     this.DataOnEdit = data.ToDataSet();
                     this.FilesOnEdit = data.ToFilesMeta();
                 }
@@ -198,7 +199,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             IToast toast = DependencyService.Get<IToast>();
 
-            if (this.NetworkType == NetworkMode.Online && !Settings.HasInternet)
+            if (this.NetworkType == NetworkMode.Online && !Utils.HasInternet)
                 toast.Show("you are not connected to Internet");
 
             if (Form.Validate())

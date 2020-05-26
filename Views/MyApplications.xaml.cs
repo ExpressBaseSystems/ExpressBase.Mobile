@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Shared;
 using System;
@@ -21,9 +20,12 @@ namespace ExpressBase.Mobile.Views
 
         public MyApplications(bool isInternal = false)
         {
-            InitializeComponent();
             IsInternal = isInternal;
+
+            InitializeComponent();
+            Loader.IsVisible = true;
             BindingContext = ViewModel = new MyApplicationsViewModel();
+
             if (isInternal)
                 ResetButton.IsVisible = false;
             else
@@ -36,13 +38,7 @@ namespace ExpressBase.Mobile.Views
 
             try
             {
-                int _current = Convert.ToInt32(Store.GetValue(AppConst.CURRENT_LOCATION));
-                EbLocation loc = Settings.Locations.Find(item => item.LocId == _current);
-
-                if (loc != null)
-                    CurrentLocation.Text = loc.ShortName;
-                else
-                    CurrentLocation.Text = "Default";
+                CurrentLocation.Text = App.Settings.CurrentLocation?.ShortName;
 
                 if (!isRendered)
                 {
@@ -50,10 +46,12 @@ namespace ExpressBase.Mobile.Views
                     this.ToggleLocationSwitcher();
                     isRendered = true;
                 }
+                Loader.IsVisible = false;
             }
             catch (Exception ex)
             {
                 Log.Write(ex.Message);
+                Loader.IsVisible = false;
             }
         }
 
@@ -61,7 +59,7 @@ namespace ExpressBase.Mobile.Views
         {
             try
             {
-                if (!Settings.HasInternet)
+                if (!Utils.HasInternet)
                 {
                     DependencyService.Get<IToast>().Show("Not connected to internet!");
                     return;

@@ -14,13 +14,14 @@ namespace ExpressBase.Mobile.Views
     {
         private bool isRendered;
 
-        public int BackButtonCount { set; get; } = 0;
+        private int BackButtonCount;
 
-        public HomeViewModel ViewModel { set; get; }
+        public HomeViewModel ViewModel { private set; get; }
 
         public Home()
         {
             InitializeComponent();
+            IconedLoader.IsVisible = true;
             BindingContext = ViewModel = new HomeViewModel();
         }
 
@@ -29,27 +30,26 @@ namespace ExpressBase.Mobile.Views
             base.OnAppearing();
             try
             {
-                EbLocation loc = Settings.CurrentLocObject;
-                if (loc != null)
-                    CurrentLocation.Text = loc.ShortName;
-                else
-                    CurrentLocation.Text = "Default";
+                CurrentLocation.Text = App.Settings.CurrentLocation?.ShortName;
 
                 if (!isRendered)
                 {
                     await ViewModel.InitializeAsync();
                     isRendered = true;
                 }
+                IconedLoader.IsVisible = false;
             }
             catch (Exception ex)
             {
                 Log.Write(ex.Message);
+                IconedLoader.IsVisible = false;
             }
         }
 
         protected override bool OnBackButtonPressed()
         {
             BackButtonCount++;
+
             if (BackButtonCount == 2)
             {
                 BackButtonCount = 0;
@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile.Views
             IToast toast = DependencyService.Get<IToast>();
             try
             {
-                if (!Settings.HasInternet)
+                if (!Utils.HasInternet)
                 {
                     toast.Show("Not connected to Internet!");
                     return;
@@ -92,31 +92,6 @@ namespace ExpressBase.Mobile.Views
             catch (Exception ex)
             {
                 toast.Show("Something went wrong. Please try again");
-                Log.Write(ex.Message);
-            }
-        }
-
-        private async void MyActions_Tapped(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!Settings.HasInternet)
-                {
-                    DependencyService.Get<IToast>().Show("You are not connected to internet.");
-                    return;
-                }
-                Device.BeginInvokeOnMainThread(() => { ViewModel.IsBusy = true; });
-
-                await Auth.AuthIfTokenExpiredAsync();//authenticate if token expired
-
-                MyActionsResponse actionResp = await RestServices.Instance.GetMyActionsAsync();
-
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new MyActions(actionResp));
-                Device.BeginInvokeOnMainThread(() => ViewModel.IsBusy = false);
-            }
-            catch (Exception ex)
-            {
-                Device.BeginInvokeOnMainThread(() => ViewModel.IsBusy = false);
                 Log.Write(ex.Message);
             }
         }

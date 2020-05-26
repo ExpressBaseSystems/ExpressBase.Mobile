@@ -43,13 +43,12 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             try
             {
-                All = Settings.Locations;
+                All = Utils.Locations;
                 Locations = new ObservableCollection<EbLocation>(All);
-                int current = Settings.LocationId;
 
                 foreach (EbLocation loc in Locations)
                 {
-                    if (loc.LocId == current)
+                    if (loc.LocId == App.Settings.CurrentLocId)
                     {
                         SelectedLocation = loc;
                         loc.Selected = true;
@@ -98,7 +97,9 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             if (SelectedLocation != null)
             {
-                Store.SetValue(AppConst.CURRENT_LOCATION, SelectedLocation.LocId.ToString());
+                await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, SelectedLocation);
+                App.Settings.CurrentLocation = SelectedLocation;
+
                 if (MyApplicationsPage == null)
                     await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
                 else

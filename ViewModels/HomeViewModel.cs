@@ -6,6 +6,7 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.ViewModels.BaseModels;
+using ExpressBase.Mobile.Views;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
@@ -32,13 +33,15 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public Command SyncButtonCommand => new Command(OnSyncClick);
+        public Command SyncButtonCommand => new Command(async () => await SyncButtonEvent());
 
         public Command MenuItemTappedCommand => new Command<object>(async (o) => await ItemTapedEvent(o));
 
+        public Command MyActionsTappedcommand => new Command<object>(async (o) => await MyActionsTapedEvent(o));
+
         public HomeViewModel()
         {
-            PageTitle = Settings.AppName;
+            PageTitle = App.Settings.CurrentApplication?.AppName;
             menuServices = new MenuServices();
         }
 
@@ -46,7 +49,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                ObjectList = await menuServices.GetDataAsync(Settings.AppId, Settings.LocationId);
+                ObjectList = await menuServices.GetDataAsync();
                 await menuServices.DeployFormTables(ObjectList);
             }
             catch (Exception ex)
@@ -59,35 +62,35 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                List<MobilePagesWraper> objList = await menuServices.GetDataAsync(Settings.AppId, Settings.LocationId);
+                List<MobilePagesWraper> objList = await menuServices.GetDataAsync();
 
                 ObjectList.Clear();
                 ObjectList.AddRange(objList);
                 await menuServices.DeployFormTables(ObjectList);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }
         }
 
-        private async void OnSyncClick(object sender)
+        private async Task SyncButtonEvent()
         {
             IToast toast = DependencyService.Get<IToast>();
-            if (!Settings.HasInternet)
+            if (!Utils.HasInternet)
             {
                 toast.Show("You are not connected to internet !");
                 return;
             }
 
+            Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
+
+            await IdentityService.AuthIfTokenExpiredAsync();
+
             await Task.Run(() =>
             {
                 try
                 {
-                    Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
-
-                    Auth.AuthIfTokenExpired();
-
                     SyncResponse response = SyncServices.Instance.Sync();
 
                     Device.BeginInvokeOnMainThread(() =>
@@ -122,7 +125,7 @@ namespace ExpressBase.Mobile.ViewModels
                 }
                 IsTapped = true;
 
-                ContentPage renderer = await GetPageByContainer(page);
+                ContentPage renderer = this.GetPageByContainer(page);
                 if (renderer != null)
                     await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
 
@@ -135,13 +138,11 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private async Task<ContentPage> GetPageByContainer(EbMobilePage page)
+        private ContentPage GetPageByContainer(EbMobilePage page)
         {
             ContentPage renderer = null;
             try
             {
-                await Task.Delay(100);
-
                 switch (page.Container)
                 {
                     case EbMobileForm f:
@@ -166,6 +167,24 @@ namespace ExpressBase.Mobile.ViewModels
                 Log.Write(ex.Message);
             }
             return renderer;
+        }
+
+        private async Task MyActionsTapedEvent(object obj)
+        {
+            try
+            {
+                if (!Utils.HasInternet)
+                {
+                    DependencyService.Get<IToast>().Show("You are not connected to internet.");
+                    return;
+                }
+
+                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new MyActions());
+            }
+            catch (Exception ex)
+            {
+                Log.Write(ex.Message);
+            }
         }
     }
 }

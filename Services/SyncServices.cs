@@ -40,7 +40,7 @@ namespace ExpressBase.Mobile.Services
         private List<EbMobileForm> GetForms()
         {
             List<EbMobileForm> ls = new List<EbMobileForm>();
-            var pages = Settings.Objects;
+            var pages = Utils.Objects;
             foreach (MobilePagesWraper _p in pages)
             {
                 EbMobilePage mpage = _p.ToPage();

@@ -46,7 +46,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public List<EbStageActions> StageActions { set; get; }
 
-        public Command SubmitCommand { set; get; }
+        public Command SubmitCommand => new Command(async () => await SubmitButton_Clicked());
 
         private readonly MyActionsViewModel MyActionVM;
 
@@ -62,7 +62,6 @@ namespace ExpressBase.Mobile.ViewModels
                 ActionData = Action.StageInfo.Data ?? new List<Param>();
                 BuildView();
             }
-            SubmitCommand = new Command(async () => await SubmitButton_Clicked());
         }
 
         private void BuildView()
@@ -118,7 +117,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (status == null) return;
 
                 string comment = this.Comments;
-                int locid = Settings.LocationId;
+                int locid = Utils.LocationId;
 
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 

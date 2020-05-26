@@ -89,7 +89,7 @@ namespace ExpressBase.Mobile
                         this.PersistCloud(data, response, rowId);
                         break;
                     case NetworkMode.Mixed:
-                        if (Settings.HasInternet)
+                        if (Utils.HasInternet)
                             this.PersistCloud(data, response, rowId);
                         else
                             this.PersistLocal(data, response, rowId);
@@ -164,7 +164,7 @@ namespace ExpressBase.Mobile
                             throw new Exception("Image Upload faild");
                     }
                 }
-                PushResponse pushResponse = RestServices.Instance.Push(webformdata, rowId, this.WebFormRefId, Settings.LocationId);
+                PushResponse pushResponse = RestServices.Instance.Push(webformdata, rowId, this.WebFormRefId, Utils.LocationId);
                 if (pushResponse.RowAffected > 0)
                 {
                     response.Status = true;

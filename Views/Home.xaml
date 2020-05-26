@@ -63,7 +63,7 @@
                                                HorizontalOptions="Center"
                                                x:Name="MyActions">
                                             <Frame.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="MyActions_Tapped"/>
+                                                <TapGestureRecognizer Tapped="{Binding MyActionsTappedcommand}"/>
                                             </Frame.GestureRecognizers>
                                             <Label Text="&#xf25a;" 
                                                    FontFamily="{StaticResource FontAwesome}"
@@ -109,9 +109,10 @@
             </RefreshView>
             <!--loader-->
             <control:LoaderIconed 
-                    IsVisible="{Binding IsBusy}"
-                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                    AbsoluteLayout.LayoutFlags="All"/>
+                x:Name="IconedLoader"
+                IsVisible="{Binding IsBusy}"
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                AbsoluteLayout.LayoutFlags="All"/>
 
             <control:ConfirmBox
                 x:Name="PushConfirmBox"

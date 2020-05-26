@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.Models
+namespace ExpressBase.Mobile.Helpers
 {
     public interface INativeHelper
     {

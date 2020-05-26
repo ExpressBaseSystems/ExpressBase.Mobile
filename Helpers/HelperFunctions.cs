@@ -109,7 +109,7 @@ namespace ExpressBase.Mobile.Helpers
 
         public static string CreatePlatFormDir(string FolderName = null)
         {
-            string sid = Settings.SolutionId.ToUpper();
+            string sid = Utils.SolutionId.ToUpper();
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
@@ -160,7 +160,7 @@ namespace ExpressBase.Mobile.Helpers
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
-                string sid = Settings.SolutionId.ToUpper();
+                string sid = Utils.SolutionId.ToUpper();
 
                 string[] filenames = helper.GetFiles($"ExpressBase/{sid}/FILES", Patten);
 

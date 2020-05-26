@@ -254,7 +254,7 @@ namespace ExpressBase.Mobile
             foreach (KeyValuePair<string, byte[]> kp in this.Gallery)
             {
                 string filename = $"{TableName}-{RowId}-{this.Name}-{Guid.NewGuid().ToString("n").Substring(0, 10)}.jpg";
-                File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{Settings.SolutionId.ToUpper()}/FILES/{filename}", kp.Value);
+                File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{Utils.SolutionId.ToUpper()}/FILES/{filename}", kp.Value);
             }
         }
 

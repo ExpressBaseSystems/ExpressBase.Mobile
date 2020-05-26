@@ -101,7 +101,7 @@ namespace ExpressBase.Mobile
 
                 if (userParam != null)
                 {
-                    userParam.Value = Settings.UserId;
+                    userParam.Value = Utils.UserId;
                     userParam.DbType = (int)EbDbTypes.Int32;
                 }
 
@@ -124,7 +124,6 @@ namespace ExpressBase.Mobile
             EbDataSet Data = null;
             try
             {
-                Auth.AuthIfTokenExpired();
                 VisualizationLiveData vd = RestServices.Instance.PullReaderData(this.DataSourceRefId, dbParameters.ToParams(), sortOrder, this.PageLength, offset);
                 Data = vd.Data;
             }

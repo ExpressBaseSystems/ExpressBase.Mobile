@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
@@ -58,7 +59,7 @@ namespace ExpressBase.Mobile.Models
                     var srow = new SingleRow
                     {
                         RowId = row.RowId,
-                        LocId = Settings.LocationId,
+                        LocId = Utils.LocationId,
                         IsUpdate = (row.RowId > 0)
                     };
 
@@ -228,7 +229,7 @@ namespace ExpressBase.Mobile.Models
 
         public void AppendEbColValues()
         {
-            this.Columns.Add(new MobileTableColumn { Name = "eb_loc_id", Type = EbDbTypes.Int32, Value = Settings.LocationId });
+            this.Columns.Add(new MobileTableColumn { Name = "eb_loc_id", Type = EbDbTypes.Int32, Value = Utils.LocationId });
             this.Columns.Add(new MobileTableColumn { Name = "eb_created_at_device", Type = EbDbTypes.DateTime, Value = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") });
 
             INativeHelper helper = DependencyService.Get<INativeHelper>();
@@ -304,6 +305,8 @@ namespace ExpressBase.Mobile.Models
         public ImageSource Logo { set; get; }
 
         public bool IsCurrent { set; get; }
+
+        public string LastUser { set; get; }
 
         public void SetLogo()
         {

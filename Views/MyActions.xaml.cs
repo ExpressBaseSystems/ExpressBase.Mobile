@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Extensions;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
@@ -16,29 +17,34 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MyActions : ContentPage
     {
+        public bool isRendered;
+
         public MyActionsViewModel ViewModel { set; get; }
 
-        public MyActions(MyActionsResponse actionResp)
+        public MyActions()
         {
             InitializeComponent();
-            BindingContext = ViewModel = new MyActionsViewModel(actionResp);
+            Loader.IsVisible = true;
+            BindingContext = ViewModel = new MyActionsViewModel();
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            if (ViewModel.Actions.Count <= 0)
-                EmptyLabel.IsVisible = true;
-            else
-                EmptyLabel.IsVisible = false;
+            if (!isRendered)
+            {
+                await ViewModel.InitializeAsync();
+                isRendered = true;
+            }
+            Loader.IsVisible = false;
         }
 
         private async void MyActionsRefresh_Refreshing(object sender, EventArgs e)
         {
             try
             {
-                if (!Settings.HasInternet)
+                if (!Utils.HasInternet)
                 {
                     DependencyService.Get<IToast>().Show("Not connected to internet!");
                     return;

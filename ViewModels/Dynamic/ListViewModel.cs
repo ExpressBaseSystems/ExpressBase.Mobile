@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
@@ -43,7 +44,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
-                if (this.Page.NetworkMode == NetworkMode.Online && !Settings.HasInternet)
+                if (this.Page.NetworkMode == NetworkMode.Online && !Utils.HasInternet)
                 {
                     DependencyService.Get<IToast>().Show("You are not connected to internet.");
                     throw new Exception("no internet");

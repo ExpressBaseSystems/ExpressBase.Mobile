@@ -19,7 +19,9 @@ namespace ExpressBase.Mobile.ViewModels
     {
         private readonly ISolutionService solutionService;
 
-        public string CurrentSolution { set; get; }
+        private string sid;
+
+        private SolutionInfo current;
 
         private ObservableCollection<SolutionInfo> _mysolution;
 
@@ -35,6 +37,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command SolutionTapedCommand => new Command<object>(async (o) => await SolutionTapedEvent(o));
 
+        public Command SolutionRemoveCommand => new Command<object>(async (o) => await SolutionRemoveEvent(o));
+
         public MySolutionsViewModel()
         {
             solutionService = new SolutionService();
@@ -42,7 +46,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            CurrentSolution = await Store.GetValueAsync(AppConst.SID);
+            current = App.Settings.CurrentSolution;
+            sid = App.Settings.Sid;
 
             MySolutions = await solutionService.GetDataAsync();
         }
@@ -52,13 +57,13 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 SolutionInfo tapedInfo = (SolutionInfo)obj;
-                if (tapedInfo.SolutionName == CurrentSolution) return;
+                if (tapedInfo.SolutionName == sid) return;
 
-                await Store.SetValueAsync(AppConst.SID, tapedInfo.SolutionName);
-                await Store.SetValueAsync(AppConst.ROOT_URL, tapedInfo.RootUrl);
+                await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, tapedInfo);
+                App.Settings.CurrentSolution = tapedInfo;
 
                 await solutionService.ClearCached();
-                await solutionService.CreateDB(CurrentSolution);
+                await solutionService.CreateDB(tapedInfo.SolutionName);
                 await solutionService.CreateDirectory();
 
                 await Application.Current.MainPage.Navigation.PushAsync(new Login());
@@ -69,16 +74,32 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        private async Task SolutionRemoveEvent(object obj)
+        {
+            try
+            {
+                SolutionInfo info = (SolutionInfo)obj;
+
+                if (current != null && info.SolutionName == current.SolutionName && info.RootUrl == current.RootUrl)
+                    return;
+                this.MySolutions.Remove(info);
+                await solutionService.UpdateSolutions(this.MySolutions);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
         public async Task AddSolution(string solutionUrl, ValidateSidResponse response)
         {
             try
             {
-                string _sid = solutionUrl.Trim().Split('.')[0];
-                CurrentSolution = _sid;
+                sid = solutionUrl.Trim().Split('.')[0];
 
                 SolutionInfo info = new SolutionInfo
                 {
-                    SolutionName = _sid,
+                    SolutionName = sid,
                     RootUrl = solutionUrl
                 };
 
@@ -88,13 +109,11 @@ namespace ExpressBase.Mobile.ViewModels
                 this.MySolutions.Add(info);
 
                 await solutionService.ClearCached();
-                await solutionService.CreateDB(CurrentSolution);
+                await solutionService.CreateDB(sid);
                 await solutionService.CreateDirectory();
 
-                RestServices.Instance.UpdateBaseUrl();
-
                 if (response.Logo != null)
-                    await solutionService.SaveLogoAsync(CurrentSolution, response.Logo);
+                    await solutionService.SaveLogoAsync(sid, response.Logo);
             }
             catch (Exception ex)
             {
@@ -102,18 +121,15 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public async Task RemoveSolution(string sname)
+        public async Task<ValidateSidResponse> Validate(string url)
         {
-            if (sname == this.CurrentSolution)
-                return;
+            return await solutionService.ValidateSid(url);
+        }
 
-            SolutionInfo info = this.MySolutions.Single(item => item.SolutionName == sname);
-
-            if (info != null)
-            {
-                this.MySolutions.Remove(info);
-                await solutionService.RemoveSolution(info);
-            }
+        public bool IsSolutionExist(string url)
+        {
+            url = url.Trim();
+            return this.MySolutions.Any(item => item.SolutionName == url.Split('.')[0] && item.RootUrl == url);
         }
     }
 }

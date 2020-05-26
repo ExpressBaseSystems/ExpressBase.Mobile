@@ -18,16 +18,14 @@ namespace ExpressBase.Mobile.Helpers
             try
             {
                 string temp = SecureStorage.GetAsync(key).Result;
-                if (temp == null || temp == "null")
-                    return null;
-                else
+                if (temp != null || temp != "null")
                     return temp;
             }
             catch (Exception ex)
             {
                 Log.Write("Store.GetValue::" + ex.Message);
-                return null;
             }
+            return null;
         }
 
         public static T GetValue<T>(string key)
@@ -35,16 +33,14 @@ namespace ExpressBase.Mobile.Helpers
             try
             {
                 string temp = SecureStorage.GetAsync(key).Result;
-                if (temp == null || temp == "null")
-                    return default;
-                else
+
+                if (temp != null || temp != "null")
                 {
                     var converter = TypeDescriptor.GetConverter(typeof(T));
                     if (converter != null)
                     {
                         return (T)converter.ConvertFromString(temp);
                     }
-                    return default;
                 }
             }
             catch (Exception ex)
@@ -52,6 +48,7 @@ namespace ExpressBase.Mobile.Helpers
                 Log.Write("Store.GetValue::" + ex.Message);
                 return default;
             }
+            return default;
         }
 
         public static async Task<string> GetValueAsync(string key)
@@ -59,16 +56,36 @@ namespace ExpressBase.Mobile.Helpers
             try
             {
                 string temp = await SecureStorage.GetAsync(key);
-                if (temp == null || temp == "null")
-                    return null;
-                else
+                if (temp != null || temp != "null")
                     return temp;
             }
             catch (Exception ex)
             {
                 Log.Write("Store.GetValueAsync::" + ex.Message);
-                return null;
             }
+            return null;
+        }
+
+        public static async Task<T> GetValueAsync<T>(string key)
+        {
+            try
+            {
+                string temp = await SecureStorage.GetAsync(key);
+
+                if (temp != null || temp != "null")
+                {
+                    var converter = TypeDescriptor.GetConverter(typeof(T));
+                    if (converter != null)
+                    {
+                        return (T)converter.ConvertFromString(temp);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Store.GetValue::" + ex.Message);
+            }
+            return default;
         }
 
         public static void SetValue(string key, string val)

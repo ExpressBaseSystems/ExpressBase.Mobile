@@ -46,7 +46,7 @@ namespace ExpressBase.Mobile
                 {
                     if (Mode != FormMode.EDIT)
                     {
-                        if (Settings.HasInternet)
+                        if (Utils.HasInternet)
                             this.SetCordinates();
                         else
                         {
@@ -136,9 +136,7 @@ namespace ExpressBase.Mobile
 
         private void SetWebViewUrl(double lat, double lon)
         {
-            Auth.AuthIfTokenExpired();//auth again if token expires
-
-            string url = $"{Settings.RootUrl}/api/map?bToken={Settings.BToken}&rToken={Settings.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}";
+            string url = $"{Utils.RootUrl}/api/map?bToken={Utils.BToken}&rToken={Utils.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}";
             this.WebView.Source = new UrlWebViewSource { Url = url };
         }
 

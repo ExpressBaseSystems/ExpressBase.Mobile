@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using Newtonsoft.Json;
 using System;
@@ -7,9 +8,9 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Essentials;
 
-namespace ExpressBase.Mobile.Models
+namespace ExpressBase.Mobile.Helpers
 {
-    public class Settings
+    public class Utils
     {
         public static string RootUrl
         {
@@ -123,6 +124,14 @@ namespace ExpressBase.Mobile.Models
             get
             {
                 return (Connectivity.NetworkAccess == NetworkAccess.Internet);
+            }
+        }
+
+        public static List<SolutionInfo> Solutions
+        {
+            get
+            {
+                return Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
             }
         }
     }

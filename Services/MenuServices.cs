@@ -14,27 +14,28 @@ namespace ExpressBase.Mobile.Services
 {
     public interface IMenuServices
     {
-        Task<List<MobilePagesWraper>> GetDataAsync(int appid, int locid);
+        Task<List<MobilePagesWraper>> GetDataAsync();
 
         Task DeployFormTables(List<MobilePagesWraper> objlist);
     }
 
     public class MenuServices : IMenuServices
     {
-        public async Task<List<MobilePagesWraper>> GetDataAsync(int appid, int locid)
+        public async Task<List<MobilePagesWraper>> GetDataAsync()
         {
             List<MobilePagesWraper> _objlist = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
 
             if (_objlist == null)
             {
-                if (!Settings.HasInternet)
+                if (!Utils.HasInternet)
                 {
                     DependencyService.Get<IToast>().Show("You are not connected to internet");
                     return new List<MobilePagesWraper>();
                 }
 
-                MobilePageCollection menuData = await GetFromApiAsync(Settings.AppId, Settings.LocationId);
+                MobilePageCollection menuData = await GetFromApiAsync();
                 _objlist = menuData.Pages;
+
                 await Store.SetJSONAsync(AppConst.OBJ_COLLECTION, _objlist);
 
                 await CommonServices.Instance.LoadLocalData(menuData.Data);
@@ -42,18 +43,19 @@ namespace ExpressBase.Mobile.Services
             return _objlist;
         }
 
-        public async Task<MobilePageCollection> GetFromApiAsync(int appid, int locid)
+        public async Task<MobilePageCollection> GetFromApiAsync()
         {
             try
             {
-                var client = new RestClient(Settings.RootUrl);
+                RestClient client = new RestClient(App.Settings.RootUrl);
 
                 RestRequest request = new RestRequest("api/objects_by_app", Method.GET);
-                request.AddHeader(AppConst.BTOKEN, Settings.BToken);
-                request.AddHeader(AppConst.RTOKEN, Settings.RToken);
 
-                request.AddParameter("appid", appid);
-                request.AddParameter("locid", locid);
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+                request.AddParameter("appid", App.Settings.AppId);
+                request.AddParameter("locid", App.Settings.CurrentLocId);
                 request.AddParameter("pull_data", true);
 
                 var response = await client.ExecuteAsync(request);

@@ -18,6 +18,8 @@ namespace ExpressBase.Mobile.Constants
 
         public const string SID = "sid";
 
+        public const string SOLUTION_OBJ = "solution_obj";
+
         public const string APPID = "appid";
 
         public const string APPNAME = "appname";
@@ -28,6 +30,8 @@ namespace ExpressBase.Mobile.Constants
 
         public const string APP_COLLECTION = "app_collection";
 
+        public const string CURRENT_APP = "current_app";
+
         public const string OBJ_COLLECTION = "obj_collection";
 
         public const string WEBOBJ_COLLECTION = "webobj_collection";
@@ -37,6 +41,8 @@ namespace ExpressBase.Mobile.Constants
         public const string USER_OBJECT = "eb_userobject";
 
         public const string USER_LOCATIONS = "eb_userlocations";
+
+        public const string CURRENT_LOCOBJ = "current_loc_object";
 
         public const string CURRENT_LOCATION = "current_loc";
     }

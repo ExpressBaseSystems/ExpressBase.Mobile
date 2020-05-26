@@ -2,10 +2,13 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -15,6 +18,8 @@ namespace ExpressBase.Mobile.Services
     public interface ISolutionService
     {
         Task<ObservableCollection<SolutionInfo>> GetDataAsync();
+
+        Task<ValidateSidResponse> ValidateSid(string url);
 
         Task SetDataAsync(SolutionInfo info);
 
@@ -26,20 +31,23 @@ namespace ExpressBase.Mobile.Services
 
         Task CreateDirectory();
 
-        Task RemoveSolution(SolutionInfo info);
+        Task UpdateSolutions(IEnumerable<SolutionInfo> info);
     }
 
     public class SolutionService : ISolutionService
     {
+        public static SolutionService Instance => new SolutionService();
+
         public async Task<ObservableCollection<SolutionInfo>> GetDataAsync()
         {
             ObservableCollection<SolutionInfo> sln = new ObservableCollection<SolutionInfo>();
             try
             {
+                await Task.Delay(1);
 
                 List<SolutionInfo> solutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
 
-                string current = await Store.GetValueAsync(AppConst.SID);
+                string current = App.Settings.Sid;
 
                 foreach (SolutionInfo info in solutions)
                 {
@@ -56,6 +64,25 @@ namespace ExpressBase.Mobile.Services
             return sln;
         }
 
+        public async Task<ValidateSidResponse> ValidateSid(string url)
+        {
+            ValidateSidResponse Vresp = new ValidateSidResponse();
+            try
+            {
+                RestClient client = new RestClient("https://" + url);
+                RestRequest request = new RestRequest("api/validate_solution", Method.GET);
+                IRestResponse response = await client.ExecuteAsync(request);
+                if (response.StatusCode == HttpStatusCode.OK)
+                    Vresp = JsonConvert.DeserializeObject<ValidateSidResponse>(response.Content);
+            }
+            catch (Exception e)
+            {
+                Vresp.IsValid = false;
+                Log.Write("Validate Sid---" + e.Message);
+            }
+            return Vresp;
+        }
+
         public async Task SetDataAsync(SolutionInfo info)
         {
             try
@@ -64,8 +91,12 @@ namespace ExpressBase.Mobile.Services
                 sol.Add(info);
 
                 await Store.SetJSONAsync(AppConst.MYSOLUTIONS, sol);
-                await Store.SetValueAsync(AppConst.SID, info.SolutionName);
-                await Store.SetValueAsync(AppConst.ROOT_URL, info.RootUrl);
+                await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, info);
+
+                App.Settings.CurrentSolution = info;
+
+                //await Store.SetValueAsync(AppConst.SID, info.SolutionName);
+                //await Store.SetValueAsync(AppConst.ROOT_URL, info.RootUrl);
             }
             catch (Exception ex)
             {
@@ -120,11 +151,9 @@ namespace ExpressBase.Mobile.Services
             });
         }
 
-        public async Task RemoveSolution(SolutionInfo info)
+        public async Task UpdateSolutions(IEnumerable<SolutionInfo> solutions)
         {
-            List<SolutionInfo> sol = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS);
-            sol.Remove(info);
-            await Store.SetJSONAsync(AppConst.MYSOLUTIONS, sol);
+            await Store.SetJSONAsync(AppConst.MYSOLUTIONS, new List<SolutionInfo>(solutions));
         }
     }
 }

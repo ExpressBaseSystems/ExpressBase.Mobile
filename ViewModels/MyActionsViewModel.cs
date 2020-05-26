@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Extensions;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
@@ -14,6 +15,8 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class MyActionsViewModel : StaticBaseViewModel
     {
+        private readonly IMyActionsService myActionService;
+
         private bool _showEmptyLabel;
 
         public bool ShowEmptyLabel
@@ -26,29 +29,43 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public ObservableCollection<EbMyAction> Actions { get; set; }
+        public ObservableCollection<EbMyAction> _actions;
 
-        public Command ItemSelectedCommand { set; get; }
-
-        public MyActionsViewModel(MyActionsResponse actionResp)
+        public ObservableCollection<EbMyAction> Actions
         {
-            Actions = new ObservableCollection<EbMyAction>(actionResp.Actions);
-            PageTitle = $"My Actions ({Actions.Count})";
+            get { return _actions; }
+            set
+            {
+                _actions = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public Command ItemSelectedCommand => new Command(async (obj) => await ItemSelected(obj));
+
+        public MyActionsViewModel()
+        {
+            myActionService = new MyActionsService();
+        }
+
+        public override async Task InitializeAsync()
+        {
+            MyActionsResponse resp = await myActionService.GetMyActionsAsync();
+
+            Actions = new ObservableCollection<EbMyAction>(resp.Actions);
             this.FillRandomColor(Actions);
-            ItemSelectedCommand = new Command(async (obj) => await ItemSelected(obj));
+            this.SetPageTitle();
         }
 
         public async Task RefreshMyActions()
         {
             try
             {
-                MyActionsResponse actionResp = await RestServices.Instance.GetMyActionsAsync();
+                MyActionsResponse actionResp = await myActionService.GetMyActionsAsync();
                 FillRandomColor(actionResp.Actions);
                 Actions.Clear();
                 Actions.AddRange(actionResp.Actions);
-                PageTitle = $"My Actions ({Actions.Count})";
-                if (Actions.Count <= 0)
-                    ShowEmptyLabel = true;
+                SetPageTitle();
             }
             catch (Exception ex)
             {
@@ -56,18 +73,23 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        private void SetPageTitle()
+        {
+            PageTitle = $"My Actions ({Actions.Count})";
+            if (Actions.Count <= 0)
+                ShowEmptyLabel = true;
+        }
+
         private async Task ItemSelected(object selected)
         {
             try
             {
-                if (selected == null) return;
+                EbMyAction action = (EbMyAction)selected;
 
-                EbMyAction action = selected as EbMyAction;
-
-                if (Settings.HasInternet)
+                if (Utils.HasInternet)
                 {
                     IsBusy = true;
-                    EbStageInfo stageInfo = await RestServices.Instance.GetMyActionInfoAsync(action.StageId, action.WebFormRefId, action.WebFormDataId);
+                    EbStageInfo stageInfo = await myActionService.GetMyActionInfoAsync(action.StageId, action.WebFormRefId, action.WebFormDataId);
 
                     if (stageInfo != null)
                     {

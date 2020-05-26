@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             InitializeComponent();
 
-            var _user = Settings.UserObject;
+            var _user = Utils.UserObject;
             UserName.Text = _user.FullName;
             Email.Text = _user.Email;
             this.SetDp();
@@ -24,7 +24,7 @@ namespace ExpressBase.Mobile.Views.Shared
         private void SetDp()
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
-            string sid = Settings.SolutionId;
+            string sid = Utils.SolutionId;
             try
             {
                 var bytes = helper.GetPhoto($"ExpressBase/{sid}/user.png");

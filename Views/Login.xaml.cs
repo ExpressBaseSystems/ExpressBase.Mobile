@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
 using System;
 using Xamarin.Forms;
@@ -25,7 +26,7 @@ namespace ExpressBase.Mobile.Views
 
             if (!isRendered)
             {
-                SolutionName.Text = Settings.SolutionId;
+                SolutionName.Text = App.Settings.Sid;
 
                 await ViewModel.InitializeAsync();
                 isRendered = true;
