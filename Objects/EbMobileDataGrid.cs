@@ -74,7 +74,7 @@ namespace ExpressBase.Mobile
             };
         }
 
-        public override void InitXControl(FormMode mode,NetworkMode network)
+        public override void InitXControl(FormMode mode, NetworkMode network)
         {
             base.InitXControl(mode, network);
 
@@ -361,7 +361,7 @@ namespace ExpressBase.Mobile
                 {
                     if (string.IsNullOrEmpty(this.DataSourceRefId))
                         return;
-                    VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, null, 0, 0);
+                    VisualizationLiveData data = DataService.Instance.GetData(this.DataSourceRefId, null, null, 0, 0);
                     if (data.Data != null && data.Data.Tables.Count >= 2)
                         dt = data.Data.Tables[1];
                 }
@@ -375,7 +375,7 @@ namespace ExpressBase.Mobile
                 {
                     if (Utils.HasInternet && !string.IsNullOrEmpty(this.DataSourceRefId))
                     {
-                        VisualizationLiveData data = RestServices.Instance.PullReaderData(this.DataSourceRefId, null, null, 0, 0);
+                        VisualizationLiveData data = DataService.Instance.GetData(this.DataSourceRefId, null, null, 0, 0);
                         if (data.Data != null && data.Data.Tables.Count >= 2)
                             dt = data.Data.Tables[1];
                     }

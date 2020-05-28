@@ -63,7 +63,7 @@
                                                HorizontalOptions="Center"
                                                x:Name="MyActions">
                                             <Frame.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="{Binding MyActionsTappedcommand}"/>
+                                                <TapGestureRecognizer Command="{Binding MyActionsTappedcommand}"/>
                                             </Frame.GestureRecognizers>
                                             <Label Text="&#xf25a;" 
                                                    FontFamily="{StaticResource FontAwesome}"
@@ -113,7 +113,7 @@
                 IsVisible="{Binding IsBusy}"
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
                 AbsoluteLayout.LayoutFlags="All"/>
-
+            
             <control:ConfirmBox
                 x:Name="PushConfirmBox"
                 Title="Confirm"

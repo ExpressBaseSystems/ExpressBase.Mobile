@@ -11,24 +11,11 @@ namespace ExpressBase.Mobile
 {
     public partial class App : Application
     {
-        public static string DbPath { set; get; }
-
         public static IDataBase DataDB { get; set; }
 
         public static MasterDetailPage RootMaster { set; get; }
 
         public static SettingsServices Settings { set; get; }
-
-        public App(string dbPath)
-        {
-            InitializeComponent();
-
-            DbPath = dbPath;
-            if (DataDB == null)
-                DataDB = DependencyService.Get<IDataBase>();
-
-            Settings = new SettingsServices();
-        }
 
         public App()
         {
@@ -49,18 +36,18 @@ namespace ExpressBase.Mobile
             await Settings.Resolve();
 
             if (Settings.Sid == null)
-                await MainPage.Navigation.PushAsync(new MySolutions());
+                await MainPage.Navigation.PushAsync(new NewSolution());
             else
             {
                 if (Settings.RToken != null)
                 {
                     if (Utils.HasInternet && IdentityService.IsTokenExpired(Settings.RToken))
                     {
-                        string username = await Store.GetValueAsync(AppConst.USERNAME);
+                        string username = Settings.UserName;
                         string password = await Store.GetValueAsync(AppConst.PASSWORD);
 
                         ApiAuthResponse authresponse = await IdentityService.Instance.AuthenticateAsync(username, password);
-
+                        await IdentityService.Instance.UpdateAuthInfo(authresponse, username, password);
                         if (authresponse.IsValid)
                         {
                             RootMaster = new RootMaster(typeof(Home));

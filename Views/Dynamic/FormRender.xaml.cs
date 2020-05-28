@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
 using Xamarin.Forms;
@@ -12,7 +11,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FormRender : ContentPage
     {
-        private bool IsRendered;
+        private bool isRendered;
 
         public FormRenderViewModel ViewModel { set; get; }
 
@@ -20,64 +19,32 @@ namespace ExpressBase.Mobile.Views.Dynamic
         public FormRender(EbMobilePage page)
         {
             InitializeComponent();
-            try
-            {
-                BindingContext = ViewModel = new FormRenderViewModel(page);
-                FormScrollView.Content = ViewModel.XView;
-            }
-            catch (Exception ex)
-            {
-                Log.Write("FormRender new mode" + ex.Message);
-            }
+            BindingContext = ViewModel = new FormRenderViewModel(page);
         }
 
         //edit
         public FormRender(EbMobilePage page, int rowId)
         {
             InitializeComponent();
-            try
-            {
-                BindingContext = ViewModel = new FormRenderViewModel(page, rowId);
-                FormScrollView.Content = ViewModel.XView;
+            BindingContext = ViewModel = new FormRenderViewModel(page, rowId);
 
-                SaveButton.Text = "Save Changes";
-                SaveButton.IsVisible = false;
-                EditButton.IsVisible = true;
-            }
-            catch (Exception ex)
-            {
-                Log.Write("FormRender edit/prefill mode" + ex.Message);
-            }
+            SaveButton.Text = "Save Changes";
+            SaveButton.IsVisible = false;
+            EditButton.IsVisible = true;
         }
 
         //prefill mode
         public FormRender(EbMobilePage page, EbDataRow currentRow)
         {
             InitializeComponent();
-            try
-            {
-                BindingContext = ViewModel = new FormRenderViewModel(page, currentRow);
-                FormScrollView.Content = ViewModel.XView;
-            }
-            catch (Exception ex)
-            {
-                Log.Write("FormRender edit/prefill mode" + ex.Message);
-            }
+            BindingContext = ViewModel = new FormRenderViewModel(page, currentRow);
         }
 
         //reference mode
         public FormRender(EbMobilePage currentForm, EbMobilePage parentForm, int parentId)
         {
             InitializeComponent();
-            try
-            {
-                BindingContext = ViewModel = new FormRenderViewModel(currentForm, parentForm, parentId);
-                FormScrollView.Content = ViewModel.XView;
-            }
-            catch (Exception ex)
-            {
-                Log.Write("FormRender reference mode" + ex.Message);
-            }
+            BindingContext = ViewModel = new FormRenderViewModel(currentForm, parentForm, parentId);
         }
 
         protected override async void OnAppearing()
@@ -85,14 +52,18 @@ namespace ExpressBase.Mobile.Views.Dynamic
             base.OnAppearing();
 
             LoaderIconed.IsVisible = true;
-            if (!IsRendered)
+            if (!isRendered)
             {
-                if(ViewModel.Mode == FormMode.EDIT)
+                if (ViewModel.Mode == FormMode.EDIT)
                 {
                     await ViewModel.SetDataOnEdit();
                     ViewModel.FillControlsValues();
                 }
-                IsRendered = true;
+                else if(ViewModel.Mode == FormMode.PREFILL)
+                {
+                    ViewModel.FillControlsFlat();
+                }
+                isRendered = true;
             }
             LoaderIconed.IsVisible = false;
         }

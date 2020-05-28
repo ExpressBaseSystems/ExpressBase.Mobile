@@ -24,7 +24,6 @@ namespace ExpressBase.Mobile.Views
         public MyActions()
         {
             InitializeComponent();
-            Loader.IsVisible = true;
             BindingContext = ViewModel = new MyActionsViewModel();
         }
 
@@ -32,6 +31,7 @@ namespace ExpressBase.Mobile.Views
         {
             base.OnAppearing();
 
+            Loader.IsVisible = true;
             if (!isRendered)
             {
                 await ViewModel.InitializeAsync();

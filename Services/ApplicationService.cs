@@ -50,8 +50,8 @@ namespace ExpressBase.Mobile.Services
                 RestClient client = new RestClient(App.Settings.RootUrl);
 
                 RestRequest request = new RestRequest("api/menu", Method.GET);
-                request.AddHeader(AppConst.BTOKEN, Utils.BToken);
-                request.AddHeader(AppConst.RTOKEN, Utils.RToken);
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
                 request.AddParameter("locid", locid);
 

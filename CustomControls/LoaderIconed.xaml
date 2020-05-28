@@ -16,14 +16,21 @@
                 Padding="10"
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
-                <ActivityIndicator
+                <Frame
+                    HasShadow="True"
                     VerticalOptions="CenterAndExpand"
-                        HorizontalOptions="Center"
+                    HorizontalOptions="Center"
+                    Padding="7"
+                    CornerRadius="30">
+                    <ActivityIndicator
                         IsRunning="true" 
                         Color="#3579f9"
                         Grid.Column="0"
-                        WidthRequest="35"
-                        HeightRequest="35"/>
+                        WidthRequest="30"
+                        HeightRequest="30">
+                    </ActivityIndicator>
+                </Frame>
+                
             </StackLayout>
         </AbsoluteLayout>
     </ContentView.Content>

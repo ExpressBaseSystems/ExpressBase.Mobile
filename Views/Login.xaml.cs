@@ -12,7 +12,7 @@ namespace ExpressBase.Mobile.Views
     {
         private bool isRendered;
 
-        private LoginViewModel ViewModel { set; get; }
+        private readonly LoginViewModel ViewModel;
 
         public Login()
         {

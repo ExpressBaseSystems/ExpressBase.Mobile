@@ -5,250 +5,128 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
-             x:Class="ExpressBase.Mobile.Views.MySolutions"
-             NavigationPage.HasNavigationBar="False"
-             NavigationPage.HasBackButton="False"
-             Style="{StaticResource ContentPageStyle}">
+             x:Class="ExpressBase.Mobile.Views.MySolutions">
+
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Text="Solution Switcher" Grid.Column="0" FontSize="16" TextColor="White" VerticalOptions="Center"/>
+        </Grid>
+    </NavigationPage.TitleView>
+
     <ContentPage.Content>
-        <Grid BackgroundColor="White">
-            <Grid RowSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
-                <ScrollView 
-                    Grid.Row="0"
-                    x:Name="scrollView">
-                    <StackLayout>
-                        <Grid>
-                            <Image Source="connect.jpg"/>
-                            <BoxView 
-                                Opacity=".9"
-                                Grid.Row="0"
-                                BackgroundColor="{StaticResource Blue-Dark}"/>
-                            <StackLayout
-                                VerticalOptions="CenterAndExpand"
-                                Grid.Row="0">
-                                <Label
-                                    x:Name="BrandName"
-                                    Margin="20,20,0,10"
-                                    FontFamily="{StaticResource Roboto-Regular}"
-                                    HorizontalOptions="StartAndExpand"
-                                    FontSize="32"
-                                    Text="Solution"
-                                    TextColor="White" />
-                                <Label
-                                    x:Name="HeaderText"
-                                    Margin="20,0,0,0"
-                                    FontFamily="{StaticResource Roboto-Regular}"
-                                    FontSize="22"
-                                    HorizontalOptions="StartAndExpand"
-                                    Text="Switcher"
-                                    TextColor="White" />
-                            </StackLayout>
-                        </Grid>
-                        <StackLayout
-                            x:Name="SolutionsList"
-                            BindableLayout.ItemsSource="{Binding MySolutions}"
-                            Spacing="0">
-                            <BindableLayout.ItemTemplate>
-                                <DataTemplate>
-                                    <Frame
+        <Grid>
+            <ScrollView x:Name="scrollView">
+                <StackLayout
+                    x:Name="SolutionsList"
+                    BindableLayout.ItemsSource="{Binding MySolutions}"
+                    Spacing="0">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame
+                                Margin="0"
+                                Padding="10"
+                                BorderColor="{DynamicResource Gray-White}"
+                                CornerRadius="0"
+                                HasShadow="false">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.SolutionTapedCommand, Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
+                                <Grid ColumnSpacing="20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <AbsoluteLayout Grid.Column="0">
+                                        <Frame 
+                                            HeightRequest="55"
+                                            VerticalOptions="Center"
+                                            WidthRequest="55"
+                                            Padding="0"
+                                            BackgroundColor="#eeeeee"
+                                            BorderColor="#d4d5d8"
+                                            HasShadow="False"
+                                            CornerRadius="30">
+                                            <Image Source="{Binding Logo}"/>
+                                        </Frame>
+                                        <Frame
+                                            IsVisible="{Binding IsCurrent}"
+                                            CornerRadius="8"
+                                            BorderColor="White"
+                                            Padding="0"
+                                            HasShadow="False"
+                                            AbsoluteLayout.LayoutFlags="PositionProportional"   
+                                            AbsoluteLayout.LayoutBounds="1,1,15,15"
+                                            BackgroundColor="#26bd26"/>
+                                    </AbsoluteLayout>
+                                    <Label 
+                                        Text="{Binding SolutionName}"
+                                        Grid.Column="1"
+                                        FontSize="18"
+                                        VerticalTextAlignment="Center"
+                                        FontFamily="{StaticResource Roboto-Medium}"
+                                        TextColor="{DynamicResource Gray-900}">
+                                    </Label>
+                                    <Button
+                                        x:Name="DeleteSolution"
+                                        Grid.Column="2"
+                                        Padding="0"
+                                        FontSize="15"
                                         Margin="0"
-                                        Padding="10"
-                                        BorderColor="{DynamicResource Gray-White}"
-                                        CornerRadius="0"
-                                        HasShadow="false">
-                                        <Frame.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.SolutionTapedCommand, Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}" />
-                                        </Frame.GestureRecognizers>
-                                        <Grid ColumnSpacing="20">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                            </Grid.ColumnDefinitions>
-                                            <AbsoluteLayout Grid.Column="0">
-                                                <Frame 
-                                                    HeightRequest="55"
-                                                    VerticalOptions="Center"
-                                                    WidthRequest="55"
-                                                    Padding="0"
-                                                    BackgroundColor="#eeeeee"
-                                                    BorderColor="#d4d5d8"
-                                                    HasShadow="False"
-                                                    CornerRadius="30">
-                                                    <Image Source="{Binding Logo}"/>
-                                                </Frame>
-                                                <Frame
-                                                    IsVisible="{Binding IsCurrent}"
-                                                    CornerRadius="8"
-                                                    BorderColor="White"
-                                                    Padding="0"
-                                                    HasShadow="False"
-                                                    AbsoluteLayout.LayoutFlags="PositionProportional"   
-                                                    AbsoluteLayout.LayoutBounds="1,1,15,15"
-                                                    BackgroundColor="#26bd26"/>
-                                            </AbsoluteLayout>
-                                            <Label 
-                                                Text="{Binding SolutionName}"
-                                                Grid.Column="1"
-                                                FontSize="18"
-                                                VerticalTextAlignment="Center"
-                                                FontFamily="{StaticResource Roboto-Medium}"
-                                                TextColor="{DynamicResource Gray-900}"/>
-                                            <Button
-                                                x:Name="DeleteSolution"
-                                                Grid.Column="2"
-                                                Padding="0"
-                                                FontSize="15"
-                                                Margin="0"
-                                                Text="&#xf014;"
-                                                TextColor="Red"
-                                                BackgroundColor="Transparent"
-                                                WidthRequest="50"
-                                                FontFamily="{StaticResource FontAwesome}"
-                                                Command="{Binding BindingContext.SolutionRemoveCommand,Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}"/>
-                                        </Grid>
-                                    </Frame>
-                                </DataTemplate>
-                            </BindableLayout.ItemTemplate>
-                        </StackLayout>
+                                        Text="&#xf014;"
+                                        TextColor="Red"
+                                        BackgroundColor="Transparent"
+                                        WidthRequest="50"
+                                        FontFamily="{StaticResource FontAwesome}"
+                                        Command="{Binding BindingContext.SolutionRemoveCommand,Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}">
+                                    </Button>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+            </ScrollView>
+
+            <Frame
+                Margin="15,10"
+                VerticalOptions="End"
+                BackgroundColor="{StaticResource Blue-Dark}"
+                HeightRequest="50"
+                CornerRadius="6"
+                Padding="0">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="NewSolution_Tapped"></TapGestureRecognizer>
+                </Frame.GestureRecognizers>
+                <Frame.Content>
+                    <StackLayout>
+                        <FlexLayout Direction="Row" JustifyContent="Center" VerticalOptions="FillAndExpand">
+                            <Label 
+                                TextColor="White"
+                                Text="&#xf196;"
+                                FontSize="18"
+                                FontFamily="{StaticResource FontAwesome}"
+                                VerticalTextAlignment="Center"/>
+                            <Label 
+                                TextColor="White"
+                                Text="Add Solution"
+                                Margin="15,0,0,0"
+                                VerticalTextAlignment="Center"/>
+                        </FlexLayout>
                     </StackLayout>
-                </ScrollView>
-                <Frame 
-                    x:Name="InputArea"
-                    HasShadow="False"
-                    BackgroundColor="Transparent"
-                    Margin="10"
-                    Grid.Row="1"
-                    CornerRadius="30"
-                    Padding="10,5,5,5">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <control:TextBox
-                            IsVisible="False"
-                            x:Name="SolutionName"
-                            BorderColor="Transparent"
-                            FontSize="18"
-                            VerticalTextAlignment="Center"
-                            Grid.Column="0"
-                            Placeholder="solution.expressbase.com"/>
+                </Frame.Content>
+            </Frame>
 
-                        <Button
-                            x:Name="AddSolution"
-                            Grid.Column="1"
-                            Padding="0"
-                            FontSize="16"
-                            Margin="0"
-                            Text="&#xf067;"
-                            BackgroundColor="{StaticResource Blue-Dark}"
-                            BorderColor="{StaticResource Blue-Dark}"
-                            TextColor="White"
-                            CornerRadius="28"
-                            HeightRequest="55"
-                            WidthRequest="55"
-                            FontFamily="{StaticResource FontAwesome}"
-                            Clicked="AddSolution_Clicked"/>
-
-                        <Button
-                            IsVisible="False"
-                            x:Name="SaveSolution"
-                            Grid.Column="1"
-                            Padding="0"
-                            FontSize="16"
-                            Margin="0"
-                            Text="&#xf0c7;"
-                            BackgroundColor="{StaticResource Blue-Dark}"
-                            BorderColor="{StaticResource Blue-Dark}"
-                            TextColor="White"
-                            CornerRadius="28"
-                            HeightRequest="55"
-                            WidthRequest="55"
-                            FontFamily="{StaticResource FontAwesome}"
-                            Clicked="SaveSolution_Clicked"/>
-                    </Grid>
-                </Frame>
-            </Grid>
             <!--loader-->
             <control:LoaderIconed 
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"/>
-
-            <!--message box-->
-            <ContentView 
-                x:Name="PopupContainer"
-                IsVisible="False" 
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
-                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                    <BoxView
-                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                        AbsoluteLayout.LayoutFlags="All"
-                        BackgroundColor="Black"
-                        Opacity=".7"/>
-                    <StackLayout 
-                        Padding="15"
-                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                        AbsoluteLayout.LayoutFlags="All">
-                        <Frame 
-                            Padding="0"
-                            HasShadow="False"
-                            BackgroundColor="White"
-                            CornerRadius="6"
-                            VerticalOptions="CenterAndExpand">
-                            <Frame.Content>
-                                <Grid RowSpacing="0" ColumnSpacing="1" BackgroundColor="#eeeeee">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"></RowDefinition>
-                                        <RowDefinition Height="Auto"></RowDefinition>
-                                        <RowDefinition Height="50"></RowDefinition>
-                                    </Grid.RowDefinitions>
-                                    <StackLayout Padding="15" Grid.Row="0" Grid.ColumnSpan="2" BackgroundColor="White">
-                                        <Label 
-                                            x:Name="SolutionLabel"
-                                            HorizontalTextAlignment="Center"
-                                            Text="xxxxxx.expressbase.com"
-                                            FontFamily="{StaticResource Roboto-Regular}"
-                                            FontSize="18"
-                                            TextColor="#333"/>
-                                        <Image 
-                                            x:Name="SolutionLogoPrompt"
-                                            Grid.Row="1" 
-                                            HeightRequest="100"
-                                            Source="icon.png"
-                                            HorizontalOptions="Center"/>
-                                    </StackLayout>
-                                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#eee" HeightRequest="1"/>
-                                    <Button 
-                                        Grid.Row="2"
-                                        Grid.Column="0"
-                                        x:Name="PopupCancel"
-                                        Text="Cancel"
-                                        Padding="0"
-                                        CornerRadius="0"   
-                                        BackgroundColor="White"
-                                        Clicked="PopupCancel_Clicked"/>
-                                    <Button 
-                                        Grid.Row="2"
-                                        Grid.Column="1"
-                                        Text="Continue" 
-                                        BackgroundColor="White"
-                                        TextColor="#0076ff"
-                                        Padding="0" 
-                                        CornerRadius="0"
-                                        Clicked="ConfirmButton_Clicked"/>
-                                </Grid>
-                            </Frame.Content>
-                        </Frame>
-                    </StackLayout>
-                </AbsoluteLayout>
-            </ContentView>
+            </control:LoaderIconed>
         </Grid>
     </ContentPage.Content>
 </ContentPage> 

@@ -107,17 +107,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     throw new Exception("no internet");
                 }
 
-                await Task.Run(() =>
+                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, offset, this.Parameters);
+                if (ds != null && ds.Tables.HasLength(2))
                 {
-                    EbDataSet ds = this.Visualization.GetData(this.Page.NetworkMode, offset, this.Parameters);
-                    if (ds != null && ds.Tables.HasLength(2))
-                    {
-                        DataTable = ds.Tables[1];
-                        DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
-                    }
-                    else
-                        throw new Exception("no internet");
-                });
+                    DataTable = ds.Tables[1];
+                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
+                }
+                else
+                    throw new Exception("no internet");
             }
             catch (Exception ex)
             {

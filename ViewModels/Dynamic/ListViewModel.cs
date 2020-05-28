@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
@@ -17,6 +18,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class ListViewModel : DynamicBaseViewModel
     {
+        private readonly IDataService dataService;
+
         public int DataCount { set; get; }
 
         public EbMobileVisualization Visualization { set; get; }
@@ -27,17 +30,18 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<SortColumn> SortColumns { set; get; }
 
-        public Command ApplyFilterCommand { set; get; }
+        public Command ApplyFilterCommand => new Command(ApplyFilterClicked);
 
         public Action ViewAction { set; get; }
 
         public ListViewModel(EbMobilePage page) : base(page)
         {
-            this.Visualization = this.Page.Container as EbMobileVisualization;
+            this.Visualization = (EbMobileVisualization)this.Page.Container;
+
             this.FilterControls = this.Visualization.FilterControls;
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
 
-            ApplyFilterCommand = new Command(ApplyFilterClicked);
+            dataService = DataService.Instance;
         }
 
         public async Task SetData(int offset = 0)
@@ -50,17 +54,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     throw new Exception("no internet");
                 }
 
-                await Task.Run(() =>
+                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, offset);
+                if (ds != null && ds.Tables.HasLength(2))
                 {
-                    EbDataSet ds = this.Visualization.GetData(this.Page.NetworkMode, offset);
-                    if (ds != null && ds.Tables.HasLength(2))
-                    {
-                        DataTable = ds.Tables[1];
-                        DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
-                    }
-                    else
-                        throw new Exception("no internet");
-                });
+                    DataTable = ds.Tables[1];
+                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
+                }
+                else
+                    throw new Exception("no internet");
             }
             catch (Exception ex)
             {
@@ -111,21 +112,18 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
-                await Task.Run(() =>
+                DataTable.Rows.Clear();
+                DataCount = 0;
+
+                List<SortColumn> sort = this.SortColumns.FindAll(item => item.Selected);
+
+                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, 0, parameters, sort);
+
+                if (ds != null && ds.Tables.HasLength(2))
                 {
-                    DataTable.Rows.Clear();
-                    DataCount = 0;
-
-                    List<SortColumn> sort = this.SortColumns.FindAll(item => item.Selected);
-
-                    EbDataSet ds = this.Visualization.GetData(this.Page.NetworkMode, 0, parameters, sort);
-
-                    if (ds != null && ds.Tables.HasLength(2))
-                    {
-                        DataTable = ds.Tables[1];
-                        DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
-                    }
-                });
+                    DataTable = ds.Tables[1];
+                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
+                }
             }
             catch (Exception ex)
             {

@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Dynamic.FormRender"
              BackgroundColor="White">
-    
+
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="0" Padding="0" BackgroundColor="Transparent">
             <Grid.ColumnDefinitions>
@@ -27,44 +27,50 @@
                 Clicked="EditButton_Clicked"/>
         </Grid>
     </NavigationPage.TitleView>
-    
+
     <ContentPage.Content>
-        <Grid>
-            <Grid RowSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
-                <ScrollView 
-                    Grid.Row="0" 
-                    Orientation="Vertical" 
-                    x:Name="FormScrollView"/>
-                <Button 
-                    x:Name="SaveButton"
-                    Grid.Row="1"
-                    Text="Save"
-                    HorizontalOptions="FillAndExpand"
-                    VerticalOptions="EndAndExpand"
-                    BackgroundColor="{StaticResource Blue-Dark}"
-                    TextColor="White"
-                    Command="{Binding SaveCommand}"/>
-            </Grid>
+        <Grid RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <control:FormView
+                Grid.Row="0"
+                Controls="{Binding Controls}"
+                NetWorkType ="{Binding NetworkType}"
+                FormMode="{Binding Mode}">
+            </control:FormView>
+            <Button 
+                x:Name="SaveButton"
+                Grid.Row="1"
+                Text="Save"
+                CornerRadius="0"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="EndAndExpand"
+                BackgroundColor="{StaticResource Blue-Dark}"
+                TextColor="White"
+                Command="{Binding SaveCommand}">
+            </Button>
             <control:Loader 
+                Grid.RowSpan="2"
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All"
                 Position="EndAndExpand"
-                Message="Saving record..."/>
-
+                Message="Saving record...">
+            </control:Loader>
             <control:LoaderIconed 
+                Grid.RowSpan="2"
                 IsVisible="False"
                 x:Name="LoaderIconed"
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"/>
-
+                AbsoluteLayout.LayoutFlags="All">
+            </control:LoaderIconed>
             <control:ImagePopup
-                x:Name="ImageFullScreen"/>
+                Grid.RowSpan="2"
+                x:Name="ImageFullScreen">
+            </control:ImagePopup>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

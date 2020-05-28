@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,8 @@ namespace ExpressBase.Mobile.Services
         Task CreateDirectory();
 
         Task UpdateSolutions(IEnumerable<SolutionInfo> info);
+
+        bool IsSolutionExist(string url);
     }
 
     public class SolutionService : ISolutionService
@@ -94,9 +97,6 @@ namespace ExpressBase.Mobile.Services
                 await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, info);
 
                 App.Settings.CurrentSolution = info;
-
-                //await Store.SetValueAsync(AppConst.SID, info.SolutionName);
-                //await Store.SetValueAsync(AppConst.ROOT_URL, info.RootUrl);
             }
             catch (Exception ex)
             {
@@ -123,16 +123,10 @@ namespace ExpressBase.Mobile.Services
 
         public async Task ClearCached()
         {
-            await Task.Delay(1);
-
-            Store.RemoveJSON(AppConst.OBJ_COLLECTION);//remove obj collection
-            Store.RemoveJSON(AppConst.APP_COLLECTION);
-            Store.RemoveJSON(AppConst.USER_LOCATIONS);
-            Store.RemoveJSON(AppConst.USER_OBJECT);
-            Store.Remove(AppConst.APPID);
-            Store.Remove(AppConst.USERNAME);
-            Store.Remove(AppConst.BTOKEN);
-            Store.Remove(AppConst.RTOKEN);
+            await Task.Run(() =>
+            {
+                Store.ResetCashedSolutionData();
+            });
         }
 
         public async Task CreateDB(string slnName)
@@ -154,6 +148,13 @@ namespace ExpressBase.Mobile.Services
         public async Task UpdateSolutions(IEnumerable<SolutionInfo> solutions)
         {
             await Store.SetJSONAsync(AppConst.MYSOLUTIONS, new List<SolutionInfo>(solutions));
+        }
+
+        public bool IsSolutionExist(string url)
+        {
+            url = url.Trim();
+            List<SolutionInfo> solutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
+            return solutions.Any(item => item.SolutionName == url.Split('.')[0] && item.RootUrl == url);
         }
     }
 }

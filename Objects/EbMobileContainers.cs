@@ -7,6 +7,7 @@ using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile
 {
@@ -74,12 +75,12 @@ namespace ExpressBase.Mobile
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
 
-        public EbDataSet GetData(NetworkMode networkType, int offset, List<DbParameter> parameters = null, List<SortColumn> sortOrder = null)
+        public async Task<EbDataSet> GetData(NetworkMode networkType, int offset, List<DbParameter> parameters = null, List<SortColumn> sortOrder = null)
         {
             try
             {
                 if (networkType == NetworkMode.Online)
-                    return this.GetLiveData(parameters, sortOrder, offset);
+                    return await this.GetLiveData(parameters, sortOrder, offset);
                 else if (networkType == NetworkMode.Offline)
                     return this.GetLocalData(parameters, sortOrder, offset);
                 else
@@ -101,7 +102,7 @@ namespace ExpressBase.Mobile
 
                 if (userParam != null)
                 {
-                    userParam.Value = Utils.UserId;
+                    userParam.Value = App.Settings.UserId;
                     userParam.DbType = (int)EbDbTypes.Int32;
                 }
 
@@ -119,12 +120,12 @@ namespace ExpressBase.Mobile
             return Data;
         }
 
-        public EbDataSet GetLiveData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, int offset)
+        public async Task<EbDataSet> GetLiveData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, int offset)
         {
             EbDataSet Data = null;
             try
             {
-                VisualizationLiveData vd = RestServices.Instance.PullReaderData(this.DataSourceRefId, dbParameters.ToParams(), sortOrder, this.PageLength, offset);
+                VisualizationLiveData vd = await DataService.Instance.GetDataAsync(this.DataSourceRefId, dbParameters.ToParams(), sortOrder, this.PageLength, offset);
                 Data = vd.Data;
             }
             catch (Exception ex)

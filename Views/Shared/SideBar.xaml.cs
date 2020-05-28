@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             InitializeComponent();
 
-            var _user = Utils.UserObject;
+            User _user = App.Settings.CurrentUser;
             UserName.Text = _user.FullName;
             Email.Text = _user.Email;
             this.SetDp();
@@ -23,10 +23,11 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private void SetDp()
         {
-            INativeHelper helper = DependencyService.Get<INativeHelper>();
-            string sid = Utils.SolutionId;
             try
             {
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                string sid = App.Settings.Sid;
+
                 var bytes = helper.GetPhoto($"ExpressBase/{sid}/user.png");
                 if (bytes != null)
                     UserDp.Source = ImageSource.FromStream(() => new MemoryStream(bytes));
@@ -37,53 +38,28 @@ namespace ExpressBase.Mobile.Views.Shared
             }
         }
 
-        private void About_Tapped(object sender, EventArgs e)
+        private async void About_Tapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            App.RootMaster.Detail.Navigation.PushAsync(new About());
+            await App.RootMaster.Detail.Navigation.PushAsync(new About());
         }
 
-        private void ChangeSolution_Tapped(object sender, EventArgs e)
+        private async void ChangeSolution_Tapped(object sender, EventArgs e)
         {
-            try
-            {
-                Application.Current.MainPage = new NavigationPage(new MySolutions())
-                {
-                    BarBackgroundColor = Color.FromHex("0046bb"),
-                    BarTextColor = Color.White
-                };
-                App.RootMaster.IsPresented = false;
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
+            App.RootMaster.IsPresented = false;
+            await App.RootMaster.Detail.Navigation.PushAsync(new MySolutions());
         }
 
         private async void ChangeApplication_Tapped(object sender, EventArgs e)
         {
-            try
-            {
-                App.RootMaster.IsPresented = false;
-                await App.RootMaster.Detail.Navigation.PushAsync(new MyApplications(true));
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
+            App.RootMaster.IsPresented = false;
+            await App.RootMaster.Detail.Navigation.PushAsync(new MyApplications(true));
         }
 
         private async void ChangeLocation_Tapped(object sender, EventArgs e)
         {
-            try
-            {
-                App.RootMaster.IsPresented = false;
-                await App.RootMaster.Detail.Navigation.PushAsync(new MyLocations());
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
+            App.RootMaster.IsPresented = false;
+            await App.RootMaster.Detail.Navigation.PushAsync(new MyLocations());
         }
 
         private void Logout_Tapped(object sender, EventArgs e)
@@ -103,14 +79,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private void Setup_Tapped(object sender, EventArgs e)
         {
-            try
-            {
 
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
         }
     }
 }

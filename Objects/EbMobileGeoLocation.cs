@@ -136,7 +136,7 @@ namespace ExpressBase.Mobile
 
         private void SetWebViewUrl(double lat, double lon)
         {
-            string url = $"{Utils.RootUrl}/api/map?bToken={Utils.BToken}&rToken={Utils.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}";
+            string url = $"{App.Settings.RootUrl}/api/map?bToken={App.Settings.BToken}&rToken={App.Settings.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}";
             this.WebView.Source = new UrlWebViewSource { Url = url };
         }
 

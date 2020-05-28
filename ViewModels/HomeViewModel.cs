@@ -1,17 +1,12 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Extensions;
+﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
-using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -76,34 +71,31 @@ namespace ExpressBase.Mobile.ViewModels
 
         private async Task SyncButtonEvent()
         {
-            IToast toast = DependencyService.Get<IToast>();
-            if (!Utils.HasInternet)
+            try
             {
-                toast.Show("You are not connected to internet !");
-                return;
+                IToast toast = DependencyService.Get<IToast>();
+                if (!Utils.HasInternet)
+                {
+                    toast.Show("You are not connected to internet !");
+                    return;
+                }
+
+                Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
+
+                await IdentityService.AuthIfTokenExpiredAsync();
+
+                SyncResponse response = await menuServices.Sync();
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    IsBusy = false;
+                    toast.Show(response.Message);
+                });
             }
-
-            Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
-
-            await IdentityService.AuthIfTokenExpiredAsync();
-
-            await Task.Run(() =>
+            catch (Exception ex)
             {
-                try
-                {
-                    SyncResponse response = SyncServices.Instance.Sync();
-
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        IsBusy = false;
-                        toast.Show(response.Message);
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Log.Write("ObjectRender_OnSyncClick" + ex.Message);
-                }
-            });
+                Log.Write("ObjectRender_OnSyncClick" + ex.Message);
+            }
         }
 
         private bool IsTapped;

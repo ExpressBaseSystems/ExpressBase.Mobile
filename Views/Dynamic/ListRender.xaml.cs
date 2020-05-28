@@ -20,6 +20,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private int PageCount = 1;
 
+        private bool isRendered;
+
         public ListViewModel ViewModel { set; get; }
 
         private TapGestureRecognizer TapGesture { set; get; }
@@ -40,11 +42,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             base.OnAppearing();
 
-            if (this.ViewModel.DataTable == null)
+            if (!isRendered)
             {
                 await this.ViewModel.SetData();
                 this.AppendListItems();
             }
+            isRendered = true;
             this.Loader.IsVisible = false;
         }
 

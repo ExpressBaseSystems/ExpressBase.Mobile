@@ -75,7 +75,7 @@ namespace ExpressBase.Mobile
             return dt;
         }
 
-        public FormSaveResponse SaveForm(int rowId)
+        public async Task<FormSaveResponse> SaveForm(int rowId)
         {
             FormSaveResponse response = new FormSaveResponse();
             try
@@ -83,20 +83,20 @@ namespace ExpressBase.Mobile
                 MobileFormData data = this.PrepareFormData(rowId);
                 data.SortByMaster();//sort then mastertable will be the first index
 
-                switch (this.NetworkType)
+                if (this.NetworkType == NetworkMode.Online)
                 {
-                    case NetworkMode.Online:
-                        this.PersistCloud(data, response, rowId);
-                        break;
-                    case NetworkMode.Mixed:
-                        if (Utils.HasInternet)
-                            this.PersistCloud(data, response, rowId);
-                        else
-                            this.PersistLocal(data, response, rowId);
-                        break;
-                    default:
-                        this.PersistLocal(data, response, rowId);
-                        break;
+                    await this.PersistCloud(data, response, rowId);
+                }
+                else if (this.NetworkType == NetworkMode.Mixed)
+                {
+                    if (Utils.HasInternet)
+                        await this.PersistCloud(data, response, rowId);
+                    else
+                        await this.PersistLocal(data, response, rowId);
+                }
+                else
+                {
+                    await this.PersistLocal(data, response, rowId);
                 }
             }
             catch (Exception ex)
@@ -106,12 +106,12 @@ namespace ExpressBase.Mobile
             return response;
         }
 
-        public FormSaveResponse SaveFormWParent(int parentId, string parentTable)
+        public async Task<FormSaveResponse> SaveFormWParent(int parentId, string parentTable)
         {
             this.Mode = FormMode.REF;
             this.ParentId = parentId;
             this.ParentTable = parentTable;
-            return SaveForm(0);
+            return await SaveForm(0);
         }
 
         private MobileFormData PrepareFormData(int RowId)
@@ -144,7 +144,7 @@ namespace ExpressBase.Mobile
             return FormData;
         }
 
-        private void PersistCloud(MobileFormData data, FormSaveResponse response, int rowId)
+        private async Task PersistCloud(MobileFormData data, FormSaveResponse response, int rowId)
         {
             try
             {
@@ -157,14 +157,16 @@ namespace ExpressBase.Mobile
                         files.AddRange(pair.Value);
                     if (files.Any())
                     {
-                        var resp = RestServices.Instance.PushFiles(files);
+                        var resp = await FormDataServices.Instance.SendFilesAsync(files);
                         webformdata.ExtendedTables = files.GroupByControl(resp);
 
                         if (!webformdata.ExtendedTables.Any())
                             throw new Exception("Image Upload faild");
                     }
                 }
-                PushResponse pushResponse = RestServices.Instance.Push(webformdata, rowId, this.WebFormRefId, Utils.LocationId);
+
+                PushResponse pushResponse = await FormDataServices.Instance.SendFormDataAsync(webformdata, rowId, this.WebFormRefId, App.Settings.CurrentLocId);
+
                 if (pushResponse.RowAffected > 0)
                 {
                     response.Status = true;
@@ -181,7 +183,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        private void PersistLocal(MobileFormData data, FormSaveResponse response, int rowId)
+        private async Task PersistLocal(MobileFormData data, FormSaveResponse response, int rowId)
         {
             try
             {
@@ -194,7 +196,7 @@ namespace ExpressBase.Mobile
                 if (this.HasFileSelect)
                 {
                     object lastRowId = (rowId != 0) ? rowId : App.DataDB.DoScalar(string.Format(StaticQueries.CURRVAL, this.TableName));
-                    this.WriteFilesToLocal(lastRowId);
+                    await this.WriteFilesToLocal(lastRowId);
                 }
 
                 if (rowAffected > 0)
@@ -213,11 +215,11 @@ namespace ExpressBase.Mobile
             }
         }
 
-        private void WriteFilesToLocal(object LastRowId)
+        private async Task WriteFilesToLocal(object LastRowId)
         {
             int rowid = Convert.ToInt32(LastRowId);
 
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 foreach (var pair in this.ControlDictionary)
                 {
@@ -227,7 +229,7 @@ namespace ExpressBase.Mobile
             });
         }
 
-        public void UploadFiles(int RowId, WebformData WebFormData)
+        public async Task UploadFiles(int RowId, WebformData WebFormData)
         {
             ControlDictionary = ChildControls.ToControlDictionary();
             List<FileWrapper> Files = new List<FileWrapper>();
@@ -240,9 +242,10 @@ namespace ExpressBase.Mobile
                     Files.AddRange(HelperFunctions.GetFilesByPattern(pattern, pair.Value.Name));
                 }
             }
+
             if (Files.Count > 0)
             {
-                var ApiFiles = RestServices.Instance.PushFiles(Files);
+                var ApiFiles = await FormDataServices.Instance.SendFilesAsync(Files);
                 var ExtendedTable = Files.GroupByControl(ApiFiles);
                 if (ExtendedTable.Any())
                     WebFormData.ExtendedTables = ExtendedTable;

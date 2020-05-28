@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public LoginViewModel()
         {
-            identityService = new IdentityService();
+            identityService = IdentityService.Instance;
         }
 
         public override async Task InitializeAsync()

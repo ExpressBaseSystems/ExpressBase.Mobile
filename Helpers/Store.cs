@@ -188,24 +188,30 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public static void ResetSolution()
+        public static void ResetCashedSolutionData()
         {
             try
             {
-                Store.Remove(AppConst.SID);
-                Store.Remove(AppConst.USERNAME);
-                Store.Remove(AppConst.PASSWORD);
+                //remove auth info
+                Store.RemoveJSON(AppConst.USER_OBJECT);
                 Store.Remove(AppConst.BTOKEN);
                 Store.Remove(AppConst.RTOKEN);
-                Store.Remove(AppConst.USER_ID);
-                Store.RemoveJSON(AppConst.USER_OBJECT);
-                Store.RemoveJSON(AppConst.USER_LOCATIONS);
-                Store.Remove(AppConst.CURRENT_LOCATION);
+                Store.Remove(AppConst.PASSWORD);
+                App.Settings.CurrentUser = null;
 
-                Store.Remove(AppConst.APPID);
-                Store.Remove(AppConst.APPNAME);
-                Store.RemoveJSON(AppConst.OBJ_COLLECTION);
+                //remove application info
                 Store.RemoveJSON(AppConst.APP_COLLECTION);
+                Store.RemoveJSON(AppConst.CURRENT_APP);
+                App.Settings.CurrentApplication = null;
+
+                //remove objects info
+                Store.RemoveJSON(AppConst.OBJ_COLLECTION);
+                Store.RemoveJSON(AppConst.WEBOBJ_COLLECTION);
+
+                //location info
+                Store.RemoveJSON(AppConst.USER_LOCATIONS);
+                Store.RemoveJSON(AppConst.CURRENT_LOCOBJ);
+                App.Settings.CurrentLocation = null;
             }
             catch (Exception ex)
             {

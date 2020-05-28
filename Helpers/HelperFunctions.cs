@@ -109,7 +109,7 @@ namespace ExpressBase.Mobile.Helpers
 
         public static string CreatePlatFormDir(string FolderName = null)
         {
-            string sid = Utils.SolutionId.ToUpper();
+            string sid = App.Settings.Sid.ToUpper();
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
@@ -160,7 +160,7 @@ namespace ExpressBase.Mobile.Helpers
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
-                string sid = Utils.SolutionId.ToUpper();
+                string sid = App.Settings.Sid.ToUpper();
 
                 string[] filenames = helper.GetFiles($"ExpressBase/{sid}/FILES", Patten);
 
@@ -191,6 +191,26 @@ namespace ExpressBase.Mobile.Helpers
         {
             byte[] b = Convert.FromBase64String(b64);
             return System.Text.Encoding.UTF8.GetString(b);
+        }
+
+        public static List<EbMobileForm> GetOfflineForms()
+        {
+            List<EbMobileForm> ls = new List<EbMobileForm>();
+            var pages = Utils.Objects;
+            foreach (MobilePagesWraper _p in pages)
+            {
+                EbMobilePage mpage = _p.ToPage();
+                if (mpage != null && mpage.Container is EbMobileForm)
+                {
+                    if (string.IsNullOrEmpty((mpage.Container as EbMobileForm).WebFormRefId))
+                        continue;
+                    if (mpage.NetworkMode == NetworkMode.Offline || mpage.NetworkMode == NetworkMode.Mixed)
+                    {
+                        ls.Add(mpage.Container as EbMobileForm);
+                    }
+                }
+            }
+            return ls;
         }
     }
 }

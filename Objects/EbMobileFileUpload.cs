@@ -254,7 +254,7 @@ namespace ExpressBase.Mobile
             foreach (KeyValuePair<string, byte[]> kp in this.Gallery)
             {
                 string filename = $"{TableName}-{RowId}-{this.Name}-{Guid.NewGuid().ToString("n").Substring(0, 10)}.jpg";
-                File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{Utils.SolutionId.ToUpper()}/FILES/{filename}", kp.Value);
+                File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{ App.Settings.Sid.ToUpper()}/FILES/{filename}", kp.Value);
             }
         }
 
@@ -277,7 +277,7 @@ namespace ExpressBase.Mobile
                 {
                     foreach (FileMetaInfo info in meta.Files)
                     {
-                        var tuple = RestServices.Instance.GetFile(info.FileCategory, $"{meta.RowId}.jpg");
+                        var tuple = FormDataServices.Instance.GetFile(info.FileCategory, $"{meta.RowId}.jpg");
                         if (tuple == null) continue;
 
                         this.AddImage(info.FileName, tuple.Item2);

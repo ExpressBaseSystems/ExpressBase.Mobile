@@ -11,12 +11,10 @@ namespace ExpressBase.Mobile.Views
     {
         public DoActionViewModel ViewModel { set; get; }
 
-        public DoAction(EbMyAction action, MyActionsViewModel myActionVm)
+        public DoAction(EbMyAction action)
         {
             InitializeComponent();
-            BindingContext = ViewModel = new DoActionViewModel(action, myActionVm);
-
-            DataContainer.Children.Add(ViewModel.DataView);
+            BindingContext = ViewModel = new DoActionViewModel(action);
 
             if (action != null && action.StageInfo != null)
                 CurrentStage.Text = action.StageInfo.StageName;

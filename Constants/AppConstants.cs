@@ -12,19 +12,7 @@ namespace ExpressBase.Mobile.Constants
 
         public const string RTOKEN = "rToken";
 
-        public const string USER_ID = "userId";
-
-        public const string DISPLAY_NAME = "displayName";
-
-        public const string SID = "sid";
-
         public const string SOLUTION_OBJ = "solution_obj";
-
-        public const string APPID = "appid";
-
-        public const string APPNAME = "appname";
-
-        public const string USERNAME = "username";
 
         public const string PASSWORD = "password";
 
@@ -36,15 +24,11 @@ namespace ExpressBase.Mobile.Constants
 
         public const string WEBOBJ_COLLECTION = "webobj_collection";
 
-        public const string ROOT_URL = "root_url";
-
         public const string USER_OBJECT = "eb_userobject";
 
         public const string USER_LOCATIONS = "eb_userlocations";
 
         public const string CURRENT_LOCOBJ = "current_loc_object";
-
-        public const string CURRENT_LOCATION = "current_loc";
     }
 
     public static class RegexConstants

@@ -8,7 +8,11 @@ namespace ExpressBase.Mobile.Data
 {
     public interface IDataBase
     {
+        string DbPath { set; get; }
+
         int CreateDB(string sid);
+
+        void SetDbPath(string sid);
 
         EbDataSet DoQueries(string query, params DbParameter[] parameter);
 

@@ -73,6 +73,11 @@ namespace ExpressBase.Mobile.Services
             {
                 CurrentSolution = this.GetSolution();
 
+                if(CurrentSolution != null)
+                {
+                    App.DataDB.SetDbPath(CurrentSolution.SolutionName);
+                }
+
                 RToken = await GetRToken();
                 BToken = await GetBToken();
 

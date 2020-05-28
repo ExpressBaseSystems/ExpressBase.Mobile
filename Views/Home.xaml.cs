@@ -16,7 +16,7 @@ namespace ExpressBase.Mobile.Views
 
         private int BackButtonCount;
 
-        public HomeViewModel ViewModel { private set; get; }
+        private readonly HomeViewModel ViewModel;
 
         public Home()
         {

@@ -138,8 +138,7 @@ namespace ExpressBase.Mobile.CustomControls
         private void IconContainer_SizeChanged(object sender, EventArgs e)
         {
             Label lay = (sender as Label);
-            if (lay.Width != lay.Height)
-                lay.HeightRequest = lay.Width;
+            lay.HeightRequest = lay.Width;
         }
 
         private Grid CreateGrid()

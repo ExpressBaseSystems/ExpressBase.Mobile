@@ -35,7 +35,9 @@
                 </FlexLayout>
                 <ScrollView Grid.Row="1">
                     <StackLayout>
+                        
                         <control:CustomShadowFrame
+                            x:Name="DataFrame"
                             Padding="0"
                             Grid.Row="0"
                             HasShadow="true"
@@ -43,11 +45,35 @@
                             BorderColor="White"
                             Margin="15"
                             CornerRadius="6">
-                            <StackLayout
-                                Margin="3"
-                                x:Name="DataContainer"
-                                BackgroundColor="#cccccc"/>
+                            <StackLayout BindableLayout.ItemsSource="{Binding ActionData}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Label 
+                                                Grid.Column="0"
+                                                Padding="8"
+                                                Text="{Binding Name}"
+                                                BackgroundColor="White"
+                                                VerticalOptions="FillAndExpand"
+                                                FontFamily="{StaticResource Roboto-Regular}">
+                                            </Label>
+                                            <Label 
+                                                Grid.Column="1"
+                                                Padding="8"
+                                                Text="{Binding Value}"
+                                                BackgroundColor="White"
+                                                VerticalOptions="FillAndExpand">
+                                            </Label>
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </StackLayout>
                         </control:CustomShadowFrame>
+                        
                         <StackLayout Margin="15,0">
                             <Label Text="Status"/>
                             <AbsoluteLayout>

@@ -95,10 +95,6 @@ namespace ExpressBase.Mobile.Services
 
                 await Store.SetValueAsync(AppConst.PASSWORD, password.Trim());
 
-                //await Store.SetValueAsync(AppConst.USER_ID, resp.UserId.ToString());
-                //await Store.SetValueAsync(AppConst.DISPLAY_NAME, resp.DisplayName);
-                //await Store.SetValueAsync(AppConst.USERNAME, username.Trim());
-
                 if (update_loc)
                 {
                     EbLocation loc = resp.Locations.Find(item => item.LocId == resp.User.Preference.DefaultLocation);
@@ -113,7 +109,7 @@ namespace ExpressBase.Mobile.Services
                 if (resp.DisplayPicture != null)
                 {
                     INativeHelper helper = DependencyService.Get<INativeHelper>();
-                    string url = helper.NativeRoot + $"/ExpressBase/{Utils.SolutionId.ToUpper()}/user.png";
+                    string url = helper.NativeRoot + $"/ExpressBase/{ App.Settings.Sid.ToUpper()}/user.png";
                     File.WriteAllBytes(url, resp.DisplayPicture);
                 }
             }

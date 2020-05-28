@@ -53,15 +53,6 @@ namespace ExpressBase.Mobile.ViewModels
 
         public void ResetClicked()
         {
-            Store.Remove(AppConst.SID);
-            Store.Remove(AppConst.ROOT_URL);
-            Store.Remove(AppConst.APPID);
-            Store.Remove(AppConst.USERNAME);
-            Store.Remove(AppConst.PASSWORD);
-            Store.Remove(AppConst.BTOKEN);
-            Store.Remove(AppConst.RTOKEN);
-            Store.RemoveJSON(AppConst.OBJ_COLLECTION);
-            Store.RemoveJSON(AppConst.APP_COLLECTION);
             App.RootMaster = null;
             Application.Current.MainPage = new NavigationPage(new MySolutions())
             {
@@ -74,25 +65,15 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                Store.Remove(AppConst.BTOKEN);
-                Store.Remove(AppConst.RTOKEN);
-                Store.Remove(AppConst.USER_ID);
-                Store.Remove(AppConst.PASSWORD);
-                Store.RemoveJSON(AppConst.USER_OBJECT);
-                Store.RemoveJSON(AppConst.USER_LOCATIONS);
-                Store.Remove(AppConst.CURRENT_LOCATION);
+                Store.ResetCashedSolutionData();
 
-                Store.Remove(AppConst.APPID);
-                Store.Remove(AppConst.APPNAME);
-                Store.RemoveJSON(AppConst.OBJ_COLLECTION);
-                Store.RemoveJSON(AppConst.APP_COLLECTION);
                 Application.Current.MainPage = new NavigationPage(new Login())
                 {
                     BarBackgroundColor = Color.FromHex("0046bb"),
                     BarTextColor = Color.White
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }

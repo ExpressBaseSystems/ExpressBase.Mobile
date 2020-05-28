@@ -12,9 +12,9 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MyApplications : ContentPage
     {
-        public bool isRendered;
+        private bool isRendered;
 
-        public MyApplicationsViewModel ViewModel { set; get; }
+        private readonly MyApplicationsViewModel ViewModel;
 
         public bool IsInternal { set; get; }
 

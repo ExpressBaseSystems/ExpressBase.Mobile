@@ -38,8 +38,6 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public View DataView { set; get; }
-
         public List<Param> ActionData { set; get; }
 
         public EbMyAction Action { set; get; }
@@ -48,64 +46,15 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command SubmitCommand => new Command(async () => await SubmitButton_Clicked());
 
-        private readonly MyActionsViewModel MyActionVM;
-
-        public DoActionViewModel(EbMyAction myAction, MyActionsViewModel myActionVM)
+        public DoActionViewModel(EbMyAction myAction)
         {
             PageTitle = myAction.Description;
             Action = myAction;
-            MyActionVM = myActionVM;
 
             if (Action.StageInfo != null)
             {
                 StageActions = Action.StageInfo.StageActions ?? new List<EbStageActions>();
                 ActionData = Action.StageInfo.Data ?? new List<Param>();
-                BuildView();
-            }
-        }
-
-        private void BuildView()
-        {
-            try
-            {
-                Grid gd = new Grid
-                {
-                    RowSpacing = 1,
-                    ColumnSpacing = 1,
-                    ColumnDefinitions =
-                    {
-                        new ColumnDefinition{ Width = GridLength.Star },
-                        new ColumnDefinition{ Width = GridLength.Star },
-                    }
-                };
-
-                int rowCounter = 0;
-                foreach (var p in this.ActionData)
-                {
-                    if (string.IsNullOrEmpty(p.Name)) continue;
-                    gd.RowDefinitions.Add(new RowDefinition());
-                    gd.Children.Add(new Label
-                    {
-                        Padding = 8,
-                        Text = p.Name,
-                        BackgroundColor = Color.White,
-                        VerticalOptions = LayoutOptions.FillAndExpand,
-                        FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("Roboto-Regular")
-                    }, 0, rowCounter);
-                    gd.Children.Add(new Label
-                    {
-                        Padding = 8,
-                        Text = p.Value,
-                        BackgroundColor = Color.White,
-                        VerticalOptions = LayoutOptions.FillAndExpand
-                    }, 1, rowCounter);
-                    rowCounter++;
-                }
-                DataView = gd;
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
             }
         }
 
@@ -117,7 +66,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (status == null) return;
 
                 string comment = this.Comments;
-                int locid = Utils.LocationId;
+                int locid = App.Settings.CurrentLocId;
 
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
@@ -138,7 +87,7 @@ namespace ExpressBase.Mobile.ViewModels
                 SingleTable st = new SingleTable { row };
                 webformData.MultipleTables.Add("eb_approval_lines", st);
 
-                PushResponse resp = await RestServices.Instance.PushAsync(webformData, this.Action.WebFormDataId, this.Action.WebFormRefId, locid);
+                PushResponse resp = await FormDataServices.Instance.SendFormDataAsync(webformData, this.Action.WebFormDataId, this.Action.WebFormRefId, locid);
 
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
 
@@ -149,7 +98,6 @@ namespace ExpressBase.Mobile.ViewModels
                     helper.Show("Unable to save action :( ");
 
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
-                if (MyActionVM != null) MyActionVM.DoActionPoped(resp.RowAffected > 0);
             }
             catch (Exception ex)
             {

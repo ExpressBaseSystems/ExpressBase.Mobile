@@ -94,7 +94,7 @@ namespace ExpressBase.Mobile.ViewModels
                     if (stageInfo != null)
                     {
                         action.StageInfo = stageInfo;
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DoAction(action, this));
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DoAction(action));
                     }
                     IsBusy = false;
                 }

@@ -1,8 +1,4 @@
-﻿using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.ViewModels;
-using System;
-using System.IO;
+﻿using ExpressBase.Mobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
@@ -12,9 +8,7 @@ namespace ExpressBase.Mobile.Views
     {
         private bool isRendered;
 
-        public MySolutionsViewModel ViewModel { private set; get; }
-
-        public ValidateSidResponse Response { private set; get; }
+        private readonly MySolutionsViewModel ViewModel;
 
         public MySolutions()
         {
@@ -44,79 +38,9 @@ namespace ExpressBase.Mobile.Views
                 return base.OnBackButtonPressed();
         }
 
-        private void PopupCancel_Clicked(object sender, EventArgs e)
+        private async void NewSolution_Tapped(object sender, System.EventArgs e)
         {
-            PopupContainer.IsVisible = false;
-        }
-
-        async void AddSolution_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                AddSolution.IsVisible = false;
-                SaveSolution.IsVisible = true;
-                InputArea.BackgroundColor = Color.FromHex("dddddd");
-                SolutionName.IsVisible = true;
-                SolutionName.Focus();
-
-                await scrollView.ScrollToAsync(0, this.Height, true);
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
-        }
-
-        private async void SaveSolution_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                IToast toast = DependencyService.Get<IToast>();
-                if (!Utils.HasInternet)
-                {
-                    toast.Show("Not connected to internet!");
-                    return;
-                }
-                if (string.IsNullOrEmpty(SolutionName.Text) || ViewModel.IsSolutionExist(SolutionName.Text))
-                    return;
-
-                Loader.IsVisible = true;
-                Response = await ViewModel.Validate(SolutionName.Text.Trim());
-
-                if (Response.IsValid)
-                {
-                    Loader.IsVisible = false;
-                    SolutionLogoPrompt.Source = ImageSource.FromStream(() => new MemoryStream(Response.Logo));
-                    SolutionLabel.Text = SolutionName.Text;
-                    PopupContainer.IsVisible = true;
-                }
-                else
-                {
-                    Loader.IsVisible = false;
-                    toast.Show("Invalid solution URL");
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
-        }
-
-        private async void ConfirmButton_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                await ViewModel.AddSolution(SolutionName.Text, Response);
-
-                Loader.IsVisible = true;
-                PopupContainer.IsVisible = false;
-
-                await Application.Current.MainPage.Navigation.PushAsync(new Login());
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.Message);
-            }
+            await App.RootMaster.Detail.Navigation.PushAsync(new NewSolution(true));
         }
     }
 }

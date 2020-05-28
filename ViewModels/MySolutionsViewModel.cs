@@ -1,15 +1,11 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -66,7 +62,13 @@ namespace ExpressBase.Mobile.ViewModels
                 await solutionService.CreateDB(tapedInfo.SolutionName);
                 await solutionService.CreateDirectory();
 
+                Application.Current.MainPage = new NavigationPage()
+                {
+                    BarBackgroundColor = Color.FromHex("0046bb"),
+                    BarTextColor = Color.White
+                };
                 await Application.Current.MainPage.Navigation.PushAsync(new Login());
+                App.RootMaster = null;
             }
             catch (Exception ex)
             {
@@ -85,51 +87,10 @@ namespace ExpressBase.Mobile.ViewModels
                 this.MySolutions.Remove(info);
                 await solutionService.UpdateSolutions(this.MySolutions);
             }
-            catch (Exception)
-            {
-
-            }
-        }
-
-        public async Task AddSolution(string solutionUrl, ValidateSidResponse response)
-        {
-            try
-            {
-                sid = solutionUrl.Trim().Split('.')[0];
-
-                SolutionInfo info = new SolutionInfo
-                {
-                    SolutionName = sid,
-                    RootUrl = solutionUrl
-                };
-
-                await solutionService.SetDataAsync(info);
-
-                info.IsCurrent = true;
-                this.MySolutions.Add(info);
-
-                await solutionService.ClearCached();
-                await solutionService.CreateDB(sid);
-                await solutionService.CreateDirectory();
-
-                if (response.Logo != null)
-                    await solutionService.SaveLogoAsync(sid, response.Logo);
-            }
             catch (Exception ex)
             {
-                Log.Write("SolutionSelect_ConfirmClicked" + ex.Message);
+                Log.Write(ex.Message);
             }
-        }
-
-        public async Task<ValidateSidResponse> Validate(string url)
-        {
-            return await solutionService.ValidateSid(url);
-        }
-
-        public bool IsSolutionExist(string url)
-        {
-            url = url.Trim();
-            return this.MySolutions.Any(item => item.SolutionName == url.Split('.')[0] && item.RootUrl == url);
         }
     }
 }
