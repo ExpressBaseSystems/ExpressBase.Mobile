@@ -1,8 +1,10 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
+using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ZXing;
@@ -16,7 +18,7 @@ namespace ExpressBase.Mobile.Views
 
         private ValidateSidResponse response;
 
-        private bool isMasterPage;
+        private readonly bool isMasterPage;
 
         public NewSolution(bool hasBackButton = false)
         {
@@ -33,9 +35,59 @@ namespace ExpressBase.Mobile.Views
 
         public void QrScanner_OnScanResult(Result result)
         {
+            IToast toast = DependencyService.Get<IToast>();
+            QrScanner.IsAnalyzing = false;
+            SolutionQrMeta meta = JsonConvert.DeserializeObject<SolutionQrMeta>(result.Text);
+            if (meta != null)
+            {
+                if (!Utils.HasInternet)
+                {
+                    toast.Show("Not connected to internet!");
+                    return;
+                }
+                if (string.IsNullOrEmpty(meta.sid) || ViewModel.IsSolutionExist(meta.sid))
+                    return;
+
+                AddSolutionQrScanned(meta);
+            }
+        }
+
+        private void AddSolutionQrScanned(SolutionQrMeta meta)
+        {
             Device.BeginInvokeOnMainThread(async () =>
             {
-                await DisplayAlert("Scanned result", result.Text, "OK");
+                try
+                {
+                    QrScannerView.IsVisible = false;
+                    Loader.IsVisible = true;
+
+                    response = await ViewModel.Validate(meta.sid);
+                    if (response.IsValid)
+                    {
+                        await ViewModel.AddSolution(meta.sid, response);
+
+                        if (isMasterPage)
+                        {
+                            App.RootMaster = null;
+                            Application.Current.MainPage = new NavigationPage
+                            {
+                                BarBackgroundColor = Color.FromHex("0046bb"),
+                                BarTextColor = Color.White
+                            };
+                        }
+                        await Application.Current.MainPage.Navigation.PushAsync(new Login());
+                    }
+                    else
+                        throw new Exception("invalid qr code meta");
+
+                    Loader.IsVisible = true;
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(ex.Message);
+                    Loader.IsVisible = true;
+                    QrScannerView.IsVisible = false;
+                }
             });
         }
 
@@ -93,6 +145,8 @@ namespace ExpressBase.Mobile.Views
                 Log.Write(ex.Message);
             }
         }
+
+
 
         private void PopupCancel_Clicked(object sender, EventArgs e)
         {

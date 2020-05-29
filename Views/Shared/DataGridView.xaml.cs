@@ -15,21 +15,21 @@ namespace ExpressBase.Mobile.Views.Shared
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DataGridView : ContentPage
     {
-        public GridMode Mode { set; get; }
+        private readonly GridMode mode;
 
-        public string RowName { set; get; }
+        public string rowName;
 
-        public EbMobileDataGrid DataGrid { set; get; }
+        private readonly EbMobileDataGrid dataGrid;
 
         public DataGridView()
         {
             InitializeComponent();
         }
 
-        public DataGridView(EbMobileDataGrid dataGrid)
+        public DataGridView(EbMobileDataGrid dg)
         {
-            Mode = GridMode.New;
-            this.DataGrid = dataGrid;
+            mode = GridMode.New;
+            dataGrid = dg;
             InitializeComponent();
             this.CreateForm();
         }
@@ -39,8 +39,8 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             InitializeComponent();
 
-            Mode = GridMode.Edit;
-            RowName = name;
+            mode = GridMode.Edit;
+            rowName = name;
 
             SaveAndContinue.IsVisible = false;
             SaveAndClose.Text = "Save Changes";
@@ -48,16 +48,16 @@ namespace ExpressBase.Mobile.Views.Shared
             SaveAndClose.BackgroundColor = Color.FromHex("0046bb");
             SaveAndClose.TextColor = Color.White;
 
-            this.DataGrid = dataGrid;
+            this.dataGrid = dataGrid;
             this.CreateForm();
             this.FillValue(row);
         }
 
         private void CreateForm()
         {
-            foreach (var ctrl in this.DataGrid.ChildControls)
+            foreach (var ctrl in this.dataGrid.ChildControls)
             {
-                ctrl.InitXControl(this.DataGrid.FormRenderMode, this.DataGrid.NetworkType);
+                ctrl.InitXControl(this.dataGrid.FormRenderMode, this.dataGrid.NetworkType);
                 ctrl.Required = true;
                 ControlContainer.Children.Add(ctrl.XView);
             }
@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private void FillValue(MobileTableRow row)
         {
-            foreach (var ctrl in this.DataGrid.ChildControls)
+            foreach (var ctrl in this.dataGrid.ChildControls)
             {
                 var col = row[ctrl.Name];
                 if (col != null)
@@ -78,10 +78,10 @@ namespace ExpressBase.Mobile.Views.Shared
             if (!Validate())
                 return;
 
-            if (Mode == GridMode.New)
-                DataGrid.RowAddCallBack();
+            if (mode == GridMode.New)
+                dataGrid.RowAddCallBack();
             else
-                DataGrid.RowAddCallBack(this.RowName);
+                dataGrid.RowAddCallBack(this.rowName);
 
             DependencyService.Get<IToast>().Show("1 row added.");
             this.ResetControls();
@@ -93,15 +93,15 @@ namespace ExpressBase.Mobile.Views.Shared
                 return;
 
             (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
-            if (Mode == GridMode.New)
-                DataGrid.RowAddCallBack();
+            if (mode == GridMode.New)
+                dataGrid.RowAddCallBack();
             else
-                DataGrid.RowAddCallBack(this.RowName);
+                dataGrid.RowAddCallBack(this.rowName);
         }
 
         private void ResetControls()
         {
-            foreach (var ctrl in DataGrid.ChildControls)
+            foreach (var ctrl in dataGrid.ChildControls)
                 ctrl.Reset();
         }
 
@@ -112,7 +112,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         public bool Validate()
         {
-            foreach (var ctrl in DataGrid.ChildControls)
+            foreach (var ctrl in dataGrid.ChildControls)
             {
                 if (ctrl.Required && ctrl.GetValue() == null)
                     return false;

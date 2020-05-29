@@ -8,8 +8,10 @@
              xmlns:themes="clr-namespace:ExpressBase.Mobile.Themes;assembly=ExpressBase.Mobile">
     <Application.Resources>
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
                 <themes:LightTheme />
+                <themes:FormStyles />
             </ResourceDictionary.MergedDictionaries>
 
             <!--  Common style for labels  -->
@@ -75,7 +77,7 @@
             <Style x:Key="MediumLabel" TargetType="Label">
                 <Setter Property="FontFamily" Value="{StaticResource Roboto-Medium}" />
             </Style>
-
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

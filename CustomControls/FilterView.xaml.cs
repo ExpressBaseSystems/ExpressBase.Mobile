@@ -11,7 +11,7 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace ExpressBase.Mobile.Views.Shared
+namespace ExpressBase.Mobile.CustomControls
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FilterView : ContentView

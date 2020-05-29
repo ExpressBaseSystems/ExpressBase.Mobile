@@ -309,4 +309,10 @@ namespace ExpressBase.Mobile.Models
 
         public WebformData Data { set; get; }
     }
+
+    public class SolutionQrMeta
+    {
+        public string sid { set; get; }
+
+    }
 }

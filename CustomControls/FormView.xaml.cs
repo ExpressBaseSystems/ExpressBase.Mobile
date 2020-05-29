@@ -19,7 +19,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         public static readonly BindableProperty NetWorkTypeProperty = BindableProperty.Create("NetWorkType", typeof(NetworkMode), typeof(ContentView));
 
-        public static readonly BindableProperty FormModeProperty = BindableProperty.Create("FormMode", typeof(NetworkMode), typeof(ContentView));
+        public static readonly BindableProperty FormModeProperty = BindableProperty.Create("FormMode", typeof(FormMode), typeof(ContentView));
 
         public List<EbMobileControl> Controls
         {

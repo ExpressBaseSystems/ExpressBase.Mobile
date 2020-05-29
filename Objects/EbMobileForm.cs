@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile
 
         private bool HasFileSelect
         {
-            get { return ControlDictionary.Any(x => x.GetType() == typeof(EbMobileFileUpload)); }
+            get { return ControlDictionary.Any(x => x.Value.GetType() == typeof(EbMobileFileUpload)); }
         }
 
         public EbMobileForm()

@@ -53,6 +53,10 @@ namespace ExpressBase.Mobile.ViewModels
 
         public void ResetClicked()
         {
+            Store.ResetCashedSolutionData();
+            Store.RemoveJSON(AppConst.SOLUTION_OBJ);
+            App.Settings.CurrentSolution = null;
+            
             App.RootMaster = null;
             Application.Current.MainPage = new NavigationPage(new MySolutions())
             {

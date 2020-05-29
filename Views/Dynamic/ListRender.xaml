@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
-             xmlns:shared="clr-namespace:ExpressBase.Mobile.Views.Shared"
              x:Class="ExpressBase.Mobile.Views.Dynamic.ListRender">
 
     <NavigationPage.TitleView>
@@ -104,13 +103,13 @@
                     </ScrollView>
                 </RefreshView>
             </Grid>
-
-            <shared:FilterView 
+            <!--Order of binding should be this, FilterControls should be the last-->
+            <control:FilterView 
                 x:Name="FilterView"
                 NetWorkType="{Binding NetworkType}"
                 SortColumns="{Binding SortColumns}"
-                FilterControls="{Binding FilterControls}"
-                ConfirmClicked="{Binding ApplyFilterCommand}"/>
+                ConfirmClicked="{Binding ApplyFilterCommand}"
+                FilterControls="{Binding FilterControls}"/>
 
             <control:LoaderIconed 
                 x:Name="Loader"

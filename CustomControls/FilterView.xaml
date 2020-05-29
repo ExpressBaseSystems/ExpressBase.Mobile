@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Shared.FilterView"
+             x:Class="ExpressBase.Mobile.CustomControls.FilterView"
              BackgroundColor="White"
              IsVisible="False"
              x:Name="x_this">

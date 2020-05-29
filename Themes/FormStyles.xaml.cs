@@ -5,14 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
 
-namespace ExpressBase.Mobile.CustomControls
+namespace ExpressBase.Mobile.Themes
 {
+    [Preserve(AllMembers = true)]
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class PaginationBar : ContentView
+    public partial class FormStyles
     {
-        public PaginationBar()
+        public FormStyles()
         {
             InitializeComponent();
         }

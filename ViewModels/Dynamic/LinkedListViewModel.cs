@@ -3,12 +3,10 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -28,27 +26,29 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<DbParameter> Parameters { set; get; }
 
-        public Command AddCommand { get; set; }
+        public Command AddCommand => new Command(AddButtonClicked);
 
-        public Command EditCommand { get; set; }
+        public Command EditCommand => new Command(EditButtonClicked);
 
-        public LinkedListViewModel() { }
+        private readonly CustomFrame linkFrame;
 
-        public LinkedListViewModel(EbMobilePage LinkPage, EbMobileVisualization SourceVis, CustomFrame CustFrame) : base(LinkPage)
+        public LinkedListViewModel(EbMobilePage page, EbMobileVisualization sourcevis, CustomFrame linkframe) : base(page)
         {
-            this.Visualization = LinkPage.Container as EbMobileVisualization;
-            this.SourceVisualization = SourceVis;
+            this.Visualization = (EbMobileVisualization)page.Container;
+            this.SourceVisualization = sourcevis;
+            linkFrame = linkframe;
+        }
 
-            this.HeaderFrame = new CustomFrame(CustFrame.DataRow, SourceVis, true)
+        public override async Task InitializeAsync()
+        {
+            this.HeaderFrame = new CustomFrame(linkFrame.DataRow, this.SourceVisualization, true)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = new Thickness(20, 10, 20, 0),
                 Margin = 0
             };
-            this.SetParameters(CustFrame.DataRow);
-
-            AddCommand = new Command(AddButtonClicked);
-            EditCommand = new Command(EditButtonClicked);
+            this.SetParameters(linkFrame.DataRow);
+            await SetData();
         }
 
         public void SetParameters(EbDataRow row)
@@ -56,6 +56,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             try
             {
                 Parameters = new List<DbParameter>();
+
                 if (this.Page.NetworkMode == NetworkMode.Online)
                 {
                     foreach (Param param in this.Visualization.DataSourceParams)
@@ -171,13 +172,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public async Task<ContentPage> GetPageByContainer(CustomFrame frame, EbMobilePage page)
+        public ContentPage GetPageByContainer(CustomFrame frame, EbMobilePage page)
         {
             ContentPage renderer = null;
             try
             {
-                await Task.Delay(10);
-
                 switch (page.Container)
                 {
                     case EbMobileForm f:

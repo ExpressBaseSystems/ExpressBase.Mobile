@@ -2,15 +2,12 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -55,9 +52,9 @@ namespace ExpressBase.Mobile
         //mobile props
         public TextBox SearchBox { set; get; }
 
-        public ComboBoxLabel Selected { set; get; }
+        private ComboBoxLabel selected;
 
-        public CustomPicker Picker { set; get; }
+        private CustomPicker picker;
 
         public override void InitXControl(FormMode Mode,NetworkMode Network)
         {
@@ -67,7 +64,7 @@ namespace ExpressBase.Mobile
 
             if (string.IsNullOrEmpty(this.DataSourceRefId))
             {
-                Picker = new CustomPicker
+                picker = new CustomPicker
                 {
                     Title = $"Select {this.Label}",
                     FontSize = 15,
@@ -79,13 +76,9 @@ namespace ExpressBase.Mobile
                 };
                 var icon = new Label
                 {
-                    Padding = 10,
-                    FontSize = 16,
-                    VerticalOptions = LayoutOptions.Center,
-                    Text = "\uf078",
-                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                   Style = (Style)HelperFunctions.GetResourceValue("PSIconLabel")
                 };
-                this.XControl = new InputGroup(Picker, icon) { BgColor = bg };
+                this.XControl = new InputGroup(picker, icon) { BgColor = bg };
             }
             else
             {
@@ -99,11 +92,7 @@ namespace ExpressBase.Mobile
                 SearchBox.Focused += SearchBox_Focused;
                 var icon = new Label
                 {
-                    Padding = 10,
-                    FontSize = 16,
-                    VerticalOptions = LayoutOptions.Center,
-                    Text = "\uf002",
-                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                    Style = (Style)HelperFunctions.GetResourceValue("SSIconLabel")
                 };
                 this.XControl = new InputGroup(SearchBox, icon) { BgColor = bg };
             }
@@ -119,13 +108,13 @@ namespace ExpressBase.Mobile
         {
             if (string.IsNullOrEmpty(this.DataSourceRefId))
             {
-                if (Picker.SelectedItem != null)
-                    return (Picker.SelectedItem as EbMobileSSOption).Value;
+                if (picker.SelectedItem != null)
+                    return (picker.SelectedItem as EbMobileSSOption).Value;
                 else
                     return null;
             }
             else
-                return this.Selected?.Value;
+                return this.selected?.Value;
         }
 
         public override bool SetValue(object value)
@@ -134,14 +123,14 @@ namespace ExpressBase.Mobile
                 return false;
 
             if (string.IsNullOrEmpty(this.DataSourceRefId))
-                Picker.SelectedItem = this.Options.Find(i => i.Value == value.ToString());
+                picker.SelectedItem = this.Options.Find(i => i.Value == value.ToString());
             else
             {
                 EbDataTable dt = this.GetDisplayFromValue(value.ToString());
                 if (dt != null && dt.Rows.Any())
                 {
                     var display_membertext = dt.Rows[0][DisplayMember.ColumnName].ToString();
-                    Selected = new ComboBoxLabel { Text = display_membertext, Value = value };
+                    selected = new ComboBoxLabel { Text = display_membertext, Value = value };
                     SearchBox.Text = display_membertext;
                 }
             }
@@ -150,7 +139,7 @@ namespace ExpressBase.Mobile
 
         public void SelectionCallback(ComboBoxLabel comboBox)
         {
-            this.Selected = comboBox;
+            this.selected = comboBox;
             this.SearchBox.Text = comboBox.Text;
             (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
         }

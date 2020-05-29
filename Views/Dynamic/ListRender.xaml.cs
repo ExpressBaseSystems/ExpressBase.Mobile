@@ -2,13 +2,10 @@
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using System.Collections.Generic;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using System.Linq;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Enums;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Views.Dynamic
@@ -16,25 +13,25 @@ namespace ExpressBase.Mobile.Views.Dynamic
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ListRender : ContentPage
     {
-        private int Offset = 0;
+        private int offset = 0;
 
-        private int PageCount = 1;
+        private int pageCount = 1;
 
         private bool isRendered;
 
-        public ListViewModel ViewModel { set; get; }
+        private readonly ListViewModel viewModel;
 
-        private TapGestureRecognizer TapGesture { set; get; }
+        private readonly TapGestureRecognizer tapGesture;
 
         public ListRender(EbMobilePage Page)
         {
             InitializeComponent();
 
-            BindingContext = ViewModel = new ListViewModel(Page);
-            this.ViewModel.BindMethod(BindableMethod);
+            BindingContext = viewModel = new ListViewModel(Page);
+            viewModel.BindMethod(BindableMethod);
 
-            this.TapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
-            this.TapGesture.Tapped += Tap_Tapped;
+            tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+            tapGesture.Tapped += ListItem_Tapped;
             this.Loader.IsVisible = true;
         }
 
@@ -44,7 +41,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
             if (!isRendered)
             {
-                await this.ViewModel.SetData();
+                await viewModel.InitializeAsync();
                 this.AppendListItems();
             }
             isRendered = true;
@@ -55,22 +52,22 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                bool flag = !string.IsNullOrEmpty(this.ViewModel.Visualization.LinkRefId);
+                bool flag = !string.IsNullOrEmpty(viewModel.Visualization.LinkRefId);
                 int counter = 1;
 
                 this.ListContainer.Children.Clear();
 
-                if (this.ViewModel.DataTable.Rows.Any())
+                if (viewModel.DataTable.Rows.Any())
                 {
-                    foreach (EbDataRow row in this.ViewModel.DataTable.Rows)
+                    foreach (EbDataRow row in viewModel.DataTable.Rows)
                     {
-                        CustomFrame customFrame = new CustomFrame(row, this.ViewModel.Visualization, false);
+                        CustomFrame customFrame = new CustomFrame(row, viewModel.Visualization, false);
                         customFrame.SetBackGroundColor(counter);
 
-                        if (this.ViewModel.NetworkType == NetworkMode.Offline)
-                            customFrame.ShowSyncFlag(this.ViewModel.DataTable.Columns);
+                        if (viewModel.NetworkType == NetworkMode.Offline)
+                            customFrame.ShowSyncFlag(viewModel.DataTable.Columns);
 
-                        if (flag) customFrame.GestureRecognizers.Add(this.TapGesture);
+                        if (flag) customFrame.GestureRecognizers.Add(tapGesture);
 
                         this.ListContainer.Children.Add(customFrame);
                         counter++;
@@ -93,21 +90,22 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        private async void Tap_Tapped(object sender, EventArgs e)
+        private async void ListItem_Tapped(object sender, EventArgs e)
         {
             IToast toast = DependencyService.Get<IToast>();
             try
             {
                 CustomFrame customFrame = (CustomFrame)sender;
-                EbMobilePage page = HelperFunctions.GetPage(this.ViewModel.Visualization.LinkRefId);
-                if (this.ViewModel.NetworkType != page.NetworkMode)
+                EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
+                if (viewModel.NetworkType != page.NetworkMode)
                 {
                     toast.Show("Link page Mode is different.");
                     return;
                 }
                 else
                 {
-                    ContentPage renderer = await this.ViewModel.GetPageByContainer(customFrame, page);
+                    ContentPage renderer = viewModel.GetPageByContainer(customFrame, page);
+
                     if (renderer != null)
                         await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
                 }
@@ -127,12 +125,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                if (this.Offset <= 0)
+                if (this.offset <= 0)
                     return;
                 else
                 {
-                    this.Offset -= this.ViewModel.Visualization.PageLength;
-                    this.PageCount--;
+                    this.offset -= viewModel.Visualization.PageLength;
+                    this.pageCount--;
                     await this.RefreshListView();
                 }
             }
@@ -146,12 +144,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                if (this.Offset + this.ViewModel.Visualization.PageLength >= this.ViewModel.DataCount)
+                if (this.offset + viewModel.Visualization.PageLength >= viewModel.DataCount)
                     return;
                 else
                 {
-                    this.Offset += this.ViewModel.Visualization.PageLength;
-                    this.PageCount++;
+                    this.offset += viewModel.Visualization.PageLength;
+                    this.pageCount++;
                     await this.RefreshListView();
                 }
             }
@@ -164,7 +162,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
         private async Task RefreshListView()
         {
             this.Loader.IsVisible = true;
-            await this.ViewModel.SetData(this.Offset);
+            await viewModel.SetData(this.offset);
             this.AppendListItems();
             this.Loader.IsVisible = false;
         }
@@ -173,16 +171,16 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                int pageLength = this.ViewModel.Visualization.PageLength;
-                int totalEntries = this.ViewModel.DataCount;
-                int offset = this.Offset + 1;
+                int pageLength = viewModel.Visualization.PageLength;
+                int totalEntries = viewModel.DataCount;
+                int _offset = offset + 1;
                 int length = pageLength + offset - 1;
 
-                if (totalEntries < pageLength || pageLength + offset > totalEntries)
+                if (totalEntries < pageLength || pageLength + _offset > totalEntries)
                     length = totalEntries;
 
-                this.PagingMeta.Text = $"{offset} - {length}/{totalEntries}";
-                this.PagingPageCount.Text = $"{PageCount}/{(int)Math.Ceiling((double)totalEntries / pageLength)}";
+                this.PagingMeta.Text = $"{_offset} - {length}/{totalEntries}";
+                this.PagingPageCount.Text = $"{pageCount}/{(int)Math.Ceiling((double)totalEntries / pageLength)}";
             }
             catch (Exception ex)
             {
@@ -196,7 +194,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             try
             {
                 this.ListViewRefresh.IsRefreshing = true;
-                this.Offset = 0;
+                this.offset = 0;
                 await this.RefreshListView();
                 this.ListViewRefresh.IsRefreshing = false;
                 toast.Show("Refreshed");
@@ -214,7 +212,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 this.Loader.IsVisible = true;
                 var parameters = this.FilterView.GetFilterValues();
-                await this.ViewModel.Refresh(parameters);
+                await viewModel.Refresh(parameters);
                 this.AppendListItems();
                 this.Loader.IsVisible = false;
             }

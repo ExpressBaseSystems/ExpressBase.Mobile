@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="ExpressBase.Mobile.Themes.FormStyles">
+
+    <Style TargetType="Button" x:Key="NumericBoxIncrButton">
+        <Setter Property="VerticalOptions" Value="Center"></Setter>
+        <Setter Property="Padding" Value="0"></Setter>
+        <Setter Property="HeightRequest" Value="40"></Setter>
+        <Setter Property="WidthRequest" Value="40"></Setter>
+        <Setter Property="CornerRadius" Value="20"></Setter>
+        <Setter Property="BorderColor" Value="#cccccc"></Setter>
+        <Setter Property="BackgroundColor" Value="#eeeeee"></Setter>
+        <Setter Property="BorderWidth" Value="1"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
+    <Style TargetType="ActivityIndicator" x:Key="GeoLocLoader">
+        <Setter Property="WidthRequest" Value="25"></Setter>
+        <Setter Property="HeightRequest" Value="25"></Setter>
+        <Setter Property="Color" Value="#315eff"></Setter>
+        <Setter Property="IsRunning" Value="True"></Setter>
+        <Setter Property="HorizontalOptions" Value="Center"></Setter>
+    </Style>
+
+    <Style TargetType="Frame" x:Key="GeoLocFrame">
+        <Setter Property="BackgroundColor" Value="#eeeeee"></Setter>
+        <Setter Property="HasShadow" Value="False"></Setter>
+        <Setter Property="Padding" Value="0,0,0,10"></Setter>
+        <Setter Property="CornerRadius" Value="10"></Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="FupCameraButton">
+        <Setter Property="BackgroundColor" Value="#eeeeee"></Setter>
+        <Setter Property="FontSize" Value="18"></Setter>
+        <Setter Property="CornerRadius" Value="4"></Setter>
+        <Setter Property="BorderColor" Value="#cccccc"></Setter>
+        <Setter Property="BorderWidth" Value="1"></Setter>
+        <Setter Property="Margin" Value="0"></Setter>
+        <Setter Property="Text" Value="&#xf030;"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="FupFileButton">
+        <Setter Property="BackgroundColor" Value="#ffc059"></Setter>
+        <Setter Property="FontSize" Value="18"></Setter>
+        <Setter Property="CornerRadius" Value="4"></Setter>
+        <Setter Property="BorderColor" Value="#cccccc"></Setter>
+        <Setter Property="BorderWidth" Value="1"></Setter>
+        <Setter Property="Margin" Value="0"></Setter>
+        <Setter Property="Text" Value="&#xf115;"></Setter>
+        <Setter Property="TextColor" Value="White"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="FupThumbCloseButton">
+        <Setter Property="Padding" Value="0"></Setter>
+        <Setter Property="WidthRequest" Value="24"></Setter>
+        <Setter Property="HeightRequest" Value="24"></Setter>
+        <Setter Property="CornerRadius" Value="12"></Setter>
+        <Setter Property="TextColor" Value="White"></Setter>
+        <Setter Property="FontSize" Value="24"></Setter>
+        <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+        <Setter Property="Text" Value="&#xf057;"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="DGNewRowButton">
+        <Setter Property="VerticalOptions" Value="Center"></Setter>
+        <Setter Property="Padding" Value="0"></Setter>
+        <Setter Property="HeightRequest" Value="30"></Setter>
+        <Setter Property="WidthRequest" Value="30"></Setter>
+        <Setter Property="CornerRadius" Value="4"></Setter>
+        <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+        <Setter Property="Text" Value="&#xf055;"></Setter>
+        <Setter Property="TextColor" Value="White"></Setter>
+        <Setter Property="BackgroundColor" Value="#33b762"></Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="DGEditRowButton">
+        <Setter Property="VerticalOptions" Value="Center"></Setter>
+        <Setter Property="Padding" Value="0"></Setter>
+        <Setter Property="HeightRequest" Value="30"></Setter>
+        <Setter Property="WidthRequest" Value="30"></Setter>
+        <Setter Property="CornerRadius" Value="4"></Setter>
+        <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+        <Setter Property="Text" Value="&#xf014;"></Setter>
+    </Style>
+
+    <Style TargetType="Frame" x:Key="DGContainerFrame">
+        <Setter Property="BorderColor" Value="#cccccc"></Setter>
+        <Setter Property="CornerRadius" Value="4"></Setter>
+        <Setter Property="HasShadow" Value="False"></Setter>
+        <Setter Property="Padding" Value="2"></Setter>
+    </Style>
+
+    <Style TargetType="Label" x:Key="PSIconLabel">
+        <Setter Property="Padding" Value="10"></Setter>
+        <Setter Property="FontSize" Value="16"></Setter>
+        <Setter Property="VerticalOptions" Value="Center"></Setter>
+        <Setter Property="Text" Value="&#xf078;"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
+    <Style TargetType="Label" x:Key="SSIconLabel">
+        <Setter Property="Padding" Value="10"></Setter>
+        <Setter Property="FontSize" Value="16"></Setter>
+        <Setter Property="VerticalOptions" Value="Center"></Setter>
+        <Setter Property="Text" Value="&#xf002;"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
+</ResourceDictionary>

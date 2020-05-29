@@ -13,20 +13,20 @@ namespace ExpressBase.Mobile.Views.Dynamic
     {
         private bool isRendered;
 
-        public FormRenderViewModel ViewModel { set; get; }
+        private readonly FormRenderViewModel viewModel;
 
         //new mode
         public FormRender(EbMobilePage page)
         {
             InitializeComponent();
-            BindingContext = ViewModel = new FormRenderViewModel(page);
+            BindingContext = viewModel = new FormRenderViewModel(page);
         }
 
         //edit
         public FormRender(EbMobilePage page, int rowId)
         {
             InitializeComponent();
-            BindingContext = ViewModel = new FormRenderViewModel(page, rowId);
+            BindingContext = viewModel = new FormRenderViewModel(page, rowId);
 
             SaveButton.Text = "Save Changes";
             SaveButton.IsVisible = false;
@@ -37,14 +37,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
         public FormRender(EbMobilePage page, EbDataRow currentRow)
         {
             InitializeComponent();
-            BindingContext = ViewModel = new FormRenderViewModel(page, currentRow);
+            BindingContext = viewModel = new FormRenderViewModel(page, currentRow);
         }
 
         //reference mode
         public FormRender(EbMobilePage currentForm, EbMobilePage parentForm, int parentId)
         {
             InitializeComponent();
-            BindingContext = ViewModel = new FormRenderViewModel(currentForm, parentForm, parentId);
+            BindingContext = viewModel = new FormRenderViewModel(currentForm, parentForm, parentId);
         }
 
         protected override async void OnAppearing()
@@ -54,14 +54,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
             LoaderIconed.IsVisible = true;
             if (!isRendered)
             {
-                if (ViewModel.Mode == FormMode.EDIT)
+                if (viewModel.Mode == FormMode.EDIT)
                 {
-                    await ViewModel.SetDataOnEdit();
-                    ViewModel.FillControlsValues();
+                    await viewModel.SetDataOnEdit();
+                    viewModel.FillControlsValues();
                 }
-                else if(ViewModel.Mode == FormMode.PREFILL)
+                else if(viewModel.Mode == FormMode.PREFILL)
                 {
-                    ViewModel.FillControlsFlat();
+                    viewModel.FillControlsFlat();
                 }
                 isRendered = true;
             }
@@ -73,7 +73,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EditButton.IsVisible = false;
             SaveButton.IsVisible = true;
 
-            foreach (var pair in ViewModel.Form.ControlDictionary)
+            foreach (var pair in viewModel.Form.ControlDictionary)
                 pair.Value.SetAsReadOnly(false);
         }
 

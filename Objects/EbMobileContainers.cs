@@ -98,7 +98,10 @@ namespace ExpressBase.Mobile
             EbDataSet Data = null;
             try
             {
-                var userParam = dbParameters.Find(item => item.ParameterName == "current_userid");
+                if (dbParameters == null)
+                    dbParameters = new List<DbParameter>();
+
+                DbParameter userParam = dbParameters.Find(item => item.ParameterName == "current_userid");
 
                 if (userParam != null)
                 {

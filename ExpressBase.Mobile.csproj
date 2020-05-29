@@ -20,6 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Themes\FormStyles.xaml.cs">
+      <DependentUpon>FormStyles.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\MyApplications.xaml.cs">
       <DependentUpon>MyApplications.xaml</DependentUpon>
     </Compile>
@@ -56,10 +59,10 @@
     <EmbeddedResource Update="CustomControls\Menu.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CustomControls\PaginationBar.xaml">
+    <EmbeddedResource Update="Themes\LightTheme.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Themes\LightTheme.xaml">
+    <EmbeddedResource Update="Themes\FormStyles.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\About.xaml">
@@ -92,7 +95,7 @@
     <EmbeddedResource Update="CustomControls\Loader.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\Shared\FilterView.xaml">
+    <EmbeddedResource Update="CustomControls\FilterView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\Shared\MyLocations.xaml">

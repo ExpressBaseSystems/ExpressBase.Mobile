@@ -25,23 +25,23 @@ namespace ExpressBase.Mobile
         public bool EnableEdit { set; get; }
 
         //mobile prop
-        private Grid Container { set; get; }
+        private Grid container;
 
-        private int CurrentRow { set; get; } = 1;
+        private int currentRow = 1;
 
-        private int CurrentColumn { set; get; } = 0;
+        private int currentColumn = 0;
 
-        private int Counter = 0;
+        private int counter = 0;
 
         public Dictionary<string, byte[]> Gallery { set; get; }
 
-        public TapGestureRecognizer Recognizer { set; get; }
+        private readonly TapGestureRecognizer recognizer;
 
         public EbMobileFileUpload()
         {
             this.Gallery = new Dictionary<string, byte[]>();
-            this.Recognizer = new TapGestureRecognizer();
-            this.Recognizer.Tapped += Recognizer_Tapped;
+            recognizer = new TapGestureRecognizer();
+            recognizer.Tapped += Recognizer_Tapped;
         }
 
         private void Recognizer_Tapped(object sender, EventArgs e)
@@ -76,7 +76,7 @@ namespace ExpressBase.Mobile
 
         public void BuildXControl()
         {
-            this.Container = new Grid()
+            this.container = new Grid()
             {
                 RowSpacing = 5,
                 RowDefinitions =
@@ -91,7 +91,7 @@ namespace ExpressBase.Mobile
                 }
             };
 
-            this.XControl = this.Container;
+            this.XControl = this.container;
         }
 
         public void AppendButtons()
@@ -100,14 +100,7 @@ namespace ExpressBase.Mobile
             {
                 var CameraBtn = new Button()
                 {
-                    FontSize = 18,
-                    CornerRadius = 4,
-                    BorderColor = Color.FromHex("cccccc"),
-                    BorderWidth = 1,
-                    BackgroundColor = Color.FromHex("eeeeee"),
-                    Margin = 0,
-                    Text = "\uf030",
-                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                    Style = (Style)HelperFunctions.GetResourceValue("FupCameraButton")
                 };
                 (this.XControl as Grid).Children.Add(CameraBtn, 1, 0);
                 CameraBtn.Clicked += OnCameraClick;
@@ -119,15 +112,7 @@ namespace ExpressBase.Mobile
             {
                 var FilesBtn = new Button()
                 {
-                    FontSize = 18,
-                    CornerRadius = 4,
-                    BorderColor = Color.FromHex("cccccc"),
-                    BorderWidth = 1,
-                    TextColor = Color.White,
-                    BackgroundColor = Color.FromHex("ffc059"),
-                    Margin = 0,
-                    Text = "\uf115",
-                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                    Style = (Style)HelperFunctions.GetResourceValue("FupFileButton")
                 };
                 (this.XControl as Grid).Children.Add(FilesBtn, 0, 0);
                 FilesBtn.Clicked += OnFileClick;
@@ -180,14 +165,14 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                string filename = "file" + Guid.NewGuid().ToString("N") + Counter++;
+                string filename = "file" + Guid.NewGuid().ToString("N") + counter++;
                 CustomImageWraper Wraper = new CustomImageWraper(filename);
                 var image = new Image
                 {
                     Aspect = Aspect.AspectFill,
                     HeightRequest = 160,
                     Source = ImageSource.FromStream(() => { return Media.GetStream(); }),
-                    GestureRecognizers = { this.Recognizer }
+                    GestureRecognizers = { recognizer }
                 };
                 AbsoluteLayout.SetLayoutBounds(image, new Rectangle(0, 0, 1, 1));
                 AbsoluteLayout.SetLayoutFlags(image, AbsoluteLayoutFlags.All);
@@ -196,15 +181,7 @@ namespace ExpressBase.Mobile
                 var closeBtn = new Button
                 {
                     ClassId = filename,
-                    Padding = 0,
-                    WidthRequest = 24,
-                    HeightRequest = 24,
-                    CornerRadius = 12,
-                    TextColor = Color.White,
-                    FontSize = 24,
-                    BackgroundColor = Color.Transparent,
-                    Text = "\uf057",
-                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                    Style = (Style)HelperFunctions.GetResourceValue("FupThumbCloseButton")
                 };
                 closeBtn.Clicked += CloseBtn_Clicked;
                 AbsoluteLayout.SetLayoutBounds(closeBtn, new Rectangle(0.95, 0.05, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
@@ -223,7 +200,7 @@ namespace ExpressBase.Mobile
         private void CloseBtn_Clicked(object sender, EventArgs e)
         {
             string classid = (sender as Button).ClassId;
-            foreach (var item in this.Container.Children)
+            foreach (var item in this.container.Children)
             {
                 if (item.ClassId == classid && item is CustomImageWraper)
                 {
@@ -236,15 +213,15 @@ namespace ExpressBase.Mobile
 
         public void AddImageToGallery(CustomImageWraper Wrapper)
         {
-            this.Container.Children.Add(Wrapper, CurrentColumn, CurrentRow);
-            if (CurrentColumn == 1)
+            this.container.Children.Add(Wrapper, currentColumn, currentRow);
+            if (currentColumn == 1)
             {
-                this.Container.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                CurrentRow++;
-                CurrentColumn = 0;
+                this.container.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                currentRow++;
+                currentColumn = 0;
             }
             else
-                CurrentColumn = 1;
+                currentColumn = 1;
         }
 
         public void PushFilesToDir(string TableName, int RowId)
@@ -303,7 +280,7 @@ namespace ExpressBase.Mobile
                         Aspect = Aspect.AspectFill,
                         HeightRequest = 160,
                         Source = ImageSource.FromStream(() => new MemoryStream(bytea)),
-                        GestureRecognizers = { this.Recognizer }
+                        GestureRecognizers = { recognizer }
                     }
                 }
             };

@@ -18,11 +18,11 @@ namespace ExpressBase.Mobile
 
         public bool HideSearchBox { set; get; }
 
-        private Location Cordinates { set; get; }
+        private Location cordinates;
 
-        private WebView WebView { set; get; }
+        private WebView webView;
 
-        private ActivityIndicator Loader { set; get; }
+        private ActivityIndicator loader;
 
         private string PlaceHolder => @"<html><head><style>body{height:100%;width:100%;display:flex;justify-content:center;
                                     align-items:center;flex-direction:column}</style></head><body style='background:#eee'> 
@@ -50,25 +50,25 @@ namespace ExpressBase.Mobile
                             this.SetCordinates();
                         else
                         {
-                            Loader.IsVisible = false;
-                            WebView.HeightRequest = 100;
-                            WebView.Source = new HtmlWebViewSource
+                            loader.IsVisible = false;
+                            webView.HeightRequest = 100;
+                            webView.Source = new HtmlWebViewSource
                             {
                                 Html = PlaceHolder.Replace("@content@", "You are not connected to internet")
                             };
-                            WebView.IsVisible = true;
+                            webView.IsVisible = true;
                         }
                     }
                 }
                 else
                 {
-                    Loader.IsVisible = false;
-                    WebView.HeightRequest = 100;
-                    WebView.Source = new HtmlWebViewSource
+                    loader.IsVisible = false;
+                    webView.HeightRequest = 100;
+                    webView.Source = new HtmlWebViewSource
                     {
                         Html = PlaceHolder.Replace("@content@", "Offline")
                     };
-                    WebView.IsVisible = true;
+                    webView.IsVisible = true;
                 }
             }
             catch (Exception ex)
@@ -81,31 +81,24 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                Loader = new ActivityIndicator
+                loader = new ActivityIndicator
                 {
-                    WidthRequest = 25,
-                    HeightRequest = 25,
-                    Color = Color.FromHex("315eff"),
-                    IsRunning = true,
-                    HorizontalOptions = LayoutOptions.Center
+                    Style = (Style)HelperFunctions.GetResourceValue("GeoLocLoader")
                 };
 
                 Frame _frame = new Frame()
                 {
-                    BackgroundColor = Color.FromHex("eeeeee"),
-                    HasShadow = false,
-                    Padding = new Thickness(0, 0, 0, 10),
-                    CornerRadius = 10.0f
+                    Style = (Style)HelperFunctions.GetResourceValue("GeoLocFrame")
                 };
 
                 StackLayout Layout = new StackLayout
                 {
                     BackgroundColor = Color.Transparent,
-                    Children = { Loader }
+                    Children = { loader }
                 };
-                WebView = new WebView { HeightRequest = 300, IsVisible = false };
-                WebView.Navigated += WebView_Navigated;
-                Layout.Children.Add(WebView);
+                webView = new WebView { HeightRequest = 300, IsVisible = false };
+                webView.Navigated += WebView_Navigated;
+                Layout.Children.Add(webView);
                 _frame.Content = Layout;
 
                 this.XControl = Layout;
@@ -119,41 +112,41 @@ namespace ExpressBase.Mobile
 
         private void WebView_Navigated(object sender, WebNavigatedEventArgs e)
         {
-            Loader.IsVisible = false;
-            WebView.IsVisible = true;
+            loader.IsVisible = false;
+            webView.IsVisible = true;
         }
 
         private async void SetCordinates()
         {
-            if (Cordinates == null)
+            if (cordinates == null)
             {
-                Cordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
-                this.SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude);
+                cordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
+                this.SetWebViewUrl(cordinates.Latitude, cordinates.Longitude);
             }
             else
-                this.SetWebViewUrl(Cordinates.Latitude, Cordinates.Longitude);
+                this.SetWebViewUrl(cordinates.Latitude, cordinates.Longitude);
         }
 
         private void SetWebViewUrl(double lat, double lon)
         {
             string url = $"{App.Settings.RootUrl}/api/map?bToken={App.Settings.BToken}&rToken={App.Settings.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}";
-            this.WebView.Source = new UrlWebViewSource { Url = url };
+            this.webView.Source = new UrlWebViewSource { Url = url };
         }
 
         public override object GetValue()
         {
             try
             {
-                if (WebView.Source is UrlWebViewSource)
+                if (webView.Source is UrlWebViewSource)
                 {
-                    Uri uri = new Uri((WebView.Source as UrlWebViewSource).Url);
+                    Uri uri = new Uri((webView.Source as UrlWebViewSource).Url);
                     var query = HttpUtility.ParseQueryString(uri.Query);
 
                     double lat = Convert.ToDouble(query.Get("latitude"));
                     double lon = Convert.ToDouble(query.Get("longitude"));
 
-                    if (Cordinates == null)
-                        Cordinates = new Location { Latitude = lat, Longitude = lon };
+                    if (cordinates == null)
+                        cordinates = new Location { Latitude = lat, Longitude = lon };
 
                     return $"{lat},{lon}";
                 }

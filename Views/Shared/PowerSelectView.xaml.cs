@@ -17,9 +17,11 @@ namespace ExpressBase.Mobile.Views.Shared
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class PowerSelectView : ContentPage
     {
-        private EbMobileSimpleSelect PowerSelect { set; get; }
+        private readonly EbMobileSimpleSelect powerSelect;
 
-        private int SearchLength { set; get; }
+        private readonly int searchLength;
+
+        private readonly TapGestureRecognizer recognizer;
 
         public PowerSelectView()
         {
@@ -29,11 +31,14 @@ namespace ExpressBase.Mobile.Views.Shared
         public PowerSelectView(EbMobileSimpleSelect powerSelect)
         {
             InitializeComponent();
-            PowerSelect = powerSelect;
+            this.powerSelect = powerSelect;
+
+            recognizer = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
+            recognizer.Tapped += LabelTaped_Tapped;
 
             SelectSearchBox.Placeholder = $"Search {powerSelect.Label}...";
             SelectSearchBox.Text = powerSelect.SearchBox.Text;
-            SearchLength = PowerSelect.MinSearchLength < 3 ? 3 : PowerSelect.MinSearchLength;
+            searchLength = this.powerSelect.MinSearchLength < 3 ? 3 : this.powerSelect.MinSearchLength;
         }
 
         protected override void OnAppearing()
@@ -42,20 +47,19 @@ namespace ExpressBase.Mobile.Views.Shared
             base.OnAppearing();
         }
 
-        private void SelectSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        private async void SelectSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SelectSearchBox.Text.Length >= this.SearchLength)
-                this.SetData();
-
+            if (SelectSearchBox.Text.Length >= this.searchLength)
+                await this.SetData();
         }
 
-        private async void SetData()
+        private async Task SetData()
         {
             try
             {
                 Device.BeginInvokeOnMainThread(() => SearchLoader.IsVisible = true);
                 ResultList.Children.Clear();
-                EbDataTable Data = await GetData(SelectSearchBox.Text);
+                EbDataTable Data = await this.GetData(SelectSearchBox.Text);
                 int c = 1;
 
                 foreach (EbDataRow row in Data.Rows)
@@ -63,21 +67,24 @@ namespace ExpressBase.Mobile.Views.Shared
                     ComboBoxLabel lbl = new ComboBoxLabel(c)
                     {
                         Padding = new Thickness(10),
-                        Text = row[this.PowerSelect.DisplayMember.ColumnName].ToString(),
-                        Value = row[this.PowerSelect.ValueMember.ColumnName],
+                        Text = row[this.powerSelect.DisplayMember.ColumnName].ToString(),
+                        Value = row[this.powerSelect.ValueMember.ColumnName],
                     };
-
-                    var labelTaped = new TapGestureRecognizer();
-                    labelTaped.Tapped += LabelTaped_Tapped;
-
-                    lbl.GestureRecognizers.Add(labelTaped);
+                    lbl.GestureRecognizers.Add(recognizer);
                     ResultList.Children.Add(lbl);
                     c++;
                 }
                 Device.BeginInvokeOnMainThread(() => SearchLoader.IsVisible = false);
 
                 if (ResultList.Children.Count <= 0)
-                    ResultList.Children.Add(new Label { Text = "No result found.", VerticalOptions = LayoutOptions.CenterAndExpand, HorizontalTextAlignment = TextAlignment.Center });
+                {
+                    ResultList.Children.Add(new Label
+                    {
+                        Text = "No result found.",
+                        VerticalOptions = LayoutOptions.CenterAndExpand,
+                        HorizontalTextAlignment = TextAlignment.Center
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -87,7 +94,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private void LabelTaped_Tapped(object sender, EventArgs e)
         {
-            PowerSelect.SelectionCallback(sender as ComboBoxLabel);
+            powerSelect.SelectionCallback((ComboBoxLabel)sender);
             //callback
         }
 
@@ -96,12 +103,12 @@ namespace ExpressBase.Mobile.Views.Shared
             EbDataTable dt;
             try
             {
-                if (PowerSelect.DisplayMember == null)
+                if (powerSelect.DisplayMember == null)
                     throw new Exception();
 
-                if (PowerSelect.NetworkType == NetworkMode.Online)
+                if (powerSelect.NetworkType == NetworkMode.Online)
                     dt = await this.GetLiveData(text);
-                else if (PowerSelect.NetworkType == NetworkMode.Mixed)
+                else if (powerSelect.NetworkType == NetworkMode.Mixed)
                 {
                     dt = await this.GetLiveData(text);
                     if (dt.Rows.Count <= 0)
@@ -123,9 +130,9 @@ namespace ExpressBase.Mobile.Views.Shared
             EbDataTable dt;
             try
             {
-                string sql = HelperFunctions.B64ToString(PowerSelect.OfflineQuery.Code).TrimEnd(';');
+                string sql = HelperFunctions.B64ToString(powerSelect.OfflineQuery.Code).TrimEnd(';');
 
-                string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{PowerSelect.DisplayMember.ColumnName} LIKE '%{search}%';";
+                string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{powerSelect.DisplayMember.ColumnName} LIKE '%{search}%';";
 
                 dt = App.DataDB.DoQuery(WrpdQuery);
             }
@@ -142,17 +149,17 @@ namespace ExpressBase.Mobile.Views.Shared
             EbDataTable dt;
             try
             {
-                if (PowerSelect.DisplayMember == null)
+                if (powerSelect.DisplayMember == null)
                     throw new Exception("Display member cannot be null");
 
                 Param p = new Param
                 {
-                    Name = PowerSelect.DisplayMember.ColumnName,
-                    Type = ((int)PowerSelect.DisplayMember.Type).ToString(),
+                    Name = powerSelect.DisplayMember.ColumnName,
+                    Type = ((int)powerSelect.DisplayMember.Type).ToString(),
                     Value = search
                 };
 
-                var response = await DataService.Instance.GetDataAsync(PowerSelect.DataSourceRefId, new List<Param> { p }, null, 50, 0, true);
+                var response = await DataService.Instance.GetDataAsync(powerSelect.DataSourceRefId, new List<Param> { p }, null, 50, 0, true);
 
                 if (response.Data != null && response.Data.Tables.Count >= 2)
                     dt = response.Data.Tables[1];

@@ -9,7 +9,6 @@ using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -19,6 +18,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
     public class ListViewModel : DynamicBaseViewModel
     {
         private readonly IDataService dataService;
+
+        private Action viewAction;
 
         public int DataCount { set; get; }
 
@@ -32,16 +33,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command ApplyFilterCommand => new Command(ApplyFilterClicked);
 
-        public Action ViewAction { set; get; }
-
         public ListViewModel(EbMobilePage page) : base(page)
         {
             this.Visualization = (EbMobileVisualization)this.Page.Container;
-
             this.FilterControls = this.Visualization.FilterControls;
-            this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
-
             dataService = DataService.Instance;
+        }
+
+        public override async Task InitializeAsync()
+        {
+            this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
+            await this.SetData();
         }
 
         public async Task SetData(int offset = 0)
@@ -70,13 +72,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public async Task<ContentPage> GetPageByContainer(CustomFrame frame, EbMobilePage page)
+        public ContentPage GetPageByContainer(CustomFrame frame, EbMobilePage page)
         {
             ContentPage renderer = null;
             try
             {
-                await Task.Delay(10);
-
                 switch (page.Container)
                 {
                     case EbMobileForm f:
@@ -133,12 +133,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public void BindMethod(Action method)
         {
-            ViewAction = method;
+            viewAction = method;
         }
 
         private void ApplyFilterClicked()
         {
-            if (ViewAction != null) ViewAction.Invoke();
+            viewAction?.Invoke();
         }
     }
 }

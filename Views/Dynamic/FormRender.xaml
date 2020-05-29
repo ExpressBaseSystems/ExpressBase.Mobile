@@ -34,11 +34,13 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
+            <!--Order of binding should be this, controls should be the last-->
             <control:FormView
+                x:Name="FormViewComponent"
                 Grid.Row="0"
-                Controls="{Binding Controls}"
                 NetWorkType ="{Binding NetworkType}"
-                FormMode="{Binding Mode}">
+                FormMode="{Binding Mode}"
+                Controls="{Binding Controls}">
             </control:FormView>
             <Button 
                 x:Name="SaveButton"
