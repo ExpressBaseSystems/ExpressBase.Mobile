@@ -94,7 +94,14 @@ namespace ExpressBase.Mobile.ViewModels
                         await identityService.UpdateAuthInfo(response, _username, password, true);
                         await identityService.UpdateLastUser(_username);
                         IsBusy = false;
-                        await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+
+                        if(App.Settings.CurrentApplication == null)
+                            await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+                        else
+                        {
+                            App.RootMaster = new RootMaster(typeof(Views.Home));
+                            Application.Current.MainPage = App.RootMaster;
+                        }
                     }
                     else
                     {

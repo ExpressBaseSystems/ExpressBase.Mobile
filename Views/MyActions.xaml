@@ -55,16 +55,15 @@
                                             VerticalOptions="Center"
                                             WidthRequest="50"
                                             Padding="0"
-                                            BackgroundColor="{Binding BackgroundColor}"
                                             HasShadow="True"
                                             CornerRadius="25">
                                                 <Label 
-                                                Text="{Binding AppNotation}"
-                                                TextColor="{Binding TextColor}"
-                                                FontSize="16"
-                                                VerticalOptions="Center"
-                                                HorizontalOptions="Center"
-                                                FontFamily="{StaticResource Roboto-Bold}"/>
+                                                    Text="{Binding Notation}"
+                                                    FontSize="16"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="Center"
+                                                    FontFamily="{StaticResource Roboto-Bold}">
+                                                </Label>
                                             </Frame>
                                             <Label 
                                             Text="{Binding Description}"

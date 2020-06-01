@@ -47,7 +47,7 @@ namespace ExpressBase.Mobile.Views.Shared
         private async void ChangeSolution_Tapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            await App.RootMaster.Detail.Navigation.PushAsync(new MySolutions());
+            await App.RootMaster.Detail.Navigation.PushAsync(new MySolutions(true));
         }
 
         private async void ChangeApplication_Tapped(object sender, EventArgs e)

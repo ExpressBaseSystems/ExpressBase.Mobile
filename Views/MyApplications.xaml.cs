@@ -14,17 +14,17 @@ namespace ExpressBase.Mobile.Views
     {
         private bool isRendered;
 
-        private readonly MyApplicationsViewModel ViewModel;
+        private readonly MyApplicationsViewModel viewModel;
 
-        public bool IsInternal { set; get; }
+        private readonly bool isInternal;
 
-        public MyApplications(bool isInternal = false)
+        public MyApplications(bool is_internal = false)
         {
-            IsInternal = isInternal;
+            isInternal = is_internal;
 
             InitializeComponent();
             Loader.IsVisible = true;
-            BindingContext = ViewModel = new MyApplicationsViewModel();
+            BindingContext = viewModel = new MyApplicationsViewModel();
 
             if (isInternal)
                 ResetButton.IsVisible = false;
@@ -42,7 +42,13 @@ namespace ExpressBase.Mobile.Views
 
                 if (!isRendered)
                 {
-                    await ViewModel.InitializeAsync();
+                    await viewModel.InitializeAsync();
+
+                    if (!isInternal && viewModel.Applications.Count == 1)
+                    {
+                        await viewModel.ItemSelected(viewModel.Applications[0]);
+                    }
+
                     this.ToggleLocationSwitcher();
                     isRendered = true;
                 }
@@ -66,7 +72,7 @@ namespace ExpressBase.Mobile.Views
                 }
                 ApplicationsRefresh.IsRefreshing = true;
                 Store.RemoveJSON(AppConst.APP_COLLECTION);
-                await ViewModel.Refresh();
+                await viewModel.Refresh();
                 ApplicationsRefresh.IsRefreshing = false;
 
                 ToggleLocationSwitcher();
@@ -91,7 +97,7 @@ namespace ExpressBase.Mobile.Views
                 BarTextColor = Color.White
             };
 
-            if (IsInternal)
+            if (isInternal)
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushModalAsync(nav);
             else
                 await Application.Current.MainPage.Navigation.PushModalAsync(nav);
@@ -102,7 +108,7 @@ namespace ExpressBase.Mobile.Views
             try
             {
                 Store.RemoveJSON(AppConst.APP_COLLECTION);
-                Task.Run(async () => await ViewModel.Refresh());
+                Task.Run(async () => await viewModel.Refresh());
                 ToggleLocationSwitcher();
             }
             catch (Exception ex)
@@ -113,7 +119,7 @@ namespace ExpressBase.Mobile.Views
 
         private void ToggleLocationSwitcher()
         {
-            if (ViewModel.Applications.Count <= 0)
+            if (viewModel.Applications.Count <= 0)
                 LocSwitchOverlay.IsVisible = true;
             else
                 LocSwitchOverlay.IsVisible = false;

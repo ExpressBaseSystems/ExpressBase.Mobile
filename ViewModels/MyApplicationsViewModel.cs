@@ -30,8 +30,6 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command AppSelectedCommand => new Command(async (obj) => await ItemSelected(obj));
 
-        public Command ApplicationSubmit => new Command(ResetClicked);
-
         public MyApplicationsViewModel()
         {
             applicationService = new ApplicationService();
@@ -40,7 +38,6 @@ namespace ExpressBase.Mobile.ViewModels
         public override async Task InitializeAsync()
         {
             Applications = await applicationService.GetDataAsync();
-            FillRandomColor();
         }
 
         public async Task Refresh()
@@ -48,10 +45,9 @@ namespace ExpressBase.Mobile.ViewModels
             ObservableCollection<AppData> apps = await applicationService.GetDataAsync();
             Applications.Clear();
             Applications.AddRange(apps);
-            FillRandomColor();
         }
 
-        private async Task ItemSelected(object selected)
+        public async Task ItemSelected(object selected)
         {
             try
             {
@@ -79,19 +75,6 @@ namespace ExpressBase.Mobile.ViewModels
             catch (Exception ex)
             {
                 Log.Write("AppSelect_ItemSelected---" + ex.Message);
-            }
-        }
-
-        private void FillRandomColor()
-        {
-            //fill by randdom colors
-            Random random = new Random();
-
-            foreach (AppData appdata in this.Applications)
-            {
-                var randomColor = ColorSet.Colors[random.Next(6)];
-                appdata.BackgroundColor = Color.FromHex(randomColor.BackGround);
-                appdata.TextColor = Color.FromHex(randomColor.TextColor);
             }
         }
     }

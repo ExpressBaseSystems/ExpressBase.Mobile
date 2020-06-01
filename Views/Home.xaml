@@ -25,7 +25,32 @@
                 Refreshing="RefreshView_Refreshing">
                 <ScrollView>
                     <StackLayout VerticalOptions="FillAndExpand">
-                        <Grid Padding="10,5" Margin="0,15,0,0">
+
+                        <FlexLayout 
+                            Padding="15,10"
+                            Direction="Row" 
+                            JustifyContent="SpaceBetween">
+                            <Frame
+                                BackgroundColor="Green"
+                                Padding="10,5"
+                                CornerRadius="6">
+                                <Label
+                                    x:Name="CurrentSolution"
+                                    TextColor="White">
+                                </Label>
+                            </Frame>
+                            <Label>
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
+                                        <Span Text=" Current Location : "></Span>
+                                        <Span Text="Default" x:Name="CurrentLocation" TextColor="#508bf9"></Span>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </FlexLayout>
+
+                        <Grid Padding="10,5" Margin="0" BackgroundColor="#fafafa">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="*"></RowDefinition>
@@ -35,18 +60,9 @@
                                    HorizontalOptions="Start"
                                    FontSize="16"
                                    Margin="5,0,5,0"
-                                   Style="{StaticResource MediumLabel}"/>
-                            <Label HorizontalOptions="End"
-                                   Margin="5,0,5,0"
-                                   Grid.Row="0">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
-                                        <Span Text=" Current Location : "></Span>
-                                        <Span Text="Default" x:Name="CurrentLocation" TextColor="#508bf9"></Span>
-                                    </FormattedString>
-                                </Label.FormattedText>
+                                   Style="{StaticResource MediumLabel}">
                             </Label>
+
                             <Frame CornerRadius="4" Grid.Row="1" BackgroundColor="Transparent">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -65,12 +81,14 @@
                                             <Frame.GestureRecognizers>
                                                 <TapGestureRecognizer Command="{Binding MyActionsTappedcommand}"/>
                                             </Frame.GestureRecognizers>
-                                            <Label Text="&#xf25a;" 
-                                                   FontFamily="{StaticResource FontAwesome}"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center"
-                                                   TextColor="White"
-                                                   FontSize="30"/>
+                                            <Label 
+                                                Text="&#xf25a;" 
+                                                FontFamily="{StaticResource FontAwesome}"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center"
+                                                TextColor="White"
+                                                FontSize="30">
+                                            </Label>
                                         </Frame>
                                         <Label Text="My Actions" HorizontalOptions="Center"></Label>
                                     </StackLayout>
@@ -85,12 +103,14 @@
                                             <Frame.GestureRecognizers>
                                                 <TapGestureRecognizer Tapped="PushButton_Tapped"/>
                                             </Frame.GestureRecognizers>
-                                            <Label Text="&#xf021;" 
-                                                   FontFamily="{StaticResource FontAwesome}"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center"
-                                                   TextColor="White"
-                                                   FontSize="30"/>
+                                            <Label 
+                                                Text="&#xf021;" 
+                                                FontFamily="{StaticResource FontAwesome}"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center"
+                                                TextColor="White"
+                                                FontSize="30">
+                                            </Label>
                                         </Frame>
                                         <Label Text="Sync" HorizontalOptions="Center"></Label>
                                     </StackLayout>
@@ -112,19 +132,22 @@
                 x:Name="IconedLoader"
                 IsVisible="{Binding IsBusy}"
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                AbsoluteLayout.LayoutFlags="All"/>
-            
+                AbsoluteLayout.LayoutFlags="All">
+            </control:LoaderIconed>
+
             <control:ConfirmBox
                 x:Name="PushConfirmBox"
                 Title="Confirm"
                 Message="Do you really want to push your local data to cloud?"
-                ConfirmClicked="{Binding SyncButtonCommand}"/>
+                ConfirmClicked="{Binding SyncButtonCommand}">
+            </control:ConfirmBox>
 
             <control:ConfirmBox
                 x:Name="LogoutDialog"
                 Title="Confirm"
                 Message="Do you want to logout?"
-                ConfirmClicked="{Binding LogoutCommand}"/>
+                ConfirmClicked="{Binding LogoutCommand}">
+            </control:ConfirmBox>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

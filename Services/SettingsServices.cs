@@ -73,7 +73,7 @@ namespace ExpressBase.Mobile.Services
             {
                 CurrentSolution = this.GetSolution();
 
-                if(CurrentSolution != null)
+                if (CurrentSolution != null)
                 {
                     App.DataDB.SetDbPath(CurrentSolution.SolutionName);
                 }
@@ -90,6 +90,16 @@ namespace ExpressBase.Mobile.Services
             {
                 Log.Write(ex.Message);
             }
+        }
+
+        public void Reset()
+        {
+            CurrentSolution = null;
+            CurrentUser = null;
+            RToken = null;
+            BToken = null;
+            CurrentApplication = null;
+            CurrentLocation = null;
         }
 
         private SolutionInfo GetSolution()

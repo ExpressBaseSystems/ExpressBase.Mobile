@@ -129,6 +129,7 @@
                                         ThumbColor="{StaticResource Blue-Dark}"
                                         OnColor="#afafaf">
                                     </Switch>
+                                    <Label Text="DESC" FontSize="12" VerticalTextAlignment="Center"></Label>
                                 </StackLayout>
                             </Grid>
                         </ViewCell>

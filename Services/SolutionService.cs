@@ -32,7 +32,7 @@ namespace ExpressBase.Mobile.Services
 
         Task CreateDirectory();
 
-        Task UpdateSolutions(IEnumerable<SolutionInfo> info);
+        Task Remove(SolutionInfo info);
 
         bool IsSolutionExist(string url);
     }
@@ -145,9 +145,11 @@ namespace ExpressBase.Mobile.Services
             });
         }
 
-        public async Task UpdateSolutions(IEnumerable<SolutionInfo> solutions)
+        public async Task Remove(SolutionInfo info)
         {
-            await Store.SetJSONAsync(AppConst.MYSOLUTIONS, new List<SolutionInfo>(solutions));
+            List<SolutionInfo> sol = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
+            sol.Remove(sol.Find(item => item.SolutionName == info.SolutionName && item.RootUrl == info.RootUrl));
+            await Store.SetJSONAsync(AppConst.MYSOLUTIONS, sol);
         }
 
         public bool IsSolutionExist(string url)

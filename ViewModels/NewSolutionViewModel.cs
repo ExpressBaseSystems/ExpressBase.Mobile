@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
@@ -33,7 +34,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                string sid = solutionUrl.Trim().Split('.')[0];
+                string sid = solutionUrl.Split(CharConstants.DOT)[0];
 
                 SolutionInfo info = new SolutionInfo
                 {

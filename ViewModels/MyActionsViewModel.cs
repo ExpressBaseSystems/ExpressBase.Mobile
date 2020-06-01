@@ -53,7 +53,6 @@ namespace ExpressBase.Mobile.ViewModels
             MyActionsResponse resp = await myActionService.GetMyActionsAsync();
 
             Actions = new ObservableCollection<EbMyAction>(resp.Actions);
-            this.FillRandomColor(Actions);
             this.SetPageTitle();
         }
 
@@ -62,7 +61,6 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 MyActionsResponse actionResp = await myActionService.GetMyActionsAsync();
-                FillRandomColor(actionResp.Actions);
                 Actions.Clear();
                 Actions.AddRange(actionResp.Actions);
                 SetPageTitle();
@@ -104,18 +102,6 @@ namespace ExpressBase.Mobile.ViewModels
             catch (Exception ex)
             {
                 Log.Write("AppSelect_ItemSelected---" + ex.Message);
-            }
-        }
-
-        public void FillRandomColor(IEnumerable<EbMyAction> actions)
-        {
-            //fill by randdom colors
-            Random random = new Random();
-            foreach (EbMyAction action in actions)
-            {
-                var randomColor = ColorSet.Colors[random.Next(6)];
-                action.BackgroundColor = Color.FromHex(randomColor.BackGround);
-                action.TextColor = Color.FromHex(randomColor.TextColor);
             }
         }
 

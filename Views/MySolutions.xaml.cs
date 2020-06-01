@@ -8,12 +8,15 @@ namespace ExpressBase.Mobile.Views
     {
         private bool isRendered;
 
-        private readonly MySolutionsViewModel ViewModel;
+        private readonly bool isMasterPage;
 
-        public MySolutions()
+        private readonly MySolutionsViewModel viewModel;
+
+        public MySolutions(bool ismaster = false)
         {
+            isMasterPage = ismaster;
             InitializeComponent();
-            BindingContext = ViewModel = new MySolutionsViewModel();
+            BindingContext = viewModel = new MySolutionsViewModel();
         }
 
         protected override async void OnAppearing()
@@ -22,7 +25,7 @@ namespace ExpressBase.Mobile.Views
 
             if (!isRendered)
             {
-                await ViewModel.InitializeAsync();
+                await viewModel.InitializeAsync();
                 isRendered = true;
             }
         }
@@ -40,7 +43,10 @@ namespace ExpressBase.Mobile.Views
 
         private async void NewSolution_Tapped(object sender, System.EventArgs e)
         {
-            await App.RootMaster.Detail.Navigation.PushAsync(new NewSolution(true));
+            if (isMasterPage)
+                await App.RootMaster.Detail.Navigation.PushAsync(new NewSolution(true));
+            else
+                await Application.Current.MainPage.Navigation.PushAsync(new NewSolution());
         }
     }
 }

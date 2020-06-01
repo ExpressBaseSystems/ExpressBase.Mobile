@@ -80,16 +80,19 @@ namespace ExpressBase.Mobile.ViewModels
                     return;
                 }
 
-                Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
-
-                await IdentityService.AuthIfTokenExpiredAsync();
-
-                SyncResponse response = await menuServices.Sync();
-
-                Device.BeginInvokeOnMainThread(() =>
+                await Task.Run(async () =>
                 {
-                    IsBusy = false;
-                    toast.Show(response.Message);
+                    Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
+
+                    await IdentityService.AuthIfTokenExpiredAsync();
+
+                    SyncResponse response = await menuServices.Sync();
+
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        IsBusy = false;
+                        toast.Show(response.Message);
+                    });
                 });
             }
             catch (Exception ex)

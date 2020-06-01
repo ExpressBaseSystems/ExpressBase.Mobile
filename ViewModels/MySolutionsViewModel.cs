@@ -55,11 +55,13 @@ namespace ExpressBase.Mobile.ViewModels
                 SolutionInfo tapedInfo = (SolutionInfo)obj;
                 if (tapedInfo.SolutionName == sid) return;
 
-                await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, tapedInfo);
-                App.Settings.CurrentSolution = tapedInfo;
+                SolutionInfo copy = Clone(tapedInfo);
+
+                await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, copy);
+                App.Settings.CurrentSolution = copy;
 
                 await solutionService.ClearCached();
-                await solutionService.CreateDB(tapedInfo.SolutionName);
+                await solutionService.CreateDB(copy.SolutionName);
                 await solutionService.CreateDirectory();
 
                 Application.Current.MainPage = new NavigationPage()
@@ -76,6 +78,16 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        private SolutionInfo Clone(SolutionInfo info)
+        {
+            return new SolutionInfo
+            {
+                SolutionName = info.SolutionName,
+                RootUrl = info.RootUrl,
+                LastUser = info.LastUser,
+            };
+        }
+
         private async Task SolutionRemoveEvent(object obj)
         {
             try
@@ -85,7 +97,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (current != null && info.SolutionName == current.SolutionName && info.RootUrl == current.RootUrl)
                     return;
                 this.MySolutions.Remove(info);
-                await solutionService.UpdateSolutions(this.MySolutions);
+                await solutionService.Remove(info);
             }
             catch (Exception ex)
             {

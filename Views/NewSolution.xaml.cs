@@ -1,10 +1,11 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
+using ExpressBase.Mobile.Views.Shared;
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ZXing;
@@ -14,7 +15,7 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewSolution : ContentPage
     {
-        private readonly NewSolutionViewModel ViewModel;
+        private readonly NewSolutionViewModel viewModel;
 
         private ValidateSidResponse response;
 
@@ -30,41 +31,24 @@ namespace ExpressBase.Mobile.Views
                 NavigationPage.SetHasBackButton(this, true);
             }
 
-            BindingContext = ViewModel = new NewSolutionViewModel();
+            BindingContext = viewModel = new NewSolutionViewModel();
         }
 
-        public void QrScanner_OnScanResult(Result result)
+        private void QrScannerCallback(SolutionQrMeta meta)
         {
-            IToast toast = DependencyService.Get<IToast>();
-            QrScanner.IsAnalyzing = false;
-            SolutionQrMeta meta = JsonConvert.DeserializeObject<SolutionQrMeta>(result.Text);
-            if (meta != null)
-            {
-                if (!Utils.HasInternet)
-                {
-                    toast.Show("Not connected to internet!");
-                    return;
-                }
-                if (string.IsNullOrEmpty(meta.sid) || ViewModel.IsSolutionExist(meta.sid))
-                    return;
+            if (string.IsNullOrEmpty(meta.Sid) || viewModel.IsSolutionExist(meta.Sid))
+                return;
 
-                AddSolutionQrScanned(meta);
-            }
-        }
-
-        private void AddSolutionQrScanned(SolutionQrMeta meta)
-        {
             Device.BeginInvokeOnMainThread(async () =>
             {
                 try
                 {
-                    QrScannerView.IsVisible = false;
                     Loader.IsVisible = true;
 
-                    response = await ViewModel.Validate(meta.sid);
+                    response = await viewModel.Validate(meta.Sid);
                     if (response.IsValid)
                     {
-                        await ViewModel.AddSolution(meta.sid, response);
+                        await viewModel.AddSolution(meta.Sid, response);
 
                         if (isMasterPage)
                         {
@@ -86,52 +70,51 @@ namespace ExpressBase.Mobile.Views
                 {
                     Log.Write(ex.Message);
                     Loader.IsVisible = true;
-                    QrScannerView.IsVisible = false;
                 }
             });
         }
 
-        private void QrButton_Tapped(object sender, EventArgs e)
+        private async void QrButton_Tapped(object sender, EventArgs e)
         {
-            QrScannerView.IsVisible = true;
-            QrScanner.IsScanning = true;
-        }
+            QrScanner scannerPage = new QrScanner(isMasterPage);
+            scannerPage.BindMethod(QrScannerCallback);
 
-        protected override bool OnBackButtonPressed()
-        {
-            if (QrScannerView.IsVisible)
-            {
-                QrScannerView.IsVisible = false;
-                QrScanner.IsScanning = false;
-                return true;
-            }
+            if (isMasterPage)
+                await App.RootMaster.Detail.Navigation.PushModalAsync(scannerPage);
             else
-            {
-                return base.OnBackButtonPressed();
-            }
+                await Application.Current.MainPage.Navigation.PushModalAsync(scannerPage);
         }
 
         private async void SaveSolution_Clicked(object sender, EventArgs e)
         {
             try
             {
+                string surl = SolutionName.Text.Trim();
+
                 IToast toast = DependencyService.Get<IToast>();
                 if (!Utils.HasInternet)
                 {
                     toast.Show("Not connected to internet!");
                     return;
                 }
-                if (string.IsNullOrEmpty(SolutionName.Text) || ViewModel.IsSolutionExist(SolutionName.Text))
+                if (string.IsNullOrEmpty(surl) || viewModel.IsSolutionExist(surl))
                     return;
 
                 Loader.IsVisible = true;
-                response = await ViewModel.Validate(SolutionName.Text.Trim());
+
+                if (surl.Split(CharConstants.DOT).Length == 1)
+                {
+                    surl += ".expressbase.com";
+                    SolutionName.Text = surl;
+                }
+
+                response = await viewModel.Validate(surl);
 
                 if (response.IsValid)
                 {
                     Loader.IsVisible = false;
                     SolutionLogoPrompt.Source = ImageSource.FromStream(() => new MemoryStream(response.Logo));
-                    SolutionLabel.Text = SolutionName.Text;
+                    SolutionLabel.Text = surl;
                     PopupContainer.IsVisible = true;
                 }
                 else
@@ -157,7 +140,7 @@ namespace ExpressBase.Mobile.Views
         {
             try
             {
-                await ViewModel.AddSolution(SolutionName.Text, response);
+                await viewModel.AddSolution(SolutionName.Text.Trim(), response);
 
                 Loader.IsVisible = true;
                 PopupContainer.IsVisible = false;

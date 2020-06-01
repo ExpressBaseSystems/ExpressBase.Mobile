@@ -143,22 +143,6 @@
                 AbsoluteLayout.LayoutFlags="All">
             </control:LoaderIconed>
 
-            <!---Scanner view-->
-            <ContentView 
-                x:Name="QrScannerView"
-                IsVisible="False">
-                <ContentView.Content>
-                    <StackLayout>
-                        <zxing:ZXingScannerView 
-                            x:Name="QrScanner"
-                            IsVisible="True"
-                            IsScanning="False"
-                            OnScanResult="QrScanner_OnScanResult">
-                        </zxing:ZXingScannerView>
-                    </StackLayout>
-                </ContentView.Content>
-            </ContentView>
-
             <!--message box-->
             <ContentView 
                 x:Name="PopupContainer"

@@ -70,10 +70,6 @@ namespace ExpressBase.Mobile.Models
                 }
             }
         }
-
-        public Color BackgroundColor { set; get; }
-
-        public Color TextColor { set; get; }
     }
 
     public class EbStageInfo
@@ -130,20 +126,27 @@ namespace ExpressBase.Mobile.Models
             }
         }
 
-        public string AppNotation
+        public string Notation
         {
             get
             {
-                string notation = string.Empty;
-                foreach (var item in Description.Split(' ').Take(2))
-                    notation += item[0];
-                return notation.ToUpper();
+                try
+                {
+                    string notation = string.Empty;
+                    foreach (var item in Description.Split(' ').Take(2))
+                    {
+                        if (string.IsNullOrEmpty(item)) continue;
+                        notation += item[0];
+                    }
+                    return notation.ToUpper();
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(ex.Message);
+                    return "??";
+                }
             }
         }
-
-        public Color BackgroundColor { set; get; }
-
-        public Color TextColor { set; get; }
     }
 
     public class MyActionsResponse
@@ -312,7 +315,7 @@ namespace ExpressBase.Mobile.Models
 
     public class SolutionQrMeta
     {
-        public string sid { set; get; }
+        public string Sid { set; get; }
 
     }
 }

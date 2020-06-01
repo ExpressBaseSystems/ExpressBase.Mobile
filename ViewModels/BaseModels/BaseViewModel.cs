@@ -55,9 +55,8 @@ namespace ExpressBase.Mobile.ViewModels
         {
             Store.ResetCashedSolutionData();
             Store.RemoveJSON(AppConst.SOLUTION_OBJ);
-            App.Settings.CurrentSolution = null;
+            App.Settings.Reset();
             
-            App.RootMaster = null;
             Application.Current.MainPage = new NavigationPage(new MySolutions())
             {
                 BarBackgroundColor = Color.FromHex("0046bb"),
