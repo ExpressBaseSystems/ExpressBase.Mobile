@@ -254,10 +254,9 @@ namespace ExpressBase.Mobile
                 {
                     foreach (FileMetaInfo info in meta.Files)
                     {
-                        var tuple = FormDataServices.Instance.GetFile(info.FileCategory, $"{meta.RowId}.jpg");
-                        if (tuple == null) continue;
-
-                        this.AddImage(info.FileName, tuple.Item2);
+                        ApiFileResponse resp = FormDataServices.Instance.GetFile(info.FileCategory, $"{info.FileRefId}.jpg");
+                        if (resp != null && resp.HasContent)
+                            this.AddImage(info.FileName, resp.Bytea);
                     }
                 }
             }

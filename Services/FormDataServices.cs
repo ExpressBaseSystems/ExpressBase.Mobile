@@ -7,7 +7,10 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
@@ -20,7 +23,7 @@ namespace ExpressBase.Mobile.Services
 
         Task<PushResponse> SendFormDataAsync(WebformData WebFormData, int RowId, string WebFormRefId, int LocId);
 
-        Tuple<string, byte[]> GetFile(EbFileCategory category, string filename);
+        FileResponse GetFile(EbFileCategory category, string filename);
     }
 
     public class FormDataServices : IFormDataService
@@ -141,32 +144,31 @@ namespace ExpressBase.Mobile.Services
             return FileData;
         }
 
-        public Tuple<string, byte[]> GetFile(EbFileCategory category, string filename)
+        public ApiFileResponse GetFile(EbFileCategory category, string filename)
         {
+            ApiFileResponse resp = null;
             try
             {
-                string imgType = category == EbFileCategory.File ? "files" : "images";
-
                 RestClient client = new RestClient(App.Settings.RootUrl);
 
-                RestRequest request = new RestRequest($"api/{imgType}/{filename}", Method.GET);
-
+                RestRequest request = new RestRequest("api/get_files", Method.GET);
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-                IRestResponse iresp = client.Execute(request);
+                request.AddParameter("category", (int)category);
+                request.AddParameter("filename", filename);
 
-                if (iresp.StatusCode == HttpStatusCode.OK)
-                {
-                    return new Tuple<string, byte[]>(iresp.ContentType, iresp.RawBytes);
-                }
+                IRestResponse response = client.Execute(request);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                    resp = JsonConvert.DeserializeObject<ApiFileResponse>(response.Content);
             }
             catch (Exception ex)
             {
                 Log.Write(ex.Message);
             }
-            return null;
+            return resp;
         }
     }
 }

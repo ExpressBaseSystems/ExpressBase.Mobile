@@ -55,7 +55,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (App.Settings.AppId != apData.AppId)
                 {
-                    Store.Remove(AppConst.OBJ_COLLECTION);
+                    Store.RemoveJSON(AppConst.OBJ_COLLECTION);
 
                     if (!Utils.HasInternet)
                     {

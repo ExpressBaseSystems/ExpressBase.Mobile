@@ -34,6 +34,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
                 if (meta != null)
                 {
+                    ScannerView.IsScanning = false;
                     viewAction?.Invoke(meta);
                     if (isMasterPage)
                         App.RootMaster.Detail.Navigation.PopModalAsync(true);

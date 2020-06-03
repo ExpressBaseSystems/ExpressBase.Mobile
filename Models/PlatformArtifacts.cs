@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
@@ -317,5 +318,22 @@ namespace ExpressBase.Mobile.Models
     {
         public string Sid { set; get; }
 
+    }
+
+    public class ApiFileResponse
+    {
+        public string ContentType { set; get; }
+
+        public byte[] Bytea { set; get; }
+
+        public HttpStatusCode StatusCode { set; get; }
+
+        public bool HasContent
+        {
+            get
+            {
+                return (Bytea != null && Bytea.Length > 0);
+            }
+        }
     }
 }

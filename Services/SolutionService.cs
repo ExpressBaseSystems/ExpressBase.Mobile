@@ -50,12 +50,10 @@ namespace ExpressBase.Mobile.Services
 
                 List<SolutionInfo> solutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
 
-                string current = App.Settings.Sid;
-
                 foreach (SolutionInfo info in solutions)
                 {
                     info.SetLogo();
-                    info.IsCurrent = info.SolutionName == current ? true : false;
+                    info.IsCurrent = (info.SolutionName == App.Settings.Sid && info.RootUrl == App.Settings.RootUrl) ? true : false;
 
                     sln.Add(info);//add to the observable collection
                 }

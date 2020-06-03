@@ -31,7 +31,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private Dictionary<string, List<FileMetaInfo>> filesOnEdit;
 
-        private EbDataRow preFillRecord;
+        private readonly EbDataRow preFillRecord;
 
         public Command SaveCommand => new Command(async () => await OnSaveClicked());
 

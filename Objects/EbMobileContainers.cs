@@ -111,7 +111,9 @@ namespace ExpressBase.Mobile
 
                 string sql = HelperFunctions.WrapSelectQuery(GetQuery, dbParameters);
 
-                dbParameters.Add(new DbParameter { ParameterName = "@limit", Value = PageLength, DbType = (int)EbDbTypes.Int32 });
+                int len = this.PageLength == 0 ? 30 : this.PageLength;
+
+                dbParameters.Add(new DbParameter { ParameterName = "@limit", Value = len, DbType = (int)EbDbTypes.Int32 });
                 dbParameters.Add(new DbParameter { ParameterName = "@offset", Value = offset, DbType = (int)EbDbTypes.Int32 });
 
                 Data = App.DataDB.DoQueries(sql, dbParameters.ToArray());
@@ -128,7 +130,8 @@ namespace ExpressBase.Mobile
             EbDataSet Data = null;
             try
             {
-                VisualizationLiveData vd = await DataService.Instance.GetDataAsync(this.DataSourceRefId, dbParameters.ToParams(), sortOrder, this.PageLength, offset);
+                int len = this.PageLength == 0 ? 30 : this.PageLength;
+                VisualizationLiveData vd = await DataService.Instance.GetDataAsync(this.DataSourceRefId, dbParameters.ToParams(), sortOrder, len, offset);
                 Data = vd.Data;
             }
             catch (Exception ex)
