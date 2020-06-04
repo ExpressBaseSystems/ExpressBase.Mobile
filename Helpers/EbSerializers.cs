@@ -1,14 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Reflection;
 
 namespace ExpressBase.Mobile.Helpers
 {

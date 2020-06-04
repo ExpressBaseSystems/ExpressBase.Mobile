@@ -75,6 +75,11 @@ namespace ExpressBase.Mobile
         protected override async void OnStart()
         {
             await InitNavigation();
+
+            if (Settings.AllowGpsLocation)
+            {
+                await Settings.GetGpsLocation();
+            }
         }
 
         protected override void OnSleep()

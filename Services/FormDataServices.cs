@@ -23,7 +23,7 @@ namespace ExpressBase.Mobile.Services
 
         Task<PushResponse> SendFormDataAsync(WebformData WebFormData, int RowId, string WebFormRefId, int LocId);
 
-        FileResponse GetFile(EbFileCategory category, string filename);
+        ApiFileResponse GetFile(EbFileCategory category, string filename);
     }
 
     public class FormDataServices : IFormDataService

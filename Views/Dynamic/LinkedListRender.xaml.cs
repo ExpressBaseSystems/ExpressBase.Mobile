@@ -56,6 +56,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 bool flag = !string.IsNullOrEmpty(viewModel.Visualization.LinkRefId);
                 int count = 1;
 
+                this.ListContainer.Children.Clear();
+
                 if (viewModel.DataTable.Rows.Any())
                 {
                     foreach (EbDataRow row in viewModel.DataTable.Rows)

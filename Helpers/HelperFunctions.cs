@@ -3,13 +3,9 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Structures;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
@@ -88,7 +84,6 @@ namespace ExpressBase.Mobile.Helpers
 
         public static object GetResourceValue(string keyName)
         {
-            // Search all dictionaries
             if (Application.Current.Resources.TryGetValue(keyName, out var retVal)) { }
             return retVal;
         }

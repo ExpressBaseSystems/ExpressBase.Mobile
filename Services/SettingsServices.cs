@@ -5,11 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace ExpressBase.Mobile.Services
 {
     public class SettingsServices
     {
+        public bool AllowGpsLocation { set; get; } = false;
+
         public SolutionInfo CurrentSolution { set; get; }
 
         public User CurrentUser { set; get; }
@@ -66,6 +69,8 @@ namespace ExpressBase.Mobile.Services
         {
             get { return CurrentLocation.LocId; }
         }
+
+        public Location GeoCordinates { set; get; }
 
         public async Task Resolve()
         {
@@ -130,6 +135,11 @@ namespace ExpressBase.Mobile.Services
         private EbLocation GetCurrentLocation()
         {
             return Store.GetJSON<EbLocation>(AppConst.CURRENT_LOCOBJ);
+        }
+
+        public async Task GetGpsLocation()
+        {
+            GeoCordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
         }
     }
 }

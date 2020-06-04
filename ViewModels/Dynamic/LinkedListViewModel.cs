@@ -189,6 +189,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                             renderer = new FormRender(page, id);
                         }
                         break;
+                    case EbMobileVisualization v:
+                        renderer = new LinkedListRender(page, this.Visualization, frame);
+                        break;
                     case EbMobileDashBoard d:
                         renderer = new DashBoardRender(page, frame.DataRow);
                         break;
