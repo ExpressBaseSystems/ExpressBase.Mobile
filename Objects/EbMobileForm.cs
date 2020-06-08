@@ -101,7 +101,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write("EbMobileForm.SaveForm::" + ex.Message);
+                EbLog.Write("EbMobileForm.SaveForm::" + ex.Message);
             }
             return response;
         }
@@ -179,7 +179,7 @@ namespace ExpressBase.Mobile
             {
                 response.Status = false;
                 response.Message = "Something went wrong :(";
-                Log.Write("EbMobileForm.PushToCloud---" + ex.Message);
+                EbLog.Write("EbMobileForm.PushToCloud---" + ex.Message);
             }
         }
 
@@ -211,7 +211,7 @@ namespace ExpressBase.Mobile
             {
                 response.Status = false;
                 response.Message = "Something went wrong :(";
-                Log.Write("EbMobileForm.PersistOnLocal::" + ex.Message);
+                EbLog.Write("EbMobileForm.PersistOnLocal::" + ex.Message);
             }
         }
 
@@ -365,7 +365,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -381,7 +381,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return true;
         }

@@ -53,7 +53,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
     }

@@ -88,7 +88,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return null;
         }
@@ -120,7 +120,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write("EbMobileVisualization.GetData with params---" + ex.Message);
+                EbLog.Write("EbMobileVisualization.GetData with params---" + ex.Message);
             }
             return Data;
         }
@@ -136,7 +136,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write("EbMobileVisualization.GetLiveData with params---" + ex.Message);
+                EbLog.Write("EbMobileVisualization.GetLiveData with params---" + ex.Message);
             }
             return Data;
         }

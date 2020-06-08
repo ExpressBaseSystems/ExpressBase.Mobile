@@ -29,6 +29,10 @@ namespace ExpressBase.Mobile.Constants
         public const string USER_LOCATIONS = "eb_userlocations";
 
         public const string CURRENT_LOCOBJ = "current_loc_object";
+
+        public const string PNS_TOKEN = "eb_pns_token";
+
+        public const string AZURE_REGID = "azure_regid";
     }
 
     public static class RegexConstants

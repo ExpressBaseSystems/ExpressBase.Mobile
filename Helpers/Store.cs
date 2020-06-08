@@ -23,7 +23,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.GetValue::" + ex.Message);
+                EbLog.Write("Store.GetValue::" + ex.Message);
             }
             return null;
         }
@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.GetValue::" + ex.Message);
+                EbLog.Write("Store.GetValue::" + ex.Message);
                 return default;
             }
             return default;
@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.GetValueAsync::" + ex.Message);
+                EbLog.Write("Store.GetValueAsync::" + ex.Message);
             }
             return null;
         }
@@ -83,7 +83,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.GetValue::" + ex.Message);
+                EbLog.Write("Store.GetValue::" + ex.Message);
             }
             return default;
         }
@@ -96,7 +96,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.SetValue::" + ex.Message);
+                EbLog.Write("Store.SetValue::" + ex.Message);
             }
         }
 
@@ -108,7 +108,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.SetValueAsync::" + ex.Message);
+                EbLog.Write("Store.SetValueAsync::" + ex.Message);
             }
         }
 
@@ -120,7 +120,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.Remove::" + ex.Message);
+                EbLog.Write("Store.Remove::" + ex.Message);
             }
         }
 
@@ -132,7 +132,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.RemoveAll::" + ex.Message);
+                EbLog.Write("Store.RemoveAll::" + ex.Message);
             }
         }
 
@@ -145,7 +145,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.SetJSON::" + ex.Message);
+                EbLog.Write("Store.SetJSON::" + ex.Message);
             }
         }
 
@@ -158,7 +158,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.SetJSON::" + ex.Message);
+                EbLog.Write("Store.SetJSON::" + ex.Message);
             }
         }
 
@@ -171,7 +171,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.GetJSON::" + ex.Message);
+                EbLog.Write("Store.GetJSON::" + ex.Message);
             }
             return default;
         }
@@ -184,7 +184,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.RemoveJSON::" + ex.Message);
+                EbLog.Write("Store.RemoveJSON::" + ex.Message);
             }
         }
 
@@ -215,7 +215,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("Store.RemoveJSON::" + ex.Message);
+                EbLog.Write("Store.RemoveJSON::" + ex.Message);
             }
         }
     }

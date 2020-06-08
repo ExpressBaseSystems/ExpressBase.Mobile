@@ -60,7 +60,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return sln;
         }
@@ -79,7 +79,7 @@ namespace ExpressBase.Mobile.Services
             catch (Exception e)
             {
                 Vresp.IsValid = false;
-                Log.Write("Validate Sid---" + e.Message);
+                EbLog.Write("Validate Sid---" + e.Message);
             }
             return Vresp;
         }
@@ -98,7 +98,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -115,7 +115,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write("SolutionSelect_SaveLogo" + ex.Message);
+                EbLog.Write("SolutionSelect_SaveLogo" + ex.Message);
             }
         }
 

@@ -173,7 +173,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
                 dt = new EbDataTable();
             }
             return dt;

@@ -68,7 +68,7 @@ namespace ExpressBase.Mobile.Views
                 }
                 catch (Exception ex)
                 {
-                    Log.Write(ex.Message);
+                    EbLog.Write(ex.Message);
                     Loader.IsVisible = true;
                 }
             });
@@ -125,7 +125,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -158,7 +158,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
     }

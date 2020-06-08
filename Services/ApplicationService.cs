@@ -37,7 +37,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return applications.ToObservableCollection();
         }
@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
                 _Apps = new List<AppData>();
             }
             return _Apps;

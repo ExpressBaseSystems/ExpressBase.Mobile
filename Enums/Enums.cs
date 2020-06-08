@@ -105,4 +105,19 @@ namespace ExpressBase.Mobile.Enums
         //ImageLarge,
         LocationFile = 5
     }
+
+    public enum MobilePlatform
+    {
+        // Summary:
+        //     Windows Notification Service
+        wns,
+
+        // Summary:
+        //     Apple Push Notifications Service
+        apns,
+
+        // Summary:
+        //     Google Cloud Messaging
+        gcm
+    }
 }

@@ -36,7 +36,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write("GetMyActionsAsync---" + ex.Message);
+                EbLog.Write("GetMyActionsAsync---" + ex.Message);
             }
             return new MyActionsResponse();
         }
@@ -62,7 +62,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write("RestService.GetMyActions---" + ex.Message);
+                EbLog.Write("RestService.GetMyActions---" + ex.Message);
             }
             return new EbStageInfo();
         }

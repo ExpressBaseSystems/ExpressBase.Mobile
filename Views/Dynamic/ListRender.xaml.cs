@@ -86,7 +86,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -136,7 +136,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write("ListViewRender.PrevButton_Clicked---" + ex.Message);
+                EbLog.Write("ListViewRender.PrevButton_Clicked---" + ex.Message);
             }
         }
 
@@ -155,7 +155,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write("ListViewRender.NextButton_Clicked---" + ex.Message);
+                EbLog.Write("ListViewRender.NextButton_Clicked---" + ex.Message);
             }
         }
 
@@ -184,7 +184,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -202,7 +202,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             catch (Exception ex)
             {
                 this.ListViewRefresh.IsRefreshing = false;
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -218,7 +218,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
     }

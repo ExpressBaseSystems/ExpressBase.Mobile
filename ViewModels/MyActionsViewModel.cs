@@ -67,7 +67,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -101,7 +101,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Write("AppSelect_ItemSelected---" + ex.Message);
+                EbLog.Write("AppSelect_ItemSelected---" + ex.Message);
             }
         }
 

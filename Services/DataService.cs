@@ -51,7 +51,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return new VisualizationLiveData();
         }
@@ -84,7 +84,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return new VisualizationLiveData();
         }

@@ -71,7 +71,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write("RestServices.GetEbObjects---" + ex.Message);
+                EbLog.Write("RestServices.GetEbObjects---" + ex.Message);
                 return new MobilePageCollection();
             }
             return new MobilePageCollection();
@@ -135,7 +135,7 @@ namespace ExpressBase.Mobile.Services
             {
                 response.Status = false;
                 response.Message = "Sync failed";
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return response;
         }
@@ -162,7 +162,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write("SyncServices.PushRow---" + ex.Message);
+                EbLog.Write("SyncServices.PushRow---" + ex.Message);
             }
             return response;
         }
@@ -195,7 +195,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -248,7 +248,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write("SyncServices.PushDependencyData---" + ex.Message);
+                EbLog.Write("SyncServices.PushDependencyData---" + ex.Message);
             }
         }
 

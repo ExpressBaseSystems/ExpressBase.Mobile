@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
                 wd = new WebformData();
             }
             return wd;
@@ -86,7 +86,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return ds;
         }
@@ -112,7 +112,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Log.Write(e.Message);
+                EbLog.Write(e.Message);
             }
             return null;
         }
@@ -139,7 +139,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Log.Write(e.Message);
+                EbLog.Write(e.Message);
             }
             return FileData;
         }
@@ -166,7 +166,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return resp;
         }

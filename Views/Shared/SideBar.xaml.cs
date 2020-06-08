@@ -34,7 +34,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                Log.Write("SideBar.SetDp---" + ex.Message);
+                EbLog.Write("SideBar.SetDp---" + ex.Message);
             }
         }
 
@@ -73,7 +73,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 

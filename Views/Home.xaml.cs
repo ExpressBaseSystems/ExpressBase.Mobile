@@ -42,7 +42,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
                 IconedLoader.IsVisible = false;
             }
         }
@@ -93,7 +93,7 @@ namespace ExpressBase.Mobile.Views
             catch (Exception ex)
             {
                 toast.Show("Something went wrong. Please try again");
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 

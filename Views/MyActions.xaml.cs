@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile.Views
             catch (Exception ex)
             {
                 MyActionsRefresh.IsRefreshing = false;
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
     }

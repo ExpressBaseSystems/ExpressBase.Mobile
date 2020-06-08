@@ -37,7 +37,7 @@ namespace ExpressBase.Mobile.Helpers
     }
 
 
-    public class Log
+    public class EbLog
     {
         public static void Write(string message, LogTypes logType = LogTypes.EXCEPTION)
         {
@@ -50,5 +50,10 @@ namespace ExpressBase.Mobile.Helpers
                 Console.WriteLine(ex.Message);
             }
         }
-    } 
+    }
+
+    public interface IPushService
+    {
+        void Register(string authid);
+    }
 }

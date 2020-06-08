@@ -71,7 +71,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             catch (Exception ex)
             {
                 DataTable = new EbDataTable();
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -100,13 +100,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         renderer = new DashBoardRender(page, frame.DataRow);
                         break;
                     default:
-                        Log.Write("inavlid container type");
+                        EbLog.Write("inavlid container type");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return renderer;
         }
@@ -130,7 +130,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 

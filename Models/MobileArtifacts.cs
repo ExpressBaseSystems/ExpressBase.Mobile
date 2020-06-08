@@ -2,6 +2,8 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -95,7 +97,7 @@ namespace ExpressBase.Mobile.Models
             }
             catch (Exception ex)
             {
-                Log.Write("MobileFormData.GetQuery---" + ex.Message);
+                EbLog.Write("MobileFormData.GetQuery---" + ex.Message);
             }
             return sb.ToString();
         }
@@ -200,7 +202,7 @@ namespace ExpressBase.Mobile.Models
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return sb.ToString();
         }
@@ -320,7 +322,7 @@ namespace ExpressBase.Mobile.Models
             }
             catch (Exception ex)
             {
-                Log.Write("Login_SetLogo" + ex.Message);
+                EbLog.Write("Login_SetLogo" + ex.Message);
             }
         }
     }
@@ -373,5 +375,33 @@ namespace ExpressBase.Mobile.Models
         public bool Selected { set; get; }
 
         public bool IsToggled { set; get; } = false;
+    }
+
+    public class DeviceRegistration
+    {
+        public MobilePlatform Platform { get; set; }
+
+        public string Handle { get; set; }
+
+        public List<string> Tags { get; set; }
+
+        public void SetPlatform()
+        {
+            switch (Device.RuntimePlatform)
+            {
+                case Device.iOS:
+                    Platform = MobilePlatform.apns;
+                    break;
+                case Device.Android:
+                    Platform = MobilePlatform.gcm;
+                    break;
+                case Device.UWP:
+                    Platform = MobilePlatform.wns;
+                    break;
+                default:
+                    Platform = default;
+                    break;
+            }
+        }
     }
 }

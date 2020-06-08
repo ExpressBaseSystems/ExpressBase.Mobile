@@ -58,7 +58,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 

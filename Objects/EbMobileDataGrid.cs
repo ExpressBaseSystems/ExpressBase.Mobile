@@ -89,7 +89,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -132,7 +132,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return row;
         }
@@ -162,7 +162,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return grid;
         }
@@ -237,7 +237,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -262,7 +262,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return null;
         }
@@ -376,7 +376,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -401,7 +401,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return table_row;
         }
@@ -422,7 +422,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return true;
         }
@@ -438,7 +438,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
     }

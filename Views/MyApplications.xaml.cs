@@ -56,7 +56,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
                 Loader.IsVisible = false;
             }
         }
@@ -80,7 +80,7 @@ namespace ExpressBase.Mobile.Views
             catch (Exception ex)
             {
                 ApplicationsRefresh.IsRefreshing = false;
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -113,7 +113,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 

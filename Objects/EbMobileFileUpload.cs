@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -142,7 +142,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write("EbMobileFileUpload.OnCameraClick---" + ex.Message);
+                EbLog.Write("EbMobileFileUpload.OnCameraClick---" + ex.Message);
             }
         }
 
@@ -157,7 +157,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write("EbMobileFileUpload.OnFileClick---" + ex.Message);
+                EbLog.Write("EbMobileFileUpload.OnFileClick---" + ex.Message);
             }
         }
 
@@ -193,7 +193,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -262,7 +262,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return true;
         }

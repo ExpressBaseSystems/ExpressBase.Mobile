@@ -17,6 +17,8 @@ namespace ExpressBase.Mobile
 
         public static SettingsServices Settings { set; get; }
 
+        private bool isInternal;
+
         public App()
         {
             InitializeComponent();
@@ -47,9 +49,12 @@ namespace ExpressBase.Mobile
                         string password = await Store.GetValueAsync(AppConst.PASSWORD);
 
                         ApiAuthResponse authresponse = await IdentityService.Instance.AuthenticateAsync(username, password);
+
                         await IdentityService.Instance.UpdateAuthInfo(authresponse, username, password);
+
                         if (authresponse.IsValid)
                         {
+                            isInternal = true;
                             RootMaster = new RootMaster(typeof(Home));
                             MainPage = RootMaster;
                         }
@@ -62,6 +67,7 @@ namespace ExpressBase.Mobile
                             await MainPage.Navigation.PushAsync(new MyApplications());
                         else
                         {
+                            isInternal = true;
                             RootMaster = new RootMaster(typeof(Home));
                             MainPage = RootMaster;
                         }

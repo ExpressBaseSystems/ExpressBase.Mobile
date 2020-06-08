@@ -4,7 +4,6 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
-             xmlns:zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.NewSolution"
              NavigationPage.HasNavigationBar="False"
@@ -25,33 +24,35 @@
                         VerticalOptions="CenterAndExpand"
                         Grid.Row="0">
                             <Label
-                            x:Name="BrandName"
-                            Margin="20,20,0,10"
-                            FontFamily="{StaticResource Roboto-Regular}"
-                            HorizontalTextAlignment="Center"
-                            FontSize="25"
-                            Text="Add new Solution"
-                            TextColor="White" />
+                                x:Name="BrandName"
+                                Margin="20,20,0,10"
+                                FontFamily="{StaticResource Roboto-Regular}"
+                                HorizontalTextAlignment="Center"
+                                FontSize="25"
+                                Text="Add new Solution"
+                                TextColor="White">
+                            </Label>
                         </StackLayout>
                     </Grid>
                     <Frame
-                    HorizontalOptions="Center"
-                    Padding="0"
-                    HeightRequest="100"
-                    WidthRequest="100"
-                    CornerRadius="50">
+                        Margin="0"
+                        Padding="5"
+                        HorizontalOptions="Center"
+                        HeightRequest="100"
+                        WidthRequest="100"
+                        HasShadow="True"
+                        CornerRadius="10">
                         <Image 
-                        Source="Icon.png"
-                        Aspect="AspectFill">
+                            Source="Icon.png">
                         </Image>
                     </Frame>
                     <StackLayout VerticalOptions="CenterAndExpand">
                         <Frame
-                    Margin="0,15"
-                    BackgroundColor="{StaticResource Blue-Dark}"
-                    HeightRequest="50"
-                    CornerRadius="25"
-                    Padding="0">
+                            Margin="0,15"
+                            BackgroundColor="{StaticResource Blue-Dark}"
+                            HeightRequest="50"
+                            CornerRadius="25"
+                            Padding="0">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="QrButton_Tapped"></TapGestureRecognizer>
                             </Frame.GestureRecognizers>
@@ -59,68 +60,71 @@
                                 <StackLayout>
                                     <FlexLayout Direction="Row" JustifyContent="Center" VerticalOptions="FillAndExpand">
                                         <Label 
-                                    TextColor="White"
-                                    Text="&#xf029;"
-                                    FontSize="18"
-                                    FontFamily="{StaticResource FontAwesome}"
-                                    VerticalTextAlignment="Center"/>
+                                            TextColor="White"
+                                            Text="&#xf029;"
+                                            FontSize="18"
+                                            FontFamily="{StaticResource FontAwesome}"
+                                            VerticalTextAlignment="Center">
+                                        </Label>
                                         <Label 
-                                    TextColor="White"
-                                    Text="Scan QR Code"
-                                    FontSize="16"
-                                    Margin="15,0,0,0"
-                                    VerticalTextAlignment="Center"/>
+                                            TextColor="White"
+                                            Text="Scan QR Code"
+                                            FontSize="16"
+                                            Margin="15,0,0,0"
+                                            VerticalTextAlignment="Center">
+                                        </Label>
                                     </FlexLayout>
                                 </StackLayout>
                             </Frame.Content>
                         </Frame>
                         <Label
-                    Text="OR"
-                    TextColor="#a5a3a3"
-                    HorizontalTextAlignment="Center">
+                            Text="OR"
+                            TextColor="#a5a3a3"
+                            HorizontalTextAlignment="Center">
                         </Label>
                         <Frame 
-                    Margin="0,15"
-                    x:Name="InputArea"
-                    HasShadow="False"
-                    BackgroundColor="#dddddd"
-                    Grid.Row="1"
-                    CornerRadius="30"
-                    Padding="10,5,5,5">
+                            Margin="0,15"
+                            x:Name="InputArea"
+                            HasShadow="False"
+                            BackgroundColor="#dddddd"
+                            Grid.Row="1"
+                            CornerRadius="30"
+                            Padding="10,5,5,5">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                 <control:TextBox
-                            x:Name="SolutionName"
-                            BorderColor="Transparent"
-                            FontSize="16"
-                            VerticalTextAlignment="Center"
-                            Grid.Column="0"
-                            Placeholder="Enter solution URL"/>
+                                    x:Name="SolutionName"
+                                    BorderColor="Transparent"
+                                    FontSize="16"
+                                    VerticalTextAlignment="Center"
+                                    Grid.Column="0"
+                                    Placeholder="Enter solution URL">
+                                </control:TextBox>
                                 <BoxView
-                            Grid.Column="1"
-                            BackgroundColor="{StaticResource Blue-Dark}"
-                            HeightRequest="45"
-                            WidthRequest="45"
-                            CornerRadius="25">
+                                    Grid.Column="1"
+                                    BackgroundColor="{StaticResource Blue-Dark}"
+                                    HeightRequest="45"
+                                    WidthRequest="45"
+                                    CornerRadius="25">
                                 </BoxView>
                                 <Button
-                            x:Name="SaveSolution"
-                            Grid.Column="1"
-                            Padding="0"
-                            FontSize="16"
-                            Margin="0"
-                            Text="&#xf0c7;"
-                            BackgroundColor="{StaticResource Blue-Dark}"
-                            BorderColor="{StaticResource Blue-Dark}"
-                            TextColor="White"
-                            CornerRadius="28"
-                            HeightRequest="45"
-                            WidthRequest="45"
-                            FontFamily="{StaticResource FontAwesome}"
-                            Clicked="SaveSolution_Clicked">
+                                    x:Name="SaveSolution"
+                                    Grid.Column="1"
+                                    Padding="0"
+                                    FontSize="16"
+                                    Margin="0"
+                                    Text="&#xf0c7;"
+                                    BackgroundColor="{StaticResource Blue-Dark}"
+                                    BorderColor="{StaticResource Blue-Dark}"
+                                    TextColor="White"
+                                    CornerRadius="28"
+                                    HeightRequest="45"
+                                    WidthRequest="45"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    Clicked="SaveSolution_Clicked">
                                 </Button>
                             </Grid>
                         </Frame>
@@ -154,7 +158,8 @@
                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                         AbsoluteLayout.LayoutFlags="All"
                         BackgroundColor="Black"
-                        Opacity=".7"/>
+                        Opacity=".7">
+                    </BoxView>
                     <StackLayout 
                         Padding="15"
                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
@@ -179,15 +184,17 @@
                                             Text="xxxxxx.expressbase.com"
                                             FontFamily="{StaticResource Roboto-Regular}"
                                             FontSize="18"
-                                            TextColor="#333"/>
+                                            TextColor="#333">
+                                        </Label>
                                         <Image 
                                             x:Name="SolutionLogoPrompt"
                                             Grid.Row="1" 
                                             HeightRequest="100"
                                             Source="icon.png"
-                                            HorizontalOptions="Center"/>
+                                            HorizontalOptions="Center">
+                                        </Image>
                                     </StackLayout>
-                                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#eee" HeightRequest="1"/>
+                                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#eee" HeightRequest="1"></BoxView>
                                     <Button 
                                         Grid.Row="2"
                                         Grid.Column="0"
@@ -196,7 +203,8 @@
                                         Padding="0"
                                         CornerRadius="0"   
                                         BackgroundColor="White"
-                                        Clicked="PopupCancel_Clicked"/>
+                                        Clicked="PopupCancel_Clicked">
+                                    </Button>
                                     <Button 
                                         Grid.Row="2"
                                         Grid.Column="1"
@@ -205,14 +213,14 @@
                                         TextColor="#0076ff"
                                         Padding="0" 
                                         CornerRadius="0"
-                                        Clicked="ConfirmButton_Clicked"/>
+                                        Clicked="ConfirmButton_Clicked">
+                                    </Button>
                                 </Grid>
                             </Frame.Content>
                         </Frame>
                     </StackLayout>
                 </AbsoluteLayout>
             </ContentView>
-
         </Grid>
     </ContentPage.Content>
 </ContentPage>

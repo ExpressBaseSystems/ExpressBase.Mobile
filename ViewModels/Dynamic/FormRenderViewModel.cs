@@ -88,7 +88,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -121,7 +121,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception e)
             {
-                Log.Write("form_SetDataOnEdit---" + e.Message);
+                EbLog.Write("form_SetDataOnEdit---" + e.Message);
                 this.dataOnEdit = new EbDataSet();
             }
         }
@@ -197,7 +197,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -215,7 +215,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
     }

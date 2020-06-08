@@ -66,7 +66,7 @@ namespace ExpressBase.Mobile.Models
                 }
                 catch (Exception ex)
                 {
-                    Log.Write(ex.Message);
+                    EbLog.Write(ex.Message);
                     return "??";
                 }
             }
@@ -143,7 +143,7 @@ namespace ExpressBase.Mobile.Models
                 }
                 catch (Exception ex)
                 {
-                    Log.Write(ex.Message);
+                    EbLog.Write(ex.Message);
                     return "??";
                 }
             }

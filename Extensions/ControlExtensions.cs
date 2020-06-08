@@ -83,8 +83,8 @@ namespace ExpressBase.Mobile.Extensions
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
-                Log.Write(ex.StackTrace);
+                EbLog.Write(ex.Message);
+                EbLog.Write(ex.StackTrace);
             }
             return ds;
         }
@@ -110,8 +110,8 @@ namespace ExpressBase.Mobile.Extensions
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
-                Log.Write(ex.StackTrace);
+                EbLog.Write(ex.Message);
+                EbLog.Write(ex.StackTrace);
             }
             return files;
         }

@@ -88,7 +88,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -119,7 +119,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
                 dt = new EbDataTable();
             }
             return dt;
@@ -138,7 +138,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
                 dt = new EbDataTable();
             }
             return dt;
@@ -168,7 +168,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
                 dt = new EbDataTable();
             }
             return dt;

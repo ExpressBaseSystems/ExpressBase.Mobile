@@ -66,7 +66,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -93,9 +93,11 @@ namespace ExpressBase.Mobile.ViewModels
                     {
                         await identityService.UpdateAuthInfo(response, _username, password, true);
                         await identityService.UpdateLastUser(_username);
+                        await identityService.UpdatePNSRegistrationByAuth(response.User.AuthId);
+
                         IsBusy = false;
 
-                        if(App.Settings.CurrentApplication == null)
+                        if (App.Settings.CurrentApplication == null)
                             await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
                         else
                         {
@@ -114,7 +116,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Write("login clicked : " + ex.Message);
+                EbLog.Write("login clicked : " + ex.Message);
             }
         }
 

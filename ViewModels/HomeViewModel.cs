@@ -49,7 +49,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
@@ -97,7 +97,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Write("ObjectRender_OnSyncClick" + ex.Message);
+                EbLog.Write("ObjectRender_OnSyncClick" + ex.Message);
             }
         }
 
@@ -129,7 +129,7 @@ namespace ExpressBase.Mobile.ViewModels
             catch (Exception ex)
             {
                 IsTapped = false;
-                Log.Write("ObjectRender_ObjFrame_Clicked" + ex.Message);
+                EbLog.Write("ObjectRender_ObjFrame_Clicked" + ex.Message);
             }
         }
 
@@ -153,13 +153,13 @@ namespace ExpressBase.Mobile.ViewModels
                         renderer = new PdfRender(page);
                         break;
                     default:
-                        Log.Write("inavlid container type");
+                        EbLog.Write("inavlid container type");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return renderer;
         }
@@ -178,7 +178,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
     }

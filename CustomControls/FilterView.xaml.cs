@@ -85,7 +85,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message, LogTypes.EXCEPTION);
+                EbLog.Write(ex.Message, LogTypes.EXCEPTION);
             }
         }
 

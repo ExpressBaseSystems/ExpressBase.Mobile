@@ -26,7 +26,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write("HelperFunctions.GetPage---" + ex.Message);
+                EbLog.Write("HelperFunctions.GetPage---" + ex.Message);
             }
             return page;
         }
@@ -60,7 +60,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                Log.Write(ex.Message);
+                EbLog.Write(ex.Message);
             }
             return query;
         }

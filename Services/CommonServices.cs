@@ -41,7 +41,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Log.Write("CommonServices.CreateLocalTable---" + e.Message);
+                EbLog.Write("CommonServices.CreateLocalTable---" + e.Message);
             }
         }
 
@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Log.Write("CommonServices.CreateTable---" + e.Message);
+                EbLog.Write("CommonServices.CreateTable---" + e.Message);
             }
         }
 
@@ -81,7 +81,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                Log.Write("CommonServices.AlterTable---" + e.Message);
+                EbLog.Write("CommonServices.AlterTable---" + e.Message);
             }
         }
 
@@ -121,7 +121,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write("CommonServices.LoadLocalData---" + ex.Message);
+                EbLog.Write("CommonServices.LoadLocalData---" + ex.Message);
             }
             return 0;
         }
@@ -135,7 +135,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                Log.Write("CommonServices.DropTable---" + ex.Message);
+                EbLog.Write("CommonServices.DropTable---" + ex.Message);
             }
         }
     }

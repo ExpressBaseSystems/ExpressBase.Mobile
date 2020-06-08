@@ -44,7 +44,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception)
             {
-                Log.Write("Invalid qr code");
+                EbLog.Write("Invalid qr code");
             }
         }
 
