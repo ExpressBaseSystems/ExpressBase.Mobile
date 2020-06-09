@@ -59,6 +59,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 if (this.Page.NetworkMode == NetworkMode.Online)
                 {
+                    EbLog.Write($"{this.Page.DisplayName} rendered with {this.Visualization.DataSourceParams.Count} params");
+
                     foreach (Param param in this.Visualization.DataSourceParams)
                     {
                         object data = row[param.Name];

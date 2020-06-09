@@ -93,7 +93,11 @@ namespace ExpressBase.Mobile.ViewModels
                     {
                         await identityService.UpdateAuthInfo(response, _username, password, true);
                         await identityService.UpdateLastUser(_username);
-                        await identityService.UpdatePNSRegistrationByAuth(response.User.AuthId);
+
+                        ///<summary>
+                        ///update notification hub regid  
+                        /// </summary>
+                        await NotificationService.Instance.UpdateNHRegisratation();
 
                         IsBusy = false;
 

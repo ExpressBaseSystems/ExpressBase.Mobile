@@ -165,7 +165,7 @@
                         AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                         AbsoluteLayout.LayoutFlags="All">
                         <Frame 
-                            Padding="0"
+                            Padding="5"
                             HasShadow="False"
                             BackgroundColor="White"
                             CornerRadius="6"

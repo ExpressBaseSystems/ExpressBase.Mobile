@@ -30,17 +30,6 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        protected override bool OnBackButtonPressed()
-        {
-            if (App.RootMaster != null)
-            {
-                Application.Current.MainPage = App.RootMaster;
-                return true;
-            }
-            else
-                return base.OnBackButtonPressed();
-        }
-
         private async void NewSolution_Tapped(object sender, System.EventArgs e)
         {
             if (isMasterPage)

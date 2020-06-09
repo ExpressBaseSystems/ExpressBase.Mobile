@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -17,6 +18,8 @@ namespace ExpressBase.Mobile.Services
         Task<bool> CreateOrUpdateRegistration(string regId, DeviceRegistration device);
 
         Task<bool> UnRegisterAsync(string regId);
+
+        Task UpdateNHRegisratation();
     }
 
     public class NotificationService : INotificationService
@@ -35,10 +38,10 @@ namespace ExpressBase.Mobile.Services
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-            IRestResponse response = await client.ExecuteAsync(request);
+            IRestResponse response = await client.ExecuteAsync<string>(request);
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                token = response.Content;
+                token = response.Content.Trim('"');
             }
             return token;
         }
@@ -47,7 +50,7 @@ namespace ExpressBase.Mobile.Services
         {
             RestClient client = new RestClient(App.Settings.RootUrl);
 
-            RestRequest request = new RestRequest("api/notifications/enable", Method.PUT);
+            RestRequest request = new RestRequest("api/notifications/enable", Method.POST);
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
@@ -78,6 +81,58 @@ namespace ExpressBase.Mobile.Services
                 return true;
             }
             return false;
+        }
+
+        private List<string> GetTags()
+        {
+            List<string> tags = new List<string> { "eb_pns_global" };
+
+            if (App.Settings.Sid != null)
+            {
+                tags.Add(App.Settings.Sid);
+            }
+
+            if (App.Settings.CurrentUser != null)
+            {
+                tags.Add(App.Settings.CurrentUser.AuthId);
+            }
+
+            return tags;
+        }
+
+        public async Task UpdateNHRegisratation()
+        {
+            try
+            {
+                string pns_token = Store.GetValue(AppConst.PNS_TOKEN);
+                string azure_regid = Store.GetValue(AppConst.AZURE_REGID);
+
+                if (!Utils.HasInternet && pns_token == null) return;
+
+                if (string.IsNullOrEmpty(azure_regid))
+                {
+                    azure_regid = await this.GetAzureTokenAsync();
+
+                    await Store.SetValueAsync(AppConst.AZURE_REGID, azure_regid);
+                }
+
+                EbLog.Write("NH REG ID:" + azure_regid);
+
+                DeviceRegistration reg = new DeviceRegistration
+                {
+                    Handle = pns_token,
+                    Tags = GetTags()
+                };
+                reg.SetPlatform();
+
+                bool status = await this.CreateOrUpdateRegistration(azure_regid, reg);
+
+                EbLog.Write($"NHub registration uppdation status: {status}");
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Failed to update NHub registration" + ex.Message);
+            }
         }
     }
 }

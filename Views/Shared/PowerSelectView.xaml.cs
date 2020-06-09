@@ -49,6 +49,11 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void SelectSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (SelectSearchBox.Text.Length > 0)
+                ResetSearch.IsVisible = true;
+            else
+                ResetSearch.IsVisible = false;
+
             if (SelectSearchBox.Text.Length >= this.searchLength)
                 await this.SetData();
         }
@@ -177,6 +182,12 @@ namespace ExpressBase.Mobile.Views.Shared
         private void BackButton_Clicked(object sender, EventArgs e)
         {
             (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
+        }
+
+        private void ResetSearch_Clicked(object sender, EventArgs e)
+        {
+            SelectSearchBox.Text = string.Empty;
+            ResultList.Children.Clear();
         }
     }
 }

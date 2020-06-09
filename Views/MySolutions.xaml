@@ -19,7 +19,13 @@
 
     <ContentPage.Content>
         <Grid>
-            <ScrollView x:Name="scrollView">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            
+            <ScrollView x:Name="scrollView" Grid.Row="0">
                 <StackLayout
                     x:Name="SolutionsList"
                     BindableLayout.ItemsSource="{Binding MySolutions}"
@@ -92,6 +98,7 @@
             </ScrollView>
 
             <Frame
+                Grid.Row="1"
                 Margin="15,10"
                 VerticalOptions="End"
                 BackgroundColor="{StaticResource Blue-Dark}"
@@ -122,6 +129,7 @@
 
             <!--loader-->
             <control:LoaderIconed 
+                Grid.RowSpan="2"
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 

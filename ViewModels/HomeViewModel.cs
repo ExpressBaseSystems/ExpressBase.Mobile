@@ -32,7 +32,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command MenuItemTappedCommand => new Command<object>(async (o) => await ItemTapedEvent(o));
 
-        public Command MyActionsTappedcommand => new Command<object>(async (o) => await MyActionsTapedEvent(o));
+        public Command MyActionsTappedcommand => new Command(async () => await MyActionsTapedEvent());
 
         public HomeViewModel()
         {
@@ -164,7 +164,7 @@ namespace ExpressBase.Mobile.ViewModels
             return renderer;
         }
 
-        private async Task MyActionsTapedEvent(object obj)
+        private async Task MyActionsTapedEvent()
         {
             try
             {

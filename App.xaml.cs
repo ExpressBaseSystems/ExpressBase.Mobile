@@ -6,6 +6,7 @@ using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ExpressBase.Mobile
 {
@@ -16,8 +17,6 @@ namespace ExpressBase.Mobile
         public static MasterDetailPage RootMaster { set; get; }
 
         public static SettingsServices Settings { set; get; }
-
-        private bool isInternal;
 
         public App()
         {
@@ -38,7 +37,12 @@ namespace ExpressBase.Mobile
             await Settings.Resolve();
 
             if (Settings.Sid == null)
-                await MainPage.Navigation.PushAsync(new NewSolution());
+            {
+                if (Utils.Solutions.Any())
+                    await MainPage.Navigation.PushAsync(new MySolutions());
+                else
+                    await MainPage.Navigation.PushAsync(new NewSolution());
+            }
             else
             {
                 if (Settings.RToken != null)
@@ -54,7 +58,6 @@ namespace ExpressBase.Mobile
 
                         if (authresponse.IsValid)
                         {
-                            isInternal = true;
                             RootMaster = new RootMaster(typeof(Home));
                             MainPage = RootMaster;
                         }
@@ -67,7 +70,6 @@ namespace ExpressBase.Mobile
                             await MainPage.Navigation.PushAsync(new MyApplications());
                         else
                         {
-                            isInternal = true;
                             RootMaster = new RootMaster(typeof(Home));
                             MainPage = RootMaster;
                         }
@@ -86,6 +88,11 @@ namespace ExpressBase.Mobile
             {
                 await Settings.GetGpsLocation();
             }
+
+            ///<summary>
+            ///update or create notification hub registration
+            /// </summary>
+            await NotificationService.Instance.UpdateNHRegisratation();
         }
 
         protected override void OnSleep()

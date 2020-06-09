@@ -27,7 +27,7 @@
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
+                <Grid Grid.Row="0" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0" BackgroundColor="White">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
@@ -51,7 +51,7 @@
                        BackgroundColor="Transparent"
                        HasShadow="False">
                         <Frame.Content>
-                            <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
+                            <StackLayout Orientation="Horizontal" Spacing="0">
                                 <Button 
                                     x:Name="PagingPrevButton"
                                     CornerRadius="17"
@@ -65,14 +65,12 @@
                                     BackgroundColor="#e1e6e9"
                                     Clicked="PagingPrevButton_Clicked">
                                 </Button>
-                                <Button 
+                                <Label 
                                     x:Name="PagingPageCount"
-                                    Padding="0"
-                                    HeightRequest="35"
-                                    WidthRequest="35"
-                                    BackgroundColor="Transparent"
-                                    CornerRadius="0">
-                                </Button>
+                                    Margin="5,0"
+                                    TextColor="#333"
+                                    VerticalTextAlignment="Center">
+                                </Label>
                                 <Button 
                                     x:Name="PagingNextButton"
                                     Margin="0,0,0,0"

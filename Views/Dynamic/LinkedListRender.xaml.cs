@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
 using System.Linq;

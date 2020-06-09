@@ -118,6 +118,8 @@ namespace ExpressBase.Mobile
 
         private async void SetCordinates()
         {
+            cordinates = App.Settings.GeoCordinates;
+
             if (cordinates == null)
             {
                 cordinates = await GeoLocation.Instance.GetCurrentGeoLocation();

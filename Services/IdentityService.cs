@@ -24,8 +24,6 @@ namespace ExpressBase.Mobile.Services
         Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password, bool update_loc = false);
 
         Task UpdateLastUser(string username);
-
-        Task UpdatePNSRegistrationByAuth(string authid);
     }
 
     public class IdentityService : IIdentityService
@@ -162,39 +160,6 @@ namespace ExpressBase.Mobile.Services
             }
 
             await Store.SetJSONAsync(AppConst.MYSOLUTIONS, solutions);
-        }
-
-        public async Task UpdatePNSRegistrationByAuth(string authid)
-        {
-            try
-            {
-                string pns_token = Store.GetValue(AppConst.PNS_TOKEN);
-                string azure_regid = Store.GetValue(AppConst.AZURE_REGID);
-
-                if (pns_token == null) return;
-
-                INotificationService nfservice = NotificationService.Instance;
-
-                if (string.IsNullOrEmpty(azure_regid))
-                {
-                    azure_regid = await nfservice.GetAzureTokenAsync();
-                }
-
-                DeviceRegistration reg = new DeviceRegistration
-                {
-                    Handle = pns_token,
-                    Tags = new List<string> { authid }
-                };
-                reg.SetPlatform();
-
-                bool status = await nfservice.CreateOrUpdateRegistration(azure_regid, reg);
-
-                EbLog.Write("Update azure registration status:" + status);
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write("Failed to update azure registration:" + ex.Message);
-            }
         }
     }
 }

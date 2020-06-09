@@ -5,9 +5,7 @@ using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -104,8 +102,12 @@ namespace ExpressBase.Mobile.CustomControls
 
                     var container = new StackLayout { Orientation = StackOrientation.Vertical };
 
-                    CustomShadowFrame iconFrame = new CustomShadowFrame(wrpr);
-                    iconFrame.GestureRecognizers.Add(gesture);
+                    CustomShadowFrame iconFrame = new CustomShadowFrame(wrpr)
+                    {
+                        Style = (Style)HelperFunctions.GetResourceValue("MenuItemFrame"),
+                        GestureRecognizers = { gesture }
+                    };
+
                     container.Children.Add(iconFrame);
 
                     Label icon = new Label
