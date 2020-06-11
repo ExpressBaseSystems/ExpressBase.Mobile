@@ -44,7 +44,11 @@
                                     <FormattedString>
                                         <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
                                         <Span Text=" Current Location : "></Span>
-                                        <Span Text="Default" x:Name="CurrentLocation" TextColor="#508bf9"></Span>
+                                        <Span 
+                                            Text="Default" 
+                                            x:Name="CurrentLocation" 
+                                            TextColor="{StaticResource Eb-Blue2}"
+                                            FontFamily="{StaticResource Roboto-Medium}"></Span>
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>

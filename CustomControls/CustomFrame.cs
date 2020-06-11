@@ -66,7 +66,7 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     if (_Cell.ControlCollection.Count > 0)
                     {
-                        EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
+                        EbMobileDataColumn _col = (EbMobileDataColumn)_Cell.ControlCollection[0];
 
                         string _text;
                         var data = this.DataRow[_col.ColumnName];
@@ -81,6 +81,12 @@ namespace ExpressBase.Mobile.CustomControls
                         this.ApplyLabelStyle(_label, _col);
 
                         contentGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
+
+                        if (_col.RowSpan > 0)
+                            Grid.SetRowSpan(_label, _col.RowSpan);
+
+                        if (_col.ColumnSpan > 0)
+                            Grid.SetColumnSpan(_label, _col.ColumnSpan);
                     }
                 }
             }
@@ -97,7 +103,7 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 if (_Cell.ControlCollection.Count > 0)
                 {
-                    EbMobileDataColumn _col = _Cell.ControlCollection[0] as EbMobileDataColumn;
+                    EbMobileDataColumn _col = (EbMobileDataColumn)_Cell.ControlCollection[0];
 
                     string _text = string.Empty;
                     MobileTableColumn tableColumn = row[_col.ColumnName];

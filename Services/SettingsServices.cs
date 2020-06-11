@@ -12,8 +12,6 @@ namespace ExpressBase.Mobile.Services
 {
     public class SettingsServices
     {
-        public bool AllowGpsLocation { set; get; } = true;
-
         public SolutionInfo CurrentSolution { set; get; }
 
         public User CurrentUser { set; get; }
@@ -136,18 +134,6 @@ namespace ExpressBase.Mobile.Services
         private EbLocation GetCurrentLocation()
         {
             return Store.GetJSON<EbLocation>(AppConst.CURRENT_LOCOBJ);
-        }
-
-        public async Task GetGpsLocation()
-        {
-            try
-            {
-                GeoCordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
-            }
-            catch (Exception)
-            {
-                EbLog.Write("Failed to set geocordinated on app start :");
-            }
         }
     }
 }

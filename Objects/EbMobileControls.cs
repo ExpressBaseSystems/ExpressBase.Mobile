@@ -142,7 +142,7 @@ namespace ExpressBase.Mobile
         public List<EbMobileControl> ControlCollection { set; get; }
     }
 
-    public class EbMobileDataColumn : EbMobileControl
+    public class EbMobileDataColumn : EbMobileControl, INonPersistControl
     {
         public string TextFormat { get; set; }
 
@@ -155,5 +155,9 @@ namespace ExpressBase.Mobile
         public EbDbTypes Type { get; set; }
 
         public EbFont Font { get; set; }
+
+        public int RowSpan { set; get; }
+
+        public int ColumnSpan { set; get; }
     }
 }

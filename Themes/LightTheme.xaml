@@ -9,6 +9,7 @@
     <Color x:Key="Gray-White">#ffffff</Color>
     <Color x:Key="Eb-Blue">#315eff</Color>
     <Color x:Key="Blue-Dark">#0046bb</Color>
+    <Color x:Key="Eb-Blue2">#1b73e8</Color>
 
     <OnPlatform x:Key="FontAwesome" x:TypeArguments="x:String">
         <OnPlatform.Platforms>

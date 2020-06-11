@@ -195,6 +195,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 this.ListViewRefresh.IsRefreshing = true;
                 this.offset = 0;
+                this.pageCount = 1;
                 await this.RefreshListView();
                 this.ListViewRefresh.IsRefreshing = false;
                 toast.Show("Refreshed");

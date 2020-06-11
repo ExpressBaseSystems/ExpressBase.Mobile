@@ -77,19 +77,43 @@
                 </Frame.Content>
             </Frame>
 
-            <ScrollView 
+            <Grid 
                 x:Name="FilterTab"
-                Padding="10" 
+                Grid.Row="1"
                 Grid.ColumnSpan="2" 
+                RowSpacing="0"
                 BackgroundColor="White"
-                Grid.Row="1">
-                <StackLayout x:Name="FilterContainer">
-                    <Label Text="No Filter"
+                Padding="15,10,15,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Text="Clear Filter"
+                    TextColor="{StaticResource Eb-Blue2}"
+                    FontFamily="{StaticResource Roboto-Medium}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="End">
+                </Label>
+                <Button 
+                    Grid.Row="0"
+                    Padding="0"
+                    HeightRequest="20"
+                    BackgroundColor="Transparent"
+                    HorizontalOptions="End"
+                    Clicked="ClearFilter_Clicked">
+                </Button>
+                <ScrollView 
+                    Grid.Row="1">
+                    <StackLayout x:Name="FilterContainer">
+                        <Label Text="No Filter"
                            VerticalOptions="CenterAndExpand"
                            HorizontalTextAlignment="Center">
-                    </Label>
-                </StackLayout>
-            </ScrollView>
+                        </Label>
+                    </StackLayout>
+                </ScrollView>
+            </Grid>
 
             <ListView 
                 x:Name="SortTab"

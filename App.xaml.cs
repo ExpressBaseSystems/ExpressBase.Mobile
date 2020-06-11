@@ -84,15 +84,13 @@ namespace ExpressBase.Mobile
         {
             await InitNavigation();
 
-            if (Settings.AllowGpsLocation)
-            {
-                await Settings.GetGpsLocation();
-            }
-
             ///<summary>
             ///update or create notification hub registration
             /// </summary>
-            await NotificationService.Instance.UpdateNHRegisratation();
+            if (Settings.CurrentUser != null)
+            {
+                NotificationService.Instance.UpdateNHRegisratation();
+            }
         }
 
         protected override void OnSleep()

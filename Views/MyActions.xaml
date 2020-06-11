@@ -56,10 +56,12 @@
                                             WidthRequest="50"
                                             Padding="0"
                                             HasShadow="True"
+                                            BackgroundColor="#b5b5b5"
                                             CornerRadius="25">
                                                 <Label 
                                                     Text="{Binding Notation}"
-                                                    FontSize="16"
+                                                    FontSize="15"
+                                                    TextColor="White"
                                                     VerticalOptions="Center"
                                                     HorizontalOptions="Center"
                                                     FontFamily="{StaticResource Roboto-Bold}">
@@ -73,7 +75,7 @@
                                             FontFamily="{StaticResource Roboto-Medium}"
                                             TextColor="{DynamicResource Gray-900}"/>
                                             <Label 
-                                            Text="{Binding EndsOn}" 
+                                            Text="{Binding DaysAgo}" 
                                             FontFamily="{StaticResource Roboto-Regular}" 
                                             Grid.Row="1" 
                                             Grid.Column="1"/>

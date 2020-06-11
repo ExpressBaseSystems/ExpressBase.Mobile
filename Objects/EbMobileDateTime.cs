@@ -41,7 +41,6 @@ namespace ExpressBase.Mobile
             {
                 IsEnabled = !this.ReadOnly,
                 Date = DateTime.Now,
-                Format = "yyyy-MM-dd",
                 BorderColor = Color.Transparent
             };
 
@@ -59,7 +58,10 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
-            return Picker.Date.ToString("yyyy-MM-dd");
+            if(this.EbDbType == EbDbTypes.Date)
+                return Picker.Date.ToString("yyyy-MM-dd");
+            else
+                return Picker.Date.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public override bool SetValue(object value)

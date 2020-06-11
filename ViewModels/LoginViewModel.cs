@@ -95,9 +95,9 @@ namespace ExpressBase.Mobile.ViewModels
                         await identityService.UpdateLastUser(_username);
 
                         ///<summary>
-                        ///update notification hub regid  
+                        ///update notification hub regid  in baground
                         /// </summary>
-                        await NotificationService.Instance.UpdateNHRegisratation();
+                        NotificationService.Instance.UpdateNHRegisratation();
 
                         IsBusy = false;
 

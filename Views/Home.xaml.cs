@@ -81,12 +81,14 @@ namespace ExpressBase.Mobile.Views
                     await IdentityService.AuthIfTokenExpiredAsync();
 
                     RootRefreshView.IsRefreshing = true;
+                    IconedLoader.IsVisible = true;
                     Store.RemoveJSON(AppConst.OBJ_COLLECTION);
 
                     await ViewModel.Refresh();
                     MenuView.Notify("ItemSource");
 
                     RootRefreshView.IsRefreshing = false;
+                    IconedLoader.IsVisible = false;
                     toast.Show("Refreshed");
                 }
             }
@@ -94,6 +96,7 @@ namespace ExpressBase.Mobile.Views
             {
                 toast.Show("Something went wrong. Please try again");
                 EbLog.Write(ex.Message);
+                IconedLoader.IsVisible = false;
             }
         }
 

@@ -44,8 +44,19 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                ObjectList = await menuServices.GetDataAsync();
-                await menuServices.DeployFormTables(ObjectList);
+                MobilePageCollection collection = await menuServices.GetDataAsync();
+
+                if (collection != null)
+                {
+                    ObjectList = collection.Pages;
+
+                    await Task.Run(async () =>
+                    {
+                        await menuServices.DeployFormTables(collection.Pages);
+
+                        await CommonServices.Instance.LoadLocalData(collection.Data);
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -57,11 +68,19 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                List<MobilePagesWraper> objList = await menuServices.GetDataAsync();
+                MobilePageCollection collection = await menuServices.GetDataAsync();
 
-                ObjectList.Clear();
-                ObjectList.AddRange(objList);
-                await menuServices.DeployFormTables(ObjectList);
+                if (collection != null)
+                {
+                    ObjectList.Clear();
+                    ObjectList.AddRange(collection.Pages);
+
+                    await Task.Run(async () =>
+                    {
+                        await menuServices.DeployFormTables(collection.Pages);
+                        await CommonServices.Instance.LoadLocalData(collection.Data);
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -108,16 +127,12 @@ namespace ExpressBase.Mobile.ViewModels
             if (IsTapped) return;
 
             MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
-            IToast toast = DependencyService.Get<IToast>();
 
             try
             {
                 EbMobilePage page = HelperFunctions.GetPage(item.RefId);
-                if (page == null)
-                {
-                    toast.Show("This page is no longer available.");
-                    return;
-                }
+                if (page == null) return;
+
                 IsTapped = true;
 
                 ContentPage renderer = this.GetPageByContainer(page);

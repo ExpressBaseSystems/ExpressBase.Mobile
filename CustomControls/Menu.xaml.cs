@@ -141,7 +141,6 @@ namespace ExpressBase.Mobile.CustomControls
         {
             Label lay = (sender as Label);
             lay.HeightRequest = lay.Width;
-            lay.WidthRequest = lay.Height;
         }
 
         private Grid CreateGrid()

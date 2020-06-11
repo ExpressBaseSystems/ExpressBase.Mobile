@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ namespace ExpressBase.Mobile.Services
 
         Task<bool> UnRegisterAsync(string regId);
 
-        Task UpdateNHRegisratation();
+        void UpdateNHRegisratation();
     }
 
     public class NotificationService : INotificationService
@@ -50,7 +51,7 @@ namespace ExpressBase.Mobile.Services
         {
             RestClient client = new RestClient(App.Settings.RootUrl);
 
-            RestRequest request = new RestRequest("api/notifications/enable", Method.POST);
+            RestRequest request = new RestRequest("api/notifications/enable", Method.PUT);
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
@@ -100,34 +101,71 @@ namespace ExpressBase.Mobile.Services
             return tags;
         }
 
-        public async Task UpdateNHRegisratation()
+        private async Task<string> GetNewRegistration()
+        {
+            string regid = await this.GetAzureTokenAsync();
+
+            if (regid != null)
+            {
+                await Store.SetValueAsync(AppConst.AZURE_REGID, regid);
+            }
+            return regid;
+        }
+
+        private DeviceRegistration GetDevice()
+        {
+            string pns_token = Store.GetValue(AppConst.PNS_TOKEN);
+
+            EbLog.Write($"NH registration id:{pns_token}", LogTypes.MESSAGE);
+
+            DeviceRegistration device = new DeviceRegistration()
+            {
+                Handle = pns_token,
+                Tags = this.GetTags()
+            };
+            device.SetPlatform();
+
+            return device;
+        }
+
+        public async void UpdateNHRegisratation()
         {
             try
             {
-                string pns_token = Store.GetValue(AppConst.PNS_TOKEN);
-                string azure_regid = Store.GetValue(AppConst.AZURE_REGID);
+                DeviceRegistration device = this.GetDevice();
 
-                if (!Utils.HasInternet && pns_token == null) return;
+                if (!Utils.HasInternet || device.Handle == null) return;
+
+                string azure_regid = Store.GetValue(AppConst.AZURE_REGID);
 
                 if (string.IsNullOrEmpty(azure_regid))
                 {
-                    azure_regid = await this.GetAzureTokenAsync();
+                    azure_regid = await this.GetNewRegistration();
 
-                    await Store.SetValueAsync(AppConst.AZURE_REGID, azure_regid);
+                    if (azure_regid != null)
+                    {
+                        await Store.SetValueAsync(AppConst.AZURE_REGID, azure_regid);
+                        await this.CreateOrUpdateRegistration(azure_regid, device);
+                    }
+                    EbLog.Write("NH REG ID:" + azure_regid, LogTypes.MESSAGE);
                 }
-
-                EbLog.Write("NH REG ID:" + azure_regid);
-
-                DeviceRegistration reg = new DeviceRegistration
+                else
                 {
-                    Handle = pns_token,
-                    Tags = GetTags()
-                };
-                reg.SetPlatform();
+                    EbLog.Write("NH REG ID:" + azure_regid, LogTypes.MESSAGE);
 
-                bool status = await this.CreateOrUpdateRegistration(azure_regid, reg);
+                    bool status = await this.CreateOrUpdateRegistration(azure_regid, device);
 
-                EbLog.Write($"NHub registration uppdation status: {status}");
+                    if (!status)
+                    {
+                        azure_regid = await this.GetNewRegistration();
+                        if (azure_regid != null)
+                        {
+                            await Store.SetValueAsync(AppConst.AZURE_REGID, azure_regid);
+                            await this.CreateOrUpdateRegistration(azure_regid, device);
+                        }
+                        EbLog.Write("NH REG ID:" + azure_regid + "after expire and new id", LogTypes.MESSAGE);
+                    }
+                }
             }
             catch (Exception ex)
             {

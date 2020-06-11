@@ -5,10 +5,10 @@ using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.CustomControls
@@ -153,6 +153,11 @@ namespace ExpressBase.Mobile.CustomControls
                     ConfirmClicked.Execute(null);
                 }
             }
+        }
+
+        private void ClearFilter_Clicked(object sender, EventArgs e)
+        {
+            FilterControls.ForEach(item => item.Reset());
         }
     }
 }

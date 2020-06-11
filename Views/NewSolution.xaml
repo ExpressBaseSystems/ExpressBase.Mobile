@@ -14,7 +14,7 @@
                 <StackLayout 
                 BackgroundColor="#eee"
                 Padding="15,0">
-                    <Grid Margin="-15,0,-15,-50">
+                    <Grid Margin="-15,0,-15,-70">
                         <Image Source="connect.jpg"/>
                         <BoxView 
                         Opacity=".9"
@@ -33,6 +33,13 @@
                                 TextColor="White">
                             </Label>
                         </StackLayout>
+                        <Frame
+                            Margin="0,0,0,-20"
+                            BackgroundColor="#eee"
+                            CornerRadius="10"
+                            Padding="15"
+                            VerticalOptions="End">
+                        </Frame>
                     </Grid>
                     <Frame
                         Margin="0"

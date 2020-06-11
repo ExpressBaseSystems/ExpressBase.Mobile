@@ -87,7 +87,7 @@
                     <Frame
                         Margin="20,30,20,20"
                         CornerRadius="6"
-                        BackgroundColor="#50ca50">
+                        BackgroundColor="{StaticResource Eb-Blue2}">
                         <Label FontSize="18"
                                HorizontalTextAlignment="Center"
                                TextColor="White"

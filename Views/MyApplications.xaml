@@ -43,7 +43,12 @@
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
-                    <Label Text="Default" x:Name="CurrentLocation" TextColor="#508bf9"/>
+                    <Label 
+                        Text="Default" 
+                        x:Name="CurrentLocation"
+                        TextColor="{StaticResource Eb-Blue2}"
+                        FontFamily="{StaticResource Roboto-Medium}">
+                    </Label>
                 </FlexLayout>
                 <BoxView Color="#eee" Grid.Row="1" HeightRequest="1"></BoxView>
                 <RefreshView 
@@ -86,10 +91,12 @@
                                                 VerticalOptions="Center"
                                                 WidthRequest="45"
                                                 Padding="0"
+                                                BackgroundColor="#b5b5b5"
                                                 HasShadow="True"
                                                 CornerRadius="25">
                                                     <Label 
                                                         Text="{Binding AppNotation}"
+                                                        TextColor="White"
                                                         FontSize="16"
                                                         VerticalOptions="Center"
                                                         HorizontalOptions="Center"

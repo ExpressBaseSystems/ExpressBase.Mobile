@@ -52,17 +52,27 @@ namespace ExpressBase.Mobile
         //mobile props
         public TextBox SearchBox { set; get; }
 
+        public bool IsSimpleSelect
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.DataSourceRefId))
+                    return true;
+                return false;
+            }
+        }
+
         private ComboBoxLabel selected;
 
         private CustomPicker picker;
 
-        public override void InitXControl(FormMode Mode,NetworkMode Network)
+        public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
             base.InitXControl(Mode, Network);
 
             var bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
 
-            if (string.IsNullOrEmpty(this.DataSourceRefId))
+            if (IsSimpleSelect)
             {
                 picker = new CustomPicker
                 {
@@ -76,7 +86,7 @@ namespace ExpressBase.Mobile
                 };
                 var icon = new Label
                 {
-                   Style = (Style)HelperFunctions.GetResourceValue("PSIconLabel")
+                    Style = (Style)HelperFunctions.GetResourceValue("PSIconLabel")
                 };
                 this.XControl = new InputGroup(picker, icon) { BgColor = bg };
             }
@@ -106,7 +116,7 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
-            if (string.IsNullOrEmpty(this.DataSourceRefId))
+            if (IsSimpleSelect)
             {
                 if (picker.SelectedItem != null)
                     return (picker.SelectedItem as EbMobileSSOption).Value;
@@ -122,7 +132,7 @@ namespace ExpressBase.Mobile
             if (value == null)
                 return false;
 
-            if (string.IsNullOrEmpty(this.DataSourceRefId))
+            if (IsSimpleSelect)
                 picker.SelectedItem = this.Options.Find(i => i.Value == value.ToString());
             else
             {
@@ -135,6 +145,17 @@ namespace ExpressBase.Mobile
                 }
             }
             return true;
+        }
+
+        public override void Reset()
+        {
+            if (IsSimpleSelect)
+                picker.ClearValue(CustomPicker.SelectedItemProperty);
+            else
+            {
+                this.selected = null;
+                SearchBox.ClearValue(TextBox.TextProperty);
+            }
         }
 
         public void SelectionCallback(ComboBoxLabel comboBox)
@@ -173,7 +194,10 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Write($"*********Exception on geting display value*********");
+
+                EbLog.Write($"DisplayMember:{this.DisplayMember.ColumnName}");
+                EbLog.Write($"ValueMember:{this.ValueMember.ColumnName}" + ex.Message);
                 dt = new EbDataTable();
             }
             return dt;

@@ -63,10 +63,10 @@ namespace ExpressBase.Mobile.Views.Shared
             try
             {
                 Device.BeginInvokeOnMainThread(() => SearchLoader.IsVisible = true);
-                ResultList.Children.Clear();
                 EbDataTable Data = await this.GetData(SelectSearchBox.Text);
                 int c = 1;
 
+                ResultList.Children.Clear();
                 foreach (EbDataRow row in Data.Rows)
                 {
                     ComboBoxLabel lbl = new ComboBoxLabel(c)
@@ -188,6 +188,7 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             SelectSearchBox.Text = string.Empty;
             ResultList.Children.Clear();
+            SelectSearchBox.Focus();
         }
     }
 }

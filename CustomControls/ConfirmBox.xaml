@@ -24,11 +24,12 @@
                     HasShadow="True"
                     BackgroundColor="White"
                     BorderColor="#fafafa"
-                    Padding="0"
+                    Padding="5"
+                    IsClippedToBounds="True"
                     CornerRadius="6"
                     VerticalOptions="CenterAndExpand">
                     <Frame.Content>
-                        <Grid RowSpacing="0" ColumnSpacing="1" BackgroundColor="#eeeeee">
+                        <Grid RowSpacing="0" Margin="-3" ColumnSpacing="1" BackgroundColor="#eeeeee">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"></RowDefinition>
                                 <RowDefinition Height="Auto"></RowDefinition>

@@ -19,12 +19,12 @@ namespace ExpressBase.Mobile.Views
     {
         public bool isRendered;
 
-        public MyActionsViewModel ViewModel { set; get; }
+        private readonly MyActionsViewModel viewModel;
 
         public MyActions()
         {
             InitializeComponent();
-            BindingContext = ViewModel = new MyActionsViewModel();
+            BindingContext = viewModel = new MyActionsViewModel();
         }
 
         protected override async void OnAppearing()
@@ -34,7 +34,7 @@ namespace ExpressBase.Mobile.Views
             Loader.IsVisible = true;
             if (!isRendered)
             {
-                await ViewModel.InitializeAsync();
+                await viewModel.InitializeAsync();
                 isRendered = true;
             }
             Loader.IsVisible = false;
@@ -51,7 +51,7 @@ namespace ExpressBase.Mobile.Views
                 }
 
                 MyActionsRefresh.IsRefreshing = true;
-                await ViewModel.RefreshMyActions();
+                await viewModel.RefreshMyActions();
                 MyActionsRefresh.IsRefreshing = false;
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using System;
@@ -116,14 +117,14 @@ namespace ExpressBase.Mobile.Models
 
         public EbStageInfo StageInfo { set; get; }
 
-        public string EndsOn
+        public string DaysAgo
         {
             get
             {
-                if (EndDate != null)
-                    return "Ends on " + EndDate.ToString("MMMM dd, yyyy");
+                if (StartDate != null)
+                    return StartDate.SubtractByNow();
                 else
-                    return "End date not specified";
+                    return "... ago";
             }
         }
 
@@ -173,6 +174,7 @@ namespace ExpressBase.Mobile.Models
         public MobilePageCollection()
         {
             this.Pages = new List<MobilePagesWraper>();
+
             this.WebObjects = new List<WebObjectsWraper>();
         }
     }

@@ -19,33 +19,47 @@ namespace ExpressBase.Mobile.Services
     {
         Task<SyncResponse> Sync();
 
-        Task<List<MobilePagesWraper>> GetDataAsync();
+        Task<MobilePageCollection> GetDataAsync();
 
         Task DeployFormTables(List<MobilePagesWraper> objlist);
     }
 
     public class MenuServices : IMenuServices
     {
-        public async Task<List<MobilePagesWraper>> GetDataAsync()
+        public async Task<MobilePageCollection> GetDataAsync()
         {
-            List<MobilePagesWraper> _objlist = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
+            MobilePageCollection collection;
 
-            if (_objlist == null)
+            try
             {
-                if (!Utils.HasInternet)
+                List<MobilePagesWraper> objlist = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
+
+                if (objlist == null)
                 {
-                    DependencyService.Get<IToast>().Show("You are not connected to internet");
-                    return new List<MobilePagesWraper>();
+                    if (!Utils.HasInternet)
+                    {
+                        DependencyService.Get<IToast>().Show("You are not connected to internet");
+                        throw new Exception();
+                    }
+
+                    collection = await GetFromApiAsync();
+                    objlist = collection.Pages;
+
+                    await Store.SetJSONAsync(AppConst.OBJ_COLLECTION, objlist);
                 }
-
-                MobilePageCollection menuData = await GetFromApiAsync();
-                _objlist = menuData.Pages;
-
-                await Store.SetJSONAsync(AppConst.OBJ_COLLECTION, _objlist);
-
-                await CommonServices.Instance.LoadLocalData(menuData.Data);
+                else
+                {
+                    collection = new MobilePageCollection
+                    {
+                        Pages = objlist
+                    };
+                }
             }
-            return _objlist;
+            catch (Exception)
+            {
+                collection = new MobilePageCollection();
+            }
+            return collection;
         }
 
         public async Task<MobilePageCollection> GetFromApiAsync()
