@@ -1,11 +1,7 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using System;
-using System.Threading.Tasks;
 using System.Web;
 using Xamarin.Essentials;
 using Xamarin.Forms;

@@ -53,7 +53,6 @@ namespace ExpressBase.Mobile.ViewModels
                     await Task.Run(async () =>
                     {
                         await menuServices.DeployFormTables(collection.Pages);
-
                         await CommonServices.Instance.LoadLocalData(collection.Data);
                     });
                 }

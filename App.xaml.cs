@@ -84,12 +84,9 @@ namespace ExpressBase.Mobile
         {
             await InitNavigation();
 
-            ///<summary>
-            ///update or create notification hub registration
-            /// </summary>
             if (Settings.CurrentUser != null)
             {
-                NotificationService.Instance.UpdateNHRegisratation();
+                await NotificationService.Instance.UpdateNHRegisratation();
             }
         }
 

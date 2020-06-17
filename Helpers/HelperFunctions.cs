@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
@@ -102,7 +104,18 @@ namespace ExpressBase.Mobile.Helpers
             return Params;
         }
 
-        public static string CreatePlatFormDir(string FolderName = null)
+        public static async Task CreateDirectory(string FolderName = null)
+        {
+            var read = await AppPermission.ReadStorage();
+            var write = await AppPermission.WriteStorage();
+
+            if (read && write)
+            {
+                CreatePlatFormDir(FolderName);
+            }
+        }
+
+        private static string CreatePlatFormDir(string FolderName)
         {
             string sid = App.Settings.Sid.ToUpper();
             try

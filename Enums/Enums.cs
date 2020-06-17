@@ -120,4 +120,10 @@ namespace ExpressBase.Mobile.Enums
         //     Google Cloud Messaging
         gcm
     }
+
+    public enum BuildEnvironement
+    {
+        Dev,
+        Production
+    }
 }

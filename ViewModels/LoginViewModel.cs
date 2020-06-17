@@ -97,7 +97,7 @@ namespace ExpressBase.Mobile.ViewModels
                         ///<summary>
                         ///update notification hub regid  in baground
                         /// </summary>
-                        NotificationService.Instance.UpdateNHRegisratation();
+                        await NotificationService.Instance.UpdateNHRegisratation();
 
                         IsBusy = false;
 

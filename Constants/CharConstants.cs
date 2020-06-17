@@ -7,5 +7,7 @@ namespace ExpressBase.Mobile.Constants
     public static class CharConstants
     {
         public const char DOT = '.';
+
+        public const char UNDERSCORE = '_';
     }
 }

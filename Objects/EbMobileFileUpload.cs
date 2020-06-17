@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -66,7 +67,7 @@ namespace ExpressBase.Mobile
             this.AppendButtons();
 
             //this will create a folder FILES in platform dir 
-            HelperFunctions.CreatePlatFormDir("FILES");
+            Task.Run(async () => { await HelperFunctions.CreateDirectory("FILES"); }); ;
         }
 
         public override MobileTableColumn GetMobileTableColumn()

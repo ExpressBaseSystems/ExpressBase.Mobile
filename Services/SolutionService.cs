@@ -139,10 +139,7 @@ namespace ExpressBase.Mobile.Services
 
         public async Task CreateDirectory()
         {
-            await Task.Run(() =>
-            {
-                HelperFunctions.CreatePlatFormDir();
-            });
+            await HelperFunctions.CreateDirectory();
         }
 
         public async Task Remove(SolutionInfo info)

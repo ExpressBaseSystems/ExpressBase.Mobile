@@ -98,7 +98,7 @@ namespace ExpressBase.Mobile.Services
             return UnCreated;
         }
 
-        public async Task<int> LoadLocalData(EbDataSet DS)
+        public async Task LoadLocalData(EbDataSet DS)
         {
             try
             {
@@ -123,7 +123,6 @@ namespace ExpressBase.Mobile.Services
             {
                 EbLog.Write("CommonServices.LoadLocalData---" + ex.Message);
             }
-            return 0;
         }
 
         private async Task DropTable(string tableName)
