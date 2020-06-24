@@ -95,7 +95,7 @@ namespace ExpressBase.Mobile
                 SearchBox = new TextBox
                 {
                     IsReadOnly = this.ReadOnly,
-                    Placeholder = $"Seach {this.Label}...",
+                    Placeholder = $"Search {this.Label}...",
                     FontSize = 14,
                     BorderColor = Color.Transparent
                 };

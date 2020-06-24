@@ -16,13 +16,13 @@ namespace ExpressBase.Mobile.Views
 
         private int BackButtonCount;
 
-        private readonly HomeViewModel ViewModel;
+        private readonly HomeViewModel viewModel;
 
         public Home()
         {
             InitializeComponent();
             IconedLoader.IsVisible = true;
-            BindingContext = ViewModel = new HomeViewModel();
+            BindingContext = viewModel = new HomeViewModel();
         }
 
         protected override async void OnAppearing()
@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.Views
 
                 if (!isRendered)
                 {
-                    await ViewModel.InitializeAsync();
+                    await viewModel.InitializeAsync();
                     isRendered = true;
                 }
                 IconedLoader.IsVisible = false;
@@ -74,17 +74,17 @@ namespace ExpressBase.Mobile.Views
                 if (!Utils.HasInternet)
                 {
                     toast.Show("Not connected to Internet!");
+                    RootRefreshView.IsRefreshing = false;
                     return;
                 }
                 else
                 {
                     await IdentityService.AuthIfTokenExpiredAsync();
 
-                    RootRefreshView.IsRefreshing = true;
                     IconedLoader.IsVisible = true;
                     Store.RemoveJSON(AppConst.OBJ_COLLECTION);
 
-                    await ViewModel.Refresh();
+                    await viewModel.Refresh();
                     MenuView.Notify("ItemSource");
 
                     RootRefreshView.IsRefreshing = false;
@@ -108,6 +108,11 @@ namespace ExpressBase.Mobile.Views
         public void ConfirmLogout()
         {
             LogoutDialog.Show();
+        }
+
+        public void Refresh()
+        {
+            RefreshView_Refreshing(null, null);
         }
     }
 }

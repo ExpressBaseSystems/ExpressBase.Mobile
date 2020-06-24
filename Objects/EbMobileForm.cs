@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -26,12 +25,6 @@ namespace ExpressBase.Mobile
 
         //mobile prop
         public Dictionary<string, EbMobileControl> ControlDictionary { set; get; }
-
-        private FormMode Mode { set; get; }
-
-        private int ParentId;
-
-        private string ParentTable;
 
         private bool HasFileSelect
         {
@@ -75,7 +68,7 @@ namespace ExpressBase.Mobile
             return dt;
         }
 
-        public async Task<FormSaveResponse> SaveForm(int rowId)
+        public async Task<FormSaveResponse> Save(int rowId)
         {
             FormSaveResponse response = new FormSaveResponse();
             try
@@ -106,14 +99,6 @@ namespace ExpressBase.Mobile
             return response;
         }
 
-        public async Task<FormSaveResponse> SaveFormWParent(int parentId, string parentTable)
-        {
-            this.Mode = FormMode.REF;
-            this.ParentId = parentId;
-            this.ParentTable = parentTable;
-            return await SaveForm(0);
-        }
-
         private MobileFormData PrepareFormData(int RowId)
         {
             MobileFormData FormData = new MobileFormData(this.TableName);
@@ -136,9 +121,6 @@ namespace ExpressBase.Mobile
             }
             if (RowId <= 0)
                 row.AppendEbColValues();//append ebcol values
-
-            if (this.Mode == FormMode.REF)
-                row.Columns.Add(new MobileTableColumn(this.ParentTable + "_id", EbDbTypes.Int32, ParentId));
 
             FormData.Tables.Add(Table);
             return FormData;
@@ -371,17 +353,10 @@ namespace ExpressBase.Mobile
 
         public bool Validate()
         {
-            try
+            foreach (EbMobileControl ctrl in this.ControlDictionary.Values)
             {
-                foreach (EbMobileControl ctrl in this.ControlDictionary.Values)
-                {
-                    if (ctrl.Required && ctrl.GetValue() == null)
-                        return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
+                if (ctrl.Required && ctrl.GetValue() == null)
+                    return false;
             }
             return true;
         }

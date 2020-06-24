@@ -25,13 +25,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private readonly int rowId;
 
-        private readonly EbMobileForm parentForm;
-
         private EbDataSet dataOnEdit;
 
         private Dictionary<string, List<FileMetaInfo>> filesOnEdit;
 
-        private readonly EbDataRow preFillRecord;
+        private readonly EbDataRow contextRow;
+
+        private readonly EbMobileVisualization context;
 
         public Command SaveCommand => new Command(async () => await OnSaveClicked());
 
@@ -55,41 +55,34 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         }
 
         //prefill mode
-        public FormRenderViewModel(EbMobilePage page, EbDataRow currentRow) : base(page)
+        public FormRenderViewModel(EbMobilePage page, EbDataRow contextrow) : base(page)
         {
             this.Mode = FormMode.PREFILL;
             this.Form = (EbMobileForm)page.Container;
-            preFillRecord = currentRow;
+            contextRow = contextrow;
 
             InitializeService();
         }
 
         //referenced mode
-        public FormRenderViewModel(EbMobilePage page, EbMobilePage parentPage, int parentId) : base(page)
+        public FormRenderViewModel(EbMobilePage page, EbMobileVisualization source, EbDataRow contextrow) : base(page)
         {
             this.Mode = FormMode.REF;
-            this.parentForm = (EbMobileForm)parentPage.Container;
-            rowId = parentId;
             this.Form = (EbMobileForm)page.Container;
+
+            context = source;
+            contextRow = contextrow;
 
             InitializeService();
         }
 
         private void InitializeService()
         {
-            try
-            {
-                //service initialize
-                formDataService = new FormDataServices();
+            formDataService = new FormDataServices();
 
-                Controls = Form.ChildControls;
-                Form.ControlDictionary = Form.ChildControls.ToControlDictionary();
-                this.DeployTables();
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
+            Controls = Form.ChildControls;
+            Form.ControlDictionary = Form.ChildControls.ToControlDictionary();
+            this.DeployTables();
         }
 
         public void DeployTables()
@@ -103,26 +96,20 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public async Task SetDataOnEdit()
         {
-            try
+            if (this.Page.NetworkMode == NetworkMode.Offline)
             {
-                if (this.Page.NetworkMode == NetworkMode.Offline)
-                {
-                    this.dataOnEdit = await formDataService.GetFormLocalDataAsync(this.Form, this.rowId);
-                }
-                else if (this.Page.NetworkMode == NetworkMode.Online)
-                {
-                    if (string.IsNullOrEmpty(this.Form.WebFormRefId))
-                        throw new Exception("webform refid is empty");
-
-                    WebformData data = await formDataService.GetFormLiveDataAsync(this.Page.RefId, this.rowId, App.Settings.CurrentLocId);
-                    this.dataOnEdit = data.ToDataSet();
-                    this.filesOnEdit = data.ToFilesMeta();
-                }
+                this.dataOnEdit = await formDataService.GetFormLocalDataAsync(this.Form, this.rowId);
             }
-            catch (Exception e)
+            else if (this.Page.NetworkMode == NetworkMode.Online)
             {
-                EbLog.Write("form_SetDataOnEdit---" + e.Message);
-                this.dataOnEdit = new EbDataSet();
+                if (string.IsNullOrEmpty(this.Form.WebFormRefId))
+                {
+                    EbLog.Write("Web form refid is empty");
+                }
+
+                WebformData data = await formDataService.GetFormLiveDataAsync(this.Page.RefId, this.rowId, App.Settings.CurrentLocId);
+                this.dataOnEdit = data?.ToDataSet();
+                this.filesOnEdit = data?.ToFilesMeta();
             }
         }
 
@@ -136,16 +123,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             if (Form.Validate())
             {
                 this.Form.NetworkType = this.NetworkType;
-                FormSaveResponse saveResponse;
 
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
-                if (this.Mode == FormMode.REF)
-                    saveResponse = await this.Form.SaveFormWParent(this.rowId, parentForm.TableName);
-                else if (this.Mode == FormMode.EDIT)
-                    saveResponse = await this.Form.SaveForm(this.rowId);
-                else
-                    saveResponse = await this.Form.SaveForm(0);
+                FormSaveResponse saveResponse = await this.Form.Save(this.rowId);
 
                 Device.BeginInvokeOnMainThread(async () =>
                 {
@@ -158,15 +139,36 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 toast.Show("Fields required");
         }
 
-        public void FillControlsValues()
+        public async Task FillValues()
+        {
+            if (this.Mode == FormMode.EDIT)
+            {
+                await this.SetDataOnEdit();
+                this.FillValuesOnEdit();
+            }
+            else if (this.Mode == FormMode.PREFILL)
+            {
+                this.FillValuesOnPrefill();
+            }
+            else if (this.Mode == FormMode.REF)
+            {
+                this.FillValuesOnRef();
+            }
+        }
+
+        private void FillValuesOnEdit()
         {
             try
             {
                 EbDataTable masterData = dataOnEdit.Tables.Find(table => table.TableName == this.Form.TableName);
-                if (masterData == null && !masterData.Rows.Any()) return;
+
+                if (masterData == null) throw new Exception($"data not found for table:'{this.Form.TableName}'");
+
                 EbDataRow masterRow = masterData.Rows.FirstOrDefault();
 
-                foreach (KeyValuePair<string, EbMobileControl> pair in this.Form.ControlDictionary)
+                if (masterRow == null) throw new Exception("no record found");
+
+                foreach (var pair in this.Form.ControlDictionary)
                 {
                     object data = masterRow[pair.Value.Name];
 
@@ -195,27 +197,36 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     pair.Value.SetAsReadOnly(true);
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 EbLog.Write(ex.Message);
             }
         }
 
-        public void FillControlsFlat()
+        private void FillValuesOnPrefill()
         {
-            try
+            foreach (KeyValuePair<string, EbMobileControl> pair in this.Form.ControlDictionary)
             {
-                foreach (KeyValuePair<string, EbMobileControl> pair in this.Form.ControlDictionary)
-                {
-                    object data = preFillRecord[pair.Value.Name];
-                    if (pair.Value is INonPersistControl || pair.Value is ILinesEnabled) continue;
-                    else
-                        pair.Value.SetValue(data);
-                }
+                object data = contextRow[pair.Value.Name];
+                if (pair.Value is INonPersistControl || pair.Value is ILinesEnabled)
+                    continue;
+                else
+                    pair.Value.SetValue(data);
             }
-            catch (Exception ex)
+        }
+
+        private void FillValuesOnRef()
+        {
+            if (context.LinkFormParameters == null) return;
+
+            foreach (EbMobileDataColToControlMap map in context.LinkFormParameters)
             {
-                EbLog.Write(ex.Message);
+                object value = contextRow[map.ColumnName];
+
+                if (map.FormControl != null && this.Form.ControlDictionary.ContainsKey(map.FormControl.ControlName))
+                {
+                    this.Form.ControlDictionary[map.FormControl.ControlName].SetValue(value);
+                }
             }
         }
     }

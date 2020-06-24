@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -14,11 +15,9 @@ namespace ExpressBase.Mobile.Views.Shared
     {
         public ObservableCollection<EbLocation> Locations { get; private set; }
 
-        public List<EbLocation> All { set; get; }
+        private readonly MyApplications myApplicationsPage;
 
-        public MyApplications MyApplicationsPage { set; get; }
-
-        public EbLocation SelectedLocation { set; get; }
+        private EbLocation selectedLocation;
 
         public MyLocations()
         {
@@ -34,7 +33,7 @@ namespace ExpressBase.Mobile.Views.Shared
             NavigationPage.SetHasNavigationBar(this, true);
             BackButton.IsVisible = true;
 
-            MyApplicationsPage = appPage;
+            myApplicationsPage = appPage;
             this.SetLocations();
             BindingContext = this;
         }
@@ -43,14 +42,13 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             try
             {
-                All = Utils.Locations;
-                Locations = new ObservableCollection<EbLocation>(All);
+                Locations = new ObservableCollection<EbLocation>(Utils.Locations);
 
                 foreach (EbLocation loc in Locations)
                 {
                     if (loc.LocId == App.Settings.CurrentLocId)
                     {
-                        SelectedLocation = loc;
+                        selectedLocation = loc;
                         loc.Selected = true;
                         break;
                     }
@@ -64,44 +62,60 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            EbLocation loc = (e.Item as EbLocation);
+            if (e.Item == null) return;
 
-            if (loc != SelectedLocation)
+            if (sender is ListView lv) lv.SelectedItem = null;
+
+            EbLocation loc = (EbLocation)e.Item;
+
+            if (loc != selectedLocation)
             {
-                this.Locations.Clear();
-                foreach (EbLocation location in All)
-                {
-                    if (location.LocId == loc.LocId)
-                    {
-                        location.Selected = true;
-                        SelectedLocation = loc;
-                    }
-                    else location.Selected = false;
-                    this.Locations.Add(location);
-                }
+                selectedLocation?.UnSelect();
+                selectedLocation = loc;
+                loc.Select();
             }
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            if (MyApplicationsPage != null) MyApplicationsPage.LocationPagePoped();
+
+            if (myApplicationsPage != null)
+                myApplicationsPage.LocationPagePoped();
         }
 
-        private void BackButton_Clicked(object sender, EventArgs e)
+        private async void BackButton_Clicked(object sender, EventArgs e)
         {
-            Application.Current.MainPage.Navigation.PopModalAsync(true);
+            await Application.Current.MainPage.Navigation.PopModalAsync(true);
         }
 
         private async void ApplyButton_Clicked(object sender, EventArgs e)
         {
-            if (SelectedLocation != null)
+            if (selectedLocation != null)
             {
-                await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, SelectedLocation);
-                App.Settings.CurrentLocation = SelectedLocation;
+                await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, selectedLocation);
+                App.Settings.CurrentLocation = selectedLocation;
 
-                if (MyApplicationsPage == null)
+                if (myApplicationsPage == null)
+                {
+                    Store.RemoveJSON(AppConst.OBJ_COLLECTION);
+
                     await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+
+                    try
+                    {
+                        IReadOnlyList<Page> stack = (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.NavigationStack;
+
+                        if (stack.Any() && stack[0] is Home)
+                        {
+                            (stack[0] as Home).Refresh();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        EbLog.Write($"Location changed to {selectedLocation.LongName}, failed to update menu");
+                    }
+                }
                 else
                     await Application.Current.MainPage.Navigation.PopModalAsync();
             }

@@ -34,17 +34,17 @@ namespace ExpressBase.Mobile.Views.Dynamic
         }
 
         //prefill mode
-        public FormRender(EbMobilePage page, EbDataRow currentRow)
+        public FormRender(EbMobilePage page, EbDataRow contextRow)
         {
             InitializeComponent();
-            BindingContext = viewModel = new FormRenderViewModel(page, currentRow);
+            BindingContext = viewModel = new FormRenderViewModel(page, contextRow);
         }
 
         //reference mode
-        public FormRender(EbMobilePage currentForm, EbMobilePage parentForm, int parentId)
+        public FormRender(EbMobilePage page, EbMobileVisualization context, EbDataRow contextRow)
         {
             InitializeComponent();
-            BindingContext = viewModel = new FormRenderViewModel(currentForm, parentForm, parentId);
+            BindingContext = viewModel = new FormRenderViewModel(page, context, contextRow);
         }
 
         protected override async void OnAppearing()
@@ -54,15 +54,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             LoaderIconed.IsVisible = true;
             if (!isRendered)
             {
-                if (viewModel.Mode == FormMode.EDIT)
-                {
-                    await viewModel.SetDataOnEdit();
-                    viewModel.FillControlsValues();
-                }
-                else if(viewModel.Mode == FormMode.PREFILL)
-                {
-                    viewModel.FillControlsFlat();
-                }
+                await viewModel.FillValues();
                 isRendered = true;
             }
             LoaderIconed.IsVisible = false;
@@ -74,7 +66,9 @@ namespace ExpressBase.Mobile.Views.Dynamic
             SaveButton.IsVisible = true;
 
             foreach (var pair in viewModel.Form.ControlDictionary)
+            {
                 pair.Value.SetAsReadOnly(false);
+            }
         }
 
         public void ShowFullScreenImage(object tapedImage)

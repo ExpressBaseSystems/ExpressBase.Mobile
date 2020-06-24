@@ -319,7 +319,6 @@ namespace ExpressBase.Mobile.Models
     public class SolutionQrMeta
     {
         public string Sid { set; get; }
-
     }
 
     public class ApiFileResponse
@@ -338,4 +337,43 @@ namespace ExpressBase.Mobile.Models
             }
         }
     }
+
+    public class EbApiMeta
+    {
+        public string RefId { set; get; }
+
+        public string Name { set; get; }
+
+        public string DisplayName { set; get; }
+
+        public string Version { set; get; }
+    }
+
+    public class EbMobileSettings 
+    {
+        public EbApiMeta MenuApi { set; get; }
+    }
+
+    public class EbMobileSolutionData
+    {
+        public List<EbApplicationDataMobile> Applications { set; get; }
+
+        public EbDataSet OfflineData { set; get; }
+    }
+
+    public class EbApplicationDataMobile
+    {
+        public int AppId { set; get; }
+
+        public string AppName { set; get; }
+
+        public string AppIcon { set; get; }
+
+        public EbMobileSettings AppSettings { set; get; }
+
+        public List<MobilePagesWraper> MobilePages { set; get; }
+
+        public List<WebObjectsWraper> WebObjects { set; get; }
+    }
+
 }

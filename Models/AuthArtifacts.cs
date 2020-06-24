@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Xamarin.Forms;
 
@@ -118,7 +120,7 @@ namespace ExpressBase.Mobile.Models
         public string ShortTime { set; get; }
     }
 
-    public class EbLocation
+    public class EbLocation : INotifyPropertyChanged
     {
         public int LocId { get; set; }
 
@@ -146,6 +148,27 @@ namespace ExpressBase.Mobile.Models
             {
                 return Selected ? Color.FromHex("0046bb") : Color.FromHex("cccccc");
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Select()
+        {
+            Selected = true;
+            RaisePropertyChanged("SelectionColor");
+            RaisePropertyChanged("Bordercolor");
+        }
+
+        public void UnSelect()
+        {
+            Selected = false;
+            RaisePropertyChanged("SelectionColor");
+            RaisePropertyChanged("Bordercolor");
         }
     }
 }

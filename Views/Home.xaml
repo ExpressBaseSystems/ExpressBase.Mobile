@@ -26,35 +26,37 @@
                 <ScrollView>
                     <StackLayout VerticalOptions="FillAndExpand">
 
-                        <FlexLayout 
-                            Padding="15,10"
-                            Direction="Row" 
-                            JustifyContent="SpaceBetween">
-                            <Frame
-                                BackgroundColor="Green"
-                                Padding="10,5"
-                                CornerRadius="6">
-                                <Label
+                        <Frame
+                            Padding="10"
+                            Margin="15,10"
+                            CornerRadius="8"
+                            BackgroundColor="#ddf3f5"
+                            HasShadow="True">
+                            <StackLayout>
+                                <Label 
                                     x:Name="CurrentSolution"
-                                    TextColor="White">
+                                    FontSize="15"
+                                    TextColor="#4e4e4e"
+                                    FontFamily="{StaticResource Roboto-Medium}">
                                 </Label>
-                            </Frame>
-                            <Label>
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
-                                        <Span Text=" Current Location : "></Span>
-                                        <Span 
-                                            Text="Default" 
-                                            x:Name="CurrentLocation" 
-                                            TextColor="{StaticResource Eb-Blue2}"
-                                            FontFamily="{StaticResource Roboto-Medium}"></Span>
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                        </FlexLayout>
+                                <Label LineBreakMode="TailTruncation">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
+                                            <Span Text=" "></Span>
+                                            <Span 
+                                                Text="Default" 
+                                                x:Name="CurrentLocation" 
+                                                TextColor="{StaticResource Eb-Blue2}"
+                                                FontFamily="{StaticResource Roboto-Medium}">
+                                            </Span>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </StackLayout>
+                        </Frame>
 
-                        <Grid Padding="10,5" Margin="0" BackgroundColor="#fafafa">
+                        <Grid Padding="10,5" Margin="0" BackgroundColor="#f7f7f7">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="*"></RowDefinition>

@@ -27,6 +27,12 @@
                 Text="&#xf177;"
                 Clicked="BackButton_Clicked"/>
             <Label Text="Switch Location" x:Name="TitleLabel" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="1"/>
+            <Button 
+                Text="&#xf002;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="2"
+                Margin="0,0,10,0">
+            </Button>
         </Grid>
     </NavigationPage.TitleView>
     <ContentPage.Content>
@@ -38,7 +44,7 @@
 
             <ListView 
                 Grid.Row="0"
-                ItemsSource="{Binding Locations}"
+                ItemsSource="{Binding Locations,Mode=TwoWay}"
                 HasUnevenRows="true"
                 ItemTapped="ListView_ItemTapped">
                 <ListView.ItemTemplate>
@@ -55,40 +61,43 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Frame 
-                                Grid.RowSpan="2"
-                                VerticalOptions="Center"
-                                HorizontalOptions="Center"
-                                HasShadow="False"
-                                Padding="0"
-                                Margin="10,0,15,0"
-                                BorderColor="{Binding Bordercolor}"
-                                HeightRequest="20"
-                                WidthRequest="20"
-                                CornerRadius="10"
-                                BackgroundColor="{Binding SelectionColor}">
-                                    <BoxView 
-                                    BackgroundColor="White"
-                                    WidthRequest="8"
-                                    HeightRequest="8"
+                                    Grid.RowSpan="2"
                                     VerticalOptions="Center"
                                     HorizontalOptions="Center"
-                                    CornerRadius="4"/>
+                                    HasShadow="False"
+                                    Padding="0"
+                                    Margin="10,0,15,0"
+                                    BorderColor="{Binding Bordercolor}"
+                                    HeightRequest="20"
+                                    WidthRequest="20"
+                                    CornerRadius="10"
+                                    BackgroundColor="{Binding SelectionColor}">
+                                    <BoxView 
+                                        BackgroundColor="White"
+                                        WidthRequest="8"
+                                        HeightRequest="8"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Center"
+                                        CornerRadius="4">
+                                    </BoxView>
                                 </Frame>
 
                                 <Label 
-                                Grid.Row="0" 
-                                Grid.Column="1" 
-                                Text="{Binding LongName}"
-                                FontFamily="{StaticResource Roboto-Medium}"
-                                FontSize="14"/>
+                                    Grid.Row="0" 
+                                    Grid.Column="1" 
+                                    Text="{Binding LongName}"
+                                    FontFamily="{StaticResource Roboto-Medium}"
+                                    FontSize="14">
+                                </Label>
 
                                 <Label 
-                                Grid.Row="1" 
-                                Grid.Column="1" 
-                                Text="{Binding ShortName}"
-                                FontFamily="{StaticResource Roboto-Regular}"
-                                FontSize="12"
-                                TextColor="{DynamicResource Gray-700}"/>
+                                    Grid.Row="1" 
+                                    Grid.Column="1" 
+                                    Text="{Binding ShortName}"
+                                    FontFamily="{StaticResource Roboto-Regular}"
+                                    FontSize="12"
+                                    TextColor="{DynamicResource Gray-700}">
+                                </Label>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>
@@ -101,7 +110,8 @@
                 BackgroundColor="{StaticResource Blue-Dark}"
                 TextColor="White"
                 CornerRadius="0"
-                Clicked="ApplyButton_Clicked"/>
+                Clicked="ApplyButton_Clicked">
+            </Button>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

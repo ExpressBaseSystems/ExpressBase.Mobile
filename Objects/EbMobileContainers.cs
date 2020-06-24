@@ -45,6 +45,22 @@ namespace ExpressBase.Mobile
         }
     }
 
+    public class EbMobileDataColToControlMap : EbMobilePageBase
+    {
+        public string ColumnName { set; get; }
+
+        public EbDbTypes Type { get; set; }
+
+        public EbMobileControlMeta FormControl { set; get; }
+    }
+
+    public class EbMobileControlMeta : EbMobilePageBase
+    {
+        public string ControlName { set; get; }
+
+        public string ControlType { set; get; }
+    }
+
     public class EbMobileContainer : EbMobilePageBase
     {
         public NetworkMode NetworkType { set; get; }
@@ -71,6 +87,8 @@ namespace ExpressBase.Mobile
         public List<EbMobileControl> FilterControls { set; get; }
 
         public List<EbMobileDataColumn> SortColumns { set; get; }
+
+        public List<EbMobileDataColToControlMap> LinkFormParameters { get; set; }
 
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
@@ -147,6 +165,7 @@ namespace ExpressBase.Mobile
             DataSourceParams = new List<Param>();
             FilterControls = new List<EbMobileControl>();
             SortColumns = new List<EbMobileDataColumn>();
+            LinkFormParameters = new List<EbMobileDataColToControlMap>();
         }
     }
 

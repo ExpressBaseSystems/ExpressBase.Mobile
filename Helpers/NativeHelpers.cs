@@ -51,9 +51,4 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
     }
-
-    public interface IPushService
-    {
-        void Register(string authid);
-    }
 }
