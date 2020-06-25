@@ -23,7 +23,7 @@ namespace ExpressBase.Mobile.Services
 
         Task<PushResponse> SendFormDataAsync(WebformData WebFormData, int RowId, string WebFormRefId, int LocId);
 
-        ApiFileResponse GetFile(EbFileCategory category, string filename);
+        Task<ApiFileResponse> GetFile(EbFileCategory category, string filename);
     }
 
     public class FormDataServices : IFormDataService
@@ -144,14 +144,14 @@ namespace ExpressBase.Mobile.Services
             return FileData;
         }
 
-        public ApiFileResponse GetFile(EbFileCategory category, string filename)
+        public async Task<ApiFileResponse> GetFile(EbFileCategory category, string filename)
         {
             ApiFileResponse resp = null;
             try
             {
                 RestClient client = new RestClient(App.Settings.RootUrl);
 
-                RestRequest request = new RestRequest("api/get_files", Method.GET);
+                RestRequest request = new RestRequest("api/get_file", Method.GET);
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
@@ -159,7 +159,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("category", (int)category);
                 request.AddParameter("filename", filename);
 
-                IRestResponse response = client.Execute(request);
+                IRestResponse response = await client.ExecuteAsync(request);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     resp = JsonConvert.DeserializeObject<ApiFileResponse>(response.Content);

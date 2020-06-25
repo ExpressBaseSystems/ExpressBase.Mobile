@@ -30,8 +30,8 @@ namespace ExpressBase.Mobile.Views
             base.OnAppearing();
             try
             {
-                CurrentLocation.Text = App.Settings.CurrentLocation?.ShortName;
-                CurrentSolution.Text = App.Settings.Sid;
+                CurrentLocation.Text = App.Settings.CurrentLocation?.LongName;
+                CurrentSolution.Text = App.Settings.Sid.ToUpper();
 
                 if (!isRendered)
                 {

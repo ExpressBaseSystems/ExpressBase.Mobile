@@ -71,11 +71,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        public void ShowFullScreenImage(object tapedImage)
+        public void ShowFullScreenImage(Image tapedImage)
         {
             if (tapedImage != null)
             {
-                ImageFullScreen.Source = (tapedImage as Image).Source;
+                ImageFullScreen.Source = tapedImage.Source;
                 ImageFullScreen.Show();
             }
         }

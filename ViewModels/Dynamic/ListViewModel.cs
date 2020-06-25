@@ -111,7 +111,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             return renderer;
         }
 
-        public async Task Refresh(List<DbParameter> parameters)
+        public async Task Refresh(List<DbParameter> parameters, int offset = 0)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 List<SortColumn> sort = this.SortColumns.FindAll(item => item.Selected);
 
-                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, 0, parameters, sort);
+                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, offset, parameters, sort);
 
                 if (ds != null && ds.Tables.HasLength(2))
                 {

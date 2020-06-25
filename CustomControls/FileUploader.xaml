@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.CustomControls.FileUploader">
+    
+  <ContentView.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Button 
+                Grid.Row="0"
+                Grid.Column="0"
+                x:Name="FilesButton"
+                Style="{DynamicResource FupFileButton}"
+                Clicked="FilesButton_Clicked">
+            </Button>
+
+            <Button 
+                Grid.Row="0"
+                Grid.Column="1"
+                x:Name="CameraButton"
+                Style="{DynamicResource FupCameraButton}"
+                Clicked="CameraButton_Clicked">
+            </Button>
+
+            <Frame
+                x:Name="Gallery"
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Padding="5"
+                CornerRadius="6">
+                <FlexLayout
+                    x:Name="Container"
+                    Wrap="Wrap"
+                    SizeChanged="Container_SizeChanged">
+                </FlexLayout>
+            </Frame>
+            
+        </Grid>
+  </ContentView.Content>
+</ContentView>

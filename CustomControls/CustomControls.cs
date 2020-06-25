@@ -128,15 +128,27 @@ namespace ExpressBase.Mobile.CustomControls
     {
         public string Name { set; get; }
 
-        public CustomImageWraper()
-        {
-
-        }
+        public CustomImageWraper() { }
 
         public CustomImageWraper(string name)
         {
             Name = name;
             ClassId = name;
+            Margin = new Thickness(5);
+        }
+
+        public CustomImageWraper(string name, double width)
+        {
+            Name = name;
+            ClassId = name;
+            WidthRequest = width;
+            Margin = new Thickness(5);
+        }
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+            this.HeightRequest = width;
         }
     }
 

@@ -159,5 +159,10 @@ namespace ExpressBase.Mobile.CustomControls
         {
             FilterControls.ForEach(item => item.Reset());
         }
+
+        public void ClearFilter()
+        {
+            ClearFilter_Clicked(null, null);
+        }
     }
 }

@@ -7,6 +7,7 @@ using ExpressBase.Mobile.Data;
 using System.Linq;
 using ExpressBase.Mobile.Helpers;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
@@ -131,7 +132,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 {
                     this.offset -= viewModel.Visualization.PageLength;
                     this.pageCount--;
-                    await this.RefreshListView();
+                    await this.RefreshListView(false);
                 }
             }
             catch (Exception ex)
@@ -150,7 +151,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 {
                     this.offset += viewModel.Visualization.PageLength;
                     this.pageCount++;
-                    await this.RefreshListView();
+                    await this.RefreshListView(false);
                 }
             }
             catch (Exception ex)
@@ -159,10 +160,19 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        private async Task RefreshListView()
+        private async Task RefreshListView(bool toInitial)
         {
             this.Loader.IsVisible = true;
-            await viewModel.SetData(this.offset);
+            if (toInitial)
+            {
+                FilterView.ClearFilter();
+                await viewModel.SetData(this.offset);
+            }
+            else
+            {
+                List<DbParameter> parameters = this.FilterView.GetFilterValues();
+                await viewModel.Refresh(parameters, offset);
+            }
             this.AppendListItems();
             this.Loader.IsVisible = false;
         }
@@ -193,10 +203,9 @@ namespace ExpressBase.Mobile.Views.Dynamic
             IToast toast = DependencyService.Get<IToast>();
             try
             {
-                this.ListViewRefresh.IsRefreshing = true;
                 this.offset = 0;
                 this.pageCount = 1;
-                await this.RefreshListView();
+                await this.RefreshListView(true);
                 this.ListViewRefresh.IsRefreshing = false;
                 toast.Show("Refreshed");
             }

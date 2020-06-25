@@ -109,9 +109,14 @@ namespace ExpressBase.Mobile
             foreach (var pair in this.ControlDictionary)
             {
                 if (pair.Value is EbMobileFileUpload)
-                    Table.Files.Add(pair.Key, (pair.Value as EbMobileFileUpload).GetFiles());
+                {
+                    object files = (pair.Value as EbMobileFileUpload).GetValue();
+                    Table.Files.Add(pair.Key, (List<FileWrapper>)files);
+                }
                 else if (pair.Value is EbMobileDataGrid)
+                {
                     FormData.Tables.Add((MobileTable)(pair.Value as EbMobileDataGrid).GetValue());
+                }
                 else
                 {
                     MobileTableColumn Column = pair.Value.GetMobileTableColumn();
