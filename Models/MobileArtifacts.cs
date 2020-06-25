@@ -2,8 +2,6 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -282,6 +280,8 @@ namespace ExpressBase.Mobile.Models
         public string ControlName { set; get; }
 
         public int FileRefId { set; get; }
+
+        public bool IsUploaded { set; get; }
     }
 
     public class FormSaveResponse

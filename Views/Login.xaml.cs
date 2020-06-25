@@ -24,10 +24,10 @@ namespace ExpressBase.Mobile.Views
         {
             base.OnAppearing();
 
+            SolutionName.Text = App.Settings.Sid.ToUpper();
+
             if (!isRendered)
             {
-                SolutionName.Text = App.Settings.Sid;
-
                 await ViewModel.InitializeAsync();
                 isRendered = true;
             }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ExpressBase.Mobile.Models;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 namespace ExpressBase.Mobile.Data
 {
@@ -36,6 +37,52 @@ namespace ExpressBase.Mobile.Data
             ExtendedTables = new Dictionary<string, SingleTable>();
             DisableDelete = new Dictionary<string, bool>();
             DisableCancel = new Dictionary<string, bool>();
+        }
+
+        public void FillFromSendFileResp(List<FileWrapper> Files, List<ApiFileData> ApiFiles)
+        {
+            if (ApiFiles.Count > 0)
+            {
+                foreach (FileWrapper file in Files)
+                {
+                    ApiFileData _apiFile = ApiFiles.Find(af => af.FileName == file.FileName);
+
+                    if (_apiFile != null && _apiFile.FileRefId > 0)
+                    {
+                        if (!ExtendedTables.ContainsKey(file.ControlName))
+                        {
+                            ExtendedTables.Add(file.ControlName, new SingleTable());
+                        }
+
+                        SingleRow row = new SingleRow();
+                        row.Columns.Add(new SingleColumn
+                        {
+                            Name = _apiFile.FileName,
+                            Value = _apiFile.FileRefId
+                        });
+
+                        ExtendedTables[file.ControlName].Add(row);
+                    }
+                }
+            }
+        }
+
+        public void FillUploadedFileRef(List<FileWrapper> files)
+        {
+            foreach (FileWrapper file in files)
+            {
+                if (ExtendedTables.ContainsKey(file.ControlName))
+                {
+                    var row = new SingleRow();
+                    row.Columns.Add(new SingleColumn
+                    {
+                        Name = file.FileName,
+                        Value = file.FileRefId
+                    });
+
+                    ExtendedTables[file.ControlName].Add(row);
+                }
+            }
         }
     }
 

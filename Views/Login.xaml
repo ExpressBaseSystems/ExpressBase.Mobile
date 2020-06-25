@@ -14,7 +14,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" Grid.Column="0" FontSize="16" TextColor="White" VerticalOptions="Center"/>
+            <Label Text="Login" Grid.Column="0" FontSize="16" TextColor="White" VerticalOptions="Center"/>
             <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Grid.Column="1" Command="{Binding ResetConfig}"/>
         </Grid>
     </NavigationPage.TitleView>
@@ -35,35 +35,22 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <!--  Label to display the title of this page  -->
-                        <Label 
-                            Text="Login" 
-                            Grid.Row="0"
-                            FontFamily="{StaticResource Roboto-Medium}"
-                            Style="{StaticResource LabelStyle}"
-                            FontSize="22"
-                            HorizontalTextAlignment="Center"/>
-                        <Label
-                            Margin="0,5"
-                            Grid.Row="1"
-                            HorizontalTextAlignment="Center"
-                            Text="to"/>
+                      
                         <Label
                             x:Name="SolutionName"
-                            Grid.Row="2"
+                            Grid.Row="0"
                             TextColor="#333333"
-                            FontFamily="{StaticResource Roboto-Regular}"
+                            FontFamily="{StaticResource Roboto-Medium}"
                             FontSize="18"
                             HorizontalTextAlignment="Center"/>
                         <Image x:Name="LogoUrl"
-                               Grid.Row="3" 
+                               Grid.Row="1" 
                                Source="{Binding LogoUrl}" 
                                Margin="20" 
-                               HorizontalOptions="Center" HeightRequest="100"/>
-                        <StackLayout Grid.Row="4">
+                               HeightRequest="100"
+                               HorizontalOptions="Center"/>
+                        <StackLayout Grid.Row="2">
                             <StackLayout Margin="0,5,0,5">
                                 <Label Text="Username" 
                                        VerticalOptions="Center"
@@ -112,7 +99,7 @@
                             </StackLayout>
                         </StackLayout>
                         <!--  next button  -->
-                        <Button Grid.Row="5"
+                        <Button Grid.Row="3"
                                 Margin="0,15,0,0"
                                 Text="Login"
                                 CornerRadius="6"

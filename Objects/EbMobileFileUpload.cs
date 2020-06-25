@@ -2,11 +2,11 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -23,6 +23,8 @@ namespace ExpressBase.Mobile
         public bool EnableEdit { set; get; }
 
         private FileUploader control;
+
+        private List<FileMetaInfo> uploadedFileRef;
 
         public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
@@ -67,13 +69,30 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
-            return control.GetFiles(this.Name);
+            List<FileWrapper> files = control.GetFiles(this.Name);
+
+            if (uploadedFileRef != null && files.Any())
+            {
+                foreach (var meta in uploadedFileRef)
+                {
+                    files.Add(new FileWrapper
+                    {
+                        FileRefId = meta.FileRefId,
+                        FileName = meta.FileName,
+                        IsUploaded = true,
+                        ControlName = Name,
+                    });
+                }
+            }
+            return files;
         }
 
         public override bool SetValue(object value)
         {
             if (value != null)
             {
+                uploadedFileRef = (value as FUPSetValueMeta).Files;
+
                 control.SetValue(this.NetworkType, value as FUPSetValueMeta, this.Name);
             }
             return true;

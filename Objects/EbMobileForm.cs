@@ -139,16 +139,31 @@ namespace ExpressBase.Mobile
 
                 foreach (MobileTable table in data.Tables)
                 {
-                    List<FileWrapper> files = new List<FileWrapper>();
-                    foreach (var pair in table.Files)
-                        files.AddRange(pair.Value);
-                    if (files.Any())
+                    if (table.Files != null && table.Files.Any())
                     {
-                        var resp = await FormDataServices.Instance.SendFilesAsync(files);
-                        webformdata.ExtendedTables = files.GroupByControl(resp);
+                        List<FileWrapper> oldFiles = new List<FileWrapper>();
+                        List<FileWrapper> newFiles = new List<FileWrapper>();
 
-                        if (!webformdata.ExtendedTables.Any())
-                            throw new Exception("Image Upload faild");
+                        foreach (var pair in table.Files)
+                        {
+                            pair.Value.ForEach(item =>
+                            {
+                                if (item.IsUploaded == false)
+                                    newFiles.Add(item);
+                                else
+                                    oldFiles.Add(item);
+                            });
+                        }
+                        if (newFiles.Any())
+                        {
+                            List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(newFiles);
+
+                            webformdata.FillFromSendFileResp(newFiles, resp);
+                            webformdata.FillUploadedFileRef(oldFiles);
+
+                            if (!webformdata.ExtendedTables.Any())
+                                throw new Exception("Image Upload faild");
+                        }
                     }
                 }
 
@@ -233,9 +248,7 @@ namespace ExpressBase.Mobile
             if (Files.Count > 0)
             {
                 var ApiFiles = await FormDataServices.Instance.SendFilesAsync(Files);
-                var ExtendedTable = Files.GroupByControl(ApiFiles);
-                if (ExtendedTable.Any())
-                    WebFormData.ExtendedTables = ExtendedTable;
+                WebFormData.FillFromSendFileResp(Files, ApiFiles);
             }
         }
 
