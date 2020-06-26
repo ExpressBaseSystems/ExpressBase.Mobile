@@ -38,7 +38,7 @@ namespace ExpressBase.Mobile.Views
 
             try
             {
-                CurrentLocation.Text = App.Settings.CurrentLocation?.ShortName;
+                CurrentLocation.Text = App.Settings.CurrentLocation?.LongName;
 
                 if (!isRendered)
                 {

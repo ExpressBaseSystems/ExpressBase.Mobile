@@ -23,7 +23,9 @@ namespace ExpressBase.Mobile.CustomControls
 
         private readonly TapGestureRecognizer recognizer;
 
-        private Action<Image> bindable;
+        private Action<Image> bindableFS;
+
+        private Action bindableDEL;
 
         public FileUploader()
         {
@@ -34,16 +36,16 @@ namespace ExpressBase.Mobile.CustomControls
             recognizer.Tapped += ThumbNail_Tapped;
         }
 
-        public void Initialize(bool hasCamera, bool hasFile)
+        public void Initialize(EbMobileFileUpload fup)
         {
-            if (!hasCamera)
+            if (!fup.EnableCameraSelect)
             {
                 CameraButton.IsVisible = false;
             }
-            if (!hasFile)
+            if (!fup.EnableFileSelect)
             {
                 FilesButton.IsVisible = false;
-                if (!hasCamera)
+                if (!fup.EnableCameraSelect)
                 {
                     Grid.SetColumn(FilesButton, 0);
                 }
@@ -162,7 +164,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void ThumbNail_Tapped(object sender, EventArgs e)
         {
-            bindable?.Invoke((sender as Image));
+            bindableFS?.Invoke((sender as Image));
         }
 
         public List<FileWrapper> GetFiles(string ctrlName)
@@ -184,7 +186,12 @@ namespace ExpressBase.Mobile.CustomControls
 
         public void BindFullScreenCallback(Action<Image> method)
         {
-            bindable = method;
+            bindableFS = method;
+        }
+
+        public void BindDeleteCallback(Action method)
+        {
+            bindableDEL = method;
         }
 
         private void ToggleGalleryBG()

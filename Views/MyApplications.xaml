@@ -39,13 +39,14 @@
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
-                                <Span Text=" Current Location"></Span>
+                                <Span Text=" Location"></Span>
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
                     <Label 
                         Text="Default" 
                         x:Name="CurrentLocation"
+                        LineBreakMode="TailTruncation"
                         TextColor="{StaticResource Eb-Blue2}"
                         FontFamily="{StaticResource Roboto-Medium}">
                     </Label>

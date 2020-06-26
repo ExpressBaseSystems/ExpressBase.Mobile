@@ -31,8 +31,9 @@ namespace ExpressBase.Mobile
             base.InitXControl(Mode, Network);
 
             control = new FileUploader();
-            control.Initialize(this.EnableCameraSelect, this.EnableFileSelect);
+            control.Initialize(this);
             control.BindFullScreenCallback(ShowFullScreen);
+            control.BindDeleteCallback(DeleteFile);
             this.XControl = control;
 
             //this will create a folder FILES in platform dir 
@@ -47,6 +48,11 @@ namespace ExpressBase.Mobile
             {
                 (current as FormRender).ShowFullScreenImage(image);
             }
+        }
+
+        public void DeleteFile()
+        {
+
         }
 
         public override MobileTableColumn GetMobileTableColumn()
