@@ -1,17 +1,11 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -19,90 +13,60 @@ namespace ExpressBase.Mobile.Services
     {
         Task<SyncResponse> Sync();
 
-        Task<MobilePageCollection> GetDataAsync();
+        List<MobilePagesWraper> GetDataAsync();
+
+        Task UpdateDataAsync(List<MobilePagesWraper> collection);
 
         Task DeployFormTables(List<MobilePagesWraper> objlist);
     }
 
     public class MenuServices : IMenuServices
     {
-        public async Task<MobilePageCollection> GetDataAsync()
+        public List<MobilePagesWraper> GetDataAsync()
         {
-            MobilePageCollection collection;
+            if (App.Settings.MobilePages != null)
+            {
+                return App.Settings.CurrentUser.FilterByLocation();
+            }
+            return new List<MobilePagesWraper>();
+        }
 
+        public async Task UpdateDataAsync(List<MobilePagesWraper> collection)
+        {
             try
             {
-                List<MobilePagesWraper> objlist = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
+                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(false);
 
-                if (objlist == null)
+                if (data != null)
                 {
-                    if (!Utils.HasInternet)
-                    {
-                        DependencyService.Get<IToast>().Show("You are not connected to internet");
-                        throw new Exception();
-                    }
+                    App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
 
-                    collection = await GetFromApiAsync();
-                    objlist = collection.Pages;
+                    var filtered = App.Settings.CurrentUser.FilterByLocation();
+                    collection.Update(filtered);
 
-                    await Store.SetJSONAsync(AppConst.OBJ_COLLECTION, objlist);
-                }
-                else
-                {
-                    collection = new MobilePageCollection
-                    {
-                        Pages = objlist
-                    };
+                    await this.DeployFormTables(collection);
                 }
             }
             catch (Exception)
             {
-                collection = new MobilePageCollection();
+                EbLog.Write("menu update failed");
             }
-            return collection;
-        }
-
-        public async Task<MobilePageCollection> GetFromApiAsync()
-        {
-            try
-            {
-                RestClient client = new RestClient(App.Settings.RootUrl);
-
-                RestRequest request = new RestRequest("api/objects_by_app", Method.GET);
-
-                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
-                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
-
-                request.AddParameter("appid", App.Settings.AppId);
-                request.AddParameter("locid", App.Settings.CurrentLocId);
-                request.AddParameter("pull_data", true);
-
-                var response = await client.ExecuteAsync(request);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    return JsonConvert.DeserializeObject<MobilePageCollection>(response.Content);
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write("RestServices.GetEbObjects---" + ex.Message);
-                return new MobilePageCollection();
-            }
-            return new MobilePageCollection();
         }
 
         public async Task DeployFormTables(List<MobilePagesWraper> objlist)
         {
             await Task.Run(() =>
             {
-                foreach (MobilePagesWraper _p in objlist)
+                foreach (MobilePagesWraper page in objlist)
                 {
-                    EbMobilePage mpage = _p.ToPage();
+                    EbMobilePage mpage = page.ToPage();
 
                     if (mpage != null && mpage.Container is EbMobileForm)
                     {
                         if (mpage.NetworkMode != NetworkMode.Online)
+                        {
                             (mpage.Container as EbMobileForm).CreateTableSchema();
+                        }
                     }
                 }
             });
@@ -185,7 +149,7 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                var controls = form.ChildControls.ToControlDictionary();
+                Dictionary<string, EbMobileControl> controls = form.ChildControls.ToControlDictionary();
 
                 foreach (var pair in controls)
                 {
@@ -269,9 +233,10 @@ namespace ExpressBase.Mobile.Services
         private void FillLiveId(EbDataTable dt, EbDataRow dr, int liveId, string columName)
         {
             EbDataColumn col = dt.Columns[columName];
-
             if (col != null)
+            {
                 dr[col.ColumnIndex] = liveId;
+            }
         }
     }
 }

@@ -18,18 +18,19 @@ namespace ExpressBase.Mobile.Helpers
         public static EbMobilePage GetPage(string Refid)
         {
             EbMobilePage page = null;
+
+            if (string.IsNullOrEmpty(Refid)) return null;
+
             try
             {
-                if (string.IsNullOrEmpty(Refid)) return null;
-
-                var wraper = Store.GetJSON<List<MobilePagesWraper>>(AppConst.OBJ_COLLECTION);
-                MobilePagesWraper wrpr = wraper?.Find(item => item.RefId == Refid);
+                MobilePagesWraper wrpr = App.Settings.MobilePages?.Find(item => item.RefId == Refid);
                 page = wrpr?.ToPage();
             }
             catch (Exception ex)
             {
-                EbLog.Write("HelperFunctions.GetPage---" + ex.Message);
+                EbLog.Write("Page not found" + ex.Message);
             }
+
             return page;
         }
 
@@ -39,7 +40,7 @@ namespace ExpressBase.Mobile.Helpers
             sql = sql.TrimEnd(';');
             try
             {
-                List<string> sqlParam = HelperFunctions.GetSqlParams(sql);
+                List<string> sqlParam = GetSqlParams(sql);
 
                 query = string.Format("SELECT COUNT(*) AS count FROM ({0}); SELECT * FROM ({0}) AS WRAPER", sql);
 
@@ -204,17 +205,20 @@ namespace ExpressBase.Mobile.Helpers
         public static List<EbMobileForm> GetOfflineForms()
         {
             List<EbMobileForm> ls = new List<EbMobileForm>();
-            var pages = Utils.Objects;
-            foreach (MobilePagesWraper _p in pages)
+
+            var pages = App.Settings.MobilePages ?? new List<MobilePagesWraper>();
+
+            foreach (MobilePagesWraper page in pages)
             {
-                EbMobilePage mpage = _p.ToPage();
+                EbMobilePage mpage = page.ToPage();
+
                 if (mpage != null && mpage.Container is EbMobileForm)
                 {
                     if (string.IsNullOrEmpty((mpage.Container as EbMobileForm).WebFormRefId))
                         continue;
                     if (mpage.NetworkMode == NetworkMode.Offline || mpage.NetworkMode == NetworkMode.Mixed)
                     {
-                        ls.Add(mpage.Container as EbMobileForm);
+                        ls.Add((EbMobileForm)mpage.Container);
                     }
                 }
             }

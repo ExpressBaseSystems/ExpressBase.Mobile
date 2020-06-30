@@ -205,7 +205,6 @@ namespace ExpressBase.Mobile.Helpers
                 App.Settings.CurrentApplication = null;
 
                 //remove objects info
-                Store.RemoveJSON(AppConst.OBJ_COLLECTION);
                 Store.RemoveJSON(AppConst.WEBOBJ_COLLECTION);
 
                 //location info

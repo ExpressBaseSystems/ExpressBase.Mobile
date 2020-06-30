@@ -129,7 +129,15 @@
                             ItemSource="{Binding ObjectList}"
                             ItemTaped="{Binding MenuItemTappedCommand}">
                         </control:Menu>
-                        
+
+                        <StackLayout 
+                            x:Name="EmptyMessage"
+                            Margin="0,20,0,0"
+                            IsVisible="False">
+                            <Image Source="mt.png" HeightRequest="50"></Image>
+                            <Label Text="Empty..." HorizontalTextAlignment="Center"></Label>
+                        </StackLayout>
+
                     </StackLayout>
                 </ScrollView>
             </RefreshView>
@@ -154,6 +162,7 @@
                 Message="Do you want to logout?"
                 ConfirmClicked="{Binding LogoutCommand}">
             </control:ConfirmBox>
+            
         </Grid>
     </ContentPage.Content>
 </ContentPage>

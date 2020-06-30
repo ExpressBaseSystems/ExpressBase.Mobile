@@ -1,6 +1,4 @@
-﻿using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.ViewModels;
+﻿using ExpressBase.Mobile.ViewModels;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -12,12 +10,12 @@ namespace ExpressBase.Mobile.Views
     {
         private bool isRendered;
 
-        private readonly LoginViewModel ViewModel;
+        private readonly LoginViewModel viewModel;
 
         public Login()
         {
             InitializeComponent();
-            BindingContext = ViewModel = new LoginViewModel();
+            BindingContext = viewModel = new LoginViewModel();
         }
 
         protected override async void OnAppearing()
@@ -28,7 +26,7 @@ namespace ExpressBase.Mobile.Views
 
             if (!isRendered)
             {
-                await ViewModel.InitializeAsync();
+                await viewModel.InitializeAsync();
                 isRendered = true;
             }
         }

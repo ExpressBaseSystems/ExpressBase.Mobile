@@ -131,31 +131,16 @@
                         </StackLayout>
                     </ScrollView>
                 </RefreshView>
+
                 <StackLayout 
-                    x:Name="LocSwitchOverlay"
+                    x:Name="EmptyMessage"
                     IsVisible="False"
                     Grid.Row="2"
-                    BackgroundColor="White">
-                    <StackLayout 
-                        Padding="20"
-                        VerticalOptions="CenterAndExpand" 
-                        BackgroundColor="White">
-                        <Label Text="No application in the current location, You may switch the location."
-                               HorizontalTextAlignment="Center"
-                               LineHeight="1.5"
-                               FontSize="15"
-                               FontFamily="{StaticResource Roboto-Regular}"/>
-                        <Button 
-                            HorizontalOptions="Center"
-                            TextColor="White"
-                            CornerRadius="6"
-                            HeightRequest="40"
-                            Margin="0,20"
-                            BackgroundColor="{StaticResource Blue-Dark}"
-                            Text="Switch Location"
-                            Clicked="LocSwitch_Clicked"/>
-                    </StackLayout>
+                    VerticalOptions="Center">
+                    <Image Source="mt.png" HeightRequest="70"></Image>
+                    <Label Text="Applications empty..." HorizontalTextAlignment="Center"></Label>
                 </StackLayout>
+                
             </Grid>
 
             <control:LoaderIconed 

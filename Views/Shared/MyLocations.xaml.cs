@@ -15,25 +15,12 @@ namespace ExpressBase.Mobile.Views.Shared
     {
         public ObservableCollection<EbLocation> Locations { get; private set; }
 
-        private readonly MyApplications myApplicationsPage;
-
         private EbLocation selectedLocation;
 
         public MyLocations()
         {
             InitializeComponent();
 
-            this.SetLocations();
-            BindingContext = this;
-        }
-
-        public MyLocations(MyApplications appPage)
-        {
-            InitializeComponent();
-            NavigationPage.SetHasNavigationBar(this, true);
-            BackButton.IsVisible = true;
-
-            myApplicationsPage = appPage;
             this.SetLocations();
             BindingContext = this;
         }
@@ -76,14 +63,6 @@ namespace ExpressBase.Mobile.Views.Shared
             }
         }
 
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            if (myApplicationsPage != null)
-                myApplicationsPage.LocationPagePoped();
-        }
-
         private async void BackButton_Clicked(object sender, EventArgs e)
         {
             await Application.Current.MainPage.Navigation.PopModalAsync(true);
@@ -96,28 +75,21 @@ namespace ExpressBase.Mobile.Views.Shared
                 await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, selectedLocation);
                 App.Settings.CurrentLocation = selectedLocation;
 
-                if (myApplicationsPage == null)
+                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+
+                try
                 {
-                    Store.RemoveJSON(AppConst.OBJ_COLLECTION);
+                    IReadOnlyList<Page> stack = (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.NavigationStack;
 
-                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
-
-                    try
+                    if (stack.Any() && stack[0] is Home)
                     {
-                        IReadOnlyList<Page> stack = (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.NavigationStack;
-
-                        if (stack.Any() && stack[0] is Home)
-                        {
-                            (stack[0] as Home).Refresh();
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        EbLog.Write($"Location changed to {selectedLocation.LongName}, failed to update menu");
+                        (stack[0] as Home).Refresh();
                     }
                 }
-                else
-                    await Application.Current.MainPage.Navigation.PopModalAsync();
+                catch (Exception)
+                {
+                    EbLog.Write($"Location changed to {selectedLocation.LongName}, failed to update menu");
+                }
             }
         }
     }

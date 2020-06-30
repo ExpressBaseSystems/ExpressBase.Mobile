@@ -84,17 +84,18 @@ namespace ExpressBase.Mobile.Extensions
             return p;
         }
 
-        public static void AddRange<T>(this ObservableCollection<T> observable, IEnumerable<T> enumerable)
+        public static void AddRange<T>(this ICollection<T> collection, ICollection<T> enumerable)
         {
-            try
+            foreach (T item in enumerable)
             {
-                foreach (T item in enumerable)
-                    observable.Add(item);
+                collection.Add(item);
             }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
+        }
+
+        public static void Update<T>(this ICollection<T> list, ICollection<T> newlist)
+        {
+            list.Clear();
+            list.AddRange(newlist);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace ExpressBase.Mobile.ViewModels
     public class BaseViewModel : INotifyPropertyChanged, IDisposable
     {
         private string _pageTitle;
+
         public string PageTitle
         {
             get { return this._pageTitle; }
@@ -25,6 +26,7 @@ namespace ExpressBase.Mobile.ViewModels
         }
 
         private bool _isBusy;
+
         public bool IsBusy
         {
             get { return this._isBusy; }
@@ -85,6 +87,11 @@ namespace ExpressBase.Mobile.ViewModels
         public virtual void RefreshPage() { }
 
         public virtual Task InitializeAsync()
+        {
+            return Task.FromResult(false);
+        }
+
+        public virtual Task UpdateAsync()
         {
             return Task.FromResult(false);
         }

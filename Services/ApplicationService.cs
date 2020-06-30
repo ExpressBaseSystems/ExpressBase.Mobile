@@ -2,14 +2,9 @@
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
@@ -17,54 +12,36 @@ namespace ExpressBase.Mobile.Services
     public interface IApplicationService
     {
         Task<ObservableCollection<AppData>> GetDataAsync();
+
+        Task UpdateDataAsync(ObservableCollection<AppData> collection);
     }
 
     public class ApplicationService : IApplicationService
     {
         public async Task<ObservableCollection<AppData>> GetDataAsync()
         {
-            List<AppData> applications = null;
+            await Task.Delay(1);
+
+            List<AppData> applications = Utils.Applications;
+            return applications?.ToObservableCollection();
+        }
+
+        public async Task UpdateDataAsync(ObservableCollection<AppData> collection)
+        {
             try
             {
-                applications = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
+                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(false);
 
-                if (applications == null || applications.Count <= 0)
+                if (data != null)
                 {
-                    applications = await this.GetAppCollections(App.Settings.CurrentLocId);
-                    applications.OrderBy(x => x.AppName);
-                    await Store.SetJSONAsync(AppConst.APP_COLLECTION, applications);
+                    ObservableCollection<AppData> obs_collection = data.Applications.ToObservableCollection();
+                    collection.Update(obs_collection);
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Write("Failed to get solution data :: " + ex.Message);
             }
-            return applications.ToObservableCollection();
-        }
-
-        private async Task<List<AppData>> GetAppCollections(int locid)
-        {
-            List<AppData> _Apps = null;
-            try
-            {
-                RestClient client = new RestClient(App.Settings.RootUrl);
-
-                RestRequest request = new RestRequest("api/menu", Method.GET);
-                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
-                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
-
-                request.AddParameter("locid", locid);
-
-                var response = await client.ExecuteAsync(request);
-                if (response.StatusCode == HttpStatusCode.OK)
-                    _Apps = JsonConvert.DeserializeObject<AppCollection>(response.Content).Applications;
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-                _Apps = new List<AppData>();
-            }
-            return _Apps;
         }
     }
 }

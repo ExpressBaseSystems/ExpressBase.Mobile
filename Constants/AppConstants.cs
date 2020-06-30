@@ -20,8 +20,6 @@ namespace ExpressBase.Mobile.Constants
 
         public const string CURRENT_APP = "current_app";
 
-        public const string OBJ_COLLECTION = "obj_collection";
-
         public const string WEBOBJ_COLLECTION = "webobj_collection";
 
         public const string USER_OBJECT = "eb_userobject";

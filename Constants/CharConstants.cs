@@ -9,5 +9,9 @@ namespace ExpressBase.Mobile.Constants
         public const char DOT = '.';
 
         public const char UNDERSCORE = '_';
+
+        public const char DASH = '-';
+
+        public const char COLON = ':';
     }
 }

@@ -14,7 +14,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Text="Login" Grid.Column="0" FontSize="16" TextColor="White" VerticalOptions="Center"/>
+            <Label Text="Login" Grid.Column="0" FontSize="18" TextColor="White" VerticalOptions="Center"/>
             <Button Text="&#xf013;" Style="{StaticResource ToolBarButtonStyle}" Grid.Column="1" Command="{Binding ResetConfig}"/>
         </Grid>
     </NavigationPage.TitleView>

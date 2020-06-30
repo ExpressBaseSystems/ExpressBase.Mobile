@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -7,6 +6,7 @@ using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -28,7 +28,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public Command AppSelectedCommand => new Command(async (obj) => await ItemSelected(obj));
+        public Command AppSelectedCommand => new Command(async (obj) => await AppSelected(obj));
 
         public MyApplicationsViewModel()
         {
@@ -40,42 +40,45 @@ namespace ExpressBase.Mobile.ViewModels
             Applications = await applicationService.GetDataAsync();
         }
 
-        public async Task Refresh()
+        public override async Task UpdateAsync()
         {
-            ObservableCollection<AppData> apps = await applicationService.GetDataAsync();
-            Applications.Clear();
-            Applications.AddRange(apps);
+            await applicationService.UpdateDataAsync(this.Applications);
         }
 
-        public async Task ItemSelected(object selected)
+        public async Task AppSelected(object selected)
         {
             try
             {
                 AppData apData = (AppData)selected;
 
-                if (App.Settings.AppId != apData.AppId)
+                if (IsCurrent(apData.AppId))
                 {
-                    Store.RemoveJSON(AppConst.OBJ_COLLECTION);
-
-                    if (!Utils.HasInternet)
-                    {
-                        DependencyService.Get<IToast>().Show("Not connected to internet!");
-                        return;
-                    }
-
-                    await Store.SetJSONAsync(AppConst.CURRENT_APP, apData);
-                    App.Settings.CurrentApplication = apData;
-
-                    App.RootMaster = new RootMaster(typeof(Views.Home));
-                    Application.Current.MainPage = App.RootMaster;
+                    await App.RootMaster.Detail.Navigation.PopAsync(true);
                 }
                 else
-                    await App.RootMaster.Detail.Navigation.PopAsync(true);
+                {
+                    await Store.SetJSONAsync(AppConst.CURRENT_APP, apData);
+                    App.Settings.CurrentApplication = apData;
+                    App.Settings.MobilePages = apData.MobilePages;
+
+                    App.RootMaster = new RootMaster(typeof(Home));
+                    Application.Current.MainPage = App.RootMaster;
+                }
             }
             catch (Exception ex)
             {
-                EbLog.Write("AppSelect_ItemSelected---" + ex.Message);
+                EbLog.Write("Failed to switch application :: " + ex.Message);
             }
+        }
+
+        private bool IsCurrent(int id)
+        {
+            return (App.Settings.AppId == id);
+        }
+
+        public bool IsEmpty()
+        {
+            return !Applications.Any();
         }
     }
 }

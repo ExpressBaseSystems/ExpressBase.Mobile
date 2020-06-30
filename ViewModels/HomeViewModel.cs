@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -7,6 +8,7 @@ using ExpressBase.Mobile.Views;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -42,62 +44,24 @@ namespace ExpressBase.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            try
-            {
-                MobilePageCollection collection = await menuServices.GetDataAsync();
-
-                if (collection != null)
-                {
-                    ObjectList = collection.Pages;
-
-                    await Task.Run(async () =>
-                    {
-                        await menuServices.DeployFormTables(collection.Pages);
-                        await CommonServices.Instance.LoadLocalData(collection.Data);
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
+            ObjectList = menuServices.GetDataAsync();
+            await menuServices.DeployFormTables(ObjectList);
         }
 
-        public async Task Refresh()
+        public override async Task UpdateAsync()
         {
-            try
-            {
-                MobilePageCollection collection = await menuServices.GetDataAsync();
-
-                if (collection != null)
-                {
-                    ObjectList.Clear();
-                    ObjectList.AddRange(collection.Pages);
-
-                    await Task.Run(async () =>
-                    {
-                        await menuServices.DeployFormTables(collection.Pages);
-                        await CommonServices.Instance.LoadLocalData(collection.Data);
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
+            await menuServices.UpdateDataAsync(ObjectList);
         }
 
         private async Task SyncButtonEvent()
         {
             try
             {
-                IToast toast = DependencyService.Get<IToast>();
                 if (!Utils.HasInternet)
                 {
-                    toast.Show("You are not connected to internet !");
+                    Utils.Alert_NoInternet();
                     return;
                 }
-
                 await Task.Run(async () =>
                 {
                     Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
@@ -109,21 +73,21 @@ namespace ExpressBase.Mobile.ViewModels
                     Device.BeginInvokeOnMainThread(() =>
                     {
                         IsBusy = false;
-                        toast.Show(response.Message);
+                        DependencyService.Get<IToast>().Show(response.Message);
                     });
                 });
             }
             catch (Exception ex)
             {
-                EbLog.Write("ObjectRender_OnSyncClick" + ex.Message);
+                EbLog.Write("Failed to sync::" + ex.Message);
             }
         }
 
-        private bool IsTapped;
+        private bool isTapped;
 
         private async Task ItemTapedEvent(object obj)
         {
-            if (IsTapped) return;
+            if (isTapped) return;
 
             MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
 
@@ -132,18 +96,18 @@ namespace ExpressBase.Mobile.ViewModels
                 EbMobilePage page = HelperFunctions.GetPage(item.RefId);
                 if (page == null) return;
 
-                IsTapped = true;
+                isTapped = true;
 
                 ContentPage renderer = this.GetPageByContainer(page);
                 if (renderer != null)
                     await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
 
-                IsTapped = false;
+                isTapped = false;
             }
             catch (Exception ex)
             {
-                IsTapped = false;
-                EbLog.Write("ObjectRender_ObjFrame_Clicked" + ex.Message);
+                isTapped = false;
+                EbLog.Write("Failed to open page ::" + ex.Message);
             }
         }
 
@@ -184,16 +148,27 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 if (!Utils.HasInternet)
                 {
-                    DependencyService.Get<IToast>().Show("You are not connected to internet.");
+                    Utils.Alert_NoInternet();
                     return;
                 }
-
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new MyActions());
             }
             catch (Exception ex)
             {
                 EbLog.Write(ex.Message);
             }
+        }
+
+        public async Task LocationSwitched()
+        {
+            List<MobilePagesWraper> objList = menuServices.GetDataAsync();
+            ObjectList.Update(objList);
+            await menuServices.DeployFormTables(objList);
+        }
+
+        public bool IsEmpty()
+        {
+            return !ObjectList.Any();
         }
     }
 }

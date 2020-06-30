@@ -1,7 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Extensions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 
@@ -67,7 +70,13 @@ namespace ExpressBase.Mobile.Models
 
         public List<int> LocationIds { get; }
 
-        public User() { }
+        public bool IsAdmin
+        {
+            get
+            {
+                return Roles.Contains("SolutionOwner") || Roles.Contains("SolutionAdmin");
+            }
+        }
 
         public bool HasEbSystemRole()
         {
@@ -76,7 +85,6 @@ namespace ExpressBase.Mobile.Models
                 if (this.Roles.Contains(role.ToString()))
                     return true;
             }
-
             return false;
         }
 
@@ -98,6 +106,31 @@ namespace ExpressBase.Mobile.Models
         public bool HasPermission(string permission)
         {
             return this.Permissions.Contains(permission);
+        }
+
+        public List<MobilePagesWraper> FilterByLocation()
+        {
+            var pages = App.Settings.MobilePages;
+
+            if (IsAdmin)
+            {
+                return new List<MobilePagesWraper>(pages);
+            }
+
+            List<int> objids = new List<int>();
+
+            foreach (string perm in Permissions)
+            {
+                int id = Convert.ToInt32(perm.Split(CharConstants.DASH)[2]);
+                int locid = Convert.ToInt32(perm.Split(CharConstants.COLON)[1]);
+
+                if (locid == App.Settings.CurrentLocId || locid == -1)
+                    objids.Add(id);
+            }
+
+            List<MobilePagesWraper> filtered = pages.Where(item => objids.Contains(item.RefId.ToObjId())).ToList();
+
+            return filtered ?? new List<MobilePagesWraper>();
         }
     }
 

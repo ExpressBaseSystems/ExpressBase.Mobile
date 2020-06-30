@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Constants;
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
@@ -19,6 +20,11 @@ namespace ExpressBase.Mobile.Extensions
                 strBuilder.Append(result[i].ToString("x2"));
             }
             return strBuilder.ToString();
+        }
+
+        public static int ToObjId(this string refid)
+        {
+            return Convert.ToInt32(refid.Split(CharConstants.DASH)[3]);
         }
     }
 }

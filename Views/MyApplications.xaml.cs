@@ -1,9 +1,7 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels;
-using ExpressBase.Mobile.Views.Shared;
 using System;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -46,12 +44,12 @@ namespace ExpressBase.Mobile.Views
 
                     if (!isInternal && viewModel.Applications.Count == 1)
                     {
-                        await viewModel.ItemSelected(viewModel.Applications[0]);
+                        await viewModel.AppSelected(viewModel.Applications[0]);
                     }
-
-                    this.ToggleLocationSwitcher();
                     isRendered = true;
                 }
+                
+                ToggleStatus();
                 Loader.IsVisible = false;
             }
             catch (Exception ex)
@@ -61,27 +59,26 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        private async void ApplicationsRefresh_Refreshing(object sender, System.EventArgs e)
+        private async void ApplicationsRefresh_Refreshing(object sender, EventArgs e)
         {
+            if (!Utils.HasInternet)
+            {
+                Utils.Alert_NoInternet();
+                return;
+            }
+
             try
             {
-                if (!Utils.HasInternet)
-                {
-                    DependencyService.Get<IToast>().Show("Not connected to internet!");
-                    return;
-                }
-                ApplicationsRefresh.IsRefreshing = true;
                 Store.RemoveJSON(AppConst.APP_COLLECTION);
-                await viewModel.Refresh();
-                ApplicationsRefresh.IsRefreshing = false;
-
-                ToggleLocationSwitcher();
+                await viewModel.UpdateAsync();
             }
             catch (Exception ex)
             {
-                ApplicationsRefresh.IsRefreshing = false;
-                EbLog.Write(ex.Message);
+                EbLog.Write("Failed to refresh applications" + ex.Message);
             }
+
+            ToggleStatus();
+            ApplicationsRefresh.IsRefreshing = false;
         }
 
         private void ResetButton_Clicked(object sender, EventArgs e)
@@ -89,40 +86,16 @@ namespace ExpressBase.Mobile.Views
             ConfimReset.Show();
         }
 
-        private async void LocSwitch_Clicked(object sender, EventArgs e)
+        private void ToggleStatus()
         {
-            var nav = new NavigationPage(new MyLocations(this))
+            if (viewModel.IsEmpty())
             {
-                BarBackgroundColor = Color.FromHex("0046bb"),
-                BarTextColor = Color.White
-            };
-
-            if (isInternal)
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushModalAsync(nav);
-            else
-                await Application.Current.MainPage.Navigation.PushModalAsync(nav);
-        }
-
-        public void LocationPagePoped()
-        {
-            try
-            {
-                Store.RemoveJSON(AppConst.APP_COLLECTION);
-                Task.Run(async () => await viewModel.Refresh());
-                ToggleLocationSwitcher();
+                EmptyMessage.IsVisible = true;
             }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
-        }
-
-        private void ToggleLocationSwitcher()
-        {
-            if (viewModel.Applications.Count <= 0)
-                LocSwitchOverlay.IsVisible = true;
             else
-                LocSwitchOverlay.IsVisible = false;
+            {
+                EmptyMessage.IsVisible = false;
+            }
         }
     }
 }

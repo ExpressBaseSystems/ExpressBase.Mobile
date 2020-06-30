@@ -1,6 +1,4 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using System;
@@ -14,7 +12,7 @@ namespace ExpressBase.Mobile.Views
     {
         private bool isRendered;
 
-        private int BackButtonCount;
+        private int backButtonCount;
 
         private readonly HomeViewModel viewModel;
 
@@ -38,6 +36,8 @@ namespace ExpressBase.Mobile.Views
                     await viewModel.InitializeAsync();
                     isRendered = true;
                 }
+
+                ToggleStatus();
                 IconedLoader.IsVisible = false;
             }
             catch (Exception ex)
@@ -49,11 +49,11 @@ namespace ExpressBase.Mobile.Views
 
         protected override bool OnBackButtonPressed()
         {
-            BackButtonCount++;
+            backButtonCount++;
 
-            if (BackButtonCount == 2)
+            if (backButtonCount == 2)
             {
-                BackButtonCount = 0;
+                backButtonCount = 0;
                 return false;
             }
             else
@@ -73,7 +73,7 @@ namespace ExpressBase.Mobile.Views
             {
                 if (!Utils.HasInternet)
                 {
-                    toast.Show("Not connected to Internet!");
+                    Utils.Alert_NoInternet();
                     RootRefreshView.IsRefreshing = false;
                     return;
                 }
@@ -82,10 +82,11 @@ namespace ExpressBase.Mobile.Views
                     await IdentityService.AuthIfTokenExpiredAsync();
 
                     IconedLoader.IsVisible = true;
-                    Store.RemoveJSON(AppConst.OBJ_COLLECTION);
+                    App.Settings.MobilePages = null;
 
-                    await viewModel.Refresh();
+                    await viewModel.UpdateAsync();
                     MenuView.Notify("ItemSource");
+                    ToggleStatus();
 
                     RootRefreshView.IsRefreshing = false;
                     IconedLoader.IsVisible = false;
@@ -110,9 +111,19 @@ namespace ExpressBase.Mobile.Views
             LogoutDialog.Show();
         }
 
-        public void Refresh()
+        public async void Refresh()
         {
-            RefreshView_Refreshing(null, null);
+            await viewModel.LocationSwitched();
+            MenuView.Notify("ItemSource");
+            ToggleStatus();
+        }
+
+        private void ToggleStatus()
+        {
+            if (viewModel.IsEmpty())
+                EmptyMessage.IsVisible = true;
+            else
+                EmptyMessage.IsVisible = false;
         }
     }
 }

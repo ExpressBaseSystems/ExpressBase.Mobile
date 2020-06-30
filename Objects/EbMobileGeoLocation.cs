@@ -114,15 +114,11 @@ namespace ExpressBase.Mobile
 
         private async void SetCordinates()
         {
-            cordinates = App.Settings.GeoCordinates;
-
-            if (cordinates == null)
+            cordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
+            if(cordinates != null)
             {
-                cordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
                 this.SetWebViewUrl(cordinates.Latitude, cordinates.Longitude);
             }
-            else
-                this.SetWebViewUrl(cordinates.Latitude, cordinates.Longitude);
         }
 
         private void SetWebViewUrl(double lat, double lon)

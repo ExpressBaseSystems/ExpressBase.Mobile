@@ -1,9 +1,12 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using Newtonsoft.Json;
+using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -55,18 +58,14 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
-        // Summary:
-        //     Gets the current loc object.
         public EbLocation CurrentLocation { set; get; }
 
-        // Summary:
-        //     Gets the current location id from current loc object.
+        public List<MobilePagesWraper> MobilePages { set; get; }
+
         public int CurrentLocId
         {
             get { return CurrentLocation.LocId; }
         }
-
-        public Location GeoCordinates { set; get; }
 
         public async Task Resolve()
         {
@@ -83,6 +82,11 @@ namespace ExpressBase.Mobile.Services
                 BToken = await GetBToken();
 
                 CurrentApplication = GetCurrentApplication();
+
+                if(CurrentApplication != null)
+                {
+                    MobilePages = CurrentApplication.MobilePages;
+                }
 
                 CurrentUser = GetUser();
                 CurrentLocation = GetCurrentLocation();
@@ -131,6 +135,53 @@ namespace ExpressBase.Mobile.Services
         private EbLocation GetCurrentLocation()
         {
             return Store.GetJSON<EbLocation>(AppConst.CURRENT_LOCOBJ);
+        }
+
+        public async Task<EbMobileSolutionData> GetSolutionDataAsync(bool export)
+        {
+            RestClient client = new RestClient(App.Settings.RootUrl);
+            RestRequest request = new RestRequest("api/get_solution_data", Method.GET);
+
+            request.AddParameter("export", export);
+            request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+            request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+            EbMobileSolutionData solData = null;
+            try
+            {
+                IRestResponse response = await client.ExecuteAsync(request);
+                if (response.IsSuccessful)
+                {
+                    solData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Error on get_solution_data request" + ex.Message);
+            }
+
+            if (solData != null)
+            {
+                if (export)
+                {
+                    EbDataSet offlineDs = solData.GetOfflineData();
+                    solData.ClearOfflineData();
+
+                    await Task.Run(async () =>
+                    {
+                        await CommonServices.Instance.LoadLocalData(offlineDs);
+                    });
+                }
+                
+                await Store.SetJSONAsync(AppConst.APP_COLLECTION, solData.Applications);
+
+                if(this.CurrentApplication != null)
+                {
+                    this.CurrentApplication = solData.Applications.Find(item => item.AppId == this.CurrentApplication.AppId);
+                    await Store.SetJSONAsync(AppConst.CURRENT_APP, this.CurrentApplication);
+                }
+            }
+            return solData;
         }
     }
 }

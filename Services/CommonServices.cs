@@ -1,14 +1,8 @@
 ﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Models;
-using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using ExpressBase.Mobile.Helpers;
 using System.Threading.Tasks;
-using System.Linq;
-using ExpressBase.Mobile.Enums;
 
 namespace ExpressBase.Mobile.Services
 {

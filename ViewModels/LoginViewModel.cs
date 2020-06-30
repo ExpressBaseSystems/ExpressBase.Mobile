@@ -4,7 +4,6 @@ using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -59,15 +58,9 @@ namespace ExpressBase.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            try
-            {
-                this.Email = App.Settings.CurrentSolution?.LastUser;
-                LogoUrl = await identityService.GetLogo(App.Settings.Sid);
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
+            this.Email = App.Settings.CurrentSolution?.LastUser;
+
+            LogoUrl = await identityService.GetLogo(App.Settings.Sid);
         }
 
         private async Task LoginAction()
@@ -94,20 +87,13 @@ namespace ExpressBase.Mobile.ViewModels
                         await identityService.UpdateAuthInfo(response, _username, password, true);
                         await identityService.UpdateLastUser(_username);
 
-                        ///<summary>
-                        ///update notification hub regid  in baground
-                        /// </summary>
+                        await App.Settings.GetSolutionDataAsync(true);
+
+                        ///update notification hub regid  in background
                         await NotificationService.Instance.UpdateNHRegisratation();
 
+                        await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
                         IsBusy = false;
-
-                        if (App.Settings.CurrentApplication == null)
-                            await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
-                        else
-                        {
-                            App.RootMaster = new RootMaster(typeof(Views.Home));
-                            Application.Current.MainPage = App.RootMaster;
-                        }
                     }
                     else
                     {

@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,9 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
 {
-    public class AppCollection
+    public interface IEbApiStatusCode
     {
-        public List<AppData> Applications { get; set; }
+        HttpStatusCode StatusCode { set; get; }
     }
 
     public class CustomColor
@@ -41,6 +42,37 @@ namespace ExpressBase.Mobile.Models
         }
     }
 
+    public class EbMobileSolutionData : IEbApiStatusCode
+    {
+        public List<AppData> Applications { set; get; }
+
+        public HttpStatusCode StatusCode { get; set; }
+
+        public EbDataSet GetOfflineData()
+        {
+            EbDataSet ds = new EbDataSet();
+            Applications?.ForEach(item =>
+            {
+                if (item.OfflineData != null)
+                    ds.Tables.AddRange(item.OfflineData.Tables);
+            });
+            return ds;
+        }
+
+        public void ClearOfflineData()
+        {
+            Applications?.ForEach(item =>
+            {
+                item.OfflineData = null;
+            });
+        }
+    }
+
+    public class AppCollection
+    {
+        public List<AppData> Applications { get; set; }
+    }
+
     public class AppData
     {
         public int AppId { set; get; }
@@ -50,6 +82,14 @@ namespace ExpressBase.Mobile.Models
         public string AppIcon { set; get; }
 
         public string Description { set; get; } = "No description";
+
+        public EbMobileSettings AppSettings { set; get; }
+
+        public List<MobilePagesWraper> MobilePages { set; get; }
+
+        public List<WebObjectsWraper> WebObjects { set; get; }
+
+        public EbDataSet OfflineData { set; get; }
 
         public string AppNotation
         {
@@ -349,31 +389,8 @@ namespace ExpressBase.Mobile.Models
         public string Version { set; get; }
     }
 
-    public class EbMobileSettings 
+    public class EbMobileSettings
     {
         public EbApiMeta MenuApi { set; get; }
     }
-
-    public class EbMobileSolutionData
-    {
-        public List<EbApplicationDataMobile> Applications { set; get; }
-
-        public EbDataSet OfflineData { set; get; }
-    }
-
-    public class EbApplicationDataMobile
-    {
-        public int AppId { set; get; }
-
-        public string AppName { set; get; }
-
-        public string AppIcon { set; get; }
-
-        public EbMobileSettings AppSettings { set; get; }
-
-        public List<MobilePagesWraper> MobilePages { set; get; }
-
-        public List<WebObjectsWraper> WebObjects { set; get; }
-    }
-
 }

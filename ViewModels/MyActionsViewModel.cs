@@ -61,7 +61,6 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 MyActionsResponse actionResp = await myActionService.GetMyActionsAsync();
-                Actions.Clear();
                 Actions.AddRange(actionResp.Actions);
                 SetPageTitle();
             }
