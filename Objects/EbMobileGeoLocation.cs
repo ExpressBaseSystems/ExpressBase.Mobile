@@ -89,6 +89,7 @@ namespace ExpressBase.Mobile
 
                 StackLayout Layout = new StackLayout
                 {
+                    Margin = new Thickness(-10,0),
                     BackgroundColor = Color.Transparent,
                     Children = { loader }
                 };
@@ -102,7 +103,6 @@ namespace ExpressBase.Mobile
             catch (Exception ex)
             {
                 EbLog.Write(ex.Message);
-                EbLog.Write(ex.StackTrace);
             }
         }
 
@@ -114,17 +114,31 @@ namespace ExpressBase.Mobile
 
         private async void SetCordinates()
         {
-            cordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
-            if(cordinates != null)
+            try
             {
-                this.SetWebViewUrl(cordinates.Latitude, cordinates.Longitude);
+                cordinates = await GeoLocation.Instance.GetCurrentGeoLocation();
+                if (cordinates != null)
+                {
+                    this.SetWebViewUrl(cordinates.Latitude, cordinates.Longitude);
+                }
+            }
+            catch(Exception ex)
+            {
+                EbLog.Write(ex.Message);
             }
         }
 
         private void SetWebViewUrl(double lat, double lon)
         {
-            string url = $"{App.Settings.RootUrl}/api/map?bToken={App.Settings.BToken}&rToken={App.Settings.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}";
-            this.webView.Source = new UrlWebViewSource { Url = url };
+            try
+            {
+                string url = $"{App.Settings.RootUrl}/api/map?bToken={App.Settings.BToken}&rToken={App.Settings.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}";
+                this.webView.Source = new UrlWebViewSource { Url = url };
+            }
+            catch(Exception ex)
+            {
+                EbLog.Write(ex.Message);
+            }
         }
 
         public override object GetValue()
@@ -147,7 +161,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write("EbMobileGeoLocation.GetValue" + ex.Message);
+                EbLog.Write("EbMobileGeoLocation.GetValue Failed :: " + ex.Message);
             }
             return null;
         }

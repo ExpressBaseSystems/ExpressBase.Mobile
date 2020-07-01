@@ -27,7 +27,7 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                var client = new RestClient(App.Settings.RootUrl);
+                RestClient client = new RestClient(App.Settings.RootUrl);
 
                 RestRequest request = new RestRequest("api/get_data", Method.GET);
                 request.AddParameter("refid", datasorce_ref);

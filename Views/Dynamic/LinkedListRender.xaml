@@ -12,12 +12,20 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+            <Label Text="{Binding PageTitle}" VerticalOptions="Center" LineBreakMode="TailTruncation" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+            <Button 
+                Text="&#xf0b2;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="1"
+                Clicked="FullScreenButton_Clicked">
+            </Button>
             <Button 
                 Text="&#xf002;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1"/>
+                Grid.Column="2">
+            </Button>
         </Grid>
     </NavigationPage.TitleView>
 
@@ -30,7 +38,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 
-                <Grid Grid.Row="0" BackgroundColor="{StaticResource Blue-Dark}">
+                <Grid x:Name="HeaderView" Grid.Row="0" BackgroundColor="{StaticResource Blue-Dark}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*" />
@@ -129,6 +137,16 @@
                         </StackLayout>
                     </ScrollView>
                 </RefreshView>
+
+                <StackLayout 
+                    Grid.Row="2"
+                    x:Name="EmptyMessage"
+                    IsVisible="False"
+                    VerticalOptions="Center">
+                    <Image Source="mt.png" HeightRequest="70"></Image>
+                    <Label Text="Empty list..." HorizontalTextAlignment="Center"></Label>
+                </StackLayout>
+
                 <Button
                     x:Name="AddLinkData"
                     Grid.Row="2"
@@ -151,6 +169,7 @@
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
             </control:LoaderIconed>
+            
         </Grid>
     </ContentPage.Content>
 </ContentPage>

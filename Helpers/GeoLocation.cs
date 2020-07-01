@@ -12,17 +12,12 @@ namespace ExpressBase.Mobile.Helpers
 
         public static GeoLocation Instance => instance ?? (instance = new GeoLocation());
 
-        private GeoLocation()
-        {
-
-        }
-
         public async Task<Location> GetCurrentGeoLocation()
         {
             Location _loc = null;
             try
             {
-                _loc = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10)));
+                _loc = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
 
                 if (_loc != null)
                 {
@@ -69,6 +64,8 @@ namespace ExpressBase.Mobile.Helpers
         private void AlertExeptionMessage(Exception _Exception)
         {
             IToast toast = DependencyService.Get<IToast>();
+
+            EbLog.Write(_Exception.Message);
 
             if (_Exception is FeatureNotSupportedException)
                 toast.Show("Feature not supproted");

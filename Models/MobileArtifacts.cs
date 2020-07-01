@@ -404,4 +404,9 @@ namespace ExpressBase.Mobile.Models
             }
         }
     }
+
+    public class MenuPreloadResponse : ApiResponse
+    {
+       public List<string> Result { set; get; }
+    }
 }

@@ -107,13 +107,24 @@
                 NetWorkType="{Binding NetworkType}"
                 SortColumns="{Binding SortColumns}"
                 ConfirmClicked="{Binding ApplyFilterCommand}"
-                FilterControls="{Binding FilterControls}"/>
+                FilterControls="{Binding FilterControls}">
+            </control:FilterView>
 
             <control:LoaderIconed 
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"/>
+                AbsoluteLayout.LayoutFlags="All">
+            </control:LoaderIconed>
+
+            <StackLayout 
+                x:Name="EmptyMessage"
+                IsVisible="False"
+                VerticalOptions="Center">
+                <Image Source="mt.png" HeightRequest="70"></Image>
+                <Label Text="Empty list..." HorizontalTextAlignment="Center"></Label>
+            </StackLayout>
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

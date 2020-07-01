@@ -1,0 +1,44 @@
+{
+  "Vendors": {
+    "ExpressBase": {
+      "HasOfflineFeature": true,
+      "HasActions": true,
+      "HasAppSwitcher": true,
+      "HasLocationswitcher": true,
+      "HasSolutionSwitcher": true,
+      "Logo": "Icon.png",
+      "AllowMenuRefresh": true,
+      "PoweredBy": "Powered by EXPRESSbase",
+      "Content": {
+        "NewSolution": {
+          "WallLabel": "Add new Solution",
+          "TextBoxPlaceHolder": "Enter solution URL"
+        },
+        "MySolutions": {
+          "Title": "Solution Switcher",
+          "AddButton": "Add Solution"
+        }
+      }
+    },
+    "MoveOn": {
+      "HasOfflineFeature": false,
+      "HasActions": false,
+      "HasAppSwitcher": false,
+      "HasLocationswitcher": false,
+      "HasSolutionSwitcher": true,
+      "Logo": "Icon.png",
+      "AllowMenuRefresh": false,
+      "PoweredBy": "Powered by EXPRESSbase",
+      "Content": {
+        "NewSolution": {
+          "WallLabel": "Add new Hotel",
+          "TextBoxPlaceHolder": "Enter Hotel Name"
+        },
+        "MySolutions": {
+          "Title": "Switch Hotel",
+          "AddButton": "Add Hotel"
+        }
+      }
+    }
+  }
+}

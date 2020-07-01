@@ -59,6 +59,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 if (viewModel.DataTable.Rows.Any())
                 {
+                    EmptyMessage.IsVisible = false;
+
                     foreach (EbDataRow row in viewModel.DataTable.Rows)
                     {
                         CustomFrame CustFrame = new CustomFrame(row, viewModel.Visualization);
@@ -76,12 +78,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 }
                 else
                 {
-                    ListContainer.Children.Add(new Label
-                    {
-                        Text = "Empty list",
-                        VerticalOptions = LayoutOptions.CenterAndExpand,
-                        HorizontalTextAlignment = TextAlignment.Center
-                    });
+                    EmptyMessage.IsVisible = true;
                 }
                 this.UpdatePaginationBar();
             }
@@ -195,7 +192,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
             IToast toast = DependencyService.Get<IToast>();
             try
             {
-                ListViewRefresh.IsRefreshing = true;
                 this.offset = 0;
                 this.pageCount = 1;
                 await this.RefreshListView();
@@ -206,6 +202,19 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 ListViewRefresh.IsRefreshing = false;
                 EbLog.Write(ex.Message);
+            }
+        }
+
+        private void FullScreenButton_Clicked(object sender, EventArgs e)
+        {
+            bool flag = HeaderView.IsVisible;
+            if (flag)
+            {
+                HeaderView.IsVisible = false;
+            }
+            else
+            {
+                HeaderView.IsVisible = true;
             }
         }
     }

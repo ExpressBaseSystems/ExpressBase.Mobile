@@ -94,6 +94,7 @@ namespace ExpressBase.Mobile.Extensions
 
         public static void Update<T>(this ICollection<T> list, ICollection<T> newlist)
         {
+            if (newlist == null) return;
             list.Clear();
             list.AddRange(newlist);
         }

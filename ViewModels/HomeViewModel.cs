@@ -44,7 +44,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
-            ObjectList = menuServices.GetDataAsync();
+            ObjectList = await menuServices.GetDataAsync();
             await menuServices.DeployFormTables(ObjectList);
         }
 
@@ -161,7 +161,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public async Task LocationSwitched()
         {
-            List<MobilePagesWraper> objList = menuServices.GetDataAsync();
+            List<MobilePagesWraper> objList = await menuServices.GetDataAsync();
             ObjectList.Update(objList);
             await menuServices.DeployFormTables(objList);
         }

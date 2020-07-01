@@ -60,6 +60,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 if (viewModel.DataTable.Rows.Any())
                 {
+                    EmptyMessage.IsVisible = false;
+
                     foreach (EbDataRow row in viewModel.DataTable.Rows)
                     {
                         CustomFrame customFrame = new CustomFrame(row, viewModel.Visualization, false);
@@ -76,12 +78,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 }
                 else
                 {
-                    this.ListContainer.Children.Add(new Label
-                    {
-                        Text = "Empty list",
-                        VerticalOptions = LayoutOptions.CenterAndExpand,
-                        HorizontalTextAlignment = TextAlignment.Center
-                    });
+                    EmptyMessage.IsVisible = true;
                 }
                 this.UpdatePaginationBar();
             }

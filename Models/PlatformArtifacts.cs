@@ -392,5 +392,30 @@ namespace ExpressBase.Mobile.Models
     public class EbMobileSettings
     {
         public EbApiMeta MenuApi { set; get; }
+
+        public bool HasMenuPreloadApi
+        {
+            get { return (MenuApi != null); }
+        }
+    }
+
+    public class ApiMessage
+    {
+        public string Status { get; set; }
+
+        public string Description { get; set; }
+
+        public string ExecutedOn { set; get; }
+
+        public string ExecutionTime { set; get; }
+    }
+
+    public class ApiResponse
+    {
+        public string Name { set; get; }
+
+        public string Version { set; get; }
+
+        public ApiMessage Message { get; set; }
     }
 }

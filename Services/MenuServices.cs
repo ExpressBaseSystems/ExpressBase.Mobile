@@ -1,7 +1,10 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,20 +16,32 @@ namespace ExpressBase.Mobile.Services
     {
         Task<SyncResponse> Sync();
 
-        List<MobilePagesWraper> GetDataAsync();
+        Task<List<MobilePagesWraper>> GetDataAsync();
 
         Task UpdateDataAsync(List<MobilePagesWraper> collection);
 
         Task DeployFormTables(List<MobilePagesWraper> objlist);
+
+        Task<List<MobilePagesWraper>> GetFromMenuPreload(EbApiMeta apimeta);
     }
 
     public class MenuServices : IMenuServices
     {
-        public List<MobilePagesWraper> GetDataAsync()
+        public async Task<List<MobilePagesWraper>> GetDataAsync()
         {
             if (App.Settings.MobilePages != null)
             {
-                return App.Settings.CurrentUser.FilterByLocation();
+                EbMobileSettings settings = App.Settings.CurrentApplication.AppSettings;
+
+                if (settings != null && settings.HasMenuPreloadApi)
+                {
+                    if (Utils.HasInternet)
+                        return await GetFromMenuPreload(settings.MenuApi);
+                    else
+                        Utils.Alert_NoInternet();
+                }
+                else
+                    return App.Settings.CurrentUser.FilterByLocation();
             }
             return new List<MobilePagesWraper>();
         }
@@ -41,9 +56,16 @@ namespace ExpressBase.Mobile.Services
                 {
                     App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
 
-                    var filtered = App.Settings.CurrentUser.FilterByLocation();
-                    collection.Update(filtered);
+                    List<MobilePagesWraper> filtered = null;
 
+                    EbMobileSettings settings = App.Settings.CurrentApplication.AppSettings;
+
+                    if (settings != null && settings.HasMenuPreloadApi)
+                        filtered = await GetFromMenuPreload(settings.MenuApi);
+                    else
+                        filtered = App.Settings.CurrentUser.FilterByLocation();
+
+                    collection.Update(filtered);
                     await this.DeployFormTables(collection);
                 }
             }
@@ -51,6 +73,46 @@ namespace ExpressBase.Mobile.Services
             {
                 EbLog.Write("menu update failed");
             }
+        }
+
+        public async Task<List<MobilePagesWraper>> GetFromMenuPreload(EbApiMeta apimeta)
+        {
+            RestClient client = new RestClient(App.Settings.RootUrl);
+            RestRequest request = new RestRequest($"api/{apimeta.Name}/{apimeta.Version}", Method.GET);
+
+            request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+            request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+            MenuPreloadResponse resp = null;
+            try
+            {
+                IRestResponse response = await client.ExecuteAsync(request);
+                if (response.IsSuccessful)
+                {
+                    resp = JsonConvert.DeserializeObject<MenuPreloadResponse>(response.Content);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Error on menu preload api request :: " + ex.Message);
+            }
+
+            List<MobilePagesWraper> pages = new List<MobilePagesWraper>();
+
+            if (resp != null && resp.Result != null)
+            {
+                List<MobilePagesWraper> all = App.Settings.MobilePages ?? new List<MobilePagesWraper>();
+
+                foreach (MobilePagesWraper item in all)
+                {
+                    if (resp.Result.Contains(item.Name))
+                    {
+                        pages.Add(item);
+                    }
+                }
+            }
+
+            return pages;
         }
 
         public async Task DeployFormTables(List<MobilePagesWraper> objlist)
