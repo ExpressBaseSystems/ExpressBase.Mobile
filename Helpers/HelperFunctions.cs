@@ -91,6 +91,11 @@ namespace ExpressBase.Mobile.Helpers
             return retVal;
         }
 
+        public static void SetResourceValue(string keyName, object value)
+        {
+            Application.Current.Resources[keyName] = value;
+        }
+
         public static List<string> GetSqlParams(string sql)
         {
             List<string> Params = new List<string>();

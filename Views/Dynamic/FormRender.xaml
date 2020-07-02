@@ -49,7 +49,7 @@
                 CornerRadius="0"
                 HorizontalOptions="FillAndExpand"
                 VerticalOptions="EndAndExpand"
-                BackgroundColor="{StaticResource Blue-Dark}"
+                BackgroundColor="{DynamicResource Primary_Color}"
                 TextColor="White"
                 Command="{Binding SaveCommand}">
             </Button>

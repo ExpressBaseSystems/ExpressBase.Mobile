@@ -34,6 +34,7 @@
                 <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />
                 <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
                 <Setter Property="FontSize" Value="18" />
+                <Setter Property="LineBreakMode" Value="TailTruncation" />
             </Style>
 
             <!--  Common style for sidebar labels  -->

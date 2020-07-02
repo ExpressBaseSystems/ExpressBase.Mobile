@@ -105,9 +105,10 @@
                                 CornerRadius="6"
                                 VerticalOptions="EndAndExpand"
                                 HorizontalOptions="FillAndExpand"
-                                BackgroundColor="{StaticResource Blue-Dark}"
+                                BackgroundColor="{DynamicResource Primary_Color}"
                                 TextColor="White"
-                                Command="{Binding LoginCommand}"/>
+                                Command="{Binding LoginCommand}">
+                        </Button>
                     </Grid>
                 </StackLayout>
             </ScrollView>

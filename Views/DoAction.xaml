@@ -113,9 +113,10 @@
                     Text="Finish Review"
                     TextColor="White"
                     CornerRadius="0"
-                    BackgroundColor="{StaticResource Blue-Dark}"
+                    BackgroundColor="{DynamicResource Primary_Color}"
                     VerticalOptions="EndAndExpand"
-                    Command="{Binding SubmitCommand}"/>
+                    Command="{Binding SubmitCommand}">
+                </Button>
             </Grid>
             <control:Loader 
                 x:Name="Loader"

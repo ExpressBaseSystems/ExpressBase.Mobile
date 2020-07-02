@@ -37,8 +37,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                
-                <Grid x:Name="HeaderView" Grid.Row="0" BackgroundColor="{StaticResource Blue-Dark}">
+
+                <Grid x:Name="HeaderView" Grid.Row="0" BackgroundColor="{DynamicResource Primary_Color}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*" />
@@ -155,7 +155,7 @@
                     VerticalOptions="End"
                     HorizontalOptions="End"
                     TextColor="White"
-                    BackgroundColor="{StaticResource Blue-Dark}"
+                    BackgroundColor="{DynamicResource Primary_Color}"
                     HeightRequest="60"
                     WidthRequest="60"
                     CornerRadius="30"

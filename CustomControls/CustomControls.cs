@@ -4,6 +4,12 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
+    public interface IDynamicContent
+    {
+        Dictionary<string, string> PageContent { get; }
+
+        void SetContentFromConfig();
+    }
 
     public interface IEbCustomControl
     {

@@ -1,16 +1,20 @@
-﻿using ExpressBase.Mobile.ViewModels;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.ViewModels;
+using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class MySolutions : ContentPage
+    public partial class MySolutions : ContentPage, IDynamicContent
     {
         private bool isRendered;
 
         private readonly bool isMasterPage;
 
         private readonly MySolutionsViewModel viewModel;
+
+        public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.MySolutions;
 
         public MySolutions(bool ismaster = false)
         {
@@ -25,9 +29,16 @@ namespace ExpressBase.Mobile.Views
 
             if (!isRendered)
             {
+                SetContentFromConfig();
                 await viewModel.InitializeAsync();
                 isRendered = true;
             }
+        }
+
+        public void SetContentFromConfig()
+        {
+            TitleLabel.Text = PageContent["Title"];
+            AddSolutionLabel.Text = PageContent["AddButton"];
         }
 
         private async void NewSolution_Tapped(object sender, System.EventArgs e)

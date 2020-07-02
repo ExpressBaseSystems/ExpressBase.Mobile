@@ -17,14 +17,14 @@
                     <Grid Margin="-15,0,-15,-70">
                         <Image Source="connect.jpg"/>
                         <BoxView 
-                        Opacity=".9"
-                        Grid.Row="0"
-                        BackgroundColor="{StaticResource Blue-Dark}"/>
+                            Opacity=".9"
+                            Grid.Row="0"
+                            BackgroundColor="{DynamicResource Primary_Color}"/>
                         <StackLayout
                         VerticalOptions="CenterAndExpand"
                         Grid.Row="0">
                             <Label
-                                x:Name="BrandName"
+                                x:Name="WallLabel"
                                 Margin="20,20,0,10"
                                 FontFamily="{StaticResource Roboto-Regular}"
                                 HorizontalTextAlignment="Center"
@@ -56,7 +56,7 @@
                     <StackLayout VerticalOptions="CenterAndExpand">
                         <Frame
                             Margin="0,15"
-                            BackgroundColor="{StaticResource Blue-Dark}"
+                            BackgroundColor="{DynamicResource Primary_Color}"
                             HeightRequest="50"
                             CornerRadius="25"
                             Padding="0">
@@ -112,7 +112,7 @@
                                 </control:TextBox>
                                 <BoxView
                                     Grid.Column="1"
-                                    BackgroundColor="{StaticResource Blue-Dark}"
+                                    BackgroundColor="{DynamicResource Primary_Color}"
                                     HeightRequest="45"
                                     WidthRequest="45"
                                     CornerRadius="25">
@@ -124,8 +124,8 @@
                                     FontSize="16"
                                     Margin="0"
                                     Text="&#xf0c7;"
-                                    BackgroundColor="{StaticResource Blue-Dark}"
-                                    BorderColor="{StaticResource Blue-Dark}"
+                                    BackgroundColor="{DynamicResource Primary_Color}"
+                                    BorderColor="{DynamicResource Primary_Color}"
                                     TextColor="White"
                                     CornerRadius="28"
                                     HeightRequest="45"

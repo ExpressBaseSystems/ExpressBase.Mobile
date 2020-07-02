@@ -11,9 +11,16 @@ namespace ExpressBase.Mobile.Views.Shared
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SideBar : ContentPage
     {
+        public bool HasAppSwitcher => App.Settings.Vendor.HasAppSwitcher;
+
+        public bool HasSolutionSwitcher => App.Settings.Vendor.HasSolutionSwitcher;
+
+        public bool HasLocationSwitcher => App.Settings.Vendor.HasLocationswitcher;
+
         public SideBar()
         {
             InitializeComponent();
+            BindingContext = this;
 
             User _user = App.Settings.CurrentUser;
             UserName.Text = _user.FullName;

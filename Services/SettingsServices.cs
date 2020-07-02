@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -62,6 +63,8 @@ namespace ExpressBase.Mobile.Services
 
         public List<MobilePagesWraper> MobilePages { set; get; }
 
+        public AppVendor Vendor { set; get; }
+
         public int CurrentLocId
         {
             get { return CurrentLocation.LocId; }
@@ -83,7 +86,7 @@ namespace ExpressBase.Mobile.Services
 
                 CurrentApplication = GetCurrentApplication();
 
-                if(CurrentApplication != null)
+                if (CurrentApplication != null)
                 {
                     MobilePages = CurrentApplication.MobilePages;
                 }
@@ -95,6 +98,13 @@ namespace ExpressBase.Mobile.Services
             {
                 EbLog.Write(ex.Message);
             }
+        }
+
+        public void InitializeConfig()
+        {
+            Config conf = Config.PopulateData<Config>("Config.json");
+            Vendor = conf.Current;
+            HelperFunctions.SetResourceValue("Primary_Color", Vendor.GetPrimaryColor());
         }
 
         public void Reset()
@@ -172,10 +182,10 @@ namespace ExpressBase.Mobile.Services
                         await CommonServices.Instance.LoadLocalData(offlineDs);
                     });
                 }
-                
+
                 await Store.SetJSONAsync(AppConst.APP_COLLECTION, solData.Applications);
 
-                if(this.CurrentApplication != null)
+                if (this.CurrentApplication != null)
                 {
                     this.CurrentApplication = solData.Applications.Find(item => item.AppId == this.CurrentApplication.AppId);
                     await Store.SetJSONAsync(AppConst.CURRENT_APP, this.CurrentApplication);

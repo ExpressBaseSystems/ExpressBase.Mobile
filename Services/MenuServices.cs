@@ -7,8 +7,10 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -23,6 +25,8 @@ namespace ExpressBase.Mobile.Services
         Task DeployFormTables(List<MobilePagesWraper> objlist);
 
         Task<List<MobilePagesWraper>> GetFromMenuPreload(EbApiMeta apimeta);
+
+        Task<ImageSource> GetLogo(string sid);
     }
 
     public class MenuServices : IMenuServices
@@ -299,6 +303,25 @@ namespace ExpressBase.Mobile.Services
             {
                 dr[col.ColumnIndex] = liveId;
             }
+        }
+
+        public async Task<ImageSource> GetLogo(string sid)
+        {
+            try
+            {
+                await Task.Delay(1);
+
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+
+                var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
+                if (bytes != null)
+                    return ImageSource.FromStream(() => new MemoryStream(bytes));
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("GetLogo" + ex.Message);
+            }
+            return null;
         }
     }
 }

@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile.ViewModels
             
             Application.Current.MainPage = new NavigationPage(new MySolutions())
             {
-                BarBackgroundColor = Color.FromHex("0046bb"),
+                BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
                 BarTextColor = Color.White
             };
         }
@@ -74,7 +74,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 Application.Current.MainPage = new NavigationPage(new Login())
                 {
-                    BarBackgroundColor = Color.FromHex("0046bb"),
+                    BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
                     BarTextColor = Color.White
                 };
             }

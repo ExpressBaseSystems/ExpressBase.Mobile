@@ -26,11 +26,23 @@ namespace ExpressBase.Mobile
             Settings = new SettingsServices();
         }
 
+        protected override async void OnStart()
+        {
+            Settings.InitializeConfig();
+
+            await InitNavigation();
+
+            if (Settings.CurrentUser != null)
+            {
+                await NotificationService.Instance.UpdateNHRegisratation();
+            }
+        }
+
         private async Task InitNavigation()
         {
             MainPage = new NavigationPage
             {
-                BarBackgroundColor = Color.FromHex("0046bb"),
+                BarBackgroundColor = Settings.Vendor.GetPrimaryColor(),
                 BarTextColor = Color.White
             };
 
@@ -78,26 +90,6 @@ namespace ExpressBase.Mobile
                 else
                     await MainPage.Navigation.PushAsync(new Login());
             }
-        }
-
-        protected override async void OnStart()
-        {
-            await InitNavigation();
-
-            if (Settings.CurrentUser != null)
-            {
-                await NotificationService.Instance.UpdateNHRegisratation();
-            }
-        }
-
-        protected override void OnSleep()
-        {
-            // Handle when your app sleeps
-        }
-
-        protected override void OnResume()
-        {
-            // Handle when your app resumes
         }
     }
 }

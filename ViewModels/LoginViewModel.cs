@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
@@ -87,12 +88,12 @@ namespace ExpressBase.Mobile.ViewModels
                         await identityService.UpdateAuthInfo(response, _username, password, true);
                         await identityService.UpdateLastUser(_username);
 
-                        await App.Settings.GetSolutionDataAsync(true);
+                        EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true);
 
                         ///update notification hub regid  in background
                         await NotificationService.Instance.UpdateNHRegisratation();
 
-                        await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+                        await Navigate(data);
                         IsBusy = false;
                     }
                     else
@@ -107,6 +108,28 @@ namespace ExpressBase.Mobile.ViewModels
             catch (Exception ex)
             {
                 EbLog.Write("login clicked : " + ex.Message);
+            }
+        }
+
+        private async Task Navigate(EbMobileSolutionData data)
+        {
+            if (data != null && data.Applications != null)
+            {
+                if (data.Applications.Count == 1)
+                {
+                    AppData appdata = data.Applications[0];
+
+                    await Store.SetJSONAsync(AppConst.CURRENT_APP, appdata);
+                    App.Settings.CurrentApplication = appdata;
+                    App.Settings.MobilePages = appdata.MobilePages;
+
+                    App.RootMaster = new RootMaster(typeof(Home));
+                    Application.Current.MainPage = App.RootMaster;
+                }
+                else
+                {
+                    await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+                }
             }
         }
 

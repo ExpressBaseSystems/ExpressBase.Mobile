@@ -94,7 +94,7 @@
                         </Grid>
                     </StackLayout>
                     <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="0" Spacing="0">
-                        <Frame Style="{StaticResource SideBarFrame}">
+                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasSolutionSwitcher}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="ChangeSolution_Tapped"/>
                             </Frame.GestureRecognizers>
@@ -109,7 +109,7 @@
                                 <Label Grid.Column="1" Text="Switch Solution" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
-                        <Frame Style="{StaticResource SideBarFrame}">
+                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasAppSwitcher}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="ChangeApplication_Tapped"/>
                             </Frame.GestureRecognizers>
@@ -124,7 +124,7 @@
                                 <Label Grid.Column="1" Text="Switch Application" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
-                        <Frame Style="{StaticResource SideBarFrame}">
+                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasLocationSwitcher}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="ChangeLocation_Tapped"/>
                             </Frame.GestureRecognizers>

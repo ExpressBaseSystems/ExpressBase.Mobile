@@ -1,25 +1,27 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Shared;
-using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using ZXing;
 
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class NewSolution : ContentPage
+    public partial class NewSolution : ContentPage, IDynamicContent
     {
         private readonly NewSolutionViewModel viewModel;
 
         private ValidateSidResponse response;
 
         private readonly bool isMasterPage;
+
+        public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.NewSolution;
 
         public NewSolution(bool hasBackButton = false)
         {
@@ -32,6 +34,19 @@ namespace ExpressBase.Mobile.Views
             }
 
             BindingContext = viewModel = new NewSolutionViewModel();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            SetContentFromConfig();
+        }
+
+        public void SetContentFromConfig()
+        {
+            WallLabel.Text = PageContent["WallLabel"];
+            SolutionName.Placeholder = PageContent["TextBoxPlaceHolder"];
         }
 
         private void QrScannerCallback(SolutionQrMeta meta)

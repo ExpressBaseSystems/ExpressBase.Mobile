@@ -1,6 +1,7 @@
 {
   "Vendors": {
     "ExpressBase": {
+      "PrimaryColor": "0046bb",
       "HasOfflineFeature": true,
       "HasActions": true,
       "HasAppSwitcher": true,
@@ -21,11 +22,12 @@
       }
     },
     "MoveOn": {
+      "PrimaryColor": "068433",
       "HasOfflineFeature": false,
       "HasActions": false,
       "HasAppSwitcher": false,
       "HasLocationswitcher": false,
-      "HasSolutionSwitcher": true,
+      "HasSolutionSwitcher": false,
       "Logo": "Icon.png",
       "AllowMenuRefresh": false,
       "PoweredBy": "Powered by EXPRESSbase",

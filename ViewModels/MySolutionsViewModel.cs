@@ -66,7 +66,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 Application.Current.MainPage = new NavigationPage()
                 {
-                    BarBackgroundColor = Color.FromHex("0046bb"),
+                    BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
                     BarTextColor = Color.White
                 };
                 await Application.Current.MainPage.Navigation.PushAsync(new Login());

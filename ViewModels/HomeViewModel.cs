@@ -22,10 +22,22 @@ namespace ExpressBase.Mobile.ViewModels
 
         public List<MobilePagesWraper> ObjectList
         {
-            get { return _objectList; }
+            get => _objectList;
             set
             {
                 _objectList = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private ImageSource solutionlogo;
+
+        public ImageSource SolutionLogo
+        {
+            get => solutionlogo;
+            set
+            {
+                solutionlogo = value;
                 NotifyPropertyChanged();
             }
         }
@@ -45,6 +57,9 @@ namespace ExpressBase.Mobile.ViewModels
         public override async Task InitializeAsync()
         {
             ObjectList = await menuServices.GetDataAsync();
+
+            SolutionLogo = await menuServices.GetLogo(App.Settings.Sid);
+
             await menuServices.DeployFormTables(ObjectList);
         }
 

@@ -171,7 +171,7 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                return Selected ? Color.FromHex("0046bb") : Color.White;
+                return Selected ? App.Settings.Vendor.GetPrimaryColor() : Color.White;
             }
         }
 
@@ -179,7 +179,7 @@ namespace ExpressBase.Mobile.Models
         {
             get
             {
-                return Selected ? Color.FromHex("0046bb") : Color.FromHex("cccccc");
+                return Selected ? App.Settings.Vendor.GetPrimaryColor() : Color.FromHex("cccccc");
             }
         }
 
