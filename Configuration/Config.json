@@ -24,7 +24,7 @@
     "MoveOn": {
       "PrimaryColor": "068433",
       "HasOfflineFeature": false,
-      "HasActions": false,
+      "HasActions": true,
       "HasAppSwitcher": false,
       "HasLocationswitcher": false,
       "HasSolutionSwitcher": false,

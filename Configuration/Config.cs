@@ -1,9 +1,4 @@
-﻿using ExpressBase.Mobile.Helpers;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Configuration
@@ -45,35 +40,12 @@ namespace ExpressBase.Mobile.Configuration
 
     public class Config
     {
-        private const string vendor = "ExpressBase";
+        private const string vendor = "MoveOn";
 
         public const string StatusBarColor = "#068433";
 
         public Dictionary<string, AppVendor> Vendors { set; get; }
 
         public AppVendor Current => Vendors[vendor];
-
-        public static T PopulateData<T>(string fileName)
-        {
-            Assembly assembly = typeof(App).GetTypeInfo().Assembly;
-
-            T obj = default;
-            try
-            {
-                Stream stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Configuration.{fileName}");
-
-                using (var reader = new StreamReader(stream))
-                {
-                    string jsonString = reader.ReadToEnd();
-                    obj = JsonConvert.DeserializeObject<T>(jsonString);
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write("Failed to deserialize config" + ex.Message);
-            }
-
-            return obj;
-        }
     }
 }

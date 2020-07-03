@@ -46,6 +46,8 @@ namespace ExpressBase.Mobile.Models
     {
         public List<AppData> Applications { set; get; }
 
+        public List<EbLocation> Locations { get; set; }
+
         public HttpStatusCode StatusCode { get; set; }
 
         public EbDataSet GetOfflineData()

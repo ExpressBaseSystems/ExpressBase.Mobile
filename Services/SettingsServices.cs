@@ -17,47 +17,11 @@ namespace ExpressBase.Mobile.Services
 
         public User CurrentUser { set; get; }
 
-        public string Sid
-        {
-            get { return CurrentSolution?.SolutionName; }
-        }
-
-        public string RootUrl
-        {
-            get { return "https://" + CurrentSolution?.RootUrl; }
-        }
-
-        public string UserName
-        {
-            get { return CurrentUser?.Email; }
-        }
-
-        public string UserDisplayName
-        {
-            get { return CurrentUser?.FullName; }
-        }
-
-        public int UserId
-        {
-            get { return CurrentUser.UserId; }
-        }
-
         public string RToken { set; get; }
 
         public string BToken { set; get; }
 
         public AppData CurrentApplication { set; get; }
-
-        public int AppId
-        {
-            get
-            {
-                if (CurrentApplication != null)
-                    return CurrentApplication.AppId;
-                else
-                    return 0;
-            }
-        }
 
         public EbLocation CurrentLocation { set; get; }
 
@@ -65,12 +29,42 @@ namespace ExpressBase.Mobile.Services
 
         public AppVendor Vendor { set; get; }
 
-        public int CurrentLocId
+        public string Sid
         {
-            get { return CurrentLocation.LocId; }
+            get => CurrentSolution?.SolutionName;
         }
 
-        public async Task Resolve()
+        public string RootUrl
+        {
+            get => "https://" + CurrentSolution?.RootUrl;
+        }
+
+        public string UserName
+        {
+            get => CurrentUser?.Email;
+        }
+
+        public string UserDisplayName
+        {
+            get => CurrentUser?.FullName;
+        }
+
+        public int UserId
+        {
+            get => CurrentUser.UserId;
+        }
+
+        public int AppId
+        {
+            get => (CurrentApplication != null) ? CurrentApplication.AppId : 0;
+        }
+
+        public int CurrentLocId
+        {
+            get => CurrentLocation.LocId;
+        }
+
+        public async Task InitializeSettings()
         {
             try
             {
@@ -81,18 +75,18 @@ namespace ExpressBase.Mobile.Services
                     App.DataDB.SetDbPath(CurrentSolution.SolutionName);
                 }
 
-                RToken = await GetRToken();
-                BToken = await GetBToken();
+                RToken = await this.GetRToken();
+                BToken = await this.GetBToken();
 
-                CurrentApplication = GetCurrentApplication();
+                CurrentApplication = this.GetCurrentApplication();
 
                 if (CurrentApplication != null)
                 {
                     MobilePages = CurrentApplication.MobilePages;
                 }
 
-                CurrentUser = GetUser();
-                CurrentLocation = GetCurrentLocation();
+                CurrentUser = this.GetUser();
+                CurrentLocation = this.GetCurrentLocation();
             }
             catch (Exception ex)
             {
@@ -102,50 +96,27 @@ namespace ExpressBase.Mobile.Services
 
         public void InitializeConfig()
         {
-            Config conf = Config.PopulateData<Config>("Config.json");
+            Config conf = EbSerializers.DeserializeJsonFile<Config>("Configuration.Config.json");
             Vendor = conf.Current;
             HelperFunctions.SetResourceValue("Primary_Color", Vendor.GetPrimaryColor());
         }
 
         public void Reset()
         {
-            CurrentSolution = null;
-            CurrentUser = null;
-            RToken = null;
-            BToken = null;
-            CurrentApplication = null;
-            CurrentLocation = null;
+            CurrentSolution = null; CurrentUser = null; RToken = null; BToken = null; CurrentApplication = null; CurrentLocation = null;
         }
 
-        private SolutionInfo GetSolution()
-        {
-            return Store.GetJSON<SolutionInfo>(AppConst.SOLUTION_OBJ);
-        }
+        private SolutionInfo GetSolution() => Store.GetJSON<SolutionInfo>(AppConst.SOLUTION_OBJ);
 
-        private AppData GetCurrentApplication()
-        {
-            return Store.GetJSON<AppData>(AppConst.CURRENT_APP);
-        }
+        private AppData GetCurrentApplication() => Store.GetJSON<AppData>(AppConst.CURRENT_APP);
 
-        private async Task<string> GetRToken()
-        {
-            return await Store.GetValueAsync(AppConst.RTOKEN);
-        }
+        private async Task<string> GetRToken() => await Store.GetValueAsync(AppConst.RTOKEN);
 
-        private async Task<string> GetBToken()
-        {
-            return await Store.GetValueAsync(AppConst.BTOKEN);
-        }
+        private async Task<string> GetBToken() => await Store.GetValueAsync(AppConst.BTOKEN);
 
-        private User GetUser()
-        {
-            return Store.GetJSON<User>(AppConst.USER_OBJECT);
-        }
+        private User GetUser() => Store.GetJSON<User>(AppConst.USER_OBJECT);
 
-        private EbLocation GetCurrentLocation()
-        {
-            return Store.GetJSON<EbLocation>(AppConst.CURRENT_LOCOBJ);
-        }
+        private EbLocation GetCurrentLocation() => Store.GetJSON<EbLocation>(AppConst.CURRENT_LOCOBJ);
 
         public async Task<EbMobileSolutionData> GetSolutionDataAsync(bool export)
         {
@@ -184,6 +155,7 @@ namespace ExpressBase.Mobile.Services
                 }
 
                 await Store.SetJSONAsync(AppConst.APP_COLLECTION, solData.Applications);
+                await SetLocationInfo(solData.Locations);
 
                 if (this.CurrentApplication != null)
                 {
@@ -192,6 +164,27 @@ namespace ExpressBase.Mobile.Services
                 }
             }
             return solData;
+        }
+
+        private async Task SetLocationInfo(List<EbLocation> locations)
+        {
+            if (locations == null) return;
+
+            try
+            {
+                if (CurrentLocation == null)
+                {
+                    EbLocation loc = locations.Find(item => item.LocId == CurrentUser.Preference.DefaultLocation);
+                    await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, loc);
+                    App.Settings.CurrentLocation = loc;
+                }
+
+                await Store.SetJSONAsync(AppConst.USER_LOCATIONS, locations);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Failed to set location :: "+ex.Message);
+            }
         }
     }
 }

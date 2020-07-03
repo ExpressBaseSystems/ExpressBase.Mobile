@@ -112,11 +112,18 @@
                     </Grid>
                 </StackLayout>
             </ScrollView>
+
+            <control:TwoFAView
+                x:Name="TwoFAWindow"
+                IsVisible="False">
+            </control:TwoFAView>
+            
             <!--loader-->
             <control:LoaderIconed 
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"/>
+                AbsoluteLayout.LayoutFlags="All">
+            </control:LoaderIconed>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

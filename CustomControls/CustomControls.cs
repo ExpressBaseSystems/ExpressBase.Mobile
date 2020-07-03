@@ -22,6 +22,11 @@ namespace ExpressBase.Mobile.CustomControls
         Color BgColor { set; get; }
     }
 
+    public class HiddenEntry : Entry
+    {
+
+    }
+
     public class TextBox : Entry, IEbCustomControl
     {
         public int BorderThickness { set; get; } = 1;

@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.CustomControls.TwoFAView">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Style x:Key="DigitBG" TargetType="BoxView">
+                <Setter Property="BackgroundColor" Value="#ddd"></Setter>
+                <Setter Property="CornerRadius" Value="4"></Setter>
+            </Style>
+            <Style x:Key="DigitLabel" TargetType="Label">
+                <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
+                <Setter Property="HorizontalTextAlignment" Value="Center"></Setter>
+                <Setter Property="FontSize" Value="18"></Setter>
+                <Setter Property="FontFamily" Value="{StaticResource Roboto-Bold}"></Setter>
+                <Setter Property="TextColor" Value="#333"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ContentView.Content>
+        <Grid BackgroundColor="White">
+            <ScrollView>
+                <StackLayout
+                    Padding="30,0"
+                    VerticalOptions="Center">
+                    <Label 
+                        Text="OTP Verification"
+                        HorizontalTextAlignment="Center"
+                        FontSize="20"
+                        TextColor="#333"
+                        FontFamily="{StaticResource Roboto-Medium}">
+                    </Label>
+
+                    <Label 
+                    HorizontalTextAlignment="Center"
+                    Margin="0,10,0,20">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Enter the OTP sent to "></Span>
+                                <Span Text="**********" TextColor="#333"></Span>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <Grid 
+                        Margin="0,20"
+                        ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <BoxView Grid.Column="0" Style="{StaticResource DigitBG}" SizeChanged="DigitBV_SizeChanged"></BoxView>
+                        <Label Grid.Column="0" x:Name="L1" Style="{StaticResource DigitLabel}"></Label>
+
+                        <BoxView Grid.Column="1" Style="{StaticResource DigitBG}" SizeChanged="DigitBV_SizeChanged"></BoxView>
+                        <Label Grid.Column="1" x:Name="L2" Style="{StaticResource DigitLabel}"></Label>
+
+                        <BoxView Grid.Column="2" Style="{StaticResource DigitBG}" SizeChanged="DigitBV_SizeChanged"></BoxView>
+                        <Label Grid.Column="2" x:Name="L3" Style="{StaticResource DigitLabel}"></Label>
+
+                        <BoxView Grid.Column="3" Style="{StaticResource DigitBG}" SizeChanged="DigitBV_SizeChanged"></BoxView>
+                        <Label Grid.Column="3" x:Name="L4" Style="{StaticResource DigitLabel}"></Label>
+
+                        <BoxView Grid.Column="4" Style="{StaticResource DigitBG}" SizeChanged="DigitBV_SizeChanged"></BoxView>
+                        <Label Grid.Column="4" x:Name="L5" Style="{StaticResource DigitLabel}"></Label>
+
+                        <BoxView Grid.Column="5" Style="{StaticResource DigitBG}" SizeChanged="DigitBV_SizeChanged"></BoxView>
+                        <Label Grid.Column="5" x:Name="L6" Style="{StaticResource DigitLabel}"></Label>
+
+                        <customcontrols:HiddenEntry
+                            x:Name="OtpTextBox"
+                            Keyboard="Numeric"
+                            Grid.ColumnSpan="6"
+                            TextColor="Transparent"
+                            BackgroundColor="Transparent"
+                            TextChanged="OtpTextBox_TextChanged">
+                        </customcontrols:HiddenEntry>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label 
+                            Grid.Column="0"
+                            VerticalOptions="Center"
+                            Text="Dont receive the OTP ? ">
+                        </Label>
+                        <Button 
+                            Grid.Column="1"
+                            BackgroundColor="Transparent"
+                            Text="resend OTP"
+                            TextColor="Red">
+                        </Button>
+                    </Grid>
+
+                    <Button 
+                        Margin="0,20"
+                        Text="Verify"
+                        TextColor="White"
+                        CornerRadius="6"
+                        BackgroundColor="{DynamicResource Primary_Color}">
+                    </Button>
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

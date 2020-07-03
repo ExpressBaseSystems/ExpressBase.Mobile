@@ -46,7 +46,7 @@ namespace ExpressBase.Mobile
                 BarTextColor = Color.White
             };
 
-            await Settings.Resolve();
+            await Settings.InitializeSettings();
 
             if (Settings.Sid == null)
             {

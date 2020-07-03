@@ -1,11 +1,10 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Extensions;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using System.Net;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
@@ -26,7 +25,18 @@ namespace ExpressBase.Mobile.Models
 
         public byte[] DisplayPicture { set; get; }
 
-        public List<EbLocation> Locations { get; set; }
+        public bool Is2FEnabled { get; set; }
+
+        public string TwoFAToken { set; get; }
+
+        public bool TwoFAStatus { set; get; }
+    }
+
+    public class ApiTwoFactorResponse : IEbApiStatusCode
+    {
+        public bool IsValid { set; get; }
+
+        public HttpStatusCode StatusCode { get; set; }
     }
 
     public enum EbSystemRoles

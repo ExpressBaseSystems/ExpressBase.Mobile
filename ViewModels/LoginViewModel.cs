@@ -16,7 +16,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public string Email
         {
-            get { return this.email; }
+            get => this.email;
             set
             {
                 this.email = value;
@@ -28,7 +28,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public string PassWord
         {
-            get { return this.password; }
+            get => this.password;
             set
             {
                 this.password = value;
@@ -40,7 +40,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public ImageSource LogoUrl
         {
-            get { return logourl; }
+            get => logourl;
             set
             {
                 logourl = value;
@@ -85,7 +85,7 @@ namespace ExpressBase.Mobile.ViewModels
                     ApiAuthResponse response = await identityService.AuthenticateAsync(_username, _password);
                     if (response.IsValid)
                     {
-                        await identityService.UpdateAuthInfo(response, _username, password, true);
+                        await identityService.UpdateAuthInfo(response, _username, password);
                         await identityService.UpdateLastUser(_username);
 
                         EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true);

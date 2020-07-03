@@ -20,9 +20,11 @@ namespace ExpressBase.Mobile.Services
 
         Task<ImageSource> GetLogo(string sid);
 
-        Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password, bool update_loc = false);
+        Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password);
 
         Task UpdateLastUser(string username);
+
+        Task<ApiTwoFactorResponse> Verify2FA(ApiAuthResponse autheresp, string otp);
     }
 
     public class IdentityService : IIdentityService
@@ -61,6 +63,32 @@ namespace ExpressBase.Mobile.Services
             return resp;
         }
 
+        public async Task<ApiTwoFactorResponse> Verify2FA(ApiAuthResponse autheresp, string otp)
+        {
+            RestRequest request = new RestRequest("api/verify_2fa", Method.POST);
+
+            request.AddHeader(AppConst.BTOKEN, autheresp.BToken);
+            request.AddHeader(AppConst.RTOKEN, autheresp.RToken);
+
+            request.AddParameter("token", autheresp.TwoFAToken);
+            request.AddParameter("otp", otp);
+
+            try
+            {
+                var response = await Client.ExecuteAsync(request);
+                if (response.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<ApiTwoFactorResponse>(response.Content);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("2FA verification failed :: " + ex.Message);
+            }
+
+            return null;
+        }
+
         public async Task<ImageSource> GetLogo(string sid)
         {
             try
@@ -80,7 +108,7 @@ namespace ExpressBase.Mobile.Services
             return null;
         }
 
-        public async Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password, bool update_loc = false)
+        public async Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password)
         {
             try
             {
@@ -93,17 +121,7 @@ namespace ExpressBase.Mobile.Services
                 App.Settings.CurrentUser = resp.User;
 
                 await Store.SetValueAsync(AppConst.PASSWORD, password.Trim());
-
-                if (update_loc)
-                {
-                    EbLocation loc = resp.Locations.Find(item => item.LocId == resp.User.Preference.DefaultLocation);
-                    await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, loc);
-                    App.Settings.CurrentLocation = loc;
-                }
-
-                //json data
                 await Store.SetJSONAsync(AppConst.USER_OBJECT, resp.User);
-                await Store.SetJSONAsync(AppConst.USER_LOCATIONS, resp.Locations);
 
                 if (resp.DisplayPicture != null)
                 {

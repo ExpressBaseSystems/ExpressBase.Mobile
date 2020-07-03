@@ -1,6 +1,8 @@
 ﻿using ExpressBase.Mobile.Constants;
 using Newtonsoft.Json;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace ExpressBase.Mobile.Helpers
 {
@@ -38,8 +40,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception e)
             {
-                Console.WriteLine("============Json_Deserialize Exception : " + e.Message);
-
+                EbLog.Write("Exception at deserialize :: " + e.Message);
                 return null;
             }
         }
@@ -52,6 +53,28 @@ namespace ExpressBase.Mobile.Helpers
                 .Replace(RegexConstants.EB_OBJ, RegexConstants.EB_MOB)
                 .Replace(RegexConstants.EB_PARAM, RegexConstants.EB_MOB)
                 .Replace(RegexConstants.EB_COM, RegexConstants.EB_MOB);
+        }
+
+        public static T DeserializeJsonFile<T>(string rootPath)
+        {
+            Assembly assembly = typeof(App).GetTypeInfo().Assembly;
+
+            T obj = default;
+            try
+            {
+                Stream stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.{rootPath}");
+
+                using (var reader = new StreamReader(stream))
+                {
+                    string jsonString = reader.ReadToEnd();
+                    obj = JsonConvert.DeserializeObject<T>(jsonString);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Failed to deserialize Json file :: " + ex.Message);
+            }
+            return obj;
         }
     }
 }
