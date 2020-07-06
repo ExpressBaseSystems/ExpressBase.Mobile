@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
+             IsVisible="False"
              x:Class="ExpressBase.Mobile.CustomControls.TwoFAView">
 
     <ContentView.Resources>
@@ -37,18 +38,16 @@
                         TextColor="#333"
                         FontFamily="{StaticResource Roboto-Medium}">
                     </Label>
-
                     <Label 
-                    HorizontalTextAlignment="Center"
-                    Margin="0,10,0,20">
+                        HorizontalTextAlignment="Center"
+                        Margin="0,10,0,20">
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span Text="Enter the OTP sent to "></Span>
-                                <Span Text="**********" TextColor="#333"></Span>
+                                <Span x:Name="ToAddressLabel" Text="**********" TextColor="#333"></Span>
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
-
                     <Grid 
                         Margin="0,20"
                         ColumnSpacing="10">
@@ -103,7 +102,8 @@
                             Grid.Column="1"
                             BackgroundColor="Transparent"
                             Text="resend OTP"
-                            TextColor="Red">
+                            TextColor="Red"
+                            Clicked="ResendButoon_Clicked">
                         </Button>
                     </Grid>
 
@@ -112,7 +112,8 @@
                         Text="Verify"
                         TextColor="White"
                         CornerRadius="6"
-                        BackgroundColor="{DynamicResource Primary_Color}">
+                        BackgroundColor="{DynamicResource Primary_Color}"
+                        Clicked="OtpSubmit_Clicked">
                     </Button>
                 </StackLayout>
             </ScrollView>

@@ -1,21 +1,34 @@
-﻿using ExpressBase.Mobile.ViewModels;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels;
 using System;
+using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Login : ContentPage
+    public partial class Login : ContentPage, IDynamicContent
     {
         private bool isRendered;
 
         private readonly LoginViewModel viewModel;
 
+        public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.Login;
+
         public Login()
         {
             InitializeComponent();
             BindingContext = viewModel = new LoginViewModel();
+
+            SetContentFromConfig();
+            viewModel.Bind2FAToggleEvent(ShowTwoFAWindow);
+        }
+
+        public void SetContentFromConfig()
+        {
+            NewSolutionButton.Text = PageContent["NewSolutionButtonText"];
         }
 
         protected override async void OnAppearing()
@@ -57,6 +70,30 @@ namespace ExpressBase.Mobile.Views
         protected override bool OnBackButtonPressed()
         {
             return true;
+        }
+
+        public void ShowTwoFAWindow(ApiAuthResponse auth)
+        {
+            TwoFAWindow.SetAddress(auth.TwoFAToAddress);
+
+            TwoFAWindow.IsVisible = true;
+            TitleLabel.IsVisible = false;
+            RestButton.IsVisible = false;
+            BackButton.IsVisible = true;
+        }
+
+        private void BackButton_Clicked(object sender, EventArgs e)
+        {
+            TwoFAWindow.IsVisible = false;
+            BackButton.IsVisible = false;
+
+            TitleLabel.IsVisible = true;
+            RestButton.IsVisible = true;
+        }
+
+        private async void NewSolutionButton_Clicked(object sender, EventArgs e)
+        {
+            await Application.Current.MainPage.Navigation.PushAsync(new NewSolution(true));
         }
     }
 }

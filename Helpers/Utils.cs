@@ -22,7 +22,7 @@ namespace ExpressBase.Mobile.Helpers
         {
             get
             {
-                return Store.GetJSON<List<EbLocation>>(AppConst.USER_LOCATIONS);
+                return Store.GetJSON<List<EbLocation>>(AppConst.USER_LOCATIONS) ?? new List<EbLocation>();
             }
         }
 

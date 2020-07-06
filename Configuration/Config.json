@@ -18,6 +18,9 @@
         "MySolutions": {
           "Title": "Solution Switcher",
           "AddButton": "Add Solution"
+        },
+        "Login": {
+          "NewSolutionButtonText": "Add new Solution"
         }
       }
     },
@@ -26,7 +29,7 @@
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": false,
-      "HasLocationswitcher": false,
+      "HasLocationswitcher": true,
       "HasSolutionSwitcher": false,
       "Logo": "Icon.png",
       "AllowMenuRefresh": false,
@@ -39,6 +42,9 @@
         "MySolutions": {
           "Title": "Switch Hotel",
           "AddButton": "Add Hotel"
+        },
+        "Login": {
+          "NewSolutionButtonText": "Login to new Hotel"
         }
       }
     }

@@ -50,11 +50,24 @@ namespace ExpressBase.Mobile.ViewModels
 
         private readonly IIdentityService identityService;
 
+        private Action<ApiAuthResponse> toggle2FAW;
+
+        private ApiAuthResponse authResponse;
+
         public Command LoginCommand => new Command(async () => await LoginAction());
+
+        public Command SubmitOtpCommand => new Command(async (o) => await SubmitOtp(o));
+
+        public Command ResendOtpCommand => new Command(async () => await ResendOtp());
 
         public LoginViewModel()
         {
             identityService = IdentityService.Instance;
+        }
+
+        public void Bind2FAToggleEvent(Action<ApiAuthResponse> action)
+        {
+            toggle2FAW = action;
         }
 
         public override async Task InitializeAsync()
@@ -66,54 +79,114 @@ namespace ExpressBase.Mobile.ViewModels
 
         private async Task LoginAction()
         {
-            try
-            {
-                IToast toast = DependencyService.Get<IToast>();
+            IToast toast = DependencyService.Get<IToast>();
 
-                if (!Utils.HasInternet)
+            if (!Utils.HasInternet)
+            {
+                toast.Show("Not connected to internet!");
+                return;
+            }
+
+            string _username = this.Email.Trim();
+            string _password = this.PassWord.Trim();
+
+            if (this.CanLogin())
+            {
+                IsBusy = true;
+
+                try
                 {
-                    toast.Show("Not connected to internet!");
-                    return;
+                    authResponse = await identityService.AuthenticateAsync(_username, _password);
+                }
+                catch (Exception ex)
+                {
+                    authResponse = null;
+                    EbLog.Write("Authentication failed :: " + ex.Message);
                 }
 
-                string _username = this.Email.Trim();
-                string _password = this.PassWord.Trim();
-
-                if (this.CanLogin())
+                if (authResponse != null && authResponse.IsValid)
                 {
-                    IsBusy = true;
-                    ApiAuthResponse response = await identityService.AuthenticateAsync(_username, _password);
-                    if (response.IsValid)
-                    {
-                        await identityService.UpdateAuthInfo(response, _username, password);
-                        await identityService.UpdateLastUser(_username);
-
-                        EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true);
-
-                        ///update notification hub regid  in background
-                        await NotificationService.Instance.UpdateNHRegisratation();
-
-                        await Navigate(data);
-                        IsBusy = false;
-                    }
+                    if (authResponse.Is2FEnabled)
+                        toggle2FAW?.Invoke(authResponse);
                     else
-                    {
-                        IsBusy = false;
-                        toast.Show("wrong username or password.");
-                    }
+                        await AfterLoginSuccess(_username, _password);
                 }
                 else
-                    toast.Show("Email/Password cannot be empty");
+                    toast.Show("wrong username or password.");
+
+                IsBusy = false;
+            }
+            else
+                toast.Show("Email/Password cannot be empty");
+        }
+
+        private async Task AfterLoginSuccess(string username, string password)
+        {
+            try
+            {
+                await identityService.UpdateAuthInfo(authResponse, username, password);
+                await identityService.UpdateLastUser(username);
+
+                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true);
+
+                ///update notification hub regid  in background
+                await NotificationService.Instance.UpdateNHRegisratation();
+
+                if (data != null)
+                {
+                    await Navigate(data);
+                }
             }
             catch (Exception ex)
             {
-                EbLog.Write("login clicked : " + ex.Message);
+                EbLog.Write("Exception at after login :: " + ex.Message);
+            }
+        }
+
+        private async Task SubmitOtp(object o)
+        {
+            string otp = o.ToString();
+            ApiTwoFactorResponse resp = null;
+            IsBusy = true;
+
+            try
+            {
+                resp = await identityService.VerifyOrGenerate2FA(authResponse, otp, false);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Otp verification failed :: " + ex.Message);
+            }
+
+            IsBusy = false;
+            if (resp != null && resp.IsValid)
+                await AfterLoginSuccess(this.Email.Trim(), this.PassWord.Trim());
+            else
+                DependencyService.Get<IToast>().Show("The OTP is Invalid or Expired");
+        }
+
+        private async Task ResendOtp()
+        {
+            ApiTwoFactorResponse resp = null;
+
+            try
+            {
+                resp = await identityService.VerifyOrGenerate2FA(authResponse, string.Empty, true);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("failed to regenerate otp :: " + ex.Message);
+            }
+
+            if (resp != null && resp.IsValid)
+            {
+                DependencyService.Get<IToast>().Show("OTP sent");
             }
         }
 
         private async Task Navigate(EbMobileSolutionData data)
         {
-            if (data != null && data.Applications != null)
+            if (data.Applications != null)
             {
                 if (data.Applications.Count == 1)
                 {

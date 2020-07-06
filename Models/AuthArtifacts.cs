@@ -30,11 +30,15 @@ namespace ExpressBase.Mobile.Models
         public string TwoFAToken { set; get; }
 
         public bool TwoFAStatus { set; get; }
+
+        public string TwoFAToAddress { set; get; }
     }
 
     public class ApiTwoFactorResponse : IEbApiStatusCode
     {
         public bool IsValid { set; get; }
+
+        public bool IsVerification { set; get; }
 
         public HttpStatusCode StatusCode { get; set; }
     }

@@ -8,6 +8,8 @@ namespace ExpressBase.Mobile.Configuration
         public Dictionary<string, string> NewSolution { set; get; }
 
         public Dictionary<string, string> MySolutions { set; get; }
+
+        public Dictionary<string, string> Login { set; get; }
     }
 
     public class AppVendor

@@ -6,7 +6,7 @@
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Home"
-             BackgroundColor="White">
+             BackgroundColor="#dadada">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -14,7 +14,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}"/>
+            <Label Text="{Binding PageTitle}" Style="{StaticResource ToolBarLabelStyle}"/>
         </Grid>
     </NavigationPage.TitleView>
 
@@ -28,9 +28,7 @@
 
                         <Frame
                             Padding="10"
-                            Margin="15,10"
-                            CornerRadius="8"
-                            BackgroundColor="#ddf3f5"
+                            BackgroundColor="White"
                             HasShadow="True">
                             <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>
@@ -44,7 +42,7 @@
                                     WidthRequest="50"
                                     Padding="0"
                                     BackgroundColor="white"
-                                    BorderColor="#ddf3f0"
+                                    BorderColor="#cccccc"
                                     HasShadow="False"
                                     CornerRadius="30">
                                     <Image Source="{Binding SolutionLogo}"/>
@@ -74,7 +72,7 @@
                             </Grid>
                         </Frame>
 
-                        <Grid Padding="10,5" Margin="0" BackgroundColor="#f7f7f7">
+                        <Grid Padding="10,5" Margin="0" BackgroundColor="White">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="*"></RowDefinition>
@@ -144,6 +142,8 @@
                         
                         <control:Menu
                             x:Name="MenuView"
+                            BackgroundColor="White"
+                            VerticalOptions="FillAndExpand"
                             ItemSource="{Binding ObjectList}"
                             ItemTaped="{Binding MenuItemTappedCommand}">
                         </control:Menu>

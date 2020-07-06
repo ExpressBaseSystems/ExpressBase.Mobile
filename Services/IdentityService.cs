@@ -24,7 +24,7 @@ namespace ExpressBase.Mobile.Services
 
         Task UpdateLastUser(string username);
 
-        Task<ApiTwoFactorResponse> Verify2FA(ApiAuthResponse autheresp, string otp);
+        Task<ApiTwoFactorResponse> VerifyOrGenerate2FA(ApiAuthResponse autheresp, string otp, bool resendOtp);
     }
 
     public class IdentityService : IIdentityService
@@ -63,15 +63,16 @@ namespace ExpressBase.Mobile.Services
             return resp;
         }
 
-        public async Task<ApiTwoFactorResponse> Verify2FA(ApiAuthResponse autheresp, string otp)
+        public async Task<ApiTwoFactorResponse> VerifyOrGenerate2FA(ApiAuthResponse autheresp, string otp, bool resendOtp)
         {
-            RestRequest request = new RestRequest("api/verify_2fa", Method.POST);
+            RestRequest request = new RestRequest("api/verify_or_resend_otp", Method.POST);
 
             request.AddHeader(AppConst.BTOKEN, autheresp.BToken);
             request.AddHeader(AppConst.RTOKEN, autheresp.RToken);
 
             request.AddParameter("token", autheresp.TwoFAToken);
             request.AddParameter("otp", otp);
+            request.AddParameter("resend", resendOtp);
 
             try
             {
