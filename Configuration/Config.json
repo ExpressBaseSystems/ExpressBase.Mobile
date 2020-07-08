@@ -1,13 +1,14 @@
 {
   "Vendors": {
     "ExpressBase": {
+      "AllowNotifications": true,
       "PrimaryColor": "0046bb",
       "HasOfflineFeature": true,
       "HasActions": true,
       "HasAppSwitcher": true,
       "HasLocationswitcher": true,
       "HasSolutionSwitcher": true,
-      "Logo": "Icon.png",
+      "Logo": "icon_eb.png",
       "AllowMenuRefresh": true,
       "PoweredBy": "Powered by EXPRESSbase",
       "Content": {
@@ -20,18 +21,20 @@
           "AddButton": "Add Solution"
         },
         "Login": {
-          "NewSolutionButtonText": "Add new Solution"
+          "NewSolutionButtonText": "Add new Solution",
+          "LoginButtonText": "Login"
         }
       }
     },
     "MoveOn": {
-      "PrimaryColor": "068433",
+      "AllowNotifications": false,
+      "PrimaryColor": "283b97",
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": false,
       "HasLocationswitcher": true,
       "HasSolutionSwitcher": false,
-      "Logo": "Icon.png",
+      "Logo": "icon_mo.png",
       "AllowMenuRefresh": false,
       "PoweredBy": "Powered by EXPRESSbase",
       "Content": {
@@ -44,7 +47,8 @@
           "AddButton": "Add Hotel"
         },
         "Login": {
-          "NewSolutionButtonText": "Login to new Hotel"
+          "NewSolutionButtonText": "Check-In to another Hotel",
+          "LoginButtonText": "CHECK-IN"
         }
       }
     }

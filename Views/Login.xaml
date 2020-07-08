@@ -14,12 +14,6 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label 
-                x:Name="TitleLabel"
-                Text="Login" 
-                Grid.Column="0" 
-                Style="{StaticResource ToolBarLabelStyle}">
-            </Label>
             <Button
                 IsVisible="False"
                 x:Name="BackButton"
@@ -121,33 +115,42 @@
                             </StackLayout>
                         </StackLayout>
                         <!--  next button  -->
-                        <Button Grid.Row="3"
-                                Margin="0,15,0,0"
-                                Text="Login"
-                                CornerRadius="6"
-                                VerticalOptions="EndAndExpand"
-                                HorizontalOptions="FillAndExpand"
-                                BackgroundColor="{DynamicResource Primary_Color}"
-                                TextColor="White"
-                                Command="{Binding LoginCommand}">
+                        <Button 
+                            x:Name="SubmitButton"
+                            Grid.Row="3"
+                            Margin="0,15,0,0"
+                            Text="Login"
+                            CornerRadius="6"
+                            VerticalOptions="EndAndExpand"
+                            HorizontalOptions="FillAndExpand"
+                            BackgroundColor="{DynamicResource Primary_Color}"
+                            TextColor="White"
+                            Command="{Binding LoginCommand}">
                         </Button>
 
                         <Label
                             Margin="0,10"
                             Grid.Row="4"
                             Text="OR"
+                            TextColor="#ddd"
                             HorizontalTextAlignment="Center">
                         </Label>
 
+                        <Label 
+                            x:Name="LoginButtonLabel"
+                            Grid.Row="5"
+                            HorizontalTextAlignment="Center"
+                            FontFamily="{StaticResource Roboto-Medium}"
+                            FontSize="15"
+                            TextColor="{DynamicResource Primary_Color}">
+                        </Label>
                         <Button Grid.Row="5"
-                                x:Name="NewSolutionButton"
-                                Text="Add new Solution"
-                                CornerRadius="6"
-                                TextColor="{StaticResource Gray-900}"
+                                BackgroundColor="Transparent"
                                 VerticalOptions="EndAndExpand"
                                 HorizontalOptions="FillAndExpand"
                                 Clicked="NewSolutionButton_Clicked">
                         </Button>
+                       
 
                     </Grid>
                 </StackLayout>

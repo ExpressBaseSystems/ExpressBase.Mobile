@@ -1,14 +1,11 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.ViewModels;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views
 {
-    class RootMaster : MasterDetailPage
+    public class RootMaster : MasterDetailPage
     {
         public RootMaster(Type pageType)
         {

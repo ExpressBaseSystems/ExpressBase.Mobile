@@ -129,8 +129,11 @@ namespace ExpressBase.Mobile.ViewModels
 
                 EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true);
 
-                ///update notification hub regid  in background
-                await NotificationService.Instance.UpdateNHRegisratation();
+                if (App.Settings.Vendor.AllowNotifications)
+                {
+                    ///update notification hub regid  in background
+                    await NotificationService.Instance.UpdateNHRegisratation();
+                }
 
                 if (data != null)
                 {
@@ -208,7 +211,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         bool CanLogin()
         {
-            if ((string.IsNullOrEmpty(this.Email) || string.IsNullOrEmpty(this.PassWord)))
+            if (string.IsNullOrEmpty(this.Email) || string.IsNullOrEmpty(this.PassWord))
                 return false;
             return true;
         }

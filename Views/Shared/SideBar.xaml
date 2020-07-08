@@ -141,7 +141,7 @@
                         </Frame>
                     </StackLayout>
                     <StackLayout VerticalOptions="End" Padding="0" Spacing="0">
-                        <Frame Style="{StaticResource SideBarFrame}">
+                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="False">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer x:Name="Setup" Tapped="Setup_Tapped"/>
                             </Frame.GestureRecognizers>

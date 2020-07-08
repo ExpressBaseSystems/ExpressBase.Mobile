@@ -50,7 +50,7 @@
                         HasShadow="True"
                         CornerRadius="10">
                         <Image 
-                            Source="Icon.png">
+                            Source="{Binding Logo}">
                         </Image>
                     </Frame>
                     <StackLayout VerticalOptions="CenterAndExpand">
@@ -136,13 +136,13 @@
                             </Grid>
                         </Frame>
                     </StackLayout>
-                    <Label 
+                    <!--<Label 
                         TextColor="#a5a3a3"
                         Margin="0,5"
                         FontSize="13"
                         HorizontalTextAlignment="Center"
                         Text="Powered by EXPRESSbase">
-                    </Label>
+                    </Label>-->
                 </StackLayout>
             </ScrollView>
 

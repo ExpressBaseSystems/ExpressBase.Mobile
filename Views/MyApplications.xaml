@@ -44,7 +44,7 @@
                         </Label.FormattedText>
                     </Label>
                     <Label 
-                        Text="Default" 
+                        Text="Location1" 
                         x:Name="CurrentLocation"
                         LineBreakMode="TailTruncation"
                         TextColor="{StaticResource Eb-Blue2}"

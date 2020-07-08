@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
@@ -91,7 +92,14 @@ namespace ExpressBase.Mobile.Services
             try
             {
                 List<SolutionInfo> sol = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
-                sol.Add(info);
+
+                if(App.Settings.Vendor.HasSolutionSwitcher) 
+                    sol.Add(info);
+                else
+                {
+                    sol.Clear();
+                    sol.Add(info);
+                }
 
                 await Store.SetJSONAsync(AppConst.MYSOLUTIONS, sol);
                 await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, info);
@@ -151,6 +159,11 @@ namespace ExpressBase.Mobile.Services
 
         public bool IsSolutionExist(string url)
         {
+            if (!App.Settings.Vendor.HasSolutionSwitcher)
+            {
+                return false;
+            }
+
             url = url.Trim();
             List<SolutionInfo> solutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
             return solutions.Any(item => item.SolutionName == url.Split('.')[0] && item.RootUrl == url);

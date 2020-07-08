@@ -6,7 +6,7 @@
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Home"
-             BackgroundColor="#dadada">
+             BackgroundColor="White">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -28,7 +28,9 @@
 
                         <Frame
                             Padding="10"
-                            BackgroundColor="White"
+                            Margin="15,10"
+                            CornerRadius="8"
+                            BackgroundColor="#ddf3f5"
                             HasShadow="True">
                             <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>
@@ -72,7 +74,7 @@
                             </Grid>
                         </Frame>
 
-                        <Grid Padding="10,5" Margin="0" BackgroundColor="White">
+                        <Grid Padding="10,5" Margin="0" BackgroundColor="#f7f7f7">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="*"></RowDefinition>

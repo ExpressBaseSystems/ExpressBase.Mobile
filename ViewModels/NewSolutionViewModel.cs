@@ -15,6 +15,8 @@ namespace ExpressBase.Mobile.ViewModels
     {
         private readonly ISolutionService solutionService;
 
+        public string Logo => App.Settings.Vendor.Logo;
+
         public NewSolutionViewModel()
         {
             solutionService = new SolutionService();

@@ -14,6 +14,8 @@ namespace ExpressBase.Mobile.Configuration
 
     public class AppVendor
     {
+        public bool AllowNotifications { set; get; }
+
         public string PrimaryColor { set; get; }
 
         public bool HasOfflineFeature { set; get; }
@@ -40,14 +42,46 @@ namespace ExpressBase.Mobile.Configuration
         }
     }
 
+    public static class EbSettings
+    {
+        public const string VendorName = "ExpressBase";
+
+        public const string AppIcon = "@mipmap/icon_eb";
+
+        public const string AppLabel = "EXPRESSbase";
+
+        public const string StatusBar = "#0046bb";
+
+        public const string SplashTheme = "@style/Theme.Splash";
+    }
+
+    public static class MoSettings
+    {
+        public const string VendorName = "MoveOn";
+
+        public const string AppIcon = "@mipmap/icon_mo";
+
+        public const string AppLabel = "Move On";
+
+        public const string StatusBar = "#283b97";
+
+        public const string SplashTheme = "@style/Theme.Splash";
+    }
+
     public class Config
     {
-        private const string vendor = "MoveOn";
+        public const string AppIcon = EbSettings.AppIcon;
 
-        public const string StatusBarColor = "#068433";
+        public const string AppLabel = EbSettings.AppLabel;
+
+        public const string StatusBarColor = EbSettings.StatusBar;
+
+        public const string SplashTheme = EbSettings.SplashTheme;
+
+        public static bool NFEnabled = false;
 
         public Dictionary<string, AppVendor> Vendors { set; get; }
 
-        public AppVendor Current => Vendors[vendor];
+        public AppVendor Current => Vendors[EbSettings.VendorName];
     }
 }

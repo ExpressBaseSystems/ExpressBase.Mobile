@@ -28,7 +28,8 @@ namespace ExpressBase.Mobile.Views
 
         public void SetContentFromConfig()
         {
-            NewSolutionButton.Text = PageContent["NewSolutionButtonText"];
+            LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
+            SubmitButton.Text = PageContent["LoginButtonText"];
         }
 
         protected override async void OnAppearing()
@@ -77,7 +78,6 @@ namespace ExpressBase.Mobile.Views
             TwoFAWindow.SetAddress(auth.TwoFAToAddress);
 
             TwoFAWindow.IsVisible = true;
-            TitleLabel.IsVisible = false;
             RestButton.IsVisible = false;
             BackButton.IsVisible = true;
         }
@@ -86,8 +86,6 @@ namespace ExpressBase.Mobile.Views
         {
             TwoFAWindow.IsVisible = false;
             BackButton.IsVisible = false;
-
-            TitleLabel.IsVisible = true;
             RestButton.IsVisible = true;
         }
 

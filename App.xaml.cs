@@ -32,7 +32,7 @@ namespace ExpressBase.Mobile
 
             await InitNavigation();
 
-            if (Settings.CurrentUser != null)
+            if (Settings.Vendor.AllowNotifications && Settings.CurrentUser != null)
             {
                 await NotificationService.Instance.UpdateNHRegisratation();
             }
