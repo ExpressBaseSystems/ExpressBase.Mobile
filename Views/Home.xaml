@@ -42,12 +42,13 @@
                                     HeightRequest="50"
                                     VerticalOptions="Center"
                                     WidthRequest="50"
-                                    Padding="0"
+                                    Padding="2"
                                     BackgroundColor="white"
                                     BorderColor="#cccccc"
                                     HasShadow="False"
-                                    CornerRadius="30">
-                                    <Image Source="{Binding SolutionLogo}"/>
+                                    IsClippedToBounds="True"
+                                    CornerRadius="8">
+                                    <Image Source="{Binding SolutionLogo}" Aspect="AspectFit"/>
                                 </Frame>
                                 <StackLayout Grid.Column="1">
                                     <Label 

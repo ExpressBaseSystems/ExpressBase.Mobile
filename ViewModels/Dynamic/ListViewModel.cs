@@ -33,11 +33,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command ApplyFilterCommand => new Command(ApplyFilterClicked);
 
+        public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
+
         public ListViewModel(EbMobilePage page) : base(page)
         {
             this.Visualization = (EbMobileVisualization)this.Page.Container;
 
-            //should be here otherwise filterview binding wont work
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
             this.FilterControls = this.Visualization.FilterControls;
 

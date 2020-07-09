@@ -12,6 +12,7 @@
             </Grid.ColumnDefinitions>
             <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
             <Button 
+                IsVisible="{Binding IsFilterVisible}"
                 Text="&#xf0b0;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
                 Grid.Column="1"
