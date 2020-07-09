@@ -129,7 +129,7 @@ namespace ExpressBase.Mobile.Views
                 {
                     Loader.IsVisible = false;
                     SolutionLogoPrompt.Source = ImageSource.FromStream(() => new MemoryStream(response.Logo));
-                    SolutionLabel.Text = surl;
+                    SolutionLabel.Text = surl.Split(CharConstants.DOT)[0];
                     PopupContainer.IsVisible = true;
                 }
                 else

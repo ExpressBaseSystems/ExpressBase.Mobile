@@ -65,23 +65,25 @@ namespace ExpressBase.Mobile.Configuration
 
         public const string StatusBar = "#283b97";
 
-        public const string SplashTheme = "@style/Theme.Splash";
+        public const string SplashTheme = "@style/Theme.SplashMO";
     }
 
     public class Config
     {
-        public const string AppIcon = EbSettings.AppIcon;
+        private const string vendor = MoSettings.VendorName;
 
-        public const string AppLabel = EbSettings.AppLabel;
+        public const string AppIcon = MoSettings.AppIcon;
 
-        public const string StatusBarColor = EbSettings.StatusBar;
+        public const string AppLabel = MoSettings.AppLabel;
 
-        public const string SplashTheme = EbSettings.SplashTheme;
+        public const string StatusBarColor = MoSettings.StatusBar;
+
+        public const string SplashTheme = MoSettings.SplashTheme;
 
         public static bool NFEnabled = false;
 
         public Dictionary<string, AppVendor> Vendors { set; get; }
 
-        public AppVendor Current => Vendors[EbSettings.VendorName];
+        public AppVendor Current => Vendors[vendor];
     }
 }

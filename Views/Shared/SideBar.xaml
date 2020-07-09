@@ -18,12 +18,12 @@
             
             <Style x:Key="SideBarIconStyle" TargetType="Label">
                 <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
-                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontSize" Value="20" />
                 <Setter Property="VerticalOptions" Value="Center"></Setter>
                 <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
                 <Setter Property="HorizontalTextAlignment" Value="Center"></Setter>
                 <Setter Property="Margin" Value="0"></Setter>
-                <Setter Property="TextColor" Value="White"></Setter>
+                <Setter Property="TextColor" Value="#737373"></Setter>
             </Style>
 
             <Style x:Key="LinkIcon" TargetType="Frame">
@@ -103,7 +103,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}" BackgroundColor="#33b762">
+                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
                                     <Label Text="&#xf140;" Style="{StaticResource SideBarIconStyle}"/>
                                 </Frame>
                                 <Label Grid.Column="1" Text="Switch Solution" Style="{StaticResource LinkLabel}"/>
@@ -118,8 +118,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}" BackgroundColor="#e8953e">
-                                    <Label Text="&#xf1e8;" Style="{StaticResource SideBarIconStyle}"/>
+                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
+                                    <Label Text="&#xf009;" Style="{StaticResource SideBarIconStyle}"/>
                                 </Frame>
                                 <Label Grid.Column="1" Text="Switch Application" Style="{StaticResource LinkLabel}"/>
                             </Grid>
@@ -133,7 +133,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}" BackgroundColor="#429ad8">
+                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
                                     <Label Text="&#xf041;" Style="{StaticResource SideBarIconStyle}"/>
                                 </Frame>
                                 <Label Grid.Column="1" Text="Switch Location" Style="{StaticResource LinkLabel}"/>
@@ -150,7 +150,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}" BackgroundColor="#8166ec">
+                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
                                     <Label Text="&#xf013;" Style="{StaticResource SideBarIconStyle}"/>
                                 </Frame>
                                 <Label Grid.Column="1" Text="Settings" Style="{StaticResource LinkLabel}"/>
@@ -165,7 +165,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}" BackgroundColor="#17a2b8">
+                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
                                     <Label Text="&#xf05a;" Style="{StaticResource SideBarIconStyle}"/>
                                 </Frame>
                                 <Label Grid.Column="1" Text="About" Style="{StaticResource LinkLabel}"/>
@@ -180,7 +180,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}" BackgroundColor="#dc3545">
+                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
                                     <Label Text="&#xf08b;" Style="{StaticResource SideBarIconStyle}"/>
                                 </Frame>
                                 <Label Grid.Column="1" Text="Logout" Style="{StaticResource LinkLabel}"/>
