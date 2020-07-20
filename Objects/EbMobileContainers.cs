@@ -61,6 +61,13 @@ namespace ExpressBase.Mobile
         public string ControlType { set; get; }
     }
 
+    public class EbCTCMapper : EbMobilePageBase
+    {
+        public string ColumnName { set; get; }
+
+        public string ControlName { set; get; }
+    }
+
     public class EbMobileContainer : EbMobilePageBase
     {
         public NetworkMode NetworkType { set; get; }
@@ -90,8 +97,24 @@ namespace ExpressBase.Mobile
 
         public List<EbMobileDataColToControlMap> LinkFormParameters { get; set; }
 
+        public List<EbCTCMapper> ContextToControlMap { set; get; }
+
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
+
+        public EbMobileVisualization()
+        {
+            OfflineQuery = new EbScript();
+            DataSourceParams = new List<Param>();
+            FilterControls = new List<EbMobileControl>();
+            SortColumns = new List<EbMobileDataColumn>();
+            LinkFormParameters = new List<EbMobileDataColToControlMap>();
+        }
+
+        public bool HasLink()
+        {
+            return !string.IsNullOrEmpty(LinkRefId);
+        }
 
         public async Task<EbDataSet> GetData(NetworkMode networkType, int offset, List<DbParameter> parameters = null, List<SortColumn> sortOrder = null)
         {
@@ -157,15 +180,6 @@ namespace ExpressBase.Mobile
                 EbLog.Write("EbMobileVisualization.GetLiveData with params---" + ex.Message);
             }
             return Data;
-        }
-
-        public EbMobileVisualization()
-        {
-            OfflineQuery = new EbScript();
-            DataSourceParams = new List<Param>();
-            FilterControls = new List<EbMobileControl>();
-            SortColumns = new List<EbMobileDataColumn>();
-            LinkFormParameters = new List<EbMobileDataColToControlMap>();
         }
     }
 

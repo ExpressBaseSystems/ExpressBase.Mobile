@@ -55,17 +55,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         }
 
         //prefill mode
-        public FormRenderViewModel(EbMobilePage page, EbDataRow contextrow) : base(page)
+        public FormRenderViewModel(EbMobilePage page, EbMobileVisualization source, EbDataRow contextrow) : base(page)
         {
             this.Mode = FormMode.PREFILL;
             this.Form = (EbMobileForm)page.Container;
+
+            context = source;
             contextRow = contextrow;
 
             InitializeService();
         }
 
         //referenced mode
-        public FormRenderViewModel(EbMobilePage page, EbMobileVisualization source, EbDataRow contextrow) : base(page)
+        public FormRenderViewModel(EbMobilePage page, EbMobileVisualization source, EbDataRow contextrow, int unused) : base(page)
         {
             this.Mode = FormMode.REF;
             this.Form = (EbMobileForm)page.Container;
@@ -197,7 +199,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     pair.Value.SetAsReadOnly(true);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Write(ex.Message);
             }
@@ -205,27 +207,36 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private void FillValuesOnPrefill()
         {
-            foreach (KeyValuePair<string, EbMobileControl> pair in this.Form.ControlDictionary)
-            {
-                object data = contextRow[pair.Value.Name];
-                if (pair.Value is INonPersistControl || pair.Value is ILinesEnabled)
-                    continue;
-                else
-                    pair.Value.SetValue(data);
-            }
-        }
-
-        private void FillValuesOnRef()
-        {
             if (context.LinkFormParameters == null) return;
 
             foreach (EbMobileDataColToControlMap map in context.LinkFormParameters)
             {
                 object value = contextRow[map.ColumnName];
 
-                if (map.FormControl != null && this.Form.ControlDictionary.ContainsKey(map.FormControl.ControlName))
+                if (map.FormControl == null)
+                    continue;
+
+                if (this.Form.ControlDictionary.TryGetValue(map.FormControl.ControlName, out EbMobileControl ctrl))
                 {
-                    this.Form.ControlDictionary[map.FormControl.ControlName].SetValue(value);
+                    ctrl.SetValue(value);
+                }
+            }
+        }
+
+        private void FillValuesOnRef()
+        {
+            if (context.ContextToControlMap == null) return;
+
+            foreach (var map in context.ContextToControlMap)
+            {
+                object value = contextRow[map.ColumnName];
+
+                if (this.Form.ControlDictionary.TryGetValue(map.ControlName, out EbMobileControl ctrl))
+                {
+                    if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
+                        continue;
+                    else
+                        ctrl.SetValue(value);
                 }
             }
         }

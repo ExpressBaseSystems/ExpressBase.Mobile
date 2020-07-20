@@ -144,8 +144,6 @@ namespace ExpressBase.Mobile
 
     public class EbMobileDataColumn : EbMobileControl, INonPersistControl
     {
-        public string TextFormat { get; set; }
-
         public int TableIndex { get; set; }
 
         public int ColumnIndex { get; set; }
@@ -154,10 +152,22 @@ namespace ExpressBase.Mobile
 
         public EbDbTypes Type { get; set; }
 
+        public DataColumnRenderType RenderAs { set; get; }
+
+        public string TextFormat { get; set; }
+
         public EbFont Font { get; set; }
 
         public int RowSpan { set; get; }
 
         public int ColumnSpan { set; get; }
+
+        public string GetContent(object value)
+        {
+            if (!string.IsNullOrEmpty(TextFormat))
+                return TextFormat.Replace("{value}", value?.ToString());
+            else
+                return value?.ToString();
+        }
     }
 }

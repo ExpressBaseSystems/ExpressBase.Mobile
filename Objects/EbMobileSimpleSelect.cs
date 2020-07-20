@@ -45,6 +45,8 @@ namespace ExpressBase.Mobile
 
         public int MinSearchLength { set; get; } = 3;
 
+        public bool EnablePreload { get; set; }
+
         public EbScript OfflineQuery { set; get; }
 
         public List<Param> Parameters { set; get; }

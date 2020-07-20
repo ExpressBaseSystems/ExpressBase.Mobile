@@ -33,7 +33,7 @@
             <Style x:Key="ToolBarLabelStyle" TargetType="Label">
                 <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />
                 <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
-                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontSize" Value="16" />
                 <Setter Property="LineBreakMode" Value="TailTruncation" />
                 <Setter Property="VerticalOptions" Value="Center"></Setter>
             </Style>

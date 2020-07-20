@@ -108,16 +108,8 @@ namespace ExpressBase.Mobile.Enums
 
     public enum MobilePlatform
     {
-        // Summary:
-        //     Windows Notification Service
         wns,
-
-        // Summary:
-        //     Apple Push Notifications Service
         apns,
-
-        // Summary:
-        //     Google Cloud Messaging
         gcm
     }
 

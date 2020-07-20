@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using System.Collections.Generic;
 using Xamarin.Forms;
 

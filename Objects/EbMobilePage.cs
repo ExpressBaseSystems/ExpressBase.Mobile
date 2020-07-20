@@ -43,6 +43,12 @@ namespace ExpressBase.Mobile
         Descending = 1
     }
 
+    public enum DataColumnRenderType
+    {
+        Text = 1,
+        Image = 2,
+        MobileNumber = 3
+    }
 
     public abstract class EbMobilePageBase : EbObject
     {

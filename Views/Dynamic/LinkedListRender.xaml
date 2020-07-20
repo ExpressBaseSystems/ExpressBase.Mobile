@@ -22,6 +22,7 @@
                 Clicked="FullScreenButton_Clicked">
             </Button>
             <Button 
+                IsVisible="False"
                 Text="&#xf002;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
                 Grid.Column="2">

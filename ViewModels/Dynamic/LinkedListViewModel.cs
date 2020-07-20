@@ -132,11 +132,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             if (page != null && page.Container is EbMobileForm)
             {
-                EbDataRow contetRow = this.DataTable.Rows.Any() ? this.DataTable.Rows[0] : null;
-                if (contetRow == null)
-                    return;
-
-                FormRender Renderer = new FormRender(page, Visualization, contetRow);
+                FormRender Renderer = new FormRender(page, Visualization, linkFrame.DataRow, 0);
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
             }
         }
@@ -165,7 +161,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     case EbMobileForm f:
                         if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
-                            renderer = new FormRender(page, frame.DataRow);
+                            renderer = new FormRender(page, Visualization, frame.DataRow);
                         else
                         {
                             int id = Convert.ToInt32(frame.DataRow["id"]);

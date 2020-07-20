@@ -42,7 +42,7 @@
                                     HeightRequest="50"
                                     VerticalOptions="Center"
                                     WidthRequest="50"
-                                    Padding="2"
+                                    Padding="5"
                                     BackgroundColor="white"
                                     BorderColor="#cccccc"
                                     HasShadow="False"

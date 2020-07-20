@@ -34,17 +34,17 @@ namespace ExpressBase.Mobile.Views.Dynamic
         }
 
         //prefill mode
-        public FormRender(EbMobilePage page, EbDataRow contextRow)
-        {
-            InitializeComponent();
-            BindingContext = viewModel = new FormRenderViewModel(page, contextRow);
-        }
-
-        //reference mode
         public FormRender(EbMobilePage page, EbMobileVisualization context, EbDataRow contextRow)
         {
             InitializeComponent();
             BindingContext = viewModel = new FormRenderViewModel(page, context, contextRow);
+        }
+
+        //reference mode
+        public FormRender(EbMobilePage page, EbMobileVisualization context, EbDataRow contextRow, int unused)
+        {
+            InitializeComponent();
+            BindingContext = viewModel = new FormRenderViewModel(page, context, contextRow, unused);
         }
 
         protected override async void OnAppearing()

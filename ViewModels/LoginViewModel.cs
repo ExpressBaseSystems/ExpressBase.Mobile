@@ -48,6 +48,8 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        public bool IsResetVisible => App.Settings.Vendor.HasSolutionSwitcher;
+
         private readonly IIdentityService identityService;
 
         private Action<ApiAuthResponse> toggle2FAW;
@@ -87,13 +89,11 @@ namespace ExpressBase.Mobile.ViewModels
                 return;
             }
 
-            string _username = this.Email.Trim();
-            string _password = this.PassWord.Trim();
-
             if (this.CanLogin())
             {
+                string _username = this.Email.Trim();
+                string _password = this.PassWord.Trim();
                 IsBusy = true;
-
                 try
                 {
                     authResponse = await identityService.AuthenticateAsync(_username, _password);

@@ -24,6 +24,7 @@
                 Clicked="BackButton_Clicked">
             </Button>
             <Button 
+                IsVisible="{Binding IsResetVisible}"
                 x:Name="RestButton"
                 Text="&#xf013;" 
                 Style="{StaticResource ToolBarButtonStyle}" 

@@ -86,7 +86,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     case EbMobileForm f:
 
                         if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
-                            renderer = new FormRender(page, frame.DataRow);
+                            renderer = new FormRender(page, Visualization, frame.DataRow);
                         else
                         {
                             int id = Convert.ToInt32(frame.DataRow["id"]);

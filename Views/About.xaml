@@ -53,7 +53,7 @@
                     VerticalOptions="Center">
                     
                     <!--  Product image  -->
-                    <Image HeightRequest="150" Source="Icon.png"/>
+                    <Image HeightRequest="150" Source="{Binding VendorLogo}"/>
 
                     <!--  Product version  -->
                     <Label
@@ -66,7 +66,7 @@
                     <!--  Product title  -->
                     <Label
                         HorizontalOptions="CenterAndExpand"
-                        Text="EXPRESSbase"
+                        Text="{Binding VendorName}"
                         Style="{StaticResource HeaderLabelStyle}">
                         <Label.Margin>
                             <OnIdiom
@@ -78,12 +78,13 @@
 
                     <!--  Product description  -->
                     <Label
+                        x:Name="VendorDescription"
                         Margin="15,0,15,0"
                         HorizontalOptions="Center"
                         HorizontalTextAlignment="Center"
                         Style="{StaticResource DescriptionLabelStyle}"
                         Text="EXPRESSbase is a Platform on the cloud to build and run business applications 10x faster. Get the best of both worlds – stability of Ready-Made software, and flexibility of Custom software."/>
-
+                    
                     <Frame
                         Margin="20,30,20,20"
                         CornerRadius="6"

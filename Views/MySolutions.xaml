@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+             BackgroundColor="White"
              x:Class="ExpressBase.Mobile.Views.MySolutions">
 
     <NavigationPage.TitleView>
@@ -15,22 +15,16 @@
             </Grid.ColumnDefinitions>
             <Label 
                 x:Name="TitleLabel"
-                Grid.Column="0" 
-                FontSize="16" 
-                TextColor="White" 
-                VerticalOptions="Center"></Label>
+                Grid.Column="0"
+                Style="{StaticResource ToolBarLabelStyle}">
+            </Label>
         </Grid>
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
         <Grid>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-            </Grid.RowDefinitions>
-            
-            <ScrollView x:Name="scrollView" Grid.Row="0">
+            <ScrollView x:Name="scrollView">
                 <StackLayout
                     x:Name="SolutionsList"
                     BindableLayout.ItemsSource="{Binding MySolutions}"
@@ -58,7 +52,6 @@
                                             VerticalOptions="Center"
                                             WidthRequest="55"
                                             Padding="0"
-                                            BackgroundColor="#eeeeee"
                                             BorderColor="#d4d5d8"
                                             HasShadow="False"
                                             CornerRadius="30">
@@ -102,45 +95,23 @@
                 </StackLayout>
             </ScrollView>
 
-            <Frame
-                Grid.Row="1"
-                Margin="15,10"
+            <Button
+                Text="&#xf067;"
+                Margin="0,0,10,10"
                 VerticalOptions="End"
+                HorizontalOptions="End"
+                TextColor="White"
                 BackgroundColor="{DynamicResource Primary_Color}"
-                HeightRequest="50"
-                CornerRadius="6"
-                Padding="0">
-                <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="NewSolution_Tapped"></TapGestureRecognizer>
-                </Frame.GestureRecognizers>
-                <Frame.Content>
-                    <StackLayout>
-                        <FlexLayout Direction="Row" JustifyContent="Center" VerticalOptions="FillAndExpand">
-                            <Label 
-                                TextColor="White"
-                                Text="&#xf196;"
-                                FontSize="18"
-                                FontFamily="{StaticResource FontAwesome}"
-                                VerticalTextAlignment="Center"/>
-                            <Label 
-                                x:Name="AddSolutionLabel"
-                                TextColor="White"
-                                Text="Add Solution"
-                                Margin="15,0,0,0"
-                                VerticalTextAlignment="Center"/>
-                        </FlexLayout>
-                    </StackLayout>
-                </Frame.Content>
-            </Frame>
-
-            <!--loader-->
-            <control:LoaderIconed 
-                Grid.RowSpan="2"
-                x:Name="Loader"
-                IsVisible="{Binding IsBusy}" 
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-            </control:LoaderIconed>
+                BorderColor="{DynamicResource Primary_Color}"
+                BorderWidth="1"
+                HeightRequest="60"
+                WidthRequest="60"
+                CornerRadius="30"
+                FontFamily="{StaticResource FontAwesome}"
+                FontSize="16"
+                Clicked="NewSolution_Clicked">
+            </Button>
+            
         </Grid>
     </ContentPage.Content>
 </ContentPage> 

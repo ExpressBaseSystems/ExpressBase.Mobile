@@ -181,21 +181,9 @@ namespace ExpressBase.Mobile.Models
 
         public bool Selected { set; get; }
 
-        public Color SelectionColor
-        {
-            get
-            {
-                return Selected ? App.Settings.Vendor.GetPrimaryColor() : Color.White;
-            }
-        }
+        public Color SelectionColor => Selected ? App.Settings.Vendor.GetPrimaryColor() : Color.White;
 
-        public Color Bordercolor
-        {
-            get
-            {
-                return Selected ? App.Settings.Vendor.GetPrimaryColor() : Color.FromHex("cccccc");
-            }
-        }
+        public Color Bordercolor => Selected ? App.Settings.Vendor.GetPrimaryColor() : Color.FromHex("cccccc");
 
         public event PropertyChangedEventHandler PropertyChanged;
 

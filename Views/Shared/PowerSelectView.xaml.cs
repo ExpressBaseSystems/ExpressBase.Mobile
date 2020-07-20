@@ -1,14 +1,12 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -41,10 +39,19 @@ namespace ExpressBase.Mobile.Views.Shared
             searchLength = this.powerSelect.MinSearchLength < 3 ? 3 : this.powerSelect.MinSearchLength;
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
-            SelectSearchBox.Focus();
             base.OnAppearing();
+
+            SelectSearchBox.Focus();
+
+            if (powerSelect.EnablePreload)
+            {
+                SearchLoader.IsVisible = true;
+                EbDataTable data = await GetData(null, true);
+                await this.Render(data);
+                SearchLoader.IsVisible = false;
+            }
         }
 
         private async void SelectSearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -60,13 +67,21 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async Task SetData()
         {
+            Device.BeginInvokeOnMainThread(() => SearchLoader.IsVisible = true);
+
+            EbDataTable Data = await this.GetData(SelectSearchBox.Text);
+            await this.Render(Data);
+
+            Device.BeginInvokeOnMainThread(() => SearchLoader.IsVisible = false);
+        }
+
+        private async Task Render(EbDataTable Data)
+        {
+            int c = 1;
+            ResultList.Children.Clear();
+
             try
             {
-                Device.BeginInvokeOnMainThread(() => SearchLoader.IsVisible = true);
-                EbDataTable Data = await this.GetData(SelectSearchBox.Text);
-                int c = 1;
-
-                ResultList.Children.Clear();
                 foreach (EbDataRow row in Data.Rows)
                 {
                     ComboBoxLabel lbl = new ComboBoxLabel(c)
@@ -79,21 +94,22 @@ namespace ExpressBase.Mobile.Views.Shared
                     ResultList.Children.Add(lbl);
                     c++;
                 }
-                Device.BeginInvokeOnMainThread(() => SearchLoader.IsVisible = false);
-
-                if (ResultList.Children.Count <= 0)
-                {
-                    ResultList.Children.Add(new Label
-                    {
-                        Text = "No result found.",
-                        VerticalOptions = LayoutOptions.CenterAndExpand,
-                        HorizontalTextAlignment = TextAlignment.Center
-                    });
-                }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Write("Failed to Render select ::" + ex.Message);
+            }
+
+            await Task.Delay(1);
+
+            if (ResultList.Children.Count <= 0)
+            {
+                ResultList.Children.Add(new Label
+                {
+                    Text = "No result found.",
+                    VerticalOptions = LayoutOptions.CenterAndExpand,
+                    HorizontalTextAlignment = TextAlignment.Center
+                });
             }
         }
 
@@ -103,7 +119,7 @@ namespace ExpressBase.Mobile.Views.Shared
             //callback
         }
 
-        private async Task<EbDataTable> GetData(string text)
+        private async Task<EbDataTable> GetData(string text, bool preload = false)
         {
             EbDataTable dt;
             try
@@ -112,15 +128,15 @@ namespace ExpressBase.Mobile.Views.Shared
                     throw new Exception();
 
                 if (powerSelect.NetworkType == NetworkMode.Online)
-                    dt = await this.GetLiveData(text);
+                    dt = await this.GetLiveData(text, preload);
                 else if (powerSelect.NetworkType == NetworkMode.Mixed)
                 {
-                    dt = await this.GetLiveData(text);
+                    dt = await this.GetLiveData(text, preload);
                     if (dt.Rows.Count <= 0)
-                        dt = this.GetLocalData(text);
+                        dt = this.GetLocalData(text, preload);
                 }
                 else
-                    dt = this.GetLocalData(text);
+                    dt = this.GetLocalData(text, preload);
             }
             catch (Exception ex)
             {
@@ -130,15 +146,19 @@ namespace ExpressBase.Mobile.Views.Shared
             return dt;
         }
 
-        private EbDataTable GetLocalData(string search)
+        private EbDataTable GetLocalData(string search, bool preload)
         {
             EbDataTable dt;
+            string sql = HelperFunctions.B64ToString(powerSelect.OfflineQuery.Code).TrimEnd(';');
+            string WrpdQuery;
+
+            if (preload)
+                WrpdQuery = $"SELECT * FROM ({sql}) AS WR LIMIT 100;";
+            else
+                WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{powerSelect.DisplayMember.ColumnName} LIKE '%{search}%' LIMIT 100;";
+
             try
             {
-                string sql = HelperFunctions.B64ToString(powerSelect.OfflineQuery.Code).TrimEnd(';');
-
-                string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{powerSelect.DisplayMember.ColumnName} LIKE '%{search}%';";
-
                 dt = App.DataDB.DoQuery(WrpdQuery);
             }
             catch (Exception ex)
@@ -146,27 +166,38 @@ namespace ExpressBase.Mobile.Views.Shared
                 EbLog.Write(ex.Message);
                 dt = new EbDataTable();
             }
+
             return dt;
         }
 
-        private async Task<EbDataTable> GetLiveData(string search)
+        private async Task<EbDataTable> GetLiveData(string search, bool preload)
         {
             EbDataTable dt;
             try
             {
                 if (powerSelect.DisplayMember == null)
-                    throw new Exception("Display member cannot be null");
-
-                Param p = new Param
                 {
-                    Name = powerSelect.DisplayMember.ColumnName,
-                    Type = ((int)powerSelect.DisplayMember.Type).ToString(),
-                    Value = search
-                };
+                    throw new Exception("Display member cannot be null");
+                }
 
-                var response = await DataService.Instance.GetDataAsync(powerSelect.DataSourceRefId, new List<Param> { p }, null, 50, 0, true);
+                List<Param> parameters = null;
 
-                if (response.Data != null && response.Data.Tables.Count >= 2)
+                if (!preload)
+                {
+                    parameters = new List<Param>();
+
+                    Param p = new Param
+                    {
+                        Name = powerSelect.DisplayMember.ColumnName,
+                        Type = ((int)powerSelect.DisplayMember.Type).ToString(),
+                        Value = search
+                    };
+                    parameters.Add(p);
+                }
+
+                VisualizationLiveData response = await DataService.Instance.GetDataAsync(powerSelect.DataSourceRefId, parameters, null, 100, 0, true);
+
+                if (response.Data != null && response.Data.Tables.HasLength(2))
                     dt = response.Data.Tables[1];
                 else
                     throw new Exception();

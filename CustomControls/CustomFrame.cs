@@ -19,17 +19,20 @@ namespace ExpressBase.Mobile.CustomControls
 
         public CustomFrame() { }
 
-        public CustomFrame(EbDataRow Row, EbMobileVisualization Visualization, bool IsHeader = false)
+        public CustomFrame(EbDataRow row, EbMobileVisualization visualization, bool isHeader = false)
         {
-            this.isHeader = IsHeader;
-            this.DataRow = Row;
+            this.isHeader = isHeader;
+            this.DataRow = row;
 
-            this.CreateGrid(Visualization.DataLayout.CellCollection, Visualization.DataLayout.RowCount, Visualization.DataLayout.ColumCount);
-            FillData(Visualization.DataLayout.CellCollection);
-            if (!string.IsNullOrEmpty(Visualization.LinkRefId) && !IsHeader) this.ShowLinkIcon();
+            this.CreateGrid(visualization.DataLayout.CellCollection, visualization.DataLayout.RowCount, visualization.DataLayout.ColumCount);
+            this.FillData(visualization.DataLayout.CellCollection);
+
+            if (visualization.HasLink() && !isHeader) 
+                this.ShowLinkIcon();
+
             this.Content = contentGrid;
 
-            if (!IsHeader)
+            if (!isHeader)
                 this.Padding = new Thickness(10);
         }
 
@@ -66,27 +69,19 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     if (_Cell.ControlCollection.Count > 0)
                     {
-                        EbMobileDataColumn _col = (EbMobileDataColumn)_Cell.ControlCollection[0];
+                        EbMobileDataColumn datacol = (EbMobileDataColumn)_Cell.ControlCollection[0];
 
-                        string _text;
-                        var data = this.DataRow[_col.ColumnName];
+                        object data = this.DataRow[datacol.ColumnName];
 
-                        if (!string.IsNullOrEmpty(_col.TextFormat))
-                            _text = _col.TextFormat.Replace("{value}", data?.ToString());
-                        else
-                            _text = data?.ToString();
+                        var view = ResolveContentType(datacol, data);
 
-                        Label _label = new Label { Text = _text };
+                        contentGrid.Children.Add(view, _Cell.ColIndex, _Cell.RowIndex);
 
-                        this.ApplyLabelStyle(_label, _col);
+                        if (datacol.RowSpan > 0)
+                            Grid.SetRowSpan(view, datacol.RowSpan);
 
-                        contentGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
-
-                        if (_col.RowSpan > 0)
-                            Grid.SetRowSpan(_label, _col.RowSpan);
-
-                        if (_col.ColumnSpan > 0)
-                            Grid.SetColumnSpan(_label, _col.ColumnSpan);
+                        if (datacol.ColumnSpan > 0)
+                            Grid.SetColumnSpan(view, datacol.ColumnSpan);
                     }
                 }
             }
@@ -94,6 +89,27 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 EbLog.Write(ex.Message);
             }
+        }
+
+        private View ResolveContentType(EbMobileDataColumn dc, object value)
+        {
+            View view = null;
+
+            if (dc.RenderAs == DataColumnRenderType.Image)
+            {
+
+            }
+            else if (dc.RenderAs == DataColumnRenderType.MobileNumber)
+            {
+
+            }
+            else
+            {
+                Label label = new Label { Text = dc.GetContent(value) };
+                this.ApplyLabelStyle(label, dc);
+                view = label;
+            }
+            return view;
         }
 
         //for data grid

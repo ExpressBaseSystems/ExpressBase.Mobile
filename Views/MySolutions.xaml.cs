@@ -38,10 +38,9 @@ namespace ExpressBase.Mobile.Views
         public void SetContentFromConfig()
         {
             TitleLabel.Text = PageContent["Title"];
-            AddSolutionLabel.Text = PageContent["AddButton"];
         }
 
-        private async void NewSolution_Tapped(object sender, System.EventArgs e)
+        private async void NewSolution_Clicked(object sender, System.EventArgs e)
         {
             if (isMasterPage)
                 await App.RootMaster.Detail.Navigation.PushAsync(new NewSolution(true));

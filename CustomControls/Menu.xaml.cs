@@ -92,6 +92,7 @@ namespace ExpressBase.Mobile.CustomControls
             try
             {
                 Grid grd = this.CreateGrid();
+                Container.Children.Add(grd);
 
                 rownum = 0;
                 colnum = 0;
@@ -128,8 +129,6 @@ namespace ExpressBase.Mobile.CustomControls
 
                     SetGrid(grd, container, wrpr == items.Last());
                 }
-
-                Container.Children.Add(grd);
             }
             catch (Exception ex)
             {
