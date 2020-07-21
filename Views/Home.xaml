@@ -25,7 +25,6 @@
                 Refreshing="RefreshView_Refreshing">
                 <ScrollView>
                     <StackLayout VerticalOptions="FillAndExpand">
-
                         <Frame
                             Padding="10"
                             Margin="15,10"
@@ -74,83 +73,12 @@
                                 </StackLayout>
                             </Grid>
                         </Frame>
-
-                        <Grid Padding="10,5" Margin="0" BackgroundColor="#f7f7f7">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition Height="*"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Label Text="Links" 
-                                   Grid.Row="0"
-                                   HorizontalOptions="Start"
-                                   FontSize="16"
-                                   Margin="5,0,5,0"
-                                   Style="{StaticResource MediumLabel}">
-                            </Label>
-
-                            <Frame CornerRadius="4" Grid.Row="1" BackgroundColor="Transparent">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30.3*"></ColumnDefinition>
-                                        <ColumnDefinition Width="30.3*"></ColumnDefinition>
-                                        <ColumnDefinition Width="30.3*"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-                                    <StackLayout Grid.Column="0">
-                                        <Frame BackgroundColor="#33b762"
-                                               WidthRequest="60"
-                                               HeightRequest="60"
-                                               CornerRadius="30"
-                                               Padding="0"
-                                               HorizontalOptions="Center"
-                                               x:Name="MyActions">
-                                            <Frame.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding MyActionsTappedcommand}"/>
-                                            </Frame.GestureRecognizers>
-                                            <Label 
-                                                Text="&#xf25a;" 
-                                                FontFamily="{StaticResource FontAwesome}"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center"
-                                                TextColor="White"
-                                                FontSize="30">
-                                            </Label>
-                                        </Frame>
-                                        <Label Text="My Actions" HorizontalOptions="Center"></Label>
-                                    </StackLayout>
-                                    <StackLayout Grid.Column="1">
-                                        <Frame BackgroundColor="#e8953e"
-                                               WidthRequest="60"
-                                               HeightRequest="60"
-                                               CornerRadius="30"
-                                               Padding="0"
-                                               HorizontalOptions="Center"
-                                               x:Name="Sync">
-                                            <Frame.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="PushButton_Tapped"/>
-                                            </Frame.GestureRecognizers>
-                                            <Label 
-                                                Text="&#xf021;" 
-                                                FontFamily="{StaticResource FontAwesome}"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center"
-                                                TextColor="White"
-                                                FontSize="30">
-                                            </Label>
-                                        </Frame>
-                                        <Label Text="Sync" HorizontalOptions="Center"></Label>
-                                    </StackLayout>
-                                </Grid>
-                            </Frame>
-                        </Grid>
-                        
                         <control:Menu
                             x:Name="MenuView"
-                            BackgroundColor="White"
                             VerticalOptions="FillAndExpand"
                             ItemSource="{Binding ObjectList}"
                             ItemTaped="{Binding MenuItemTappedCommand}">
                         </control:Menu>
-
                         <StackLayout 
                             x:Name="EmptyMessage"
                             Margin="0,20,0,0"
@@ -158,7 +86,6 @@
                             <Image Source="mt.png" HeightRequest="50"></Image>
                             <Label Text="Empty..." HorizontalTextAlignment="Center"></Label>
                         </StackLayout>
-
                     </StackLayout>
                 </ScrollView>
             </RefreshView>
@@ -169,21 +96,18 @@
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
                 AbsoluteLayout.LayoutFlags="All">
             </control:LoaderIconed>
-
             <control:ConfirmBox
                 x:Name="PushConfirmBox"
                 Title="Confirm"
                 Message="Do you really want to push your local data to cloud?"
                 ConfirmClicked="{Binding SyncButtonCommand}">
             </control:ConfirmBox>
-
             <control:ConfirmBox
                 x:Name="LogoutDialog"
                 Title="Confirm"
                 Message="Do you want to logout?"
                 ConfirmClicked="{Binding LogoutCommand}">
             </control:ConfirmBox>
-            
         </Grid>
     </ContentPage.Content>
 </ContentPage>

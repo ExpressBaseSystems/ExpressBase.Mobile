@@ -31,6 +31,10 @@ namespace ExpressBase.Mobile.Services
 
     public class MenuServices : IMenuServices
     {
+        private static MenuServices instance;
+
+        public static MenuServices Instance => instance ?? (instance = new MenuServices());
+
         public async Task<List<MobilePagesWraper>> GetDataAsync()
         {
             if (App.Settings.MobilePages != null)

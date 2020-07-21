@@ -1,12 +1,16 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -87,6 +91,33 @@ namespace ExpressBase.Mobile.Services
                 EbLog.Write(ex.Message);
             }
             return new VisualizationLiveData();
+        }
+
+        public async Task<ApiFileResponse> GetFile(EbFileCategory category, string filename)
+        {
+            ApiFileResponse resp = null;
+            try
+            {
+                RestClient client = new RestClient(App.Settings.RootUrl);
+
+                RestRequest request = new RestRequest("api/get_file", Method.GET);
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+                request.AddParameter("category", (int)category);
+                request.AddParameter("filename", filename);
+
+                IRestResponse response = await client.ExecuteAsync(request);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                    resp = JsonConvert.DeserializeObject<ApiFileResponse>(response.Content);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write(ex.Message);
+            }
+            return resp;
         }
     }
 }

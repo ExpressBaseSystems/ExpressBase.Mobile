@@ -81,7 +81,8 @@
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 FontFamily="{StaticResource Roboto-Medium}"
-                                FontSize="16"/>
+                                FontSize="16">
+                            </Label>
 
                             <Label
                                 x:Name="Email"
@@ -90,7 +91,8 @@
                                 FontFamily="{StaticResource Roboto-Regular}"
                                 FontSize="12"
                                 HorizontalOptions="StartAndExpand"
-                                Text="{Binding UserEmail}"/>
+                                Text="{Binding UserEmail}">
+                            </Label>
                         </Grid>
                     </StackLayout>
                     <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="0" Spacing="0">
@@ -137,6 +139,36 @@
                                     <Label Text="&#xf041;" Style="{StaticResource SideBarIconStyle}"/>
                                 </Frame>
                                 <Label Grid.Column="1" Text="Switch Location" Style="{StaticResource LinkLabel}"/>
+                            </Grid>
+                        </Frame>
+                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasMyActions}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="MyActions_Tapped"/>
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
+                                    <Label Text="&#xf25a;" Style="{StaticResource SideBarIconStyle}"/>
+                                </Frame>
+                                <Label Grid.Column="1" Text="My Actions" Style="{StaticResource LinkLabel}"/>
+                            </Grid>
+                        </Frame>
+                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasOfflineSupport}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="SyncButton_Tapped"/>
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
+                                    <Label Text="&#xf021;" Style="{StaticResource SideBarIconStyle}"/>
+                                </Frame>
+                                <Label Grid.Column="1" Text="Sync" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
                     </StackLayout>

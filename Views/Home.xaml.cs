@@ -101,21 +101,27 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        private void PushButton_Tapped(object sender, EventArgs e)
-        {
-            PushConfirmBox.Show();
-        }
-
-        public void ConfirmLogout()
+        public void ShowLogoutConfirmBox()
         {
             LogoutDialog.Show();
         }
 
-        public async void Refresh()
+        public async void RefreshView()
         {
             await viewModel.LocationSwitched();
             MenuView.Notify("ItemSource");
             ToggleStatus();
+        }
+
+        public void TriggerSync()
+        {
+            if (!Utils.HasInternet)
+            {
+                Utils.Alert_NoInternet();
+                return;
+            }
+
+            PushConfirmBox.Show();
         }
 
         private void ToggleStatus()

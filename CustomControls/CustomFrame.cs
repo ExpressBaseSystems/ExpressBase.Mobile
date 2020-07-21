@@ -1,10 +1,13 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
@@ -27,7 +30,7 @@ namespace ExpressBase.Mobile.CustomControls
             this.CreateGrid(visualization.DataLayout.CellCollection, visualization.DataLayout.RowCount, visualization.DataLayout.ColumCount);
             this.FillData(visualization.DataLayout.CellCollection);
 
-            if (visualization.HasLink() && !isHeader) 
+            if (visualization.HasLink() && !isHeader)
                 this.ShowLinkIcon();
 
             this.Content = contentGrid;
@@ -47,7 +50,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
         {
-            contentGrid = new Grid { BackgroundColor = Color.Transparent };
+            contentGrid = new Grid { BackgroundColor = Color.Transparent, VerticalOptions = LayoutOptions.StartAndExpand };
 
             for (int r = 0; r < RowCount; r++)
             {
@@ -73,7 +76,9 @@ namespace ExpressBase.Mobile.CustomControls
 
                         object data = this.DataRow[datacol.ColumnName];
 
-                        var view = ResolveContentType(datacol, data);
+                        View view = ResolveContentType(datacol, data);
+
+                        if (view == null) continue;
 
                         contentGrid.Children.Add(view, _Cell.ColIndex, _Cell.RowIndex);
 
@@ -93,23 +98,22 @@ namespace ExpressBase.Mobile.CustomControls
 
         private View ResolveContentType(EbMobileDataColumn dc, object value)
         {
-            View view = null;
+            if (value == null) return null;
 
             if (dc.RenderAs == DataColumnRenderType.Image)
             {
-
+                return this.DC2Image(value);
             }
             else if (dc.RenderAs == DataColumnRenderType.MobileNumber)
             {
-
+                return this.DC2PhoneNumber(dc, value);
             }
             else
             {
                 Label label = new Label { Text = dc.GetContent(value) };
                 this.ApplyLabelStyle(label, dc);
-                view = label;
+                return label;
             }
-            return view;
         }
 
         //for data grid
@@ -186,13 +190,11 @@ namespace ExpressBase.Mobile.CustomControls
 
             int synced = Convert.ToInt32(DataRow["eb_synced"]);
 
-            var lbl = new Label
+            Label lbl = new Label
             {
-                VerticalOptions = LayoutOptions.Start,
-                HorizontalOptions = LayoutOptions.End,
+                Style = (Style)HelperFunctions.GetResourceValue("ListViewSyncFlagStyle"),
                 TextColor = (synced == 0) ? Color.FromHex("ff5f5f") : Color.Green,
                 Text = (synced == 0) ? "\uf06a" : "\uf058",
-                FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
             };
 
             int colLength = contentGrid.ColumnDefinitions.Count;
@@ -204,18 +206,92 @@ namespace ExpressBase.Mobile.CustomControls
         {
             contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            var lbl = new Label
+            Label lbl = new Label
             {
-                FontSize = 18,
-                VerticalOptions = LayoutOptions.Center,
-                TextColor = Color.FromHex("aba8a8"),
-                Text = "\uf105",
-                FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                Style = (Style)HelperFunctions.GetResourceValue("ListViewLinkIconStyle")
             };
 
             contentGrid.Children.Add(lbl);
             Grid.SetColumn(lbl, contentGrid.ColumnDefinitions.Count - 1);
             Grid.SetRowSpan(lbl, contentGrid.RowDefinitions.Count);
+        }
+
+        private View DC2Image(object value)
+        {
+            Image image = new Image { Style = (Style)HelperFunctions.GetResourceValue("ListViewImage") };
+            Frame frame = new Frame
+            {
+                Content = image,
+                Style = (Style)HelperFunctions.GetResourceValue("ListViewImageFrame")
+            };
+            frame.SizeChanged += Image_SizeChanged;
+            this.RenderImage(image, value);
+            return frame;
+        }
+
+        private void Image_SizeChanged(object sender, EventArgs e)
+        {
+            Frame item = (Frame)sender;
+            item.HeightRequest = item.Width;
+        }
+
+        public async void RenderImage(Image image, object filerefs)
+        {
+            if (filerefs == null && string.IsNullOrEmpty(filerefs.ToString()))
+                return;
+
+            string refid = filerefs.ToString().Split(CharConstants.COMMA)[0];
+
+            try
+            {
+                ApiFileResponse resp = await DataService.Instance.GetFile(EbFileCategory.Images, $"{refid}.jpg");
+                if (resp.HasContent)
+                    image.Source = ImageSource.FromStream(() => { return new MemoryStream(resp.Bytea); });
+            }
+            catch (Exception)
+            {
+                EbLog.Write("failed to load image ,getfile api error");
+            }
+        }
+
+        private View DC2PhoneNumber(EbMobileDataColumn dc, object value)
+        {
+            Label label = new Label { Text = dc.GetContent(value) };
+            this.ApplyLabelStyle(label, dc);
+            Button callbtn = new Button
+            {
+                ClassId = label.Text,
+                Style = (Style)HelperFunctions.GetResourceValue("ListViewPhoneNumber")
+            };
+            callbtn.Clicked += DialNumber;
+
+            return new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                Children = { label, callbtn }
+            };
+        }
+
+        private void DialNumber(object sender, EventArgs e)
+        {
+            Button dialler = (Button)sender;
+            IToast toast = DependencyService.Get<IToast>();
+            try
+            {
+                PhoneDialer.Open(dialler.ClassId);
+            }
+            catch (ArgumentNullException)
+            {
+                toast.Show("no number");
+            }
+            catch (FeatureNotSupportedException)
+            {
+                toast.Show("Feature unsuported");
+            }
+            catch (Exception)
+            {
+                toast.Show("Something went wrong");
+            }
         }
     }
 }

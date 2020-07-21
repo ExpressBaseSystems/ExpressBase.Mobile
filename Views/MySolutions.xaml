@@ -54,7 +54,8 @@
                                             Padding="0"
                                             BorderColor="#d4d5d8"
                                             HasShadow="False"
-                                            CornerRadius="30">
+                                            CornerRadius="30"
+                                            IsClippedToBounds="True">
                                             <Image Source="{Binding Logo}"/>
                                         </Frame>
                                         <Frame

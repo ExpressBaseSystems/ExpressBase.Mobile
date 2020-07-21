@@ -13,5 +13,7 @@ namespace ExpressBase.Mobile.Constants
         public const char DASH = '-';
 
         public const char COLON = ':';
+
+        public const char COMMA = ',';
     }
 }

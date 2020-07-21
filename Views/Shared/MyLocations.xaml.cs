@@ -83,7 +83,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
                     if (stack.Any() && stack[0] is Home)
                     {
-                        (stack[0] as Home).Refresh();
+                        (stack[0] as Home).RefreshView();
                     }
                 }
                 catch (Exception)

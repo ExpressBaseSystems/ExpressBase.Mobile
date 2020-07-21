@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary
+    x:Class="ExpressBase.Mobile.Themes.ListViewStyles"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style TargetType="Frame" x:Key="ListViewImageFrame">
+        <Setter Property="VerticalOptions" Value="FillAndExpand"></Setter>
+        <Setter Property="Padding" Value="0"></Setter>
+        <Setter Property="IsClippedToBounds" Value="True"></Setter>
+        <Setter Property="CornerRadius" Value="6"></Setter>
+        <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+    </Style>
+
+    <Style TargetType="Image" x:Key="ListViewImage">
+        <Setter Property="Aspect" Value="AspectFill"></Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="ListViewPhoneNumber">
+        <Setter Property="BackgroundColor" Value="#47af08"></Setter>
+        <Setter Property="BorderWidth" Value="2"></Setter>
+        <Setter Property="BorderColor" Value="#47af08"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+        <Setter Property="Text" Value="&#xf095;"></Setter>
+        <Setter Property="TextColor" Value="White"></Setter>
+        <Setter Property="WidthRequest" Value="25"></Setter>
+        <Setter Property="HeightRequest" Value="25"></Setter>
+        <Setter Property="CornerRadius" Value="13"></Setter>
+        <Setter Property="Padding" Value="0"></Setter>
+        <Setter Property="HorizontalOptions" Value="EndAndExpand"></Setter>
+    </Style>
+
+    <Style TargetType="Label" x:Key="ListViewLinkIconStyle">
+        <Setter Property="FontSize" Value="18"></Setter>
+        <Setter Property="VerticalOptions" Value="Center"></Setter>
+        <Setter Property="TextColor" Value="#aba8a8"></Setter>
+        <Setter Property="Text" Value="&#xf105;"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
+    <Style TargetType="Label" x:Key="ListViewSyncFlagStyle">
+        <Setter Property="VerticalOptions" Value="Start"></Setter>
+        <Setter Property="HorizontalOptions" Value="End"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
+</ResourceDictionary>

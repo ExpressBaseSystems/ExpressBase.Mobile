@@ -27,9 +27,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<DbParameter> Parameters { set; get; }
 
-        public Command AddCommand => new Command(AddButtonClicked);
+        public Command AddCommand => new Command(async () => await AddButtonClicked());
 
-        public Command EditCommand => new Command(EditButtonClicked);
+        public Command EditCommand => new Command(async () => await EditButtonClicked());
 
         private readonly CustomFrame linkFrame;
 
@@ -126,7 +126,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        async void AddButtonClicked(object sender)
+        private async Task AddButtonClicked()
         {
             EbMobilePage page = HelperFunctions.GetPage(Visualization.LinkRefId);
 
@@ -137,7 +137,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        async void EditButtonClicked(object sender)
+        private async Task EditButtonClicked()
         {
             EbMobilePage _page = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
 

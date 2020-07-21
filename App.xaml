@@ -12,6 +12,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <themes:LightTheme />
                 <themes:FormStyles />
+                <themes:ListViewStyles />
             </ResourceDictionary.MergedDictionaries>
 
             <!--  Common style for labels  -->

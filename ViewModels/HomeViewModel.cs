@@ -4,7 +4,6 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
-using ExpressBase.Mobile.Views;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
@@ -46,7 +45,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command MenuItemTappedCommand => new Command<object>(async (o) => await ItemTapedEvent(o));
 
-        public Command MyActionsTappedcommand => new Command(async () => await MyActionsTapedEvent());
+        private bool isTapped;
 
         public HomeViewModel()
         {
@@ -72,11 +71,6 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                if (!Utils.HasInternet)
-                {
-                    Utils.Alert_NoInternet();
-                    return;
-                }
                 await Task.Run(async () =>
                 {
                     Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
@@ -97,8 +91,6 @@ namespace ExpressBase.Mobile.ViewModels
                 EbLog.Write("Failed to sync::" + ex.Message);
             }
         }
-
-        private bool isTapped;
 
         private async Task ItemTapedEvent(object obj)
         {
@@ -155,23 +147,6 @@ namespace ExpressBase.Mobile.ViewModels
                 EbLog.Write(ex.Message);
             }
             return renderer;
-        }
-
-        private async Task MyActionsTapedEvent()
-        {
-            try
-            {
-                if (!Utils.HasInternet)
-                {
-                    Utils.Alert_NoInternet();
-                    return;
-                }
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new MyActions());
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
         }
 
         public async Task LocationSwitched()
