@@ -1,10 +1,7 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -39,9 +36,8 @@ namespace ExpressBase.Mobile.Views.Shared
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
-                string sid = App.Settings.Sid;
 
-                byte[] bytes = helper.GetPhoto($"ExpressBase/{sid}/user.png");
+                byte[] bytes = helper.GetPhoto($"ExpressBase/{App.Settings.Sid}/user.png");
                 if (bytes != null)
                     UserDp.Source = ImageSource.FromStream(() => new MemoryStream(bytes));
             }

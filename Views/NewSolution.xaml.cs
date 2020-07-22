@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
@@ -159,6 +160,7 @@ namespace ExpressBase.Mobile.Views
 
                 Loader.IsVisible = true;
                 PopupContainer.IsVisible = false;
+                LoginType loginType = App.Settings.Vendor.DefaultLoginType;
 
                 if (isMasterPage)
                 {
@@ -169,7 +171,11 @@ namespace ExpressBase.Mobile.Views
                         BarTextColor = Color.White
                     };
                 }
-                await Application.Current.MainPage.Navigation.PushAsync(new Login());
+
+                if(loginType == LoginType.CREDENTIALS)
+                    await Application.Current.MainPage.Navigation.PushAsync(new Login());
+                else
+                    await Application.Current.MainPage.Navigation.PushAsync(new LoginByOTP());
             }
             catch (Exception ex)
             {

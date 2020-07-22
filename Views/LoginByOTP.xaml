@@ -2,10 +2,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
-             x:Class="ExpressBase.Mobile.Views.Login"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.Views.LoginByOTP"
              NavigationPage.HasBackButton="False">
 
     <NavigationPage.TitleView>
@@ -24,7 +24,6 @@
                 Clicked="BackButton_Clicked">
             </Button>
             <Button 
-                IsVisible="{Binding IsResetVisible}"
                 x:Name="RestButton"
                 Text="&#xf013;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
@@ -35,13 +34,13 @@
     </NavigationPage.TitleView>
     <ContentPage.Content>
         <Grid BackgroundColor="White">
-            <ScrollView 
-                x:Name="scrollView">
+            <ScrollView x:Name="scrollView">
                 <ScrollView.VerticalOptions>
                     <OnIdiom
                         x:TypeArguments="LayoutOptions"
                         Default="CenterAndExpand"
-                        Phone="FillAndExpand" />
+                        Phone="FillAndExpand">
+                    </OnIdiom>
                 </ScrollView.VerticalOptions>
                 <StackLayout Margin="20" VerticalOptions="FillAndExpand">
                     <Grid RowSpacing="0" VerticalOptions="CenterAndExpand">
@@ -61,73 +60,39 @@
                             TextColor="#333333"
                             FontFamily="{StaticResource Roboto-Medium}"
                             FontSize="18"
-                            HorizontalTextAlignment="Center"/>
+                            HorizontalTextAlignment="Center">
+                        </Label>
                         <Image x:Name="LogoUrl"
                                Grid.Row="1" 
                                Source="{Binding LogoUrl}" 
                                Margin="20" 
                                HeightRequest="100"
-                               HorizontalOptions="Center"/>
-                        <StackLayout Grid.Row="2">
-                            <StackLayout Margin="0,5,0,5">
-                                <Label Text="Username" 
-                                       VerticalOptions="Center"
-                                       FontFamily="{StaticResource Roboto-Regular}"
-                                       Style="{StaticResource LabelStyle}"/>
-                                <control:TextBox x:Name="Email" 
-                                                 Completed="Email_Completed" 
-                                                 Text="{Binding Email}"/>
-                            </StackLayout>
-                            <StackLayout Margin="0,5,0,20">
-                                <Label Text="Password" 
-                                       VerticalOptions="Center"
-                                       FontFamily="{StaticResource Roboto-Regular}"
-                                       Style="{StaticResource LabelStyle}"/>
-                                <AbsoluteLayout>
-                                    <control:TextBox 
-                                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                                        AbsoluteLayout.LayoutFlags="All"
-                                        BorderColor="#cccccc"
-                                        BorderThickness="1"
-                                        BorderRadius="10.0"
-                                        x:Name="PassWord" 
-                                        IsPassword="True" Text="{Binding PassWord}"/>
-                                    <Button 
-                                        x:Name="ShowPassword"
-                                        AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
-                                        AbsoluteLayout.LayoutFlags="PositionProportional"
-                                        Text="&#xf06e;"
-                                        FontSize="18"
-                                        BackgroundColor="Transparent"
-                                        FontFamily="{StaticResource FontAwesome}"
-                                        WidthRequest="50"
-                                        Clicked="ShowPassword_Clicked"/>
-                                    <Button 
-                                        IsVisible="False"
-                                        x:Name="HidePassword"
-                                        AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
-                                        AbsoluteLayout.LayoutFlags="PositionProportional"
-                                        Text="&#xf070;"
-                                        FontSize="18"
-                                        BackgroundColor="Transparent"
-                                        FontFamily="{StaticResource FontAwesome}"
-                                        WidthRequest="50"
-                                        Clicked="HidePassword_Clicked"/>
-                                </AbsoluteLayout>
-                            </StackLayout>
+                               HorizontalOptions="Center">
+                        </Image>
+                        
+                        <StackLayout Grid.Row="2" Margin="0,5,0,15">
+                            <Label Text="Email or Mobile Number" 
+                                    VerticalOptions="Center"
+                                    FontFamily="{StaticResource Roboto-Regular}"
+                                    Style="{StaticResource LabelStyle}">
+                            </Label>
+                            <control:TextBox 
+                                x:Name="UserName"
+                                Text="{Binding UserName}">
+                            </control:TextBox>
                         </StackLayout>
                         <!--  next button  -->
                         <Button 
-                            x:Name="SubmitButton"
+                            x:Name="SendOTPButton"
                             Grid.Row="3"
                             Margin="0,15,0,0"
-                            Text="Login"
+                            Text="Send OTP"
                             CornerRadius="6"
                             VerticalOptions="EndAndExpand"
                             HorizontalOptions="FillAndExpand"
                             BackgroundColor="{DynamicResource Primary_Color}"
                             TextColor="White"
-                            Command="{Binding LoginCommand}">
+                            Command="{Binding SendOTPCommand}">
                         </Button>
 
                         <Label
@@ -139,32 +104,30 @@
                         </Label>
 
                         <Button 
-                            x:Name="SSOLoginButton"
+                            x:Name="CredLoginButton"
                             Grid.Row="5"
                             Margin="0,0,0,0"
-                            Text="Login with OTP"
+                            Text="Login with Password"
                             CornerRadius="6"
                             VerticalOptions="EndAndExpand"
                             HorizontalOptions="FillAndExpand"
-                            Clicked="SSOLoginButton_Clicked">
+                            Clicked="CredLoginButton_Clicked">
                         </Button>
 
                         <Label 
                             x:Name="LoginButtonLabel"
                             Grid.Row="6"
-                            Margin="0,10"
                             VerticalOptions="EndAndExpand"
+                            Text="Add new Solution"
                             HorizontalTextAlignment="Center"
                             FontFamily="{StaticResource Roboto-Medium}"
                             FontSize="15"
                             TextColor="{DynamicResource Primary_Color}">
                         </Label>
                         <Button Grid.Row="6"
-                                Margin="0,10"
                                 BackgroundColor="Transparent"
                                 VerticalOptions="EndAndExpand"
-                                HorizontalOptions="FillAndExpand"
-                                Clicked="NewSolutionButton_Clicked">
+                                HorizontalOptions="FillAndExpand">
                         </Button>
 
                     </Grid>
@@ -173,8 +136,8 @@
 
             <control:TwoFAView
                 x:Name="TwoFAWindow"
-                ResendClicked="{Binding ResendOtpCommand}"
-                SubmitClicked="{Binding SubmitOtpCommand}">
+                ResendClicked="{Binding ResendOTPCommand}"
+                SubmitClicked="{Binding SubmitOTPCommand}">
             </control:TwoFAView>
 
             <!--loader-->

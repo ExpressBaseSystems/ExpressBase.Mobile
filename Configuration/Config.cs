@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ExpressBase.Mobile.Enums;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Configuration
@@ -35,6 +36,8 @@ namespace ExpressBase.Mobile.Configuration
         public bool AllowMenuRefresh { set; get; }
 
         public string PoweredBy { set; get; }
+
+        public LoginType DefaultLoginType { set; get; }
 
         public AppContent Content { set; get; }
 

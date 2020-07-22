@@ -11,6 +11,7 @@
       "Logo": "icon_eb.png",
       "AllowMenuRefresh": true,
       "PoweredBy": "Powered by EXPRESSbase",
+      "DefaultLoginType": "SSO",
       "Content": {
         "NewSolution": {
           "WallLabel": "Add new Solution",
@@ -39,6 +40,7 @@
       "Logo": "icon_mo.png",
       "AllowMenuRefresh": false,
       "PoweredBy": "Powered by EXPRESSbase",
+      "DefaultLoginType": "SSO",
       "Content": {
         "NewSolution": {
           "WallLabel": "Add new Hotel",

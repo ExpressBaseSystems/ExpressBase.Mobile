@@ -7,11 +7,14 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using System.Threading.Tasks;
 using System.Linq;
+using ExpressBase.Mobile.Enums;
 
 namespace ExpressBase.Mobile
 {
     public partial class App : Application
     {
+        private LoginType loginType => Settings.Vendor.DefaultLoginType;
+
         public static IDataBase DataDB { get; set; }
 
         public static MasterDetailPage RootMaster { set; get; }
@@ -74,7 +77,12 @@ namespace ExpressBase.Mobile
                             MainPage = RootMaster;
                         }
                         else
-                            await MainPage.Navigation.PushAsync(new Login());
+                        {
+                            if (loginType == LoginType.SSO)
+                                await MainPage.Navigation.PushAsync(new LoginByOTP());
+                            else
+                                await MainPage.Navigation.PushAsync(new Login());
+                        }
                     }
                     else
                     {
@@ -88,7 +96,12 @@ namespace ExpressBase.Mobile
                     }
                 }
                 else
-                    await MainPage.Navigation.PushAsync(new Login());
+                {
+                    if (loginType == LoginType.SSO)
+                        await MainPage.Navigation.PushAsync(new LoginByOTP());
+                    else
+                        await MainPage.Navigation.PushAsync(new Login());
+                }
             }
         }
     }

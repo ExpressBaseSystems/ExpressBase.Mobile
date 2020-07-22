@@ -118,4 +118,16 @@ namespace ExpressBase.Mobile.Enums
         Dev,
         Production
     }
+
+    public enum SignInOtpType
+    {
+        Sms = 1,
+        Email = 2
+    }
+
+    public enum LoginType
+    {
+        SSO,
+        CREDENTIALS
+    }
 }

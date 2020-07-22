@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -125,7 +126,7 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 await identityService.UpdateAuthInfo(authResponse, username, password);
-                await identityService.UpdateLastUser(username);
+                await identityService.UpdateLastUser(username, LoginType.CREDENTIALS);
 
                 EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true);
 
@@ -137,7 +138,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (data != null)
                 {
-                    await Navigate(data);
+                    await identityService.Navigate(data);
                 }
             }
             catch (Exception ex)
@@ -149,12 +150,12 @@ namespace ExpressBase.Mobile.ViewModels
         private async Task SubmitOtp(object o)
         {
             string otp = o.ToString();
-            ApiTwoFactorResponse resp = null;
+            ApiAuthResponse resp = null;
             IsBusy = true;
 
             try
             {
-                resp = await identityService.VerifyOrGenerate2FA(authResponse, otp, false);
+                resp = await identityService.VerifyOTP(authResponse, otp);
             }
             catch (Exception ex)
             {
@@ -170,11 +171,11 @@ namespace ExpressBase.Mobile.ViewModels
 
         private async Task ResendOtp()
         {
-            ApiTwoFactorResponse resp = null;
+            ApiGenerateOTPResponse resp = null;
 
             try
             {
-                resp = await identityService.VerifyOrGenerate2FA(authResponse, string.Empty, true);
+                resp = await identityService.GenerateOTP(authResponse);
             }
             catch (Exception ex)
             {
@@ -184,28 +185,6 @@ namespace ExpressBase.Mobile.ViewModels
             if (resp != null && resp.IsValid)
             {
                 DependencyService.Get<IToast>().Show("OTP sent");
-            }
-        }
-
-        private async Task Navigate(EbMobileSolutionData data)
-        {
-            if (data.Applications != null)
-            {
-                if (data.Applications.Count == 1)
-                {
-                    AppData appdata = data.Applications[0];
-
-                    await Store.SetJSONAsync(AppConst.CURRENT_APP, appdata);
-                    App.Settings.CurrentApplication = appdata;
-                    App.Settings.MobilePages = appdata.MobilePages;
-
-                    App.RootMaster = new RootMaster(typeof(Home));
-                    Application.Current.MainPage = App.RootMaster;
-                }
-                else
-                {
-                    await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
-                }
             }
         }
 

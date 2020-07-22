@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Configuration;
 using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
@@ -183,7 +184,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to set location :: "+ex.Message);
+                EbLog.Write("Failed to set location :: " + ex.Message);
             }
         }
     }

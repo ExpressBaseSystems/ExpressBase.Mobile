@@ -310,6 +310,8 @@ namespace ExpressBase.Mobile.Models
 
         public string LastUser { set; get; }
 
+        public LoginType LoginType { set; get; }
+
         public void SetLogo()
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();

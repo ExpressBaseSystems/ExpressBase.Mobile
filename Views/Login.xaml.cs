@@ -93,5 +93,10 @@ namespace ExpressBase.Mobile.Views
         {
             await Application.Current.MainPage.Navigation.PushAsync(new NewSolution(true));
         }
+
+        private async void SSOLoginButton_Clicked(object sender, EventArgs e)
+        {
+            await Application.Current.MainPage.Navigation.PushAsync(new LoginByOTP());
+        }
     }
 }
