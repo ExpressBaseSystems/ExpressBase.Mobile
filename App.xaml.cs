@@ -1,20 +1,15 @@
-﻿using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
+﻿using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
 using Xamarin.Forms;
-using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using System.Threading.Tasks;
 using System.Linq;
-using ExpressBase.Mobile.Enums;
 
 namespace ExpressBase.Mobile
 {
     public partial class App : Application
     {
-        private LoginType loginType => Settings.Vendor.DefaultLoginType;
-
         public static IDataBase DataDB { get; set; }
 
         public static MasterDetailPage RootMaster { set; get; }
@@ -62,28 +57,8 @@ namespace ExpressBase.Mobile
             {
                 if (Settings.RToken != null)
                 {
-                    if (Utils.HasInternet && IdentityService.IsTokenExpired(Settings.RToken))
-                    {
-                        string username = Settings.UserName;
-                        string password = await Store.GetValueAsync(AppConst.PASSWORD);
-
-                        ApiAuthResponse authresponse = await IdentityService.Instance.AuthenticateAsync(username, password);
-
-                        await IdentityService.Instance.UpdateAuthInfo(authresponse, username, password);
-
-                        if (authresponse.IsValid)
-                        {
-                            RootMaster = new RootMaster(typeof(Home));
-                            MainPage = RootMaster;
-                        }
-                        else
-                        {
-                            if (loginType == LoginType.SSO)
-                                await MainPage.Navigation.PushAsync(new LoginByOTP());
-                            else
-                                await MainPage.Navigation.PushAsync(new Login());
-                        }
-                    }
+                    if (NAVService.IsTokenExpired(Settings.RToken))
+                        await NAVService.NavigateToLogin();
                     else
                     {
                         if (Settings.AppId <= 0)
@@ -96,12 +71,7 @@ namespace ExpressBase.Mobile
                     }
                 }
                 else
-                {
-                    if (loginType == LoginType.SSO)
-                        await MainPage.Navigation.PushAsync(new LoginByOTP());
-                    else
-                        await MainPage.Navigation.PushAsync(new Login());
-                }
+                    await NAVService.NavigateToLogin();
             }
         }
     }

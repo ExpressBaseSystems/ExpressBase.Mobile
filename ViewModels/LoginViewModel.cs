@@ -1,10 +1,8 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
-using ExpressBase.Mobile.Views;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -110,7 +108,7 @@ namespace ExpressBase.Mobile.ViewModels
                     if (authResponse.Is2FEnabled)
                         toggle2FAW?.Invoke(authResponse);
                     else
-                        await AfterLoginSuccess(_username, _password);
+                        await AfterLoginSuccess(_username);
                 }
                 else
                     toast.Show("wrong username or password.");
@@ -121,25 +119,20 @@ namespace ExpressBase.Mobile.ViewModels
                 toast.Show("Email/Password cannot be empty");
         }
 
-        private async Task AfterLoginSuccess(string username, string password)
+        private async Task AfterLoginSuccess(string username)
         {
             try
             {
-                await identityService.UpdateAuthInfo(authResponse, username, password);
+                await identityService.UpdateAuthInfo(authResponse, username);
                 await identityService.UpdateLastUser(username, LoginType.CREDENTIALS);
 
                 EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true);
 
                 if (App.Settings.Vendor.AllowNotifications)
-                {
-                    ///update notification hub regid  in background
                     await NotificationService.Instance.UpdateNHRegisratation();
-                }
 
                 if (data != null)
-                {
                     await identityService.Navigate(data);
-                }
             }
             catch (Exception ex)
             {
@@ -164,7 +157,7 @@ namespace ExpressBase.Mobile.ViewModels
 
             IsBusy = false;
             if (resp != null && resp.IsValid)
-                await AfterLoginSuccess(this.Email.Trim(), this.PassWord.Trim());
+                await AfterLoginSuccess(this.Email.Trim());
             else
                 DependencyService.Get<IToast>().Show("The OTP is Invalid or Expired");
         }
@@ -172,7 +165,6 @@ namespace ExpressBase.Mobile.ViewModels
         private async Task ResendOtp()
         {
             ApiGenerateOTPResponse resp = null;
-
             try
             {
                 resp = await identityService.GenerateOTP(authResponse);
@@ -183,9 +175,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
 
             if (resp != null && resp.IsValid)
-            {
                 DependencyService.Get<IToast>().Show("OTP sent");
-            }
         }
 
         bool CanLogin()

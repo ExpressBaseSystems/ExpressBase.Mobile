@@ -65,6 +65,8 @@ namespace ExpressBase.Mobile.Services
             get => CurrentLocation.LocId;
         }
 
+        public LoginType LoginType => CurrentSolution == null ? Vendor.DefaultLoginType : CurrentSolution.LoginType;
+
         public async Task InitializeSettings()
         {
             try

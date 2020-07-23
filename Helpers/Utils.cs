@@ -13,11 +13,6 @@ namespace ExpressBase.Mobile.Helpers
 {
     public class Utils
     {
-        public static string PassWord
-        {
-            get { return Store.GetValue(AppConst.PASSWORD); }
-        }
-
         public static List<EbLocation> Locations
         {
             get

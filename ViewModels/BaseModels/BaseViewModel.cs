@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
 using System;
 using System.ComponentModel;
@@ -37,9 +39,9 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public Command ResetConfig => new Command(ResetClicked);
+        public Command ResetConfig => new Command(async () => await Reset());
 
-        public Command LogoutCommand => new Command(LogoutClicked);
+        public Command LogoutCommand => new Command(async () => await Logout());
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -53,35 +55,24 @@ namespace ExpressBase.Mobile.ViewModels
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void ResetClicked()
+        public async Task Reset()
         {
             Store.ResetCashedSolutionData();
             Store.RemoveJSON(AppConst.SOLUTION_OBJ);
             App.Settings.Reset();
-            
-            Application.Current.MainPage = new NavigationPage(new MySolutions())
+
+            Application.Current.MainPage = new NavigationPage()
             {
                 BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
                 BarTextColor = Color.White
             };
+            await Application.Current.MainPage.Navigation.PushAsync(new MySolutions());
         }
 
-        public void LogoutClicked()
+        public async Task Logout()
         {
-            try
-            {
-                Store.ResetCashedSolutionData();
-
-                Application.Current.MainPage = new NavigationPage(new Login())
-                {
-                    BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
-                    BarTextColor = Color.White
-                };
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
+            Store.ResetCashedSolutionData();
+            await NAVService.NavigateToLogin();
         }
 
         public virtual void RefreshPage() { }

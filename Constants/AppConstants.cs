@@ -14,8 +14,6 @@ namespace ExpressBase.Mobile.Constants
 
         public const string SOLUTION_OBJ = "solution_obj";
 
-        public const string PASSWORD = "password";
-
         public const string APP_COLLECTION = "app_collection";
 
         public const string CURRENT_APP = "current_app";

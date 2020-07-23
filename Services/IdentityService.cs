@@ -8,8 +8,8 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -24,7 +24,7 @@ namespace ExpressBase.Mobile.Services
 
         Task<ImageSource> GetLogo(string sid);
 
-        Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password);
+        Task UpdateAuthInfo(ApiAuthResponse resp, string username);
 
         Task UpdateLastUser(string username, LoginType logintype = LoginType.SSO);
 
@@ -33,6 +33,8 @@ namespace ExpressBase.Mobile.Services
         Task<ApiGenerateOTPResponse> GenerateOTP(ApiAuthResponse autheresp);
 
         Task Navigate(EbMobileSolutionData data);
+
+        bool IsValidOTP(string otp);
     }
 
     public class IdentityService : IIdentityService
@@ -75,7 +77,7 @@ namespace ExpressBase.Mobile.Services
         {
             ApiAuthResponse resp;
 
-            RestRequest request = new RestRequest("api/auth_sso", Method.GET);
+            RestRequest request = new RestRequest("api/auth_sso", Method.POST);
 
             request.AddParameter("username", username);
             request.AddParameter("type", (int)type);
@@ -108,7 +110,7 @@ namespace ExpressBase.Mobile.Services
             }
 
             request.AddParameter("token", autheresp.TwoFAToken);
-            request.AddParameter("authid", autheresp.User.AuthId);
+            request.AddParameter("authid", autheresp.UserAuthId);
             request.AddParameter("otp", otp);
 
             try
@@ -175,7 +177,7 @@ namespace ExpressBase.Mobile.Services
             return null;
         }
 
-        public async Task UpdateAuthInfo(ApiAuthResponse resp, string username, string password)
+        public async Task UpdateAuthInfo(ApiAuthResponse resp, string username)
         {
             try
             {
@@ -187,7 +189,6 @@ namespace ExpressBase.Mobile.Services
                 App.Settings.BToken = resp.BToken;
                 App.Settings.CurrentUser = resp.User;
 
-                await Store.SetValueAsync(AppConst.PASSWORD, password.Trim());
                 await Store.SetJSONAsync(AppConst.USER_OBJECT, resp.User);
 
                 if (resp.DisplayPicture != null)
@@ -200,31 +201,6 @@ namespace ExpressBase.Mobile.Services
             catch (Exception ex)
             {
                 EbLog.Write("UpdateAuthInfo---" + ex.Message);
-            }
-        }
-
-        public static bool IsTokenExpired(string rtoken)
-        {
-            var jwtToken = new JwtSecurityToken(rtoken);
-
-            if (DateTime.Compare(jwtToken.ValidTo, DateTime.Now) < 0)
-                return true;
-            else
-                return false;
-        }
-
-        public static async Task AuthIfTokenExpiredAsync()
-        {
-            if (IsTokenExpired(App.Settings.RToken))
-            {
-                string _username = App.Settings.UserName;
-                string _password = Utils.PassWord;
-
-                IdentityService service = IdentityService.Instance;
-
-                ApiAuthResponse response = await service.AuthenticateAsync(_username, _password);
-                if (response.IsValid)
-                    await service.UpdateAuthInfo(response, _username, _password);
             }
         }
 
@@ -268,6 +244,19 @@ namespace ExpressBase.Mobile.Services
                     await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
                 }
             }
+        }
+
+        public bool IsValidOTP(string otp)
+        {
+            if (string.IsNullOrEmpty(otp))
+                return false;
+
+            char[] charArray = otp.ToCharArray();
+
+            if (charArray.All(x => char.IsDigit(x)) && charArray.Length == 6)
+                return true;
+            else
+                return false;
         }
     }
 }

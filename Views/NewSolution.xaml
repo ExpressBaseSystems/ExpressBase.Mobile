@@ -4,6 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+             xmlns:behavior="clr-namespace:ExpressBase.Mobile.Behavior"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.NewSolution"
              NavigationPage.HasNavigationBar="False"
@@ -109,6 +110,9 @@
                                     VerticalTextAlignment="Center"
                                     Grid.Column="0"
                                     Placeholder="Enter solution URL">
+                                    <control:TextBox.Behaviors>
+                                        <behavior:SolutioUrlBehavior></behavior:SolutioUrlBehavior>
+                                    </control:TextBox.Behaviors>
                                 </control:TextBox>
                                 <BoxView
                                     Grid.Column="1"

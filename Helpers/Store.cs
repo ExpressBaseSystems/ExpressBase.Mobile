@@ -196,7 +196,6 @@ namespace ExpressBase.Mobile.Helpers
                 Store.RemoveJSON(AppConst.USER_OBJECT);
                 Store.Remove(AppConst.BTOKEN);
                 Store.Remove(AppConst.RTOKEN);
-                Store.Remove(AppConst.PASSWORD);
                 App.Settings.CurrentUser = null;
 
                 //remove application info

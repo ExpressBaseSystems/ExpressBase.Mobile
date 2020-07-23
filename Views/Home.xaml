@@ -75,13 +75,12 @@
                         </Frame>
                         <control:Menu
                             x:Name="MenuView"
-                            VerticalOptions="FillAndExpand"
                             ItemSource="{Binding ObjectList}"
                             ItemTaped="{Binding MenuItemTappedCommand}">
                         </control:Menu>
                         <StackLayout 
+                            VerticalOptions="CenterAndExpand"
                             x:Name="EmptyMessage"
-                            Margin="0,20,0,0"
                             IsVisible="False">
                             <Image Source="mt.png" HeightRequest="50"></Image>
                             <Label Text="Empty..." HorizontalTextAlignment="Center"></Label>

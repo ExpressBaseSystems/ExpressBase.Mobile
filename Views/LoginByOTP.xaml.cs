@@ -1,6 +1,9 @@
-﻿using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using System;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -45,7 +48,7 @@ namespace ExpressBase.Mobile.Views
 
         private async void CredLoginButton_Clicked(object sender, EventArgs e)
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new Login());
+            await NAVService.ReplaceTopAsync(new Login());
         }
 
         private void BackButton_Clicked(object sender, EventArgs e)

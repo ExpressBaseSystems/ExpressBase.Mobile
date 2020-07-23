@@ -79,18 +79,23 @@ namespace ExpressBase.Mobile.Views
                 }
                 else
                 {
-                    await IdentityService.AuthIfTokenExpiredAsync();
+                    if (NAVService.IsTokenExpired(App.Settings.RToken))
+                    {
+                        await NAVService.NavigateToLogin();
+                    }
+                    else
+                    {
+                        IconedLoader.IsVisible = true;
+                        App.Settings.MobilePages = null;
 
-                    IconedLoader.IsVisible = true;
-                    App.Settings.MobilePages = null;
+                        await viewModel.UpdateAsync();
+                        MenuView.Notify("ItemSource");
+                        ToggleStatus();
 
-                    await viewModel.UpdateAsync();
-                    MenuView.Notify("ItemSource");
-                    ToggleStatus();
-
-                    RootRefreshView.IsRefreshing = false;
-                    IconedLoader.IsVisible = false;
-                    toast.Show("Refreshed");
+                        RootRefreshView.IsRefreshing = false;
+                        IconedLoader.IsVisible = false;
+                        toast.Show("Refreshed");
+                    }
                 }
             }
             catch (Exception ex)

@@ -4,9 +4,7 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
-using System.Collections.Generic;
 using System.Net.Mail;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -62,6 +60,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public override async Task InitializeAsync()
         {
+            this.UserName = App.Settings.CurrentSolution?.LastUser;
+
             LogoUrl = await identityService.GetLogo(App.Settings.Sid);
         }
 
@@ -74,7 +74,7 @@ namespace ExpressBase.Mobile.ViewModels
 
             IToast toast = DependencyService.Get<IToast>();
 
-            var otpT = OtpType(username);
+            SignInOtpType otpT = OtpType(username);
 
             IsBusy = true;
             try
@@ -82,45 +82,37 @@ namespace ExpressBase.Mobile.ViewModels
                 authResponse = await identityService.AuthenticateSSOAsync(username, otpT);
 
                 if (authResponse != null && authResponse.IsValid)
-                {
-                    if (authResponse.Is2FEnabled)
-                        toggle2FAW?.Invoke(authResponse);
-                    else
-                        toast.Show("OTP service unavailable");
-                }
+                    toggle2FAW?.Invoke(authResponse);
                 else
-                    toast.Show("wrong username or password.");
+                    toast.Show("username or mobile invalid");
             }
             catch (Exception ex)
             {
-                EbLog.Write("failed to send otp :: " + ex.Message);
+                EbLog.Write("Failed to send otp :: " + ex.Message);
             }
 
-            IsBusy = true;
+            IsBusy = false;
         }
 
         private async Task SubmitOTP(object o)
         {
             string otp = o.ToString();
-            ApiAuthResponse resp = null;
-            IsBusy = true;
 
+            if (!identityService.IsValidOTP(otp)) return;
+
+            IsBusy = true;
             try
             {
-                resp = await identityService.VerifyOTP(authResponse, otp);
+                ApiAuthResponse resp = await identityService.VerifyOTP(authResponse, otp);
+
+                if (resp != null && resp.IsValid)
+                    await AfterLoginSuccess(resp, this.UserName);
+                else
+                    DependencyService.Get<IToast>().Show("The OTP is Invalid or Expired");
             }
             catch (Exception ex)
             {
-                EbLog.Write("Otp verification failed :: " + ex.Message);
-            }
-
-            if (resp != null && resp.IsValid)
-            {
-                await AfterLoginSuccess(resp, this.UserName);
-            }
-            else
-            {
-                DependencyService.Get<IToast>().Show("The OTP is Invalid or Expired");
+                EbLog.Write("OTP verification failed :: " + ex.Message);
             }
 
             IsBusy = false;
@@ -130,21 +122,16 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                await identityService.UpdateAuthInfo(resp, username, string.Empty);
+                await identityService.UpdateAuthInfo(resp, username);
                 await identityService.UpdateLastUser(username);
 
                 EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true);
 
                 if (App.Settings.Vendor.AllowNotifications)
-                {
-                    ///update notification hub regid  in background
                     await NotificationService.Instance.UpdateNHRegisratation();
-                }
 
                 if (data != null)
-                {
                     await identityService.Navigate(data);
-                }
             }
             catch (Exception ex)
             {
@@ -155,20 +142,17 @@ namespace ExpressBase.Mobile.ViewModels
         private async Task ResendOTP()
         {
             ApiGenerateOTPResponse resp = null;
-
             try
             {
                 resp = await identityService.GenerateOTP(authResponse);
             }
             catch (Exception ex)
             {
-                EbLog.Write("failed to regenerate otp :: " + ex.Message);
+                EbLog.Write("Failed to regenerate otp :: " + ex.Message);
             }
 
             if (resp != null && resp.IsValid)
-            {
                 DependencyService.Get<IToast>().Show("OTP sent");
-            }
         }
 
         private SignInOtpType OtpType(string username)

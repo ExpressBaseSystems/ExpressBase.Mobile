@@ -71,20 +71,25 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                await Task.Run(async () =>
+                if (NAVService.IsTokenExpired(App.Settings.RToken))
                 {
-                    Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
-
-                    await IdentityService.AuthIfTokenExpiredAsync();
-
-                    SyncResponse response = await menuServices.Sync();
-
-                    Device.BeginInvokeOnMainThread(() =>
+                    await NAVService.NavigateToLogin();
+                }
+                else
+                {
+                    await Task.Run(async () =>
                     {
-                        IsBusy = false;
-                        DependencyService.Get<IToast>().Show(response.Message);
+                        Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
+
+                        SyncResponse response = await menuServices.Sync();
+
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            IsBusy = false;
+                            DependencyService.Get<IToast>().Show(response.Message);
+                        });
                     });
-                });
+                }
             }
             catch (Exception ex)
             {

@@ -11,13 +11,15 @@ namespace ExpressBase.Mobile.Models
 {
     public class ApiAuthResponse
     {
+        public bool IsValid { set; get; }
+
         public string BToken { set; get; }
 
         public string RToken { set; get; }
 
-        public bool IsValid { set; get; }
-
         public int UserId { set; get; }
+
+        public string UserAuthId { set; get; }
 
         public string DisplayName { set; get; }
 
