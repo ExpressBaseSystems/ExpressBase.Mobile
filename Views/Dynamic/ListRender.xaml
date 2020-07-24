@@ -21,89 +21,108 @@
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
-        <Grid>
-            <Grid RowSpacing="0">
+        <Grid RowSpacing="0">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" x:Name="PagingContainer" RowSpacing="0" IsVisible="False" ColumnSpacing="0" BackgroundColor="White">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0" BackgroundColor="White">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Label 
-                        x:Name="PagingMeta"
-                        Grid.Column="0"
-                        VerticalTextAlignment="Center"
-                        Margin="5,0"
-                        FontSize="15"
-                        TextColor="#333">
-                    </Label>
-                    <Frame Grid.Column="1" 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label 
+                    x:Name="PagingMeta"
+                    Grid.Column="0"
+                    VerticalTextAlignment="Center"
+                    Margin="5,0"
+                    FontSize="15"
+                    TextColor="#333">
+                </Label>
+                <Frame Grid.Column="1" 
                        Padding="0" 
                        Margin="5"
                        BackgroundColor="Transparent"
                        HasShadow="False">
-                        <Frame.Content>
-                            <StackLayout Orientation="Horizontal" Spacing="0">
-                                <Button 
-                                    x:Name="PagingPrevButton"
-                                    CornerRadius="17"
-                                    Padding="0"
-                                    BorderColor="#e1e6e9"
-                                    BorderWidth="1"
-                                    HeightRequest="35"
-                                    WidthRequest="35"
-                                    Text="&#xf053;"
-                                    FontFamily="{StaticResource FontAwesome}"
-                                    BackgroundColor="#e1e6e9"
-                                    Clicked="PagingPrevButton_Clicked">
-                                </Button>
-                                <Label 
-                                    x:Name="PagingPageCount"
-                                    Margin="5,0"
-                                    TextColor="#333"
-                                    VerticalTextAlignment="Center">
-                                </Label>
-                                <Button 
-                                    x:Name="PagingNextButton"
-                                    Margin="0,0,0,0"
-                                    CornerRadius="17" 
-                                    Padding="0"
-                                    HeightRequest="35"
-                                    WidthRequest="35"
-                                    Text="&#xf054;" 
-                                    FontFamily="{StaticResource FontAwesome}"
-                                    BorderColor="#e1e6e9"
-                                    BorderWidth="1"
-                                    BackgroundColor="#e1e6e9"
-                                    Clicked="PagingNextButton_Clicked">
-                                </Button>
-                            </StackLayout>
-                        </Frame.Content>
-                    </Frame>
-                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
-                </Grid>
-                <RefreshView
+                    <Frame.Content>
+                        <StackLayout Orientation="Horizontal" Spacing="0">
+                            <Button 
+                                x:Name="PagingPrevButton"
+                                CornerRadius="17"
+                                Padding="0"
+                                BorderColor="#e1e6e9"
+                                BorderWidth="1"
+                                HeightRequest="35"
+                                WidthRequest="35"
+                                Text="&#xf053;"
+                                FontFamily="{StaticResource FontAwesome}"
+                                BackgroundColor="#e1e6e9"
+                                Clicked="PagingPrevButton_Clicked">
+                            </Button>
+                            <Label 
+                                x:Name="PagingPageCount"
+                                Margin="5,0"
+                                TextColor="#333"
+                                VerticalTextAlignment="Center">
+                            </Label>
+                            <Button 
+                                x:Name="PagingNextButton"
+                                Margin="0,0,0,0"
+                                CornerRadius="17" 
+                                Padding="0"
+                                HeightRequest="35"
+                                WidthRequest="35"
+                                Text="&#xf054;" 
+                                FontFamily="{StaticResource FontAwesome}"
+                                BorderColor="#e1e6e9"
+                                BorderWidth="1"
+                                BackgroundColor="#e1e6e9"
+                                Clicked="PagingNextButton_Clicked">
+                            </Button>
+                        </StackLayout>
+                    </Frame.Content>
+                </Frame>
+                <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
+            </Grid>
+            
+            <RefreshView
                     Grid.Row="1"
                     x:Name="ListViewRefresh"
                     Refreshing="ListViewRefresh_Refreshing">
-                    <ScrollView>
-                        <StackLayout x:Name="ListContainer" BackgroundColor="White" Spacing="0">
+                <ScrollView>
+                    <StackLayout x:Name="ListContainer" BackgroundColor="White" Spacing="0">
 
-                        </StackLayout>
-                    </ScrollView>
-                </RefreshView>
-            </Grid>
+                    </StackLayout>
+                </ScrollView>
+            </RefreshView>
+
+            <Button
+                x:Name="AddLinkData"
+                IsVisible="False"
+                Grid.Row="1"
+                Text="&#xf067;"
+                Margin="0,0,10,10"
+                VerticalOptions="End"
+                HorizontalOptions="End"
+                TextColor="White"
+                BackgroundColor="{DynamicResource Primary_Color}"
+                HeightRequest="60"
+                WidthRequest="60"
+                CornerRadius="30"
+                FontFamily="{StaticResource FontAwesome}"
+                Command="{Binding AddCommand}">
+            </Button>
+            
             <!--Order of binding should be this, FilterControls should be the last-->
             <control:FilterView 
+                Grid.RowSpan="2"
                 x:Name="FilterView"
                 NetWorkType="{Binding NetworkType}"
                 SortColumns="{Binding SortColumns}"
@@ -112,6 +131,7 @@
             </control:FilterView>
 
             <control:LoaderIconed 
+                Grid.RowSpan="2"
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
@@ -119,6 +139,7 @@
             </control:LoaderIconed>
 
             <StackLayout 
+                Grid.RowSpan="2"
                 x:Name="EmptyMessage"
                 IsVisible="False"
                 VerticalOptions="Center">

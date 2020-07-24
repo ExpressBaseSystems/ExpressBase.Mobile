@@ -3,6 +3,7 @@ using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Shared;
 using System;
@@ -110,7 +111,7 @@ namespace ExpressBase.Mobile.Views
                 IToast toast = DependencyService.Get<IToast>();
                 if (!Utils.HasInternet)
                 {
-                    toast.Show("Not connected to internet!");
+                    Utils.Alert_NoInternet(toast);
                     return;
                 }
                 if (string.IsNullOrEmpty(surl) || viewModel.IsSolutionExist(surl))
@@ -145,8 +146,6 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-
-
         private void PopupCancel_Clicked(object sender, EventArgs e)
         {
             PopupContainer.IsVisible = false;
@@ -160,7 +159,6 @@ namespace ExpressBase.Mobile.Views
 
                 Loader.IsVisible = true;
                 PopupContainer.IsVisible = false;
-                LoginType loginType = App.Settings.Vendor.DefaultLoginType;
 
                 if (isMasterPage)
                 {
@@ -171,11 +169,7 @@ namespace ExpressBase.Mobile.Views
                         BarTextColor = Color.White
                     };
                 }
-
-                if(loginType == LoginType.CREDENTIALS)
-                    await Application.Current.MainPage.Navigation.PushAsync(new Login());
-                else
-                    await Application.Current.MainPage.Navigation.PushAsync(new LoginByOTP());
+                await NAVService.LoginWithCS();
             }
             catch (Exception ex)
             {

@@ -33,6 +33,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
             tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
             tapGesture.Tapped += ListItem_Tapped;
+            this.ToggleLinks();
             this.Loader.IsVisible = true;
         }
 
@@ -49,6 +50,17 @@ namespace ExpressBase.Mobile.Views.Dynamic
             this.Loader.IsVisible = false;
         }
 
+        private void ToggleLinks()
+        {
+            if (!string.IsNullOrEmpty(viewModel.Visualization.LinkRefId))
+            {
+                EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
+
+                if (page != null && page.Container is EbMobileForm)
+                    AddLinkData.IsVisible = true;
+            }
+        }
+
         private void AppendListItems()
         {
             try
@@ -61,6 +73,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 if (viewModel.DataTable.Rows.Any())
                 {
                     EmptyMessage.IsVisible = false;
+                    PagingContainer.IsVisible = true;
 
                     foreach (EbDataRow row in viewModel.DataTable.Rows)
                     {
@@ -78,6 +91,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 }
                 else
                 {
+                    PagingContainer.IsVisible = false;
                     EmptyMessage.IsVisible = true;
                 }
                 this.UpdatePaginationBar();

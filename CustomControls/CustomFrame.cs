@@ -218,7 +218,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private View DC2Image(object value)
         {
-            Image image = new Image { Style = (Style)HelperFunctions.GetResourceValue("ListViewImage") };
+            ImageCircle image = new ImageCircle { Style = (Style)HelperFunctions.GetResourceValue("ListViewImage") };
             Frame frame = new Frame
             {
                 Content = image,

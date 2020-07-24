@@ -22,25 +22,25 @@
                 Refreshing="MyActionsRefresh_Refreshing">
                 <ScrollView x:Name="scrollView">
                     <StackLayout
-                    x:Name="actionList"
-                    BindableLayout.ItemsSource="{Binding Actions}"
-                    Spacing="0">
+                        x:Name="actionList"
+                        BindableLayout.ItemsSource="{Binding Actions}"
+                        Spacing="0">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
                                 <Frame
-                                Margin="0"
-                                Padding="0"
-                                BorderColor="{DynamicResource Gray-White}"
-                                CornerRadius="0"
-                                HasShadow="false">
+                                    Margin="0"
+                                    Padding="0"
+                                    BorderColor="{DynamicResource Gray-White}"
+                                    CornerRadius="0"
+                                    HasShadow="false">
                                     <Frame.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemSelectedCommand, Source={x:Reference actionList}}" CommandParameter="{Binding .}" />
                                     </Frame.GestureRecognizers>
                                     <StackLayout Orientation="Vertical">
-                                        <Grid ColumnSpacing="10" Padding="10">
+                                        <Grid ColumnSpacing="10" Padding="10,10,10,0">
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="*"></RowDefinition>
-                                                <RowDefinition Height="*"></RowDefinition>
+                                                <RowDefinition Height="Auto"></RowDefinition>
+                                                <RowDefinition Height="Auto"></RowDefinition>
                                             </Grid.RowDefinitions>
 
                                             <Grid.ColumnDefinitions>
@@ -48,16 +48,16 @@
                                                 <ColumnDefinition Width="*"></ColumnDefinition>
                                             </Grid.ColumnDefinitions>
                                             <Frame 
-                                            Grid.Row="0"
-                                            Grid.RowSpan="2"
-                                            Grid.Column="0"
-                                            HeightRequest="50"
-                                            VerticalOptions="Center"
-                                            WidthRequest="50"
-                                            Padding="0"
-                                            HasShadow="True"
-                                            BackgroundColor="#b5b5b5"
-                                            CornerRadius="25">
+                                                Grid.Row="0"
+                                                Grid.RowSpan="2"
+                                                Grid.Column="0"
+                                                HeightRequest="50"
+                                                VerticalOptions="Center"
+                                                WidthRequest="50"
+                                                Padding="0"
+                                                HasShadow="True"
+                                                BackgroundColor="#b5b5b5"
+                                                CornerRadius="25">
                                                 <Label 
                                                     Text="{Binding Notation}"
                                                     FontSize="15"
@@ -68,17 +68,19 @@
                                                 </Label>
                                             </Frame>
                                             <Label 
-                                            Text="{Binding Description}"
-                                            Grid.Row="0"
-                                            Grid.Column="1"
-                                            FontSize="15"
-                                            FontFamily="{StaticResource Roboto-Medium}"
-                                            TextColor="{DynamicResource Gray-900}"/>
+                                                Text="{Binding Description}"
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                FontSize="15"
+                                                FontFamily="{StaticResource Roboto-Medium}"
+                                                TextColor="{DynamicResource Gray-900}">
+                                            </Label>
                                             <Label 
-                                            Text="{Binding DaysAgo}" 
-                                            FontFamily="{StaticResource Roboto-Regular}" 
-                                            Grid.Row="1" 
-                                            Grid.Column="1"/>
+                                                Text="{Binding DaysAgo}" 
+                                                FontFamily="{StaticResource Roboto-Regular}" 
+                                                Grid.Row="1" 
+                                                Grid.Column="1">
+                                            </Label>
                                         </Grid>
                                         <BoxView Color="#eee" HeightRequest="1"></BoxView>
                                     </StackLayout>
@@ -88,6 +90,7 @@
                     </StackLayout>
                 </ScrollView>
             </RefreshView>
+            
             <Label 
                 IsVisible="{Binding ShowEmptyLabel}"
                 x:Name="EmptyLabel"
@@ -96,10 +99,10 @@
                 HorizontalTextAlignment="Center"/>
             <!--loader-->
             <control:LoaderIconed 
+                Grid.Row="0"
                 x:Name="Loader"
-                IsVisible="{Binding IsBusy}" 
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"/>
+                IsVisible="{Binding IsBusy}">
+            </control:LoaderIconed>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -29,42 +29,43 @@
                             Padding="10"
                             Margin="15,10"
                             CornerRadius="8"
-                            BackgroundColor="#ddf3f5"
+                            BackgroundColor="#e8f0fe"
+                            BorderColor="#e4ecf9"
                             HasShadow="True">
                             <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
-                                <Frame 
-                                    Grid.Column="0"
+                                <BoxView 
                                     HeightRequest="50"
-                                    VerticalOptions="Center"
                                     WidthRequest="50"
-                                    Padding="5"
-                                    BackgroundColor="white"
-                                    BorderColor="#cccccc"
-                                    HasShadow="False"
-                                    IsClippedToBounds="True"
-                                    CornerRadius="8">
-                                    <Image Source="{Binding SolutionLogo}" Aspect="AspectFit"/>
-                                </Frame>
+                                    CornerRadius="28"
+                                    BackgroundColor="White">
+                                </BoxView>
+                                <control:ImageCircle 
+                                    HeightRequest="50"
+                                    WidthRequest="50"
+                                    Source="{Binding SolutionLogo}" 
+                                    VerticalOptions="Center"
+                                    Aspect="AspectFit">
+                                </control:ImageCircle>
                                 <StackLayout Grid.Column="1">
                                     <Label 
                                         x:Name="CurrentSolution"
                                         FontSize="15"
-                                        TextColor="#4e4e4e"
+                                        TextColor="#1a73e8"
                                         FontFamily="{StaticResource Roboto-Medium}">
                                     </Label>
                                     <Label LineBreakMode="TailTruncation">
                                         <Label.FormattedText>
                                             <FormattedString>
-                                                <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
+                                                <Span Text="&#xf041;" TextColor="#1a73e8" FontFamily="{StaticResource FontAwesome}"></Span>
                                                 <Span Text=" "></Span>
                                                 <Span 
                                                     Text="Default" 
+                                                    FontSize="13"
                                                     x:Name="CurrentLocation" 
-                                                    TextColor="{StaticResource Eb-Blue2}"
                                                     FontFamily="{StaticResource Roboto-Medium}">
                                                 </Span>
                                             </FormattedString>

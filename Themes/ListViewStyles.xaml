@@ -5,10 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Style TargetType="Frame" x:Key="ListViewImageFrame">
-        <Setter Property="VerticalOptions" Value="FillAndExpand"></Setter>
+        <Setter Property="VerticalOptions" Value="CenterAndExpand"></Setter>
         <Setter Property="Padding" Value="0"></Setter>
+        <Setter Property="Margin" Value="0"></Setter>
         <Setter Property="IsClippedToBounds" Value="True"></Setter>
-        <Setter Property="CornerRadius" Value="6"></Setter>
         <Setter Property="BackgroundColor" Value="Transparent"></Setter>
     </Style>
 

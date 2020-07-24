@@ -59,6 +59,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
                 if (viewModel.DataTable.Rows.Any())
                 {
+                    PagingContainer.IsVisible = true;
                     EmptyMessage.IsVisible = false;
 
                     foreach (EbDataRow row in viewModel.DataTable.Rows)
@@ -78,6 +79,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 }
                 else
                 {
+                    PagingContainer.IsVisible = false;
                     EmptyMessage.IsVisible = true;
                 }
                 this.UpdatePaginationBar();
@@ -117,14 +119,17 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             try
             {
-                if (string.IsNullOrEmpty(viewModel.SourceVisualization.SourceFormRefId))
+                if (!string.IsNullOrEmpty(viewModel.SourceVisualization.SourceFormRefId))
                 {
-                    SourceDataEdit.IsVisible = false;
+                    SourceDataEdit.IsVisible = true;
                 }
 
-                if (string.IsNullOrEmpty(viewModel.Visualization.LinkRefId))
+                if (!string.IsNullOrEmpty(viewModel.Visualization.LinkRefId))
                 {
-                    AddLinkData.IsVisible = false;
+                    EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
+
+                    if (page != null && page.Container is EbMobileForm)
+                        AddLinkData.IsVisible = true;
                 }
             }
             catch (Exception ex)

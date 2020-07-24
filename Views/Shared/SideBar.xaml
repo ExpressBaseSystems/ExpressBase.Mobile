@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Shared.SideBar"
              Title="SideBar">
@@ -65,15 +66,13 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <Frame Grid.RowSpan="2"
-                                    VerticalOptions="Center"
-                                    Padding="0"
-                                    BackgroundColor="White"
-                                    CornerRadius="24"
-                                    HeightRequest="48"
-                                    WidthRequest="48">
-                                <Image x:Name="UserDp"/>
-                            </Frame>
+                            <customcontrols:ImageCircle
+                               x:Name="UserDp"
+                               Grid.RowSpan="2"
+                               HeightRequest="48"
+                               WidthRequest="48"
+                               VerticalOptions="Center">
+                            </customcontrols:ImageCircle>
 
                             <Label
                                 x:Name="UserName"

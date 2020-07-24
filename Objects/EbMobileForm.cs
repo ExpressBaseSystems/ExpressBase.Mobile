@@ -172,10 +172,10 @@ namespace ExpressBase.Mobile
                 if (pushResponse.RowAffected > 0)
                 {
                     response.Status = true;
-                    response.Message = "Data pushed to cloud :)";
+                    response.Message = "saved successfully :)";
                 }
                 else
-                    throw new Exception("Failed to push data");
+                    throw new Exception("Failed to save");
             }
             catch (Exception ex)
             {

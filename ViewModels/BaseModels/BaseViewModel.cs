@@ -72,7 +72,7 @@ namespace ExpressBase.Mobile.ViewModels
         public async Task Logout()
         {
             Store.ResetCashedSolutionData();
-            await NAVService.NavigateToLogin();
+            await NAVService.LoginWithNS();
         }
 
         public virtual void RefreshPage() { }

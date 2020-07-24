@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              BackgroundColor="White"
              x:Class="ExpressBase.Mobile.Views.MySolutions">
@@ -23,7 +24,6 @@
 
     <ContentPage.Content>
         <Grid>
-
             <ScrollView x:Name="scrollView">
                 <StackLayout
                     x:Name="SolutionsList"
@@ -32,6 +32,7 @@
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
                             <Frame
+                                BackgroundColor="Transparent"
                                 Margin="0"
                                 Padding="10"
                                 BorderColor="{DynamicResource Gray-White}"
@@ -49,14 +50,20 @@
                                     <AbsoluteLayout Grid.Column="0">
                                         <Frame 
                                             HeightRequest="55"
-                                            VerticalOptions="Center"
                                             WidthRequest="55"
-                                            Padding="0"
-                                            BorderColor="#d4d5d8"
-                                            HasShadow="False"
                                             CornerRadius="30"
+                                            VerticalOptions="Center"
+                                            Padding="0"
+                                            HasShadow="False"
+                                            BorderColor="#cccccc"
                                             IsClippedToBounds="True">
-                                            <Image Source="{Binding Logo}"/>
+                                            <customcontrols:ImageCircle 
+                                                HeightRequest="55"
+                                                WidthRequest="55"
+                                                Source="{Binding Logo}"
+                                                VerticalOptions="Center"
+                                                Aspect="AspectFit">
+                                            </customcontrols:ImageCircle>
                                         </Frame>
                                         <Frame
                                             IsVisible="{Binding IsCurrent}"

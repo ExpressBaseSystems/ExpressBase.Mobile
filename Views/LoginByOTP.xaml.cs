@@ -1,27 +1,35 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LoginByOTP : ContentPage
+    public partial class LoginByOTP : ContentPage, IDynamicContent
     {
         private bool isRendered;
 
         private readonly LoginByOTPViewModel viewModel;
+
+        public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.Login;
 
         public LoginByOTP()
         {
             InitializeComponent();
             BindingContext = viewModel = new LoginByOTPViewModel();
 
+            SetContentFromConfig();
             viewModel.Bind2FAToggleEvent(ShowTwoFAWindow);
+        }
+
+        public void SetContentFromConfig()
+        {
+            LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
         }
 
         protected override async void OnAppearing()
@@ -56,6 +64,11 @@ namespace ExpressBase.Mobile.Views
             TwoFAWindow.IsVisible = false;
             BackButton.IsVisible = false;
             RestButton.IsVisible = true;
+        }
+
+        private async void NewSolutionButton_Clicked(object sender, EventArgs e)
+        {
+            await Application.Current.MainPage.Navigation.PushAsync(new NewSolution(true));
         }
     }
 }

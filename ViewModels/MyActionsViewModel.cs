@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 MyActionsResponse actionResp = await myActionService.GetMyActionsAsync();
-                Actions.AddRange(actionResp.Actions);
+                Actions.Update(actionResp.Actions);
                 SetPageTitle();
             }
             catch (Exception ex)
@@ -86,6 +86,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (Utils.HasInternet)
                 {
                     IsBusy = true;
+
                     EbStageInfo stageInfo = await myActionService.GetMyActionInfoAsync(action.StageId, action.WebFormRefId, action.WebFormDataId);
 
                     if (stageInfo != null)
@@ -96,7 +97,7 @@ namespace ExpressBase.Mobile.ViewModels
                     IsBusy = false;
                 }
                 else
-                    DependencyService.Get<IToast>().Show("You are not connected to internet");
+                    Utils.Alert_NoInternet();
             }
             catch (Exception ex)
             {

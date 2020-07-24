@@ -6,35 +6,49 @@
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.LoginByOTP"
-             NavigationPage.HasBackButton="False">
-
-    <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Button
-                IsVisible="False"
-                x:Name="BackButton"
-                Grid.Column="0"
-                Style="{StaticResource ToolBarButtonStyle}"
-                Text="&#xf177;"
-                HorizontalOptions="Start"
-                Clicked="BackButton_Clicked">
-            </Button>
-            <Button 
-                x:Name="RestButton"
-                Text="&#xf013;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1" 
-                Command="{Binding ResetConfig}">
-            </Button>
-        </Grid>
-    </NavigationPage.TitleView>
+             NavigationPage.HasBackButton="False"
+             NavigationPage.HasNavigationBar="False">
     <ContentPage.Content>
         <Grid BackgroundColor="White">
-            <ScrollView x:Name="scrollView">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid 
+                Grid.Row="0"
+                RowSpacing="0" 
+                ColumnSpacing="2"
+                Padding="10,0,5,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    IsVisible="False"
+                    x:Name="BackButton"
+                    Grid.Column="0"
+                    Style="{StaticResource ToolBarButtonStyle}"
+                    Text="&#xf177;"
+                    TextColor="#333333"
+                    HorizontalOptions="Start"
+                    Clicked="BackButton_Clicked">
+                </Button>
+                <Button 
+                    IsVisible="{Binding IsResetVisible}"
+                    x:Name="RestButton"
+                    Text="&#xf013;" 
+                    Style="{StaticResource ToolBarButtonStyle}" 
+                    TextColor="#333333"
+                    Grid.Column="1" 
+                    Command="{Binding ResetConfig}">
+                </Button>
+            </Grid>
+
+            <ScrollView 
+                Grid.Row="1"
+                x:Name="scrollView">
                 <ScrollView.VerticalOptions>
                     <OnIdiom
                         x:TypeArguments="LayoutOptions"
@@ -118,7 +132,6 @@
                             x:Name="LoginButtonLabel"
                             Grid.Row="6"
                             VerticalOptions="EndAndExpand"
-                            Text="Add new Solution"
                             HorizontalTextAlignment="Center"
                             FontFamily="{StaticResource Roboto-Medium}"
                             FontSize="15"
@@ -127,7 +140,8 @@
                         <Button Grid.Row="6"
                                 BackgroundColor="Transparent"
                                 VerticalOptions="EndAndExpand"
-                                HorizontalOptions="FillAndExpand">
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="NewSolutionButton_Clicked">
                         </Button>
 
                     </Grid>
@@ -135,6 +149,7 @@
             </ScrollView>
 
             <control:TwoFAView
+                Grid.Row="1"
                 x:Name="TwoFAWindow"
                 ResendClicked="{Binding ResendOTPCommand}"
                 SubmitClicked="{Binding SubmitOTPCommand}">
@@ -142,6 +157,7 @@
 
             <!--loader-->
             <control:LoaderIconed 
+                Grid.RowSpan="2"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">

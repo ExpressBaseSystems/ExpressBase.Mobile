@@ -9,28 +9,14 @@
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button
-                x:Name="BackButton"
-                IsVisible="False"
-                Grid.Column="0"
-                Margin="0,0,10,0"
-                Padding="0"
-                FontSize="18"
-                TextColor="White"
-                FontFamily="{StaticResource FontAwesome}"
-                BackgroundColor="Transparent"
-                WidthRequest="40"
-                Text="&#xf177;"
-                Clicked="BackButton_Clicked"/>
-            <Label Text="Switch Location" x:Name="TitleLabel" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="1"/>
+            <Label Text="Switch Location" x:Name="TitleLabel" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
             <Button 
                 Text="&#xf002;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="2"
+                Grid.Column="1"
                 Margin="0,0,10,0">
             </Button>
         </Grid>

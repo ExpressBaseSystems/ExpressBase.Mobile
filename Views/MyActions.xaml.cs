@@ -25,13 +25,13 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
             BindingContext = viewModel = new MyActionsViewModel();
+            Loader.IsVisible = true;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            Loader.IsVisible = true;
             if (!isRendered)
             {
                 await viewModel.InitializeAsync();

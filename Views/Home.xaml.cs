@@ -81,7 +81,7 @@ namespace ExpressBase.Mobile.Views
                 {
                     if (NAVService.IsTokenExpired(App.Settings.RToken))
                     {
-                        await NAVService.NavigateToLogin();
+                        await NAVService.LoginWithNS();
                     }
                     else
                     {

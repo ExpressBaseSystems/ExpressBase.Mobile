@@ -202,4 +202,9 @@ namespace ExpressBase.Mobile.CustomControls
             this.Content = grid;
         }
     }
+
+    public class ImageCircle : Image
+    {
+
+    }
 }

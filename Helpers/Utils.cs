@@ -45,9 +45,12 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public static void Alert_NoInternet()
+        public static void Alert_NoInternet(IToast toast = null)
         {
-            DependencyService.Get<IToast>().Show("Not connected to internet!");
+            if (toast == null)
+                DependencyService.Get<IToast>().Show("Not connected to internet!");
+            else
+                toast.Show("Not connected to internet!");
         }
     }
 }

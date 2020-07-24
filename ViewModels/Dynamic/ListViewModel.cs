@@ -31,6 +31,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<SortColumn> SortColumns { set; get; }
 
+        public Command AddCommand => new Command(async () => await AddButtonClicked());
+
         public Command ApplyFilterCommand => new Command(ApplyFilterClicked);
 
         public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
@@ -56,7 +58,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 if (this.Page.NetworkMode == NetworkMode.Online && !Utils.HasInternet)
                 {
-                    DependencyService.Get<IToast>().Show("You are not connected to internet.");
+                    Utils.Alert_NoInternet();
                     throw new Exception("no internet");
                 }
 
@@ -73,6 +75,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 DataTable = new EbDataTable();
                 EbLog.Write(ex.Message);
+            }
+        }
+
+        private async Task AddButtonClicked()
+        {
+            EbMobilePage page = HelperFunctions.GetPage(Visualization.LinkRefId);
+
+            if (page != null && page.Container is EbMobileForm)
+            {
+                FormRender Renderer = new FormRender(page);
+                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
             }
         }
 

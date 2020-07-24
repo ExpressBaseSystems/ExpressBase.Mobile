@@ -63,11 +63,6 @@ namespace ExpressBase.Mobile.Views.Shared
             }
         }
 
-        private async void BackButton_Clicked(object sender, EventArgs e)
-        {
-            await Application.Current.MainPage.Navigation.PopModalAsync(true);
-        }
-
         private async void ApplyButton_Clicked(object sender, EventArgs e)
         {
             if (selectedLocation != null)

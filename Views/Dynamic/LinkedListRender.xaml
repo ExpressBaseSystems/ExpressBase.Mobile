@@ -45,6 +45,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Button
+                        IsVisible="False"
                         x:Name="SourceDataEdit"
                         Grid.Row="1"
                         Text="Edit"
@@ -62,7 +63,7 @@
                     </StackLayout>
                 </Grid>
 
-                <Grid Grid.Row="1" x:Name="PagingContainer" RowSpacing="0" ColumnSpacing="0">
+                <Grid Grid.Row="1" x:Name="PagingContainer" IsVisible="False" RowSpacing="0" ColumnSpacing="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
@@ -149,6 +150,7 @@
                 </StackLayout>
 
                 <Button
+                    IsVisible="False"
                     x:Name="AddLinkData"
                     Grid.Row="2"
                     Text="&#xf067;"

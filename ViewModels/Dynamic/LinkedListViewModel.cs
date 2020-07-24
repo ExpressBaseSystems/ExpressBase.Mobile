@@ -107,7 +107,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 if (this.Page.NetworkMode == NetworkMode.Online && !Utils.HasInternet)
                 {
-                    DependencyService.Get<IToast>().Show("You are not connected to internet.");
+                    Utils.Alert_NoInternet();
                     throw new Exception("no internet");
                 }
 
