@@ -50,7 +50,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
         {
-            contentGrid = new Grid { BackgroundColor = Color.Transparent, VerticalOptions = LayoutOptions.StartAndExpand };
+            contentGrid = new Grid { BackgroundColor = Color.Transparent };
 
             for (int r = 0; r < RowCount; r++)
             {
@@ -149,7 +149,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             if (_font != null)
             {
-                Label.FontSize = (this.isHeader) ? (_font.Size + 4) : _font.Size;
+                Label.FontSize = _font.Size;
 
                 if (_font.Style == FontStyle.BOLD)
                     Label.FontAttributes = FontAttributes.Bold;
@@ -218,24 +218,30 @@ namespace ExpressBase.Mobile.CustomControls
 
         private View DC2Image(object value)
         {
-            ImageCircle image = new ImageCircle { Style = (Style)HelperFunctions.GetResourceValue("ListViewImage") };
-            Frame frame = new Frame
+            LSImageButton image = new LSImageButton
             {
-                Content = image,
-                Style = (Style)HelperFunctions.GetResourceValue("ListViewImageFrame")
+                Style = (Style)HelperFunctions.GetResourceValue("ListViewImage")
             };
-            frame.SizeChanged += Image_SizeChanged;
+            image.SizeChanged += Image_SizeChanged;
+
             this.RenderImage(image, value);
-            return frame;
+            return image;
         }
 
         private void Image_SizeChanged(object sender, EventArgs e)
         {
-            Frame item = (Frame)sender;
-            item.HeightRequest = item.Width;
+            LSImageButton item = (LSImageButton)sender;
+
+            if (item.InitialWidth == 0)
+                item.InitialWidth = item.Width;
+
+            if (item.Width != item.InitialWidth)
+                item.WidthRequest = item.InitialWidth;
+
+            item.HeightRequest = item.InitialWidth;
         }
 
-        public async void RenderImage(Image image, object filerefs)
+        public async void RenderImage(LSImageButton image, object filerefs)
         {
             if (filerefs == null && string.IsNullOrEmpty(filerefs.ToString()))
                 return;

@@ -220,7 +220,7 @@ namespace ExpressBase.Mobile.Services
                     break;
                 }
             }
-
+            await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, current);
             await Store.SetJSONAsync(AppConst.MYSOLUTIONS, solutions);
         }
 
