@@ -10,7 +10,7 @@ namespace ExpressBase.Mobile.Views.Shared
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SideBar : ContentPage
     {
-        public bool HasAppSwitcher => App.Settings.Vendor.HasAppSwitcher;
+        public bool HasAppSwitcher => Utils.Applications.Count > 1;
 
         public bool HasSolutionSwitcher => App.Settings.Vendor.HasSolutionSwitcher;
 

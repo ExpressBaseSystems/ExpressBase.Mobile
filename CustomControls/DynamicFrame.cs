@@ -12,55 +12,84 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
-    public class CustomFrame : Frame
+    public class DynamicFrame : Frame
     {
-        private readonly bool isHeader;
-
         public EbDataRow DataRow { set; get; }
 
-        private Grid contentGrid;
+        private readonly bool isHeader;
 
-        public CustomFrame() { }
+        private Grid grid;
 
-        public CustomFrame(EbDataRow row, EbMobileVisualization visualization, bool isHeader = false)
+        public DynamicFrame() { }
+
+        public DynamicFrame(EbDataRow row, EbMobileVisualization visualization, bool isHeader = false)
         {
             this.isHeader = isHeader;
             this.DataRow = row;
+
+            this.SetFrameStyle(visualization);
 
             this.CreateGrid(visualization.DataLayout.CellCollection, visualization.DataLayout.RowCount, visualization.DataLayout.ColumCount);
             this.FillData(visualization.DataLayout.CellCollection);
 
             if (visualization.HasLink() && !isHeader)
+            {
                 this.ShowLinkIcon();
-
-            this.Content = contentGrid;
-
-            if (!isHeader)
-                this.Padding = new Thickness(10);
+            }
+            this.Content = grid;
         }
 
         //for data grid
-        public CustomFrame(MobileTableRow row, List<EbMobileTableCell> cellCollection, int rowCount, int columCount, bool isHeader = false)
+        public DynamicFrame(MobileTableRow row, List<EbMobileTableCell> cellCollection, int rowCount, int columCount, bool isHeader = false)
         {
             this.isHeader = isHeader;
             this.CreateGrid(cellCollection, rowCount, columCount);
             this.FillTableColums(row, cellCollection);
-            this.Content = contentGrid;
+            this.Content = grid;
         }
+
+        private void SetFrameStyle(EbMobileVisualization viz)
+        {
+            if (!isHeader)
+            {
+                EbThickness pd = viz.Padding ?? new EbThickness(10);
+                EbThickness mr = viz.Margin ?? new EbThickness();
+
+                this.Padding = new Thickness(pd.Left, pd.Top, pd.Right, pd.Bottom);
+                this.Margin = new Thickness(mr.Left, mr.Top, mr.Right, mr.Bottom);
+            }
+
+            try
+            {
+                if (viz.Style == RenderStyle.Tile)
+                {
+                    this.BackgroundColor = Color.FromHex(viz.BackgroundColor ?? "#ffffff");
+                    this.BorderColor = Color.FromHex(viz.BorderColor ?? "#ffffff");
+                    this.CornerRadius = viz.BorderRadius;
+                    this.HasShadow = viz.BoxShadow;
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Frame style issue :: " + ex.Message);
+            }
+        }
+
+
 
         private void CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
         {
-            contentGrid = new Grid { BackgroundColor = Color.Transparent };
+            grid = new Grid { BackgroundColor = Color.Transparent };
 
             for (int r = 0; r < RowCount; r++)
             {
-                contentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             }
             for (int c = 0; c < ColumCount; c++)
             {
                 EbMobileTableCell current = CellCollection.Find(li => li.ColIndex == c && li.RowIndex == 0);
 
-                contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(current.Width, GridUnitType.Star) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(current.Width, GridUnitType.Star) });
             }
         }
 
@@ -68,11 +97,11 @@ namespace ExpressBase.Mobile.CustomControls
         {
             try
             {
-                foreach (EbMobileTableCell _Cell in CellCollection)
+                foreach (EbMobileTableCell cell in CellCollection)
                 {
-                    if (_Cell.ControlCollection.Count > 0)
+                    if (cell.ControlCollection.Count > 0)
                     {
-                        EbMobileDataColumn datacol = (EbMobileDataColumn)_Cell.ControlCollection[0];
+                        EbMobileDataColumn datacol = (EbMobileDataColumn)cell.ControlCollection[0];
 
                         object data = this.DataRow[datacol.ColumnName];
 
@@ -80,7 +109,7 @@ namespace ExpressBase.Mobile.CustomControls
 
                         if (view == null) continue;
 
-                        contentGrid.Children.Add(view, _Cell.ColIndex, _Cell.RowIndex);
+                        grid.Children.Add(view, cell.ColIndex, cell.RowIndex);
 
                         if (datacol.RowSpan > 0)
                             Grid.SetRowSpan(view, datacol.RowSpan);
@@ -98,8 +127,6 @@ namespace ExpressBase.Mobile.CustomControls
 
         private View ResolveContentType(EbMobileDataColumn dc, object value)
         {
-            if (value == null) return null;
-
             if (dc.RenderAs == DataColumnRenderType.Image)
             {
                 return this.DC2Image(value);
@@ -119,26 +146,26 @@ namespace ExpressBase.Mobile.CustomControls
         //for data grid
         private void FillTableColums(MobileTableRow row, List<EbMobileTableCell> CellCollection)
         {
-            foreach (EbMobileTableCell _Cell in CellCollection)
+            foreach (EbMobileTableCell cell in CellCollection)
             {
-                if (_Cell.ControlCollection.Count > 0)
+                if (cell.ControlCollection.Count > 0)
                 {
-                    EbMobileDataColumn _col = (EbMobileDataColumn)_Cell.ControlCollection[0];
+                    EbMobileDataColumn column = (EbMobileDataColumn)cell.ControlCollection[0];
 
-                    string _text = string.Empty;
-                    MobileTableColumn tableColumn = row[_col.ColumnName];
+                    string text = string.Empty;
+                    MobileTableColumn tableColumn = row[column.ColumnName];
 
                     if (tableColumn != null)
-                        _text = tableColumn.Value.ToString();
+                        text = tableColumn.Value.ToString();
 
-                    Label _label = new Label { Text = _text, VerticalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center };
+                    Label label = new Label { Text = text, VerticalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center };
 
                     if (isHeader)
-                        _label.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("Roboto-Medium");
+                        label.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("Roboto-Medium");
                     else
-                        this.ApplyLabelStyle(_label, _col);
+                        this.ApplyLabelStyle(label, column);
 
-                    contentGrid.Children.Add(_label, _Cell.ColIndex, _Cell.RowIndex);
+                    grid.Children.Add(label, cell.ColIndex, cell.RowIndex);
                 }
             }
         }
@@ -146,6 +173,13 @@ namespace ExpressBase.Mobile.CustomControls
         private void ApplyLabelStyle(Label Label, EbMobileDataColumn DataColumn)
         {
             EbFont _font = DataColumn.Font;
+
+            if (DataColumn.TextAlign == MobileTextAlign.Left)
+                Label.HorizontalTextAlignment = TextAlignment.Start;
+            else if (DataColumn.TextAlign == MobileTextAlign.Center)
+                Label.HorizontalTextAlignment = TextAlignment.Center;
+            else
+                Label.HorizontalTextAlignment = TextAlignment.End;
 
             if (_font != null)
             {
@@ -158,7 +192,7 @@ namespace ExpressBase.Mobile.CustomControls
                 else
                     Label.FontAttributes = FontAttributes.None;
 
-                Label.TextColor = (this.isHeader) ? Color.White : Color.FromHex(_font.Color.TrimStart('#'));
+                Label.TextColor = (this.isHeader) ? Color.White : Color.FromHex(_font.Color);
 
                 if (_font.Caps)
                     Label.Text = Label.Text.ToUpper();
@@ -197,23 +231,21 @@ namespace ExpressBase.Mobile.CustomControls
                 Text = (synced == 0) ? "\uf06a" : "\uf058",
             };
 
-            int colLength = contentGrid.ColumnDefinitions.Count;
+            int colLength = grid.ColumnDefinitions.Count;
 
-            contentGrid.Children.Add(lbl, colLength - 1, 0);
+            grid.Children.Add(lbl, colLength - 1, 0);
         }
 
         public void ShowLinkIcon()
         {
-            contentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
             Label lbl = new Label
             {
                 Style = (Style)HelperFunctions.GetResourceValue("ListViewLinkIconStyle")
             };
 
-            contentGrid.Children.Add(lbl);
-            Grid.SetColumn(lbl, contentGrid.ColumnDefinitions.Count - 1);
-            Grid.SetRowSpan(lbl, contentGrid.RowDefinitions.Count);
+            grid.Children.Add(lbl);
+            Grid.SetRowSpan(lbl, grid.RowDefinitions.Count);
+            Grid.SetColumnSpan(lbl, grid.ColumnDefinitions.Count);
         }
 
         private View DC2Image(object value)
@@ -243,11 +275,9 @@ namespace ExpressBase.Mobile.CustomControls
 
         public async void RenderImage(LSImageButton image, object filerefs)
         {
-            if (filerefs == null && string.IsNullOrEmpty(filerefs.ToString()))
-                return;
+            if (filerefs == null) return;
 
             string refid = filerefs.ToString().Split(CharConstants.COMMA)[0];
-
             try
             {
                 ApiFileResponse resp = await DataService.Instance.GetFile(EbFileCategory.Images, $"{refid}.jpg");
@@ -286,18 +316,9 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 PhoneDialer.Open(dialler.ClassId);
             }
-            catch (ArgumentNullException)
-            {
-                toast.Show("no number");
-            }
-            catch (FeatureNotSupportedException)
-            {
-                toast.Show("Feature unsuported");
-            }
-            catch (Exception)
-            {
-                toast.Show("Something went wrong");
-            }
+            catch (ArgumentNullException) { toast.Show("no number"); }
+            catch (FeatureNotSupportedException) { toast.Show("Feature unsuported"); }
+            catch (Exception) { toast.Show("Something went wrong"); }
         }
     }
 }

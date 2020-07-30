@@ -18,11 +18,11 @@ namespace ExpressBase.Mobile
 
         public bool EnableFileSelect { set; get; }
 
-        public bool MultiSelect { set; get; }
+        public virtual bool MultiSelect { set; get; }
 
-        public bool EnableEdit { set; get; }
+        public virtual bool EnableEdit { set; get; }
 
-        private FileUploader control;
+        protected FileUploader XamControl;
 
         private List<FileMetaInfo> uploadedFileRef;
 
@@ -30,11 +30,11 @@ namespace ExpressBase.Mobile
         {
             base.InitXControl(Mode, Network);
 
-            control = new FileUploader();
-            control.Initialize(this);
-            control.BindFullScreenCallback(ShowFullScreen);
-            control.BindDeleteCallback(DeleteFile);
-            this.XControl = control;
+            XamControl = new FileUploader();
+            XamControl.Initialize(this);
+            XamControl.BindFullScreenCallback(ShowFullScreen);
+            XamControl.BindDeleteCallback(DeleteFile);
+            this.XControl = XamControl;
 
             //this will create a folder FILES in platform dir 
             Task.Run(async () => { await HelperFunctions.CreateDirectory("FILES"); }); ;
@@ -64,7 +64,7 @@ namespace ExpressBase.Mobile
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-            List<FileWrapper> files = control.GetFiles(this.Name);
+            List<FileWrapper> files = XamControl.GetFiles(this.Name);
 
             foreach (FileWrapper wrapr in files)
             {
@@ -75,7 +75,7 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
-            List<FileWrapper> files = control.GetFiles(this.Name);
+            List<FileWrapper> files = XamControl.GetFiles(this.Name);
 
             if (uploadedFileRef != null && files.Any())
             {
@@ -99,7 +99,7 @@ namespace ExpressBase.Mobile
             {
                 uploadedFileRef = (value as FUPSetValueMeta).Files;
 
-                control.SetValue(this.NetworkType, value as FUPSetValueMeta, this.Name);
+                XamControl.SetValue(this.NetworkType, value as FUPSetValueMeta, this.Name);
             }
             return true;
         }

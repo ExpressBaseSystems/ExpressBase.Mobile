@@ -99,11 +99,22 @@ namespace ExpressBase.Mobile.Models
             }
             return sb.ToString();
         }
+
+        public MobileTable CreateTable()
+        {
+            MobileTable table = new MobileTable(this.MasterTable);
+            Tables.Add(table);
+            return table;
+        }
     }
 
     public class MobileTable : List<MobileTableRow>
     {
         public string TableName { set; get; }
+
+        public List<FileWrapper> OldFiles { set; get; }
+
+        public List<FileWrapper> NewFiles { set; get; }
 
         public Dictionary<string, List<FileWrapper>> Files { set; get; }
 
@@ -204,6 +215,30 @@ namespace ExpressBase.Mobile.Models
             }
             return sb.ToString();
         }
+
+        public void InitFilesToUpload()
+        {
+            OldFiles = new List<FileWrapper>();
+            NewFiles = new List<FileWrapper>();
+
+            foreach (var pair in this.Files)
+            {
+                pair.Value.ForEach(item =>
+                {
+                    if (item.IsUploaded == false)
+                        NewFiles.Add(item);
+                    else
+                        OldFiles.Add(item);
+                });
+            }
+        }
+
+        public MobileTableRow CreateRow(int rowid = 0)
+        {
+            MobileTableRow row = new MobileTableRow(rowid);
+            this.Add(row);
+            return row;
+        }
     }
 
     public class MobileTableRow
@@ -234,10 +269,16 @@ namespace ExpressBase.Mobile.Models
 
             INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-            this.Columns.Add(new MobileTableColumn { Name = "eb_device_id", Type = EbDbTypes.String, Value = helper.DeviceId });
-            //<manufacturer>(<model> <platform>:<osversion>)-<appversion>
-            string appversion = string.Format("{0}({1} {2}:{3})-{4}", DeviceInfo.Manufacturer, DeviceInfo.Model, DeviceInfo.Platform, DeviceInfo.VersionString, helper.AppVersion);
-            this.Columns.Add(new MobileTableColumn { Name = "eb_appversion", Type = EbDbTypes.String, Value = appversion });
+            try
+            {
+                this.Columns.Add(new MobileTableColumn { Name = "eb_device_id", Type = EbDbTypes.String, Value = helper.DeviceId });
+                string appversion = string.Format("{0}({1} {2}:{3})-{4}", DeviceInfo.Manufacturer, DeviceInfo.Model, DeviceInfo.Platform, DeviceInfo.VersionString, helper.AppVersion);
+                this.Columns.Add(new MobileTableColumn { Name = "eb_appversion", Type = EbDbTypes.String, Value = appversion });
+            }
+            catch(Exception ex)
+            {
+                EbLog.Write(ex.Message);
+            }
         }
 
         public MobileTableColumn this[string columnname]
@@ -409,6 +450,6 @@ namespace ExpressBase.Mobile.Models
 
     public class MenuPreloadResponse : ApiResponse
     {
-       public List<string> Result { set; get; }
+        public List<string> Result { set; get; }
     }
 }

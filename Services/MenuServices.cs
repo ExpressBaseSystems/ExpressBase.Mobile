@@ -41,7 +41,7 @@ namespace ExpressBase.Mobile.Services
             {
                 EbMobileSettings settings = App.Settings.CurrentApplication.AppSettings;
 
-                if (settings != null && settings.HasMenuPreloadApi)
+                if (settings != null && settings.HasMenuPreloadApi && !App.Settings.CurrentUser.IsAdmin)
                 {
                     if (Utils.HasInternet)
                         return await GetFromMenuPreload(settings.MenuApi);

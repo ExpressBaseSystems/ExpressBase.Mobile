@@ -2,8 +2,6 @@
 using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ExpressBase.Mobile
 {
@@ -31,29 +29,13 @@ namespace ExpressBase.Mobile
         Mixed
     }
 
-    public enum NumericBoxTypes
-    {
-        TextType = 0,
-        ButtonType = 1
-    }
-
     public enum SortOrder
     {
         Ascending = 0,
         Descending = 1
     }
 
-    public enum DataColumnRenderType
-    {
-        Text = 1,
-        Image = 2,
-        MobileNumber = 3
-    }
-
-    public abstract class EbMobilePageBase : EbObject
-    {
-
-    }
+    public abstract class EbMobilePageBase : EbObject { }
 
     public class EbMobilePage : EbMobilePageBase
     {
@@ -68,7 +50,7 @@ namespace ExpressBase.Mobile
         public string IconColor { get; set; }
 
         public string IconBackground { get; set; }
-    } 
+    }
 
     public class EbScript
     {

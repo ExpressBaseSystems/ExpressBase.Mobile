@@ -12,6 +12,12 @@ using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.CustomControls
 {
+    public enum FupControlType
+    {
+        DP,
+        CONTEXT
+    }
+
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FileUploader : ContentView
     {
@@ -27,6 +33,8 @@ namespace ExpressBase.Mobile.CustomControls
 
         private Action bindableDEL;
 
+        private FupControlType controlType;
+
         public FileUploader()
         {
             InitializeComponent();
@@ -38,6 +46,8 @@ namespace ExpressBase.Mobile.CustomControls
 
         public void Initialize(EbMobileFileUpload fup)
         {
+            controlType = fup is EbMobileDisplayPicture ? FupControlType.DP : FupControlType.CONTEXT;
+
             if (!fup.EnableCameraSelect)
             {
                 CameraButton.IsVisible = false;
@@ -78,7 +88,10 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void Container_SizeChanged(object sender, EventArgs e)
         {
-            thumbnailWidth = (sender as FlexLayout).Width / 3 - 10;
+            if(controlType == FupControlType.DP)
+                thumbnailWidth = (sender as FlexLayout).Width;
+            else
+                thumbnailWidth = (sender as FlexLayout).Width / 3 - 10;
         }
 
         private async void FilesButton_Clicked(object sender, EventArgs e)
@@ -98,12 +111,18 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void AppendToGallery(MediaFile media)
         {
-            var bytea = HelperFunctions.StreamToBytea(media.GetStream());
+            byte[] bytea = HelperFunctions.StreamToBytea(media.GetStream());
 
             CustomImageWraper thumbnail = GetTemplate(bytea);
+
+            if (controlType == FupControlType.DP)
+            {
+                Container.Children.Clear();
+                Files.Clear();
+            }
+
             Container.Children.Add(thumbnail);
             Files.Add(thumbnail.Name, bytea);
-
             ToggleGalleryBG();
         }
 

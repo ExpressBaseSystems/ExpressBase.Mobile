@@ -23,7 +23,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private readonly TapGestureRecognizer tapGesture;
 
-        public LinkedListRender(EbMobilePage page, EbMobileVisualization sourcevis, CustomFrame linkframe)
+        private bool HasSourceLink => !string.IsNullOrEmpty(viewModel.SourceVisualization.SourceFormRefId);
+
+        private bool HasLink => !string.IsNullOrEmpty(viewModel.Visualization.LinkRefId);
+
+        public LinkedListRender(EbMobilePage page, EbMobileVisualization sourcevis, DynamicFrame linkframe)
         {
             InitializeComponent();
             BindingContext = viewModel = new LinkedListViewModel(page, sourcevis, linkframe);
@@ -50,44 +54,46 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void AppendListItems()
         {
-            try
+            int count = 1;
+            this.ListContainer.Children.Clear();
+
+            if (viewModel.DataTable.Rows.Any())
             {
-                bool flag = !string.IsNullOrEmpty(viewModel.Visualization.LinkRefId);
-                int count = 1;
+                PagingContainer.IsVisible = true;
+                EmptyMessage.IsVisible = false;
 
-                this.ListContainer.Children.Clear();
-
-                if (viewModel.DataTable.Rows.Any())
+                try
                 {
-                    PagingContainer.IsVisible = true;
-                    EmptyMessage.IsVisible = false;
-
                     foreach (EbDataRow row in viewModel.DataTable.Rows)
                     {
-                        CustomFrame CustFrame = new CustomFrame(row, viewModel.Visualization);
-                        CustFrame.SetBackGroundColor(count);
+                        DynamicFrame CustFrame = new DynamicFrame(row, viewModel.Visualization);
+
+                        if (viewModel.Visualization.Style == RenderStyle.Flat)
+                        {
+                            CustFrame.SetBackGroundColor(count);
+                        }
 
                         if (viewModel.NetworkType == NetworkMode.Offline)
                             CustFrame.ShowSyncFlag(viewModel.DataTable.Columns);
 
-                        if (flag) CustFrame.GestureRecognizers.Add(tapGesture);
+                        if (this.HasLink) CustFrame.GestureRecognizers.Add(tapGesture);
 
                         ListContainer.Children.Add(CustFrame);
 
                         count++;
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    PagingContainer.IsVisible = false;
-                    EmptyMessage.IsVisible = true;
+                    EbLog.Write("list item rendering :: " + ex.Message);
                 }
-                this.UpdatePaginationBar();
             }
-            catch (Exception ex)
+            else
             {
-                EbLog.Write(ex.Message);
+                PagingContainer.IsVisible = false;
+                EmptyMessage.IsVisible = true;
             }
+            this.UpdatePaginationBar();
         }
 
         private async void ListItem_Tapped(object sender, EventArgs e)
@@ -95,7 +101,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             IToast toast = DependencyService.Get<IToast>();
             try
             {
-                CustomFrame customFrame = (CustomFrame)sender;
+                DynamicFrame customFrame = (DynamicFrame)sender;
 
                 EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
 
@@ -111,30 +117,20 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                EbLog.Write(ex.Message);
             }
         }
 
         private void ToggleLinks()
         {
-            try
-            {
-                if (!string.IsNullOrEmpty(viewModel.SourceVisualization.SourceFormRefId))
-                {
-                    SourceDataEdit.IsVisible = true;
-                }
+            if (this.HasSourceLink) SourceDataEdit.IsVisible = true;
 
-                if (!string.IsNullOrEmpty(viewModel.Visualization.LinkRefId))
-                {
-                    EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
-
-                    if (page != null && page.Container is EbMobileForm)
-                        AddLinkData.IsVisible = true;
-                }
-            }
-            catch (Exception ex)
+            if (this.HasLink && viewModel.Visualization.ShowNewButton)
             {
-                EbLog.Write(ex.Message);
+                EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
+
+                if (page != null && page.Container is EbMobileForm)
+                    AddLinkData.IsVisible = true;
             }
         }
 
@@ -194,18 +190,17 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private async void ListViewRefresh_Refreshing(object sender, EventArgs e)
         {
+            ListViewRefresh.IsRefreshing = false;
             IToast toast = DependencyService.Get<IToast>();
             try
             {
                 this.offset = 0;
                 this.pageCount = 1;
                 await this.RefreshListView();
-                ListViewRefresh.IsRefreshing = false;
                 toast.Show("Refreshed");
             }
             catch (Exception ex)
             {
-                ListViewRefresh.IsRefreshing = false;
                 EbLog.Write(ex.Message);
             }
         }
@@ -214,13 +209,9 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             bool flag = HeaderView.IsVisible;
             if (flag)
-            {
                 HeaderView.IsVisible = false;
-            }
             else
-            {
                 HeaderView.IsVisible = true;
-            }
         }
     }
 }

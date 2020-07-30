@@ -71,7 +71,8 @@
                                Grid.RowSpan="2"
                                HeightRequest="48"
                                WidthRequest="48"
-                               VerticalOptions="Center">
+                               VerticalOptions="Center"
+                               Source="user_avatar.jpg">
                             </customcontrols:ImageCircle>
 
                             <Label

@@ -135,7 +135,8 @@
                         <StackLayout 
                             x:Name="ListContainer" 
                             Spacing="0" 
-                            BackgroundColor="White">
+                            BackgroundColor="White"
+                            Orientation="Vertical">
                         </StackLayout>
                     </ScrollView>
                 </RefreshView>

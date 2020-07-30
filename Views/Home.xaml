@@ -22,6 +22,7 @@
         <Grid>
             <RefreshView 
                 x:Name="RootRefreshView" 
+                RefreshColor="{DynamicResource Primary_Color}"
                 Refreshing="RefreshView_Refreshing">
                 <ScrollView>
                     <StackLayout VerticalOptions="FillAndExpand">
@@ -30,7 +31,7 @@
                             Margin="15,10"
                             CornerRadius="8"
                             BackgroundColor="#e8f0fe"
-                            BorderColor="#e4ecf9"
+                            BorderColor="#e8f0fe"
                             HasShadow="True">
                             <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>

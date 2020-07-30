@@ -18,6 +18,8 @@
                 AbsoluteLayout.LayoutFlags="All">
                 <Frame
                     HasShadow="True"
+                    BackgroundColor="White"
+                    BorderColor="#fafafa"
                     VerticalOptions="CenterAndExpand"
                     HorizontalOptions="Center"
                     Padding="7"

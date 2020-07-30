@@ -24,6 +24,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private readonly TapGestureRecognizer tapGesture;
 
+        private bool HasLink => !string.IsNullOrEmpty(viewModel.Visualization.LinkRefId);
+
         public ListRender(EbMobilePage Page)
         {
             InitializeComponent();
@@ -52,7 +54,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void ToggleLinks()
         {
-            if (!string.IsNullOrEmpty(viewModel.Visualization.LinkRefId))
+            if (this.HasLink && viewModel.Visualization.ShowNewButton)
             {
                 EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
 
@@ -63,43 +65,45 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void AppendListItems()
         {
-            try
+            int counter = 1;
+            this.ListContainer.Children.Clear();
+
+            if (viewModel.DataTable.Rows.Any())
             {
-                bool flag = !string.IsNullOrEmpty(viewModel.Visualization.LinkRefId);
-                int counter = 1;
+                EmptyMessage.IsVisible = false;
+                PagingContainer.IsVisible = true;
 
-                this.ListContainer.Children.Clear();
-
-                if (viewModel.DataTable.Rows.Any())
+                try
                 {
-                    EmptyMessage.IsVisible = false;
-                    PagingContainer.IsVisible = true;
-
                     foreach (EbDataRow row in viewModel.DataTable.Rows)
                     {
-                        CustomFrame customFrame = new CustomFrame(row, viewModel.Visualization, false);
-                        customFrame.SetBackGroundColor(counter);
+                        DynamicFrame li = new DynamicFrame(row, viewModel.Visualization, false);
+
+                        if (viewModel.Visualization.Style == RenderStyle.Flat)
+                        {
+                            li.SetBackGroundColor(counter);
+                        }
 
                         if (viewModel.NetworkType == NetworkMode.Offline)
-                            customFrame.ShowSyncFlag(viewModel.DataTable.Columns);
+                            li.ShowSyncFlag(viewModel.DataTable.Columns);
 
-                        if (flag) customFrame.GestureRecognizers.Add(tapGesture);
+                        if (this.HasLink) li.GestureRecognizers.Add(tapGesture);
 
-                        this.ListContainer.Children.Add(customFrame);
+                        this.ListContainer.Children.Add(li);
                         counter++;
                     }
                 }
-                else
+                catch(Exception ex)
                 {
-                    PagingContainer.IsVisible = false;
-                    EmptyMessage.IsVisible = true;
+                    EbLog.Write("list item rendering :: " + ex.Message);
                 }
-                this.UpdatePaginationBar();
             }
-            catch (Exception ex)
+            else
             {
-                EbLog.Write(ex.Message);
+                PagingContainer.IsVisible = false;
+                EmptyMessage.IsVisible = true;
             }
+            this.UpdatePaginationBar();
         }
 
         private async void ListItem_Tapped(object sender, EventArgs e)
@@ -107,7 +111,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             IToast toast = DependencyService.Get<IToast>();
             try
             {
-                CustomFrame customFrame = (CustomFrame)sender;
+                DynamicFrame customFrame = (DynamicFrame)sender;
                 EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
                 if (viewModel.NetworkType != page.NetworkMode)
                 {
@@ -211,18 +215,17 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private async void ListViewRefresh_Refreshing(object sender, EventArgs e)
         {
+            this.ListViewRefresh.IsRefreshing = false;
             IToast toast = DependencyService.Get<IToast>();
             try
             {
                 this.offset = 0;
                 this.pageCount = 1;
                 await this.RefreshListView(true);
-                this.ListViewRefresh.IsRefreshing = false;
                 toast.Show("Refreshed");
             }
             catch (Exception ex)
             {
-                this.ListViewRefresh.IsRefreshing = false;
                 EbLog.Write(ex.Message);
             }
         }

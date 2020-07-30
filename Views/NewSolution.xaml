@@ -49,6 +49,8 @@
                         WidthRequest="100"
                         CornerRadius="10"
                         BackgroundColor="White"
+                        HasShadow="True"
+                        BorderColor="#fafafa"
                         IsClippedToBounds="True">
                         <Image 
                             Source="{Binding Logo}"
@@ -64,6 +66,7 @@
                             HeightRequest="50"
                             CornerRadius="25"
                             HasShadow="True"
+                            BorderColor="{DynamicResource Primary_Color}"
                             Padding="0">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="QrButton_Tapped"></TapGestureRecognizer>
@@ -97,7 +100,6 @@
                         <Frame 
                             Margin="0,15"
                             x:Name="InputArea"
-                            HasShadow="True"
                             BackgroundColor="#dddddd"
                             Grid.Row="1"
                             CornerRadius="30"

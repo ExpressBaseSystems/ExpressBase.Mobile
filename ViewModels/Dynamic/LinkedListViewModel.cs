@@ -19,7 +19,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public EbMobileVisualization Visualization { set; get; }
 
-        public CustomFrame HeaderFrame { set; get; }
+        public DynamicFrame HeaderFrame { set; get; }
 
         public int DataCount { set; get; }
 
@@ -31,9 +31,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command EditCommand => new Command(async () => await EditButtonClicked());
 
-        private readonly CustomFrame linkFrame;
+        private readonly DynamicFrame linkFrame;
 
-        public LinkedListViewModel(EbMobilePage page, EbMobileVisualization sourcevis, CustomFrame linkframe) : base(page)
+        public LinkedListViewModel(EbMobilePage page, EbMobileVisualization sourcevis, DynamicFrame linkframe) : base(page)
         {
             this.Visualization = (EbMobileVisualization)page.Container;
             this.SourceVisualization = sourcevis;
@@ -42,7 +42,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public override async Task InitializeAsync()
         {
-            this.HeaderFrame = new CustomFrame(linkFrame.DataRow, this.SourceVisualization, true)
+            this.HeaderFrame = new DynamicFrame(linkFrame.DataRow, this.SourceVisualization, true)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = new Thickness(20, 10, 20, 0),
@@ -152,7 +152,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public ContentPage GetPageByContainer(CustomFrame frame, EbMobilePage page)
+        public ContentPage GetPageByContainer(DynamicFrame frame, EbMobilePage page)
         {
             ContentPage renderer = null;
             try

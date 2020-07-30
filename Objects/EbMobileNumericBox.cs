@@ -8,6 +8,12 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
+    public enum NumericBoxTypes
+    {
+        TextType = 0,
+        ButtonType = 1
+    }
+
     public class EbMobileNumericBox : EbMobileControl
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.Decimal; } set { } }

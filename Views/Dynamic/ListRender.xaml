@@ -97,7 +97,11 @@
                     x:Name="ListViewRefresh"
                     Refreshing="ListViewRefresh_Refreshing">
                 <ScrollView>
-                    <StackLayout x:Name="ListContainer" BackgroundColor="White" Spacing="0">
+                    <StackLayout 
+                        x:Name="ListContainer" 
+                        BackgroundColor="White" 
+                        Spacing="0"
+                        Orientation="Vertical">
 
                     </StackLayout>
                 </ScrollView>

@@ -103,7 +103,7 @@ namespace ExpressBase.Mobile
             };
             addRowBtn.Clicked += AddRowBtn_Clicked;
             grid.Children.Add(addRowBtn, 1, 0);
-            CustomFrame frame = new CustomFrame(this.GetControlValues(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount, true)
+            DynamicFrame frame = new DynamicFrame(this.GetControlValues(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount, true)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = 0
@@ -150,7 +150,7 @@ namespace ExpressBase.Mobile
                 rowOptions.Clicked += RowDelete_Clicked;
                 grid.Children.Add(rowOptions, 1, 0);
 
-                grid.Children.Add(new CustomFrame(row, DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
+                grid.Children.Add(new DynamicFrame(row, DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
                 {
                     ClassId = grid.ClassId,
                     BackgroundColor = Color.Transparent,
@@ -170,7 +170,7 @@ namespace ExpressBase.Mobile
         private void CreateFooter()
         {
             Grid grid = CreateGridLayout();
-            grid.Children.Add(new CustomFrame(this.GetControlValues(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
+            grid.Children.Add(new DynamicFrame(this.GetControlValues(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = 0
@@ -243,7 +243,7 @@ namespace ExpressBase.Mobile
 
         private void TapRecognizer_Tapped(object sender, EventArgs e)
         {
-            string classId = (sender as CustomFrame).ClassId;
+            string classId = (sender as DynamicFrame).ClassId;
             DataGridView gridview = new DataGridView(this, dataDictionary[classId], classId);
             (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushModalAsync(gridview);
         }

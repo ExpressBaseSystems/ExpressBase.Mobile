@@ -89,7 +89,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public ContentPage GetPageByContainer(CustomFrame frame, EbMobilePage page)
+        public ContentPage GetPageByContainer(DynamicFrame frame, EbMobilePage page)
         {
             ContentPage renderer = null;
             try

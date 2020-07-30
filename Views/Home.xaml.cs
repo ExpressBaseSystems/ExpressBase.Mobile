@@ -68,21 +68,19 @@ namespace ExpressBase.Mobile.Views
 
         private async void RefreshView_Refreshing(object sender, System.EventArgs e)
         {
+            RootRefreshView.IsRefreshing = false;
             IToast toast = DependencyService.Get<IToast>();
             try
             {
                 if (!Utils.HasInternet)
                 {
                     Utils.Alert_NoInternet();
-                    RootRefreshView.IsRefreshing = false;
                     return;
                 }
                 else
                 {
                     if (NAVService.IsTokenExpired(App.Settings.RToken))
-                    {
                         await NAVService.LoginWithNS();
-                    }
                     else
                     {
                         IconedLoader.IsVisible = true;
@@ -92,7 +90,6 @@ namespace ExpressBase.Mobile.Views
                         MenuView.Notify("ItemSource");
                         ToggleStatus();
 
-                        RootRefreshView.IsRefreshing = false;
                         IconedLoader.IsVisible = false;
                         toast.Show("Refreshed");
                     }

@@ -10,6 +10,7 @@
         <Setter Property="VerticalOptions" Value="CenterAndExpand"></Setter>
         <Setter Property="Margin" Value="0"></Setter>
         <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+        <Setter Property="Source" Value="image_avatar.jpg"></Setter>
     </Style>
 
     <Style TargetType="Button" x:Key="ListViewPhoneNumber">
@@ -29,6 +30,7 @@
     <Style TargetType="Label" x:Key="ListViewLinkIconStyle">
         <Setter Property="FontSize" Value="18"></Setter>
         <Setter Property="VerticalOptions" Value="Center"></Setter>
+        <Setter Property="HorizontalOptions" Value="End"></Setter>
         <Setter Property="TextColor" Value="#aba8a8"></Setter>
         <Setter Property="Text" Value="&#xf105;"></Setter>
         <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>

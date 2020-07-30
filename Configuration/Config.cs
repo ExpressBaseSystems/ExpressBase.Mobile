@@ -49,17 +49,17 @@ namespace ExpressBase.Mobile.Configuration
 
     public class Config
     {
-        public static string Vendor = MoSettings.VendorName;
+        public static string Vendor = EbSettings.VendorName;
 
-        public const string AppIcon = MoSettings.AppIcon;
+        public const string AppIcon = EbSettings.AppIcon;
 
-        public const string AppLabel = MoSettings.AppLabel;
+        public const string AppLabel = EbSettings.AppLabel;
 
-        public const string StatusBarColor = MoSettings.StatusBar;
+        public const string StatusBarColor = EbSettings.StatusBar;
 
-        public const string SplashTheme = MoSettings.SplashTheme;
+        public const string SplashTheme = EbSettings.SplashTheme;
 
-        public static bool NFEnabled = false;
+        public static bool NFEnabled = true;
 
         public Dictionary<string, AppVendor> Vendors { set; get; }
 

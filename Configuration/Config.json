@@ -34,7 +34,7 @@
       "PrimaryColor": "283b97",
       "HasOfflineFeature": false,
       "HasActions": true,
-      "HasAppSwitcher": false,
+      "HasAppSwitcher": true,
       "HasLocationswitcher": false,
       "HasSolutionSwitcher": false,
       "Logo": "icon_mo.png",

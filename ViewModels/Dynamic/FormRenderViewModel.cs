@@ -146,19 +146,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             if (this.Mode == FormMode.EDIT)
             {
                 await this.SetDataOnEdit();
-                this.FillValuesOnEdit();
+                this.SetDataForEdit();
             }
             else if (this.Mode == FormMode.PREFILL)
             {
-                this.FillValuesOnPrefill();
+                this.SetDataForPrefill();
             }
             else if (this.Mode == FormMode.REF)
             {
-                this.FillValuesOnRef();
+                this.SetDataForRef();
             }
         }
 
-        private void FillValuesOnEdit()
+        private void SetDataForEdit()
         {
             try
             {
@@ -172,31 +172,23 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 foreach (var pair in this.Form.ControlDictionary)
                 {
-                    object data = masterRow[pair.Value.Name];
+                    EbMobileControl ctrl = pair.Value;
 
-                    if (pair.Value is EbMobileFileUpload)
+                    object data = masterRow[ctrl.Name];
+
+                    if (ctrl is EbMobileFileUpload)
                     {
-                        var fup = new FUPSetValueMeta
-                        {
-                            TableName = this.Form.TableName,
-                            RowId = this.rowId
-                        };
-
-                        if (this.filesOnEdit != null && this.filesOnEdit.ContainsKey(pair.Value.Name))
-                        {
-                            fup.Files.AddRange(this.filesOnEdit[pair.Value.Name]);
-                        }
-                        pair.Value.SetValue(fup);
+                        this.SetFileDataForEdit(ctrl as EbMobileFileUpload, data);
                     }
-                    else if (pair.Value is ILinesEnabled)
+                    else if (ctrl is ILinesEnabled)
                     {
-                        EbDataTable lines = dataOnEdit.Tables.Find(table => table.TableName == (pair.Value as ILinesEnabled).TableName);
-                        pair.Value.SetValue(lines);
+                        EbDataTable lines = dataOnEdit.Tables.Find(table => table.TableName == (ctrl as ILinesEnabled).TableName);
+                        ctrl.SetValue(lines);
                     }
                     else
-                        pair.Value.SetValue(data);
+                        ctrl.SetValue(data);
 
-                    pair.Value.SetAsReadOnly(true);
+                    ctrl.SetAsReadOnly(true);
                 }
             }
             catch (Exception ex)
@@ -205,7 +197,34 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private void FillValuesOnPrefill()
+        private void SetFileDataForEdit(EbMobileFileUpload ctrl, object data)
+        {
+            FUPSetValueMeta fup = new FUPSetValueMeta
+            {
+                TableName = this.Form.TableName,
+                RowId = this.rowId
+            };
+
+            if (ctrl is EbMobileDisplayPicture)
+            {
+                fup.Files.Add(new FileMetaInfo
+                {
+                    FileCategory = EbFileCategory.Images,
+                    FileRefId = data != null ? Convert.ToInt32(data) : 0
+                });
+            }
+            else
+            {
+                if (this.filesOnEdit != null && this.filesOnEdit.ContainsKey(ctrl.Name))
+                {
+                    fup.Files.AddRange(this.filesOnEdit[ctrl.Name]);
+                }
+            }
+
+            ctrl.SetValue(fup);
+        }
+
+        private void SetDataForPrefill()
         {
             if (context.LinkFormParameters == null) return;
 
@@ -223,7 +242,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private void FillValuesOnRef()
+        private void SetDataForRef()
         {
             if (context.ContextToControlMap == null) return;
 

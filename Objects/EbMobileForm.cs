@@ -73,23 +73,25 @@ namespace ExpressBase.Mobile
             FormSaveResponse response = new FormSaveResponse();
             try
             {
-                MobileFormData data = this.PrepareFormData(rowId);
-                data.SortByMaster();//sort then mastertable will be the first index
+                MobileFormData data = await this.GetFormData(rowId);
+                data.SortByMaster();
 
-                if (this.NetworkType == NetworkMode.Online)
+                switch (this.NetworkType)
                 {
-                    await this.PersistCloud(data, response, rowId);
-                }
-                else if (this.NetworkType == NetworkMode.Mixed)
-                {
-                    if (Utils.HasInternet)
-                        await this.PersistCloud(data, response, rowId);
-                    else
-                        await this.PersistLocal(data, response, rowId);
-                }
-                else
-                {
-                    await this.PersistLocal(data, response, rowId);
+                    case NetworkMode.Online:
+                        await this.SaveToCloudDB(data, response, rowId);
+                        break;
+                    case NetworkMode.Mixed:
+                        {
+                            if (Utils.HasInternet)
+                                await this.SaveToCloudDB(data, response, rowId);
+                            else
+                                await this.SaveToLocalDB(data, response, rowId);
+                        }
+                        break;
+                    default:
+                        await this.SaveToLocalDB(data, response, rowId);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -99,75 +101,87 @@ namespace ExpressBase.Mobile
             return response;
         }
 
-        private MobileFormData PrepareFormData(int RowId)
+        private async Task<MobileFormData> GetFormData(int RowId)
         {
-            MobileFormData FormData = new MobileFormData(this.TableName);
-            MobileTable Table = new MobileTable(this.TableName);
-            MobileTableRow row = new MobileTableRow(RowId);
+            MobileFormData formData = new MobileFormData(this.TableName);
 
-            Table.Add(row);
+            MobileTable table = formData.CreateTable();
+            MobileTableRow row = table.CreateRow(RowId);
+
             foreach (var pair in this.ControlDictionary)
             {
-                if (pair.Value is EbMobileFileUpload)
+                EbMobileControl ctrl = pair.Value;
+
+                if (ctrl is EbMobileFileUpload)
                 {
-                    object files = (pair.Value as EbMobileFileUpload).GetValue();
-                    Table.Files.Add(pair.Key, (List<FileWrapper>)files);
+                    await this.GetFileData(ctrl, table, row);
                 }
-                else if (pair.Value is EbMobileDataGrid)
+                else if (ctrl is EbMobileDataGrid)
                 {
-                    FormData.Tables.Add((MobileTable)(pair.Value as EbMobileDataGrid).GetValue());
+                    formData.Tables.Add((MobileTable)(ctrl as EbMobileDataGrid).GetValue());
                 }
                 else
                 {
-                    MobileTableColumn Column = pair.Value.GetMobileTableColumn();
+                    MobileTableColumn Column = ctrl.GetMobileTableColumn();
                     if (Column != null)
                         row.Columns.Add(Column);
                 }
             }
             if (RowId <= 0)
-                row.AppendEbColValues();//append ebcol values
+                row.AppendEbColValues();
 
-            FormData.Tables.Add(Table);
-            return FormData;
+            return formData;
         }
 
-        private async Task PersistCloud(MobileFormData data, FormSaveResponse response, int rowId)
+        private async Task GetFileData(EbMobileControl ctrl, MobileTable table, MobileTableRow row)
+        {
+            if (ctrl is EbMobileDisplayPicture)
+            {
+                List<FileWrapper> files = ctrl.GetValue() as List<FileWrapper>;
+                if (!files.Any()) return;
+                try
+                {
+                    List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(files);
+                    if (resp.Any())
+                    {
+                        MobileTableColumn column = ctrl.GetMobileTableColumn();
+                        int refid = resp[0].FileRefId;
+                        column.Value = refid;
+                        if (refid > 0)
+                            row.Columns.Add(column);
+                    }
+                }
+                catch (Exception)
+                {
+                    EbLog.Write("Upload file api error");
+                }
+            }
+            else
+            {
+                List<FileWrapper> files = (ctrl as EbMobileFileUpload).GetValue() as List<FileWrapper>;
+                table.Files.Add(ctrl.Name, files);
+            }
+        }
+
+        private async Task SaveToCloudDB(MobileFormData data, FormSaveResponse response, int rowId)
         {
             try
             {
-                WebformData webformdata = data.ToWebFormData();
+                WebformData webFormData = data.ToWebFormData();
 
                 foreach (MobileTable table in data.Tables)
                 {
                     if (table.Files != null && table.Files.Any())
                     {
-                        List<FileWrapper> oldFiles = new List<FileWrapper>();
-                        List<FileWrapper> newFiles = new List<FileWrapper>();
+                        table.InitFilesToUpload();
+                        bool status = await this.SendAndFillFupData(webFormData, table);
 
-                        foreach (var pair in table.Files)
-                        {
-                            pair.Value.ForEach(item =>
-                            {
-                                if (item.IsUploaded == false)
-                                    newFiles.Add(item);
-                                else
-                                    oldFiles.Add(item);
-                            });
-                        }
-                        if (newFiles.Any())
-                        {
-                            List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(newFiles);
-
-                            webformdata.FillFromSendFileResp(newFiles, resp);
-                            webformdata.FillUploadedFileRef(oldFiles);
-
-                            if (!webformdata.ExtendedTables.Any())
-                                throw new Exception("Image Upload faild");
-                        }
+                        if (!status)
+                            throw new Exception("Image Upload faild");
                     }
                 }
 
-                PushResponse pushResponse = await FormDataServices.Instance.SendFormDataAsync(webformdata, rowId, this.WebFormRefId, App.Settings.CurrentLocId);
+                PushResponse pushResponse = await FormDataServices.Instance.SendFormDataAsync(webFormData, rowId, this.WebFormRefId, App.Settings.CurrentLocId);
 
                 if (pushResponse.RowAffected > 0)
                 {
@@ -185,7 +199,32 @@ namespace ExpressBase.Mobile
             }
         }
 
-        private async Task PersistLocal(MobileFormData data, FormSaveResponse response, int rowId)
+        private async Task<bool> SendAndFillFupData(WebformData webformdata, MobileTable table)
+        {
+            if (table.NewFiles.Any())
+            {
+                try
+                {
+                    List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(table.NewFiles);
+
+                    webformdata.FillFromSendFileResp(table.NewFiles, resp);
+                    webformdata.FillUploadedFileRef(table.OldFiles);
+
+                    if (!webformdata.ExtendedTables.Any())
+                    {
+                        EbLog.Write("Image upload response empty, breaking save");
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Write("SendFilesAsync error :: " + ex.Message);
+                }
+            }
+            return true;
+        }
+
+        private async Task SaveToLocalDB(MobileFormData data, FormSaveResponse response, int rowId)
         {
             try
             {
