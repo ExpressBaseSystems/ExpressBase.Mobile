@@ -33,13 +33,12 @@ namespace ExpressBase.Mobile.CustomControls
             InitializeComponent();
         }
 
-        protected override void OnPropertyChanged(string propertyName = null)
+        protected override void OnBindingContextChanged()
         {
-            base.OnPropertyChanged(propertyName);
-            if (propertyName == SourceProperty.PropertyName)
-            {
+            base.OnBindingContextChanged();
+
+            if (Source != null)
                 FullScreenImage.Source = Source;
-            }
         }
 
         public void Show()

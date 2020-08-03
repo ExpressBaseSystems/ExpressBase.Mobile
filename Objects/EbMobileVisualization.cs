@@ -82,6 +82,11 @@ namespace ExpressBase.Mobile
             return !string.IsNullOrEmpty(LinkRefId);
         }
 
+        public bool HasSourceFormLink()
+        {
+            return !string.IsNullOrEmpty(SourceFormRefId);
+        }
+
         public async Task<EbDataSet> GetData(NetworkMode networkType, int offset, List<DbParameter> parameters = null, List<SortColumn> sortOrder = null)
         {
             try

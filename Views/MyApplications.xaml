@@ -65,12 +65,12 @@
                                 <DataTemplate>
                                     <StackLayout Spacing="0">
                                         <Frame
-                                        Margin="0"
-                                        Padding="0"
-                                        BackgroundColor="{DynamicResource Gray-White}"
-                                        BorderColor="{DynamicResource Gray-White}"
-                                        CornerRadius="0"
-                                        HasShadow="false">
+                                            Margin="0"
+                                            Padding="0"
+                                            BackgroundColor="{DynamicResource Gray-White}"
+                                            BorderColor="{DynamicResource Gray-White}"
+                                            CornerRadius="0"
+                                            HasShadow="false">
                                             <Frame.GestureRecognizers>
                                                 <TapGestureRecognizer Command="{Binding Path=BindingContext.AppSelectedCommand, Source={x:Reference applicationList}}" CommandParameter="{Binding .}" />
                                             </Frame.GestureRecognizers>

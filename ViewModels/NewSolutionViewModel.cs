@@ -4,10 +4,7 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {

@@ -3,6 +3,7 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
@@ -15,59 +16,87 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class LinkedListViewModel : DynamicBaseViewModel
     {
-        public EbMobileVisualization SourceVisualization { set; get; }
+        private RowColletion datarows;
 
-        public EbMobileVisualization Visualization { set; get; }
+        public RowColletion DataRows
+        {
+            get { return datarows; }
+            set
+            {
+                datarows = value;
+                NotifyPropertyChanged();
+            }
+        }
 
-        public DynamicFrame HeaderFrame { set; get; }
+        public int Offset { set; get; }
 
         public int DataCount { set; get; }
 
-        public EbDataTable DataTable { set; get; }
+        public EbMobileVisualization Visualization { set; get; }
 
-        public List<DbParameter> Parameters { set; get; }
+        public EbMobileVisualization Context { set; get; }
+
+        public List<SortColumn> SortColumns { set; get; }
+
+        public List<EbMobileControl> FilterControls { set; get; }
+
+        public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
+
+        public SeparatorVisibility SeparatorVisibility { set; get; } = SeparatorVisibility.Default;
 
         public Command AddCommand => new Command(async () => await AddButtonClicked());
 
         public Command EditCommand => new Command(async () => await EditButtonClicked());
 
-        private readonly DynamicFrame linkFrame;
+        public Command RefreshListCommand => new Command(async () => await RefreshDataAsync());
 
-        public LinkedListViewModel(EbMobilePage page, EbMobileVisualization sourcevis, DynamicFrame linkframe) : base(page)
+        public Command ItemTappedCommand => new Command(async (o) => await ListItemTapped(o));
+
+        public Command ApplyFilterCommand => new Command(async (o) => await ApplyFilterClicked(o));
+
+        private readonly DynamicFrame sender;
+
+        private List<DbParameter> contextParams;
+
+        private List<DbParameter> filterParams;
+
+        public LinkedListViewModel(EbMobilePage page, EbMobileVisualization context, DynamicFrame sender) : base(page)
         {
             this.Visualization = (EbMobileVisualization)page.Container;
-            this.SourceVisualization = sourcevis;
-            linkFrame = linkframe;
+            this.Context = context;
+            this.sender = sender;
+
+            this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
+            this.FilterControls = this.Visualization.FilterControls;
+
+            if (Visualization.Style == RenderStyle.Tile)
+            {
+                SeparatorVisibility = SeparatorVisibility.None;
+            }
         }
 
         public override async Task InitializeAsync()
         {
-            this.HeaderFrame = new DynamicFrame(linkFrame.DataRow, this.SourceVisualization, true)
-            {
-                BackgroundColor = Color.Transparent,
-                Padding = new Thickness(20, 10, 20, 0),
-                Margin = 0
-            };
-            this.SetParameters(linkFrame.DataRow);
-            await SetData();
+            this.SetContextParams();
+            await SetDataAsync();
         }
 
-        public void SetParameters(EbDataRow row)
+        private void SetContextParams()
         {
+            EbDataRow dataRow = sender.DataRow;
+            contextParams = new List<DbParameter>();
+
             try
             {
-                Parameters = new List<DbParameter>();
-
-                if (this.Page.NetworkMode == NetworkMode.Online)
+                if (this.NetworkType == NetworkMode.Online)
                 {
-                    EbLog.Write($"{this.Page.DisplayName} rendered with {this.Visualization.DataSourceParams.Count} params");
-
                     foreach (Param param in this.Visualization.DataSourceParams)
                     {
-                        object data = row[param.Name];
+                        object data = dataRow[param.Name];
+
                         if (data != null)
                         {
-                            Parameters.Add(new DbParameter
+                            contextParams.Add(new DbParameter
                             {
                                 ParameterName = param.Name,
                                 DbType = Convert.ToInt32(param.Type),
@@ -83,10 +112,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                     foreach (string param in _parameters)
                     {
-                        object data = row[param];
+                        object data = dataRow[param];
                         if (data != null)
                         {
-                            Parameters.Add(new DbParameter
+                            contextParams.Add(new DbParameter
                             {
                                 ParameterName = param,
                                 Value = data
@@ -101,7 +130,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public async Task SetData(int offset = 0)
+        public async Task SetDataAsync()
         {
             try
             {
@@ -111,10 +140,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     throw new Exception("no internet");
                 }
 
-                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, offset, this.Parameters);
+                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, this.Offset, this.contextParams);
                 if (ds != null && ds.Tables.HasLength(2))
                 {
-                    DataTable = ds.Tables[1];
+                    DataRows = ds.Tables[1].Rows;
                     DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
                 }
                 else
@@ -126,24 +155,50 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
+        private async Task ListItemTapped(object item)
+        {
+            DynamicFrame dyFrame = (DynamicFrame)item;
+
+            try
+            {
+                EbMobilePage page = HelperFunctions.GetPage(this.Visualization.LinkRefId);
+                if (this.NetworkType != page.NetworkMode)
+                {
+                    DependencyService.Get<IToast>().Show("Link page Mode is different.");
+                    return;
+                }
+                else
+                {
+                    ContentPage renderer = this.GetPageByContainer(dyFrame, page);
+
+                    if (renderer != null)
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         private async Task AddButtonClicked()
         {
             EbMobilePage page = HelperFunctions.GetPage(Visualization.LinkRefId);
 
             if (page != null && page.Container is EbMobileForm)
             {
-                FormRender Renderer = new FormRender(page, Visualization, linkFrame.DataRow, 0);
+                FormRender Renderer = new FormRender(page, Visualization, sender.DataRow, 0);
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
             }
         }
 
         private async Task EditButtonClicked()
         {
-            EbMobilePage _page = HelperFunctions.GetPage(SourceVisualization.SourceFormRefId);
+            EbMobilePage _page = HelperFunctions.GetPage(Context.SourceFormRefId);
 
             if (_page != null)
             {
-                int id = Convert.ToInt32(this.HeaderFrame.DataRow["id"]);
+                int id = Convert.ToInt32(sender.DataRow["id"]);
                 if (id != 0)
                 {
                     FormRender Renderer = new FormRender(_page, id);
@@ -152,7 +207,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public ContentPage GetPageByContainer(DynamicFrame frame, EbMobilePage page)
+        private ContentPage GetPageByContainer(DynamicFrame senderInner, EbMobilePage page)
         {
             ContentPage renderer = null;
             try
@@ -161,19 +216,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     case EbMobileForm f:
                         if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
-                            renderer = new FormRender(page, Visualization, frame.DataRow);
+                            renderer = new FormRender(page, Visualization, senderInner.DataRow);
                         else
                         {
-                            int id = Convert.ToInt32(frame.DataRow["id"]);
+                            int id = Convert.ToInt32(senderInner.DataRow["id"]);
                             if (id <= 0) throw new Exception("id has ivalid value" + id);
                             renderer = new FormRender(page, id);
                         }
                         break;
                     case EbMobileVisualization v:
-                        renderer = new LinkedListRender(page, this.Visualization, frame);
+                        renderer = new LinkedListRender(page, this.Visualization, senderInner);
                         break;
                     case EbMobileDashBoard d:
-                        renderer = new DashBoardRender(page, frame.DataRow);
+                        renderer = new DashBoardRender(page, senderInner.DataRow);
                         break;
                     default:
                         EbLog.Write("inavlid container type");
@@ -185,6 +240,40 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 EbLog.Write(ex.Message);
             }
             return renderer;
+        }
+
+        public async Task RefreshDataAsync()
+        {
+            try
+            {
+                DataCount = 0;
+
+                List<SortColumn> sort = this.SortColumns.FindAll(item => item.Selected);
+
+                var temp = filterParams == null ? contextParams : contextParams.Union(filterParams).OrderBy(x => x.ParameterName).ToList();
+
+                EbDataSet ds = await this.Visualization.GetData(this.NetworkType, Offset, temp, sort);
+
+                if (ds != null && ds.Tables.HasLength(2))
+                {
+                    DataRows = ds.Tables[1].Rows;
+                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
+                }
+
+                IsRefreshing = false;
+                Page current = App.RootMaster.Detail.Navigation.NavigationStack.Last();
+                (current as IRefreshable).Refreshed();
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write(ex.Message);
+            }
+        }
+
+        private async Task ApplyFilterClicked(object filters)
+        {
+            filterParams = (List<DbParameter>)filters;
+            await RefreshDataAsync();
         }
     }
 }

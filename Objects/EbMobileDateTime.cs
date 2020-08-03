@@ -15,9 +15,9 @@ namespace ExpressBase.Mobile
 
         public bool IsNullable { get; set; }
 
-        public TimeShowFormat ShowTimeAs_ { get; set; }
+        public bool BlockBackDatedEntry { set; get; }
 
-        public DateShowFormat ShowDateAs_ { get; set; }
+        public bool BlockFutureDatedEntry { set; get; }
 
         public CustomDatePicker Picker { set; get; }
 

@@ -39,6 +39,18 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        private bool isrefreshing;
+
+        public bool IsRefreshing
+        {
+            get { return isrefreshing; }
+            set
+            {
+                isrefreshing = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public Command ResetConfig => new Command(async () => await Reset());
 
         public Command LogoutCommand => new Command(async () => await Logout());

@@ -60,6 +60,7 @@ namespace ExpressBase.Mobile.ViewModels
             SolutionLogo = await menuServices.GetLogo(App.Settings.Sid);
 
             await menuServices.DeployFormTables(ObjectList);
+            await HelperFunctions.CreateDirectory("FILES");
         }
 
         public override async Task UpdateAsync()

@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -119,9 +120,12 @@ namespace ExpressBase.Mobile.Services
                 await Task.Delay(1);
 
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
+                string root = EbBuildConfig.VendorName;
 
-                if (!helper.DirectoryOrFileExist($"ExpressBase/{solutionname}/logo.png", SysContentType.File))
-                    File.WriteAllBytes(helper.NativeRoot + $"/ExpressBase/{solutionname}/logo.png", imageByte);
+                if (!helper.DirectoryOrFileExist($"{root}/{solutionname}/logo.png", SysContentType.File))
+                {
+                    File.WriteAllBytes(helper.NativeRoot + $"/{root}/{solutionname}/logo.png", imageByte);
+                }
             }
             catch (Exception ex)
             {

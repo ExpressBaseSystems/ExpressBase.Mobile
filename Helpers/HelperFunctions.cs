@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
@@ -124,32 +125,34 @@ namespace ExpressBase.Mobile.Helpers
         private static string CreatePlatFormDir(string FolderName)
         {
             string sid = App.Settings.Sid.ToUpper();
+            string root = EbBuildConfig.VendorName;
+
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                if (helper.DirectoryOrFileExist("ExpressBase", SysContentType.Directory))
+                if (helper.DirectoryOrFileExist(root, SysContentType.Directory))
                 {
-                    if (!helper.DirectoryOrFileExist($"ExpressBase/{sid}", SysContentType.Directory))
+                    if (!helper.DirectoryOrFileExist($"{root}/{sid}", SysContentType.Directory))
                     {
-                        helper.CreateDirectoryOrFile($"ExpressBase/{sid}", SysContentType.Directory);
+                        helper.CreateDirectoryOrFile($"{root}/{sid}", SysContentType.Directory);
 
                         if (FolderName != null)
-                            return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
+                            return helper.CreateDirectoryOrFile($"{root}/{sid}/{FolderName}", SysContentType.Directory);
                     }
                     else
                     {
                         if (FolderName != null)
-                            return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
+                            return helper.CreateDirectoryOrFile($"{root}/{sid}/{FolderName}", SysContentType.Directory);
                     }
                 }
                 else
                 {
-                    helper.CreateDirectoryOrFile("ExpressBase", SysContentType.Directory);
-                    helper.CreateDirectoryOrFile($"ExpressBase/{sid}", SysContentType.Directory);
+                    helper.CreateDirectoryOrFile(root, SysContentType.Directory);
+                    helper.CreateDirectoryOrFile($"{root}/{sid}", SysContentType.Directory);
 
                     if (FolderName != null)
-                        return helper.CreateDirectoryOrFile($"ExpressBase/{sid}/{FolderName}", SysContentType.Directory);
+                        return helper.CreateDirectoryOrFile($"{root}/{sid}/{FolderName}", SysContentType.Directory);
                 }
             }
             catch (Exception ex)
@@ -174,15 +177,17 @@ namespace ExpressBase.Mobile.Helpers
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
-                string sid = App.Settings.Sid.ToUpper();
 
-                string[] filenames = helper.GetFiles($"ExpressBase/{sid}/FILES", Patten);
+                string sid = App.Settings.Sid.ToUpper();
+                string root = EbBuildConfig.VendorName;
+
+                string[] filenames = helper.GetFiles($"{root}/{sid}/FILES", Patten);
 
                 foreach (string filepath in filenames)
                 {
                     string filename = Path.GetFileName(filepath);
 
-                    var bytes = helper.GetPhoto($"ExpressBase/{sid}/FILES/{filename}");
+                    var bytes = helper.GetPhoto($"{root}/{sid}/FILES/{filename}");
 
                     Files.Add(new FileWrapper
                     {
@@ -217,17 +222,38 @@ namespace ExpressBase.Mobile.Helpers
             {
                 EbMobilePage mpage = page.ToPage();
 
-                if (mpage != null && mpage.Container is EbMobileForm)
+                if (mpage != null && mpage.Container is EbMobileForm form)
                 {
-                    if (string.IsNullOrEmpty((mpage.Container as EbMobileForm).WebFormRefId))
+                    if (string.IsNullOrEmpty(form.WebFormRefId))
                         continue;
                     if (mpage.NetworkMode == NetworkMode.Offline || mpage.NetworkMode == NetworkMode.Mixed)
                     {
-                        ls.Add((EbMobileForm)mpage.Container);
+                        ls.Add(form);
                     }
                 }
             }
             return ls;
+        }
+
+        public static void WriteFilesLocal(string filename, byte[] fileBytea)
+        {
+            try
+            {
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                string root = EbBuildConfig.VendorName;
+
+                string path = $"{root}/{App.Settings.Sid}/FILES/{filename}";
+
+                if (!helper.DirectoryOrFileExist(path, SysContentType.File))
+                {
+                    File.WriteAllBytes(helper.NativeRoot + $"/{path}", fileBytea);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write(ex.Message);
+                EbLog.Write(ex.StackTrace);
+            }
         }
     }
 }

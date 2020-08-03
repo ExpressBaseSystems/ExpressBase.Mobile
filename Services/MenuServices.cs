@@ -68,7 +68,7 @@ namespace ExpressBase.Mobile.Services
 
                     EbMobileSettings settings = App.Settings.CurrentApplication.AppSettings;
 
-                    if (settings != null && settings.HasMenuPreloadApi)
+                    if (settings != null && settings.HasMenuPreloadApi && !App.Settings.CurrentUser.IsAdmin)
                         filtered = await GetFromMenuPreload(settings.MenuApi);
                     else
                         filtered = App.Settings.CurrentUser.FilterByLocation();

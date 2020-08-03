@@ -135,11 +135,14 @@ namespace ExpressBase.Mobile.Services
 
         public async Task UpdateNHRegisratation()
         {
+            if (!Utils.HasInternet)
+                return;
+
             try
             {
                 DeviceRegistration device = this.GetDevice();
 
-                if (!Utils.HasInternet && device.Handle == null) return;
+                if (device.Handle == null) return;
 
                 string azure_regid = Store.GetValue(AppConst.AZURE_REGID);
 

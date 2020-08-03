@@ -1,11 +1,9 @@
 ﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

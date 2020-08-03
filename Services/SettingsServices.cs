@@ -99,7 +99,7 @@ namespace ExpressBase.Mobile.Services
 
         public void InitializeConfig()
         {
-            Config conf = EbSerializers.DeserializeJsonFile<Config>("Configuration.Config.json");
+            EbBuildConfig conf = EbSerializers.DeserializeJsonFile<EbBuildConfig>("Configuration.Config.json");
             Vendor = conf.Current;
             HelperFunctions.SetResourceValue("Primary_Color", Vendor.GetPrimaryColor());
         }

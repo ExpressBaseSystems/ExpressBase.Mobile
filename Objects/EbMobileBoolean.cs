@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using System;
 using Xamarin.Forms;
@@ -17,11 +18,13 @@ namespace ExpressBase.Mobile
                 return true;
         }
 
-        public override void InitXControl(FormMode Mode,NetworkMode Network)
+        public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
             base.InitXControl(Mode, Network);
-
-            this.XControl = new CheckBox();
+            this.XControl = new CheckBox
+            {
+                Color = (Color)HelperFunctions.GetResourceValue("Primary_Color")
+            };
         }
 
         public override object GetValue()
@@ -35,7 +38,7 @@ namespace ExpressBase.Mobile
                 return false;
 
             int val = Convert.ToInt32(value);
-            (this.XControl as CheckBox).IsChecked = (val == 0) ? false : true;
+            (this.XControl as CheckBox).IsChecked = val != 0;
             return true;
         }
 

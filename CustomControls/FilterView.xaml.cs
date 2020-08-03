@@ -53,17 +53,14 @@ namespace ExpressBase.Mobile.CustomControls
             InitializeComponent();
         }
 
-        protected override void OnPropertyChanged(string propertyName = null)
+        protected override void OnBindingContextChanged()
         {
-            base.OnPropertyChanged(propertyName);
+            base.OnBindingContextChanged();
 
-            if (propertyName == FilterControlsProperty.PropertyName)
+            Task.Run(() =>
             {
-                Task.Run(() =>
-                {
-                    this.AppendFilterControls();
-                });
-            }
+                this.AppendFilterControls();
+            });
         }
 
         private void AppendFilterControls()
@@ -149,8 +146,9 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 if (ConfirmClicked.CanExecute(null))
                 {
+                    List<DbParameter> filters = this.GetFilterValues();
                     this.Hide();
-                    ConfirmClicked.Execute(null);
+                    ConfirmClicked.Execute(filters);
                 }
             }
         }

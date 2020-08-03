@@ -10,19 +10,25 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+            <Label 
+                Text="{Binding PageTitle}" 
+                VerticalOptions="Center" 
+                Style="{StaticResource ToolBarLabelStyle}" 
+                Grid.Column="0">
+            </Label>
             <Button 
                 IsVisible="{Binding IsFilterVisible}"
                 Text="&#xf0b0;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
                 Grid.Column="1"
-                Clicked="FilterButton_Clicked"/>
+                Clicked="FilterButton_Clicked">
+            </Button>
         </Grid>
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
         <Grid RowSpacing="0">
-            
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
@@ -91,21 +97,27 @@
                 </Frame>
                 <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
             </Grid>
-            
-            <RefreshView
-                    Grid.Row="1"
-                    x:Name="ListViewRefresh"
-                    Refreshing="ListViewRefresh_Refreshing">
-                <ScrollView>
-                    <StackLayout 
-                        x:Name="ListContainer" 
-                        BackgroundColor="White" 
-                        Spacing="0"
-                        Orientation="Vertical">
 
-                    </StackLayout>
-                </ScrollView>
-            </RefreshView>
+            <StackLayout Grid.Row="1">
+                <ListView 
+                    x:Name="EbListView"
+                    HasUnevenRows="True"
+                    SeparatorVisibility="{Binding SeparatorVisibility}"
+                    ItemsSource="{Binding DataRows}"
+                    IsPullToRefreshEnabled="True"
+                    IsRefreshing="{Binding IsRefreshing}"
+                    RefreshControlColor="{DynamicResource Primary_Color}"
+                    RefreshCommand="{Binding RefreshListCommand}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <control:DynamicViewCell 
+                                Visualization="{Binding Path=BindingContext.Visualization,Source={x:Reference EbListView}}"
+                                ItemSelected="{Binding Path=BindingContext.ItemTappedCommand,Source={x:Reference EbListView}}">
+                            </control:DynamicViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
 
             <Button
                 x:Name="AddLinkData"
@@ -123,8 +135,16 @@
                 FontFamily="{StaticResource FontAwesome}"
                 Command="{Binding AddCommand}">
             </Button>
-            
-            <!--Order of binding should be this, FilterControls should be the last-->
+
+            <StackLayout 
+                Grid.RowSpan="2"
+                x:Name="EmptyMessage"
+                IsVisible="False"
+                VerticalOptions="Center">
+                <Image Source="mt.png" HeightRequest="70"></Image>
+                <Label Text="Empty list..." HorizontalTextAlignment="Center"></Label>
+            </StackLayout>
+
             <control:FilterView 
                 Grid.RowSpan="2"
                 x:Name="FilterView"
@@ -141,16 +161,7 @@
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
             </control:LoaderIconed>
-
-            <StackLayout 
-                Grid.RowSpan="2"
-                x:Name="EmptyMessage"
-                IsVisible="False"
-                VerticalOptions="Center">
-                <Image Source="mt.png" HeightRequest="70"></Image>
-                <Label Text="Empty list..." HorizontalTextAlignment="Center"></Label>
-            </StackLayout>
-
+            
         </Grid>
     </ContentPage.Content>
 </ContentPage>

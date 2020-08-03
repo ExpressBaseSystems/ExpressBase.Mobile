@@ -22,158 +22,177 @@
                 Clicked="FullScreenButton_Clicked">
             </Button>
             <Button 
-                IsVisible="False"
-                Text="&#xf002;" 
+                IsVisible="{Binding IsFilterVisible}"
+                Text="&#xf0b0;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="2">
+                Grid.Column="2"
+                Clicked="FilterButton_Clicked">
             </Button>
         </Grid>
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
-        <Grid>
-            <Grid RowSpacing="0">
+        <Grid RowSpacing="0">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid x:Name="HeaderView" Grid.Row="0" BackgroundColor="{DynamicResource Primary_Color}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+                <Button
+                    IsVisible="False"
+                    x:Name="SourceDataEdit"
+                    Grid.Row="1"
+                    Text="Edit"
+                    HorizontalOptions="Start"
+                    Margin="20,10,10,10"
+                    Padding="0"
+                    CornerRadius="15"
+                    HeightRequest="30"
+                    BackgroundColor="White"
+                    Command="{Binding EditCommand}">
+                </Button>
+                <StackLayout 
+                    Grid.Row="0"
+                    x:Name="HeaderContainer">
+                </StackLayout>
+            </Grid>
 
-                <Grid x:Name="HeaderView" Grid.Row="0" BackgroundColor="{DynamicResource Primary_Color}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Button
-                        IsVisible="False"
-                        x:Name="SourceDataEdit"
-                        Grid.Row="1"
-                        Text="Edit"
-                        HorizontalOptions="Start"
-                        Margin="20,10,10,10"
-                        Padding="0"
-                        CornerRadius="15"
-                        HeightRequest="30"
-                        BackgroundColor="White"
-                        Command="{Binding EditCommand}">
-                    </Button>
-                    <StackLayout 
-                        Grid.Row="0"
-                        x:Name="HeaderContainer">
-                    </StackLayout>
-                </Grid>
+            <Grid Grid.Row="1" x:Name="PagingContainer" IsVisible="False" RowSpacing="0" ColumnSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="1" x:Name="PagingContainer" IsVisible="False" RowSpacing="0" ColumnSpacing="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-
-                    <Label x:Name="PagingMeta"
+                <Label x:Name="PagingMeta"
                        Grid.Column="0" 
                        VerticalTextAlignment="Center"
                        Margin="5,0"
                        FontSize="15"
                        TextColor="#333">
-                    </Label>
-                    <Frame Grid.Column="1" 
+                </Label>
+                <Frame Grid.Column="1" 
                        Padding="0" 
                        Margin="5"
                        BackgroundColor="Transparent"
                        HasShadow="False">
-                        <Frame.Content>
-                            <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
-                                <Button 
-                                    x:Name="PagingPrevButton"
-                                    CornerRadius="17"
-                                    Padding="0"
-                                    BorderColor="#e1e6e9"
-                                    BorderWidth="1"
-                                    HeightRequest="35"
-                                    WidthRequest="35"
-                                    Text="&#xf053;"
-                                    FontFamily="{StaticResource FontAwesome}"
-                                    BackgroundColor="#e1e6e9"
-                                    Clicked="PagingPrevButton_Clicked">
-                                </Button>
-                                <Button 
-                                    x:Name="PagingPageCount"
-                                    Padding="0"
-                                    HeightRequest="35"
-                                    WidthRequest="35"
-                                    BackgroundColor="Transparent"
-                                    CornerRadius="0">
-                                </Button>
-                                <Button 
-                                    x:Name="PagingNextButton"
-                                    Margin="0,0,0,0"
-                                    CornerRadius="17" 
-                                    Padding="0"
-                                    HeightRequest="35"
-                                    WidthRequest="35"
-                                    Text="&#xf054;" 
-                                    FontFamily="{StaticResource FontAwesome}"
-                                    BorderColor="#e1e6e9"
-                                    BorderWidth="1"
-                                    BackgroundColor="#e1e6e9"
-                                    Clicked="PagingNextButton_Clicked">
-                                </Button>
-                            </StackLayout>
-                        </Frame.Content>
-                    </Frame>
-                    <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
-                </Grid>
-                <RefreshView
-                    Grid.Row="2"
-                    x:Name="ListViewRefresh"
-                    Refreshing="ListViewRefresh_Refreshing">
-                    <ScrollView>
-                        <StackLayout 
-                            x:Name="ListContainer" 
-                            Spacing="0" 
-                            BackgroundColor="White"
-                            Orientation="Vertical">
+                    <Frame.Content>
+                        <StackLayout Orientation="Horizontal" WidthRequest="105" Spacing="0">
+                            <Button 
+                                x:Name="PagingPrevButton"
+                                CornerRadius="17"
+                                Padding="0"
+                                BorderColor="#e1e6e9"
+                                BorderWidth="1"
+                                HeightRequest="35"
+                                WidthRequest="35"
+                                Text="&#xf053;"
+                                FontFamily="{StaticResource FontAwesome}"
+                                BackgroundColor="#e1e6e9"
+                                Clicked="PagingPrevButton_Clicked">
+                            </Button>
+                            <Button 
+                                x:Name="PagingPageCount"
+                                Padding="0"
+                                HeightRequest="35"
+                                WidthRequest="35"
+                                BackgroundColor="Transparent"
+                                CornerRadius="0">
+                            </Button>
+                            <Button 
+                                x:Name="PagingNextButton"
+                                Margin="0,0,0,0"
+                                CornerRadius="17" 
+                                Padding="0"
+                                HeightRequest="35"
+                                WidthRequest="35"
+                                Text="&#xf054;" 
+                                FontFamily="{StaticResource FontAwesome}"
+                                BorderColor="#e1e6e9"
+                                BorderWidth="1"
+                                BackgroundColor="#e1e6e9"
+                                Clicked="PagingNextButton_Clicked">
+                            </Button>
                         </StackLayout>
-                    </ScrollView>
-                </RefreshView>
-
-                <StackLayout 
-                    Grid.Row="2"
-                    x:Name="EmptyMessage"
-                    IsVisible="False"
-                    VerticalOptions="Center">
-                    <Image Source="mt.png" HeightRequest="70"></Image>
-                    <Label Text="Empty list..." HorizontalTextAlignment="Center"></Label>
-                </StackLayout>
-
-                <Button
-                    IsVisible="False"
-                    x:Name="AddLinkData"
-                    Grid.Row="2"
-                    Text="&#xf067;"
-                    Margin="0,0,10,10"
-                    VerticalOptions="End"
-                    HorizontalOptions="End"
-                    TextColor="White"
-                    BackgroundColor="{DynamicResource Primary_Color}"
-                    HeightRequest="60"
-                    WidthRequest="60"
-                    CornerRadius="30"
-                    FontFamily="{StaticResource FontAwesome}"
-                    Command="{Binding AddCommand}">
-                </Button>
+                    </Frame.Content>
+                </Frame>
+                <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
             </Grid>
+
+            <StackLayout Grid.Row="2">
+                <ListView 
+                    x:Name="EbListView"
+                    HasUnevenRows="True"
+                    SeparatorVisibility="{Binding SeparatorVisibility}"
+                    ItemsSource="{Binding DataRows}"
+                    IsPullToRefreshEnabled="True"
+                    IsRefreshing="{Binding IsRefreshing}"
+                    RefreshControlColor="{DynamicResource Primary_Color}"
+                    RefreshCommand="{Binding RefreshListCommand}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <control:DynamicViewCell 
+                                Visualization="{Binding Path=BindingContext.Visualization,Source={x:Reference EbListView}}"
+                                ItemSelected="{Binding Path=BindingContext.ItemTappedCommand,Source={x:Reference EbListView}}">
+                            </control:DynamicViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+
+            <Button
+                IsVisible="False"
+                x:Name="AddLinkData"
+                Grid.Row="2"
+                Text="&#xf067;"
+                Margin="0,0,10,10"
+                VerticalOptions="End"
+                HorizontalOptions="End"
+                TextColor="White"
+                BackgroundColor="{DynamicResource Primary_Color}"
+                HeightRequest="60"
+                WidthRequest="60"
+                CornerRadius="30"
+                FontFamily="{StaticResource FontAwesome}"
+                Command="{Binding AddCommand}">
+            </Button>
+
+            <StackLayout 
+                Grid.Row="2"
+                x:Name="EmptyMessage"
+                IsVisible="False"
+                VerticalOptions="Center">
+                <Image Source="mt.png" HeightRequest="70"></Image>
+                <Label Text="Empty list..." HorizontalTextAlignment="Center"></Label>
+            </StackLayout>
+
+            <control:FilterView 
+                Grid.RowSpan="3"
+                x:Name="FilterView"
+                NetWorkType="{Binding NetworkType}"
+                SortColumns="{Binding SortColumns}"
+                ConfirmClicked="{Binding ApplyFilterCommand}"
+                FilterControls="{Binding FilterControls}">
+            </control:FilterView>
+
             <control:LoaderIconed 
+                Grid.RowSpan="3"
                 x:Name="Loader"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
             </control:LoaderIconed>
-            
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

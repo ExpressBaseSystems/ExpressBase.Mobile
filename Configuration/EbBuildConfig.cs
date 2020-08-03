@@ -47,22 +47,22 @@ namespace ExpressBase.Mobile.Configuration
         }
     }
 
-    public class Config
+    public class EbBuildConfig
     {
-        public static string Vendor = EbSettings.VendorName;
+        public static string VendorName = Expressbase.VendorName;
 
-        public const string AppIcon = EbSettings.AppIcon;
+        public const string AppIcon = Expressbase.AppIcon;
 
-        public const string AppLabel = EbSettings.AppLabel;
+        public const string AppLabel = Expressbase.AppLabel;
 
-        public const string StatusBarColor = EbSettings.StatusBar;
+        public const string StatusBarColor = Expressbase.StatusBar;
 
-        public const string SplashTheme = EbSettings.SplashTheme;
+        public const string SplashTheme = Expressbase.SplashTheme;
 
-        public static bool NFEnabled = true;
+        public static bool NFEnabled = Expressbase.NFEnabled;
 
         public Dictionary<string, AppVendor> Vendors { set; get; }
 
-        public AppVendor Current => Vendors[Vendor];
+        public AppVendor Current => Vendors[VendorName];
     }
 }

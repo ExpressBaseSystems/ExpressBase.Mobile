@@ -2,40 +2,26 @@
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Data;
-using System.Linq;
 using ExpressBase.Mobile.Helpers;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using ExpressBase.Mobile.CustomControls;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ListRender : ContentPage
+    public partial class ListRender : ContentPage, IRefreshable
     {
-        private int offset = 0;
-
         private int pageCount = 1;
 
         private bool isRendered;
 
         private readonly ListViewModel viewModel;
 
-        private readonly TapGestureRecognizer tapGesture;
-
-        private bool HasLink => !string.IsNullOrEmpty(viewModel.Visualization.LinkRefId);
+        private bool HasLink => viewModel.Visualization.HasLink();
 
         public ListRender(EbMobilePage Page)
         {
             InitializeComponent();
-
             BindingContext = viewModel = new ListViewModel(Page);
-            viewModel.BindMethod(BindableMethod);
-
-            tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
-            tapGesture.Tapped += ListItem_Tapped;
-            this.ToggleLinks();
             this.Loader.IsVisible = true;
         }
 
@@ -46,7 +32,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
             if (!isRendered)
             {
                 await viewModel.InitializeAsync();
-                this.AppendListItems();
+                this.ToggleLinks();
+                this.UpdatePaginationBar();
             }
             isRendered = true;
             this.Loader.IsVisible = false;
@@ -61,74 +48,21 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 if (page != null && page.Container is EbMobileForm)
                     AddLinkData.IsVisible = true;
             }
+
+            this.ToggleDataLength();
         }
 
-        private void AppendListItems()
+        private void ToggleDataLength()
         {
-            int counter = 1;
-            this.ListContainer.Children.Clear();
-
-            if (viewModel.DataTable.Rows.Any())
-            {
-                EmptyMessage.IsVisible = false;
-                PagingContainer.IsVisible = true;
-
-                try
-                {
-                    foreach (EbDataRow row in viewModel.DataTable.Rows)
-                    {
-                        DynamicFrame li = new DynamicFrame(row, viewModel.Visualization, false);
-
-                        if (viewModel.Visualization.Style == RenderStyle.Flat)
-                        {
-                            li.SetBackGroundColor(counter);
-                        }
-
-                        if (viewModel.NetworkType == NetworkMode.Offline)
-                            li.ShowSyncFlag(viewModel.DataTable.Columns);
-
-                        if (this.HasLink) li.GestureRecognizers.Add(tapGesture);
-
-                        this.ListContainer.Children.Add(li);
-                        counter++;
-                    }
-                }
-                catch(Exception ex)
-                {
-                    EbLog.Write("list item rendering :: " + ex.Message);
-                }
-            }
-            else
+            if (viewModel.DataCount <= 0)
             {
                 PagingContainer.IsVisible = false;
                 EmptyMessage.IsVisible = true;
             }
-            this.UpdatePaginationBar();
-        }
-
-        private async void ListItem_Tapped(object sender, EventArgs e)
-        {
-            IToast toast = DependencyService.Get<IToast>();
-            try
+            else
             {
-                DynamicFrame customFrame = (DynamicFrame)sender;
-                EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
-                if (viewModel.NetworkType != page.NetworkMode)
-                {
-                    toast.Show("Link page Mode is different.");
-                    return;
-                }
-                else
-                {
-                    ContentPage renderer = viewModel.GetPageByContainer(customFrame, page);
-
-                    if (renderer != null)
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                PagingContainer.IsVisible = true;
+                EmptyMessage.IsVisible = false;
             }
         }
 
@@ -139,57 +73,26 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private async void PagingPrevButton_Clicked(object sender, EventArgs e)
         {
-            try
+            if (viewModel.Offset <= 0)
+                return;
+            else
             {
-                if (this.offset <= 0)
-                    return;
-                else
-                {
-                    this.offset -= viewModel.Visualization.PageLength;
-                    this.pageCount--;
-                    await this.RefreshListView(false);
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write("ListViewRender.PrevButton_Clicked---" + ex.Message);
+                viewModel.Offset -= viewModel.Visualization.PageLength;
+                this.pageCount--;
+                await viewModel.RefreshDataAsync();
             }
         }
 
         private async void PagingNextButton_Clicked(object sender, EventArgs e)
         {
-            try
-            {
-                if (this.offset + viewModel.Visualization.PageLength >= viewModel.DataCount)
-                    return;
-                else
-                {
-                    this.offset += viewModel.Visualization.PageLength;
-                    this.pageCount++;
-                    await this.RefreshListView(false);
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write("ListViewRender.NextButton_Clicked---" + ex.Message);
-            }
-        }
-
-        private async Task RefreshListView(bool toInitial)
-        {
-            this.Loader.IsVisible = true;
-            if (toInitial)
-            {
-                FilterView.ClearFilter();
-                await viewModel.SetData(this.offset);
-            }
+            if (viewModel.Offset + viewModel.Visualization.PageLength >= viewModel.DataCount)
+                return;
             else
             {
-                List<DbParameter> parameters = this.FilterView.GetFilterValues();
-                await viewModel.Refresh(parameters, offset);
+                viewModel.Offset += viewModel.Visualization.PageLength;
+                this.pageCount++;
+                await viewModel.RefreshDataAsync();
             }
-            this.AppendListItems();
-            this.Loader.IsVisible = false;
         }
 
         private void UpdatePaginationBar()
@@ -198,13 +101,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 int pageLength = viewModel.Visualization.PageLength;
                 int totalEntries = viewModel.DataCount;
-                int _offset = offset + 1;
+                int offset = viewModel.Offset + 1;
                 int length = pageLength + offset - 1;
 
-                if (totalEntries < pageLength || pageLength + _offset > totalEntries)
+                if (totalEntries < pageLength || pageLength + offset > totalEntries)
                     length = totalEntries;
 
-                this.PagingMeta.Text = $"{_offset} - {length}/{totalEntries}";
+                this.PagingMeta.Text = $"{offset} - {length}/{totalEntries}";
                 this.PagingPageCount.Text = $"{pageCount}/{(int)Math.Ceiling((double)totalEntries / pageLength)}";
             }
             catch (Exception ex)
@@ -213,37 +116,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
         }
 
-        private async void ListViewRefresh_Refreshing(object sender, EventArgs e)
+        public void Refreshed()
         {
-            this.ListViewRefresh.IsRefreshing = false;
-            IToast toast = DependencyService.Get<IToast>();
-            try
-            {
-                this.offset = 0;
-                this.pageCount = 1;
-                await this.RefreshListView(true);
-                toast.Show("Refreshed");
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
-        }
-
-        public async void BindableMethod()
-        {
-            try
-            {
-                this.Loader.IsVisible = true;
-                var parameters = this.FilterView.GetFilterValues();
-                await viewModel.Refresh(parameters);
-                this.AppendListItems();
-                this.Loader.IsVisible = false;
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
+            this.UpdatePaginationBar();
+            this.ToggleDataLength();
         }
     }
 }

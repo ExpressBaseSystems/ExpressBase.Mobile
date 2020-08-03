@@ -53,6 +53,11 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+        }
+
         public void Notify(string propname)
         {
             this.OnPropertyChanged(propname);

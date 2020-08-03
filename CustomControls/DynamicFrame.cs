@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
@@ -36,7 +37,7 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 this.ShowLinkIcon();
             }
-            this.Content = grid;
+            this.Content = new StackLayout { Children = { grid } };
         }
 
         //for data grid
@@ -170,41 +171,52 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private void ApplyLabelStyle(Label Label, EbMobileDataColumn DataColumn)
+        private void ApplyLabelStyle(Label label, EbMobileDataColumn dc)
         {
-            EbFont _font = DataColumn.Font;
+            EbFont font = dc.Font;
 
-            if (DataColumn.TextAlign == MobileTextAlign.Left)
-                Label.HorizontalTextAlignment = TextAlignment.Start;
-            else if (DataColumn.TextAlign == MobileTextAlign.Center)
-                Label.HorizontalTextAlignment = TextAlignment.Center;
-            else
-                Label.HorizontalTextAlignment = TextAlignment.End;
+            SetTextAlign(dc.TextAlign, label);
 
-            if (_font != null)
+            if (font != null)
             {
-                Label.FontSize = _font.Size;
+                label.FontSize = font.Size;
 
-                if (_font.Style == FontStyle.BOLD)
-                    Label.FontAttributes = FontAttributes.Bold;
-                else if (_font.Style == FontStyle.ITALIC)
-                    Label.FontAttributes = FontAttributes.Italic;
+                if (font.Style == FontStyle.BOLD)
+                    label.FontAttributes = FontAttributes.Bold;
+                else if (font.Style == FontStyle.ITALIC)
+                    label.FontAttributes = FontAttributes.Italic;
                 else
-                    Label.FontAttributes = FontAttributes.None;
+                    label.FontAttributes = FontAttributes.None;
 
-                Label.TextColor = (this.isHeader) ? Color.White : Color.FromHex(_font.Color);
+                label.TextColor = (this.isHeader) ? Color.White : Color.FromHex(font.Color);
 
-                if (_font.Caps)
-                    Label.Text = Label.Text.ToUpper();
+                if (font.Caps)
+                    label.Text = label.Text.ToUpper();
 
-                if (_font.Underline)
-                    Label.TextDecorations = TextDecorations.Underline;
-                else if (_font.Strikethrough)
-                    Label.TextDecorations = TextDecorations.Strikethrough;
+                if (font.Underline)
+                    label.TextDecorations = TextDecorations.Underline;
+                else if (font.Strikethrough)
+                    label.TextDecorations = TextDecorations.Strikethrough;
             }
             else
             {
-                if (this.isHeader) Label.TextColor = Color.White;
+                if (this.isHeader) label.TextColor = Color.White;
+            }
+        }
+
+        private void SetTextAlign(MobileTextAlign align, Label label)
+        {
+            switch (align)
+            {
+                case MobileTextAlign.Center:
+                    label.HorizontalTextAlignment = TextAlignment.Center;
+                    break;
+                case MobileTextAlign.Right:
+                    label.HorizontalTextAlignment = TextAlignment.End;
+                    break;
+                default:
+                    label.HorizontalTextAlignment = TextAlignment.Start;
+                    break;
             }
         }
 
@@ -236,7 +248,7 @@ namespace ExpressBase.Mobile.CustomControls
             grid.Children.Add(lbl, colLength - 1, 0);
         }
 
-        public void ShowLinkIcon()
+        private void ShowLinkIcon()
         {
             Label lbl = new Label
             {
@@ -280,9 +292,19 @@ namespace ExpressBase.Mobile.CustomControls
             string refid = filerefs.ToString().Split(CharConstants.COMMA)[0];
             try
             {
-                ApiFileResponse resp = await DataService.Instance.GetFile(EbFileCategory.Images, $"{refid}.jpg");
-                if (resp.HasContent)
-                    image.Source = ImageSource.FromStream(() => { return new MemoryStream(resp.Bytea); });
+                byte[] file = await DataService.Instance.GetLocalFile($"{refid}.jpg");
+
+                if (file == null)
+                {
+                    ApiFileResponse resp = await DataService.Instance.GetFile(EbFileCategory.Images, $"{refid}.jpg");
+                    if (resp.HasContent)
+                    {
+                        image.Source = ImageSource.FromStream(() => { return new MemoryStream(resp.Bytea); });
+                        this.CacheImage(refid, resp.Bytea);
+                    }
+                }
+                else
+                    image.Source = ImageSource.FromStream(() => { return new MemoryStream(file); });
             }
             catch (Exception)
             {
@@ -319,6 +341,11 @@ namespace ExpressBase.Mobile.CustomControls
             catch (ArgumentNullException) { toast.Show("no number"); }
             catch (FeatureNotSupportedException) { toast.Show("Feature unsuported"); }
             catch (Exception) { toast.Show("Something went wrong"); }
+        }
+
+        private void CacheImage(string filename, byte[] fileBytea)
+        {
+            HelperFunctions.WriteFilesLocal(filename + ".jpg", fileBytea);
         }
     }
 }

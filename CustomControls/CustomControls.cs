@@ -12,6 +12,11 @@ namespace ExpressBase.Mobile.CustomControls
         void SetContentFromConfig();
     }
 
+    public interface IRefreshable
+    {
+        void Refreshed();
+    }
+
     public interface IEbCustomControl
     {
         int BorderThickness { set; get; }

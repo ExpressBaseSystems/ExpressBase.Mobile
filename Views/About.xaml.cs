@@ -29,11 +29,11 @@ namespace ExpressBase.Mobile.Views
             DeviceId.Text = $"DEVICE ID : {helper.DeviceId}";
             AppVersion.Text = $"Version {helper.AppVersion}";
 
-            if(Config.Vendor == EbSettings.VendorName)
+            if(EbBuildConfig.VendorName == Expressbase.VendorName)
             {
                 VendorDescription.Text = @"EXPRESSbase is a Platform on the cloud to build and run business applications 10x faster. Get the best of both worlds – stability of Ready-Made software, and flexibility of Custom software.";
             }
-            else if(Config.Vendor == MoSettings.VendorName)
+            else if(EbBuildConfig.VendorName == MoveOn.VendorName)
             {
                 VendorDescription.Text = string.Empty;
             }

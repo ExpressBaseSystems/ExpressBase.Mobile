@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -194,7 +195,9 @@ namespace ExpressBase.Mobile.Services
                 if (resp.DisplayPicture != null)
                 {
                     INativeHelper helper = DependencyService.Get<INativeHelper>();
-                    string url = helper.NativeRoot + $"/ExpressBase/{ App.Settings.Sid.ToUpper()}/user.png";
+                    string root = EbBuildConfig.VendorName;
+
+                    string url = helper.NativeRoot + $"/{root}/{ App.Settings.Sid.ToUpper()}/user.png";
                     File.WriteAllBytes(url, resp.DisplayPicture);
                 }
             }

@@ -4,7 +4,6 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
@@ -17,25 +16,41 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class ListViewModel : DynamicBaseViewModel
     {
-        private readonly IDataService dataService;
-
-        private Action viewAction;
+        public int Offset { set; get; }
 
         public int DataCount { set; get; }
 
-        public EbMobileVisualization Visualization { set; get; }
+        private RowColletion datarows;
 
-        public EbDataTable DataTable { set; get; }
+        public RowColletion DataRows
+        {
+            get { return datarows; }
+            set
+            {
+                datarows = value;
+                NotifyPropertyChanged();
+            }
+        }
 
-        public List<EbMobileControl> FilterControls { set; get; }
+        private List<DbParameter> parameters;
 
         public List<SortColumn> SortColumns { set; get; }
 
-        public Command AddCommand => new Command(async () => await AddButtonClicked());
+        public EbMobileVisualization Visualization { set; get; }
 
-        public Command ApplyFilterCommand => new Command(ApplyFilterClicked);
+        public List<EbMobileControl> FilterControls { set; get; }
+
+        public SeparatorVisibility SeparatorVisibility { set; get; } = SeparatorVisibility.Default;
 
         public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
+
+        public Command ItemTappedCommand => new Command(async (o) => await ListItemTapped(o));
+
+        public Command AddCommand => new Command(async () => await AddButtonClicked());
+
+        public Command ApplyFilterCommand => new Command(async (o) => await ApplyFilterClicked(o));
+
+        public Command RefreshListCommand => new Command(async () => await RefreshDataAsync());
 
         public ListViewModel(EbMobilePage page) : base(page)
         {
@@ -44,15 +59,18 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
             this.FilterControls = this.Visualization.FilterControls;
 
-            dataService = DataService.Instance;
+            if(this.Visualization.Style == RenderStyle.Tile)
+            {
+                SeparatorVisibility = SeparatorVisibility.None;
+            }
         }
 
         public override async Task InitializeAsync()
         {
-            await this.SetData();
+            await this.SetDataAsync();
         }
 
-        public async Task SetData(int offset = 0)
+        public async Task SetDataAsync()
         {
             try
             {
@@ -62,10 +80,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     throw new Exception("no internet");
                 }
 
-                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, offset);
+                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, this.Offset);
                 if (ds != null && ds.Tables.HasLength(2))
                 {
-                    DataTable = ds.Tables[1];
+                    DataRows = ds.Tables[1].Rows;
                     DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
                 }
                 else
@@ -73,7 +91,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                DataTable = new EbDataTable();
                 EbLog.Write(ex.Message);
             }
         }
@@ -86,6 +103,32 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 FormRender Renderer = new FormRender(page);
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+            }
+        }
+
+        private async Task ListItemTapped(object item)
+        {
+            IToast toast = DependencyService.Get<IToast>();
+            try
+            {
+                DynamicFrame customFrame = (DynamicFrame)item;
+                EbMobilePage page = HelperFunctions.GetPage(this.Visualization.LinkRefId);
+                if (this.NetworkType != page.NetworkMode)
+                {
+                    toast.Show("Link page Mode is different.");
+                    return;
+                }
+                else
+                {
+                    ContentPage renderer = this.GetPageByContainer(customFrame, page);
+
+                    if (renderer != null)
+                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -125,20 +168,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             return renderer;
         }
 
-        public async Task Refresh(List<DbParameter> parameters, int offset = 0)
+        public async Task RefreshDataAsync()
         {
             try
             {
-                DataTable.Rows.Clear();
                 DataCount = 0;
 
                 List<SortColumn> sort = this.SortColumns.FindAll(item => item.Selected);
 
-                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, offset, parameters, sort);
+                EbDataSet ds = await this.Visualization.GetData(this.NetworkType, Offset, parameters, sort);
 
                 if (ds != null && ds.Tables.HasLength(2))
                 {
-                    DataTable = ds.Tables[1];
+                    DataRows = ds.Tables[1].Rows;
                     DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
                 }
             }
@@ -146,16 +188,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 EbLog.Write(ex.Message);
             }
+
+            IsRefreshing = false;
+            Page current = App.RootMaster.Detail.Navigation.NavigationStack.Last();
+            (current as IRefreshable).Refreshed();
         }
 
-        public void BindMethod(Action method)
+        private async Task ApplyFilterClicked(object filters)
         {
-            viewAction = method;
-        }
-
-        private void ApplyFilterClicked()
-        {
-            viewAction?.Invoke();
+            parameters = (List<DbParameter>)filters;
+            await RefreshDataAsync();
         }
     }
 }

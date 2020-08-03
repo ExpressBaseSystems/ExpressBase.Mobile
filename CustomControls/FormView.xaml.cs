@@ -44,14 +44,10 @@ namespace ExpressBase.Mobile.CustomControls
             InitializeComponent();
         }
 
-        protected override void OnPropertyChanged(string propertyName = null)
+        protected override void OnBindingContextChanged()
         {
-            base.OnPropertyChanged(propertyName);
-
-            if (propertyName == ControlsProperty.PropertyName)
-            {
-                Render();
-            }
+            base.OnBindingContextChanged();
+            this.Render();
         }
 
         private void Render()
