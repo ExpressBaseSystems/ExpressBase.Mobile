@@ -26,7 +26,7 @@
                     CornerRadius="30">
                     <ActivityIndicator
                         IsRunning="true" 
-                        Color="#3579f9"
+                        Color="{DynamicResource Primary_Color}"
                         Grid.Column="0"
                         WidthRequest="30"
                         HeightRequest="30">

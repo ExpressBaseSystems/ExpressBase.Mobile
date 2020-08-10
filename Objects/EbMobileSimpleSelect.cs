@@ -72,15 +72,13 @@ namespace ExpressBase.Mobile
         {
             base.InitXControl(Mode, Network);
 
-            var bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
+            Color bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
 
             if (IsSimpleSelect)
             {
                 picker = new CustomPicker
                 {
                     Title = $"Select {this.Label}",
-                    FontSize = 15,
-                    TextColor = Color.FromHex("333942"),
                     ItemsSource = this.Options,
                     ItemDisplayBinding = new Binding("DisplayName"),
                     IsEnabled = !this.ReadOnly,
@@ -98,7 +96,6 @@ namespace ExpressBase.Mobile
                 {
                     IsReadOnly = this.ReadOnly,
                     Placeholder = $"Search {this.Label}...",
-                    FontSize = 14,
                     BorderColor = Color.Transparent
                 };
                 SearchBox.Focused += SearchBox_Focused;

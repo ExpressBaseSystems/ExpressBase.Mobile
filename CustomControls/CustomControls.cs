@@ -15,6 +15,8 @@ namespace ExpressBase.Mobile.CustomControls
     public interface IRefreshable
     {
         void Refreshed();
+
+        void UpdateRenderStatus();
     }
 
     public interface IEbCustomControl
@@ -83,6 +85,19 @@ namespace ExpressBase.Mobile.CustomControls
         public Color BgColor { set; get; }
 
         public CustomDatePicker() { }
+    }
+
+    public class CustomTimePicker : TimePicker, IEbCustomControl
+    {
+        public int BorderThickness { set; get; } = 1;
+
+        public float BorderRadius { set; get; } = 10.0f;
+
+        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
+
+        public Color BgColor { set; get; }
+
+        public CustomTimePicker() { }
     }
 
     public class CustomCheckBox : CheckBox, IEbCustomControl

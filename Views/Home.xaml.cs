@@ -28,13 +28,13 @@ namespace ExpressBase.Mobile.Views
             base.OnAppearing();
             try
             {
-                CurrentLocation.Text = App.Settings.CurrentLocation?.LongName;
+                CurrentLocation.Text = App.Settings.CurrentLocation?.LongName.ToLower();
                 CurrentSolution.Text = App.Settings.Sid.ToUpper();
 
                 if (!isRendered)
                 {
                     await viewModel.InitializeAsync();
-                    isRendered = true;
+                    isRendered = !viewModel.RefreshOnAppearing;
                 }
 
                 ToggleStatus();
@@ -87,8 +87,7 @@ namespace ExpressBase.Mobile.Views
                         App.Settings.MobilePages = null;
 
                         await viewModel.UpdateAsync();
-                        MenuView.Notify("ItemSource");
-                        ToggleStatus();
+                        this.ToggleStatus();
 
                         IconedLoader.IsVisible = false;
                         toast.Show("Refreshed");
@@ -111,8 +110,7 @@ namespace ExpressBase.Mobile.Views
         public async void RefreshView()
         {
             await viewModel.LocationSwitched();
-            MenuView.Notify("ItemSource");
-            ToggleStatus();
+            this.ToggleStatus();
         }
 
         public void TriggerSync()

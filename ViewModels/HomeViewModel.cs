@@ -41,6 +41,8 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        public bool RefreshOnAppearing { set; get; }
+
         public Command SyncButtonCommand => new Command(async () => await SyncButtonEvent());
 
         public Command MenuItemTappedCommand => new Command<object>(async (o) => await ItemTapedEvent(o));
@@ -51,21 +53,42 @@ namespace ExpressBase.Mobile.ViewModels
         {
             PageTitle = App.Settings.CurrentApplication?.AppName;
             menuServices = new MenuServices();
+
+            EbMobileSettings settings = App.Settings.CurrentApplication.AppSettings;
+            if(settings != null)
+            {
+                RefreshOnAppearing = !App.Settings.CurrentUser.IsAdmin && settings.HasMenuPreloadApi;
+            }
         }
 
         public override async Task InitializeAsync()
         {
-            ObjectList = await menuServices.GetDataAsync();
-
-            SolutionLogo = await menuServices.GetLogo(App.Settings.Sid);
-
-            await menuServices.DeployFormTables(ObjectList);
-            await HelperFunctions.CreateDirectory("FILES");
+            try
+            {
+                this.ObjectList = await menuServices.GetDataAsync();
+                await menuServices.DeployFormTables(ObjectList);
+                EbLog.Write($"Current Application :'{PageTitle}' with page count of {this.ObjectList.Count}.");
+                SolutionLogo = await menuServices.GetLogo(App.Settings.Sid);
+                await HelperFunctions.CreateDirectory("FILES");
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Home page initialization data request failed ::" + ex.Message);
+            }
         }
 
         public override async Task UpdateAsync()
         {
-            await menuServices.UpdateDataAsync(ObjectList);
+            try
+            {
+                this.ObjectList = await menuServices.UpdateDataAsync();
+                await menuServices.DeployFormTables(ObjectList);
+                EbLog.Write($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
+            }
+            catch(Exception ex)
+            {
+                EbLog.Write("Home page update data request failed ::" + ex.Message);
+            }
         }
 
         private async Task SyncButtonEvent()
@@ -157,9 +180,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public async Task LocationSwitched()
         {
-            List<MobilePagesWraper> objList = await menuServices.GetDataAsync();
-            ObjectList.Update(objList);
-            await menuServices.DeployFormTables(objList);
+            ObjectList = await menuServices.GetDataAsync();
+            await menuServices.DeployFormTables(ObjectList);
         }
 
         public bool IsEmpty()

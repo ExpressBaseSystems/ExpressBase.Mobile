@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -27,6 +28,8 @@ namespace ExpressBase.Mobile.ViewModels
                 NotifyPropertyChanged();
             }
         }
+
+        public bool IsResetVisible => (App.Settings.Vendor.BuildType != AppBuildType.Embedded);
 
         public Command AppSelectedCommand => new Command(async (obj) => await AppSelected(obj));
 

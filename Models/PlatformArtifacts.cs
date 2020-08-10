@@ -16,32 +16,6 @@ namespace ExpressBase.Mobile.Models
         HttpStatusCode StatusCode { set; get; }
     }
 
-    public class CustomColor
-    {
-        public string BackGround { set; get; }
-
-        public string TextColor { set; get; }
-    }
-
-    public class ColorSet
-    {
-        public static IList<CustomColor> Colors
-        {
-            get
-            {
-                return new List<CustomColor>
-                {
-                    new CustomColor{ BackGround = "eaf7f9", TextColor = "3bb1cd" },
-                    new CustomColor{ BackGround = "fef0f2", TextColor = "ef7c93" },
-                    new CustomColor{ BackGround = "eef2fe", TextColor = "5a8ff4" },
-                    new CustomColor{ BackGround = "fcf4ec", TextColor = "e0a14e" },
-                    new CustomColor{ BackGround = "fdf0fb", TextColor = "e364d0" },
-                    new CustomColor{ BackGround = "f2f4f6", TextColor = "8da2b2" }
-                };
-            }
-        }
-    }
-
     public class EbMobileSolutionData : IEbApiStatusCode
     {
         public List<AppData> Applications { set; get; }
@@ -203,24 +177,6 @@ namespace ExpressBase.Mobile.Models
         }
     }
 
-    public class MobilePageCollection
-    {
-        public List<MobilePagesWraper> Pages { set; get; }
-
-        public List<WebObjectsWraper> WebObjects { set; get; }
-
-        public EbDataSet Data { set; get; }
-
-        public List<string> TableNames { set; get; }
-
-        public MobilePageCollection()
-        {
-            this.Pages = new List<MobilePagesWraper>();
-
-            this.WebObjects = new List<WebObjectsWraper>();
-        }
-    }
-
     public class MobilePagesWraper
     {
         private EbMobilePage _page;
@@ -244,15 +200,6 @@ namespace ExpressBase.Mobile.Models
                 if (string.IsNullOrEmpty(icon))
                     icon = this.GetDefaultIcon();
                 return icon;
-            }
-        }
-
-        public string ContainerType
-        {
-            get
-            {
-                if (_page == null) ToPage();
-                return ContainerLabels.GetLabel(_page.Container);
             }
         }
 

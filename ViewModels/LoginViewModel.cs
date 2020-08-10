@@ -47,6 +47,8 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        public bool ShowNewSolutionLink => (App.Settings.Vendor.BuildType != AppBuildType.Embedded);
+
         public bool IsResetVisible => App.Settings.Vendor.HasSolutionSwitcher;
 
         private readonly IIdentityService identityService;

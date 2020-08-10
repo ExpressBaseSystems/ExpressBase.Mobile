@@ -28,7 +28,6 @@ namespace ExpressBase.Mobile
             {
                 XControl = new TextArea()
                 {
-                    HeightRequest = 100,
                     IsReadOnly = this.ReadOnly,
                     BgColor = bg
                 };

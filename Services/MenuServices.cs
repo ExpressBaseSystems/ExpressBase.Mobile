@@ -1,5 +1,7 @@
-﻿using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -20,7 +22,7 @@ namespace ExpressBase.Mobile.Services
 
         Task<List<MobilePagesWraper>> GetDataAsync();
 
-        Task UpdateDataAsync(List<MobilePagesWraper> collection);
+        Task<List<MobilePagesWraper>> UpdateDataAsync();
 
         Task DeployFormTables(List<MobilePagesWraper> objlist);
 
@@ -37,25 +39,41 @@ namespace ExpressBase.Mobile.Services
 
         public async Task<List<MobilePagesWraper>> GetDataAsync()
         {
-            if (App.Settings.MobilePages != null)
+            List<MobilePagesWraper> objectList = App.Settings.MobilePages ?? new List<MobilePagesWraper>();
+
+            if (App.Settings.CurrentUser.IsAdmin)
+            {
+                return objectList;
+            }
+            else
             {
                 EbMobileSettings settings = App.Settings.CurrentApplication.AppSettings;
 
-                if (settings != null && settings.HasMenuPreloadApi && !App.Settings.CurrentUser.IsAdmin)
+                if (settings != null && settings.HasMenuPreloadApi)
                 {
                     if (Utils.HasInternet)
-                        return await GetFromMenuPreload(settings.MenuApi);
+                        objectList = await GetFromMenuPreload(settings.MenuApi);
                     else
+                    {
+                        objectList.Clear();
                         Utils.Alert_NoInternet();
+                    }
                 }
-                else
-                    return App.Settings.CurrentUser.FilterByLocation();
             }
-            return new List<MobilePagesWraper>();
+
+            return objectList;
         }
 
-        public async Task UpdateDataAsync(List<MobilePagesWraper> collection)
+        public async Task<List<MobilePagesWraper>> UpdateDataAsync()
         {
+            if (!Utils.HasInternet)
+            {
+                Utils.Alert_NoInternet();
+                return new List<MobilePagesWraper>();
+            }
+
+            List<MobilePagesWraper> collection = null;
+
             try
             {
                 EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(false);
@@ -63,24 +81,15 @@ namespace ExpressBase.Mobile.Services
                 if (data != null)
                 {
                     App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
-
-                    List<MobilePagesWraper> filtered = null;
-
-                    EbMobileSettings settings = App.Settings.CurrentApplication.AppSettings;
-
-                    if (settings != null && settings.HasMenuPreloadApi && !App.Settings.CurrentUser.IsAdmin)
-                        filtered = await GetFromMenuPreload(settings.MenuApi);
-                    else
-                        filtered = App.Settings.CurrentUser.FilterByLocation();
-
-                    collection.Update(filtered);
-                    await this.DeployFormTables(collection);
+                    collection = await this.GetDataAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                EbLog.Write("menu update failed");
+                EbLog.Write("menu update failed :: " + ex.Message);
             }
+
+            return collection ?? new List<MobilePagesWraper>();
         }
 
         public async Task<List<MobilePagesWraper>> GetFromMenuPreload(EbApiMeta apimeta)
@@ -125,6 +134,9 @@ namespace ExpressBase.Mobile.Services
 
         public async Task DeployFormTables(List<MobilePagesWraper> objlist)
         {
+            if (objlist == null)
+                return;
+
             await Task.Run(() =>
             {
                 foreach (MobilePagesWraper page in objlist)
@@ -315,11 +327,18 @@ namespace ExpressBase.Mobile.Services
             {
                 await Task.Delay(1);
 
-                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                if (App.Settings.Vendor.BuildType == AppBuildType.Embedded)
+                {
+                    return ImageSource.FromFile(App.Settings.Vendor.Logo);
+                }
+                else
+                {
+                    INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
-                if (bytes != null)
-                    return ImageSource.FromStream(() => new MemoryStream(bytes));
+                    var bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{sid}/logo.png");
+                    if (bytes != null)
+                        return ImageSource.FromStream(() => new MemoryStream(bytes));
+                }
             }
             catch (Exception ex)
             {

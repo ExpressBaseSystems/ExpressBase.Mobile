@@ -17,6 +17,10 @@ namespace ExpressBase.Mobile.Configuration
 
     public class AppVendor
     {
+        public AppBuildType BuildType { set; get; }
+
+        public string SolutionURL { set; get; }
+
         public bool AllowNotifications { set; get; }
 
         public string PrimaryColor { set; get; }
@@ -33,8 +37,6 @@ namespace ExpressBase.Mobile.Configuration
 
         public string Logo { set; get; }
 
-        public bool AllowMenuRefresh { set; get; }
-
         public string PoweredBy { set; get; }
 
         public LoginType DefaultLoginType { set; get; }
@@ -49,17 +51,17 @@ namespace ExpressBase.Mobile.Configuration
 
     public class EbBuildConfig
     {
-        public static string VendorName = Expressbase.VendorName;
+        public static string VendorName = KudumbaShree.VendorName;
 
-        public const string AppIcon = Expressbase.AppIcon;
+        public const string AppIcon = KudumbaShree.AppIcon;
 
-        public const string AppLabel = Expressbase.AppLabel;
+        public const string AppLabel = KudumbaShree.AppLabel;
 
-        public const string StatusBarColor = Expressbase.StatusBar;
+        public const string StatusBarColor = KudumbaShree.StatusBar;
 
-        public const string SplashTheme = Expressbase.SplashTheme;
+        public const string SplashTheme = KudumbaShree.SplashTheme;
 
-        public static bool NFEnabled = Expressbase.NFEnabled;
+        public static bool NFEnabled = KudumbaShree.NFEnabled;
 
         public Dictionary<string, AppVendor> Vendors { set; get; }
 

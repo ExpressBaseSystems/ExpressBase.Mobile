@@ -34,6 +34,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public EbMobileVisualization Visualization { set; get; }
 
+        public IntRef ListItemIndex { set; get; }
+
         public EbMobileVisualization Context { set; get; }
 
         public List<SortColumn> SortColumns { set; get; }
@@ -41,8 +43,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public List<EbMobileControl> FilterControls { set; get; }
 
         public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
-
-        public SeparatorVisibility SeparatorVisibility { set; get; } = SeparatorVisibility.Default;
 
         public Command AddCommand => new Command(async () => await AddButtonClicked());
 
@@ -63,16 +63,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public LinkedListViewModel(EbMobilePage page, EbMobileVisualization context, DynamicFrame sender) : base(page)
         {
             this.Visualization = (EbMobileVisualization)page.Container;
+            this.ListItemIndex = new IntRef();
             this.Context = context;
             this.sender = sender;
 
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
             this.FilterControls = this.Visualization.FilterControls;
-
-            if (Visualization.Style == RenderStyle.Tile)
-            {
-                SeparatorVisibility = SeparatorVisibility.None;
-            }
         }
 
         public override async Task InitializeAsync()

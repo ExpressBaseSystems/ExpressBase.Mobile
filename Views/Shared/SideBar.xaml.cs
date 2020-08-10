@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System;
 using System.IO;
@@ -37,7 +38,7 @@ namespace ExpressBase.Mobile.Views.Shared
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                byte[] bytes = helper.GetPhoto($"ExpressBase/{App.Settings.Sid}/user.png");
+                byte[] bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{App.Settings.Sid}/user.png");
                 if (bytes != null)
                     UserDp.Source = ImageSource.FromStream(() => new MemoryStream(bytes));
             }

@@ -61,14 +61,13 @@ namespace ExpressBase.Mobile
         public void PushFilesToDir(string TableName, int RowId)
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
-            string root = EbBuildConfig.VendorName;
 
             List<FileWrapper> files = XamControl.GetFiles(this.Name);
 
             foreach (FileWrapper wrapr in files)
             {
                 wrapr.Name = $"{TableName}-{RowId}-{this.Name}-{Guid.NewGuid().ToString("n").Substring(0, 10)}.jpg";
-                File.WriteAllBytes(helper.NativeRoot + $"/{root}/{ App.Settings.Sid.ToUpper()}/FILES/{wrapr.Name}", wrapr.Bytea);
+                File.WriteAllBytes(helper.NativeRoot + $"/{App.Settings.AppDirectory}/{ App.Settings.Sid.ToUpper()}/FILES/{wrapr.Name}", wrapr.Bytea);
             }
         }
 

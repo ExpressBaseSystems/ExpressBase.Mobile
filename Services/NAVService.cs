@@ -1,7 +1,10 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views;
 using ExpressBase.Mobile.Views.Shared;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -72,6 +75,29 @@ namespace ExpressBase.Mobile.Services
         public static async Task LoginAction()
         {
             await App.RootMaster.Detail.Navigation.PushModalAsync(new LoginAction());
+        }
+
+        public static void UpdateRenderStatusLast()
+        {
+            try
+            {
+                IReadOnlyList<Page> stack = App.RootMaster.Detail.Navigation.NavigationStack;
+
+                if (stack.Count <= 1) return;
+
+                int currentIndex = stack.Count - 1;
+
+                Page lastPage = stack[currentIndex - 1];
+
+                if (lastPage is IRefreshable)
+                {
+                    (lastPage as IRefreshable).UpdateRenderStatus();
+                }
+            }
+            catch(Exception ex)
+            {
+                EbLog.Write("Failed to auto refresh listview :" + ex.Message);
+            }
         }
     }
 }

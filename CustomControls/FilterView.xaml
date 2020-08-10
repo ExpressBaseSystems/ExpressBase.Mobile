@@ -3,12 +3,39 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.CustomControls.FilterView"
              BackgroundColor="White"
              IsVisible="False"
              x:Name="x_this">
-  <ContentView.Content>
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Style TargetType="control:TextBox">
+                <Setter Property="FontSize" Value="15"></Setter>
+            </Style>
+            <Style TargetType="control:CustomDatePicker">
+                <Setter Property="FontSize" Value="15"></Setter>
+            </Style>
+            <Style TargetType="control:CustomTimePicker">
+                <Setter Property="FontSize" Value="15"></Setter>
+            </Style>
+            <Style TargetType="control:NumericTextBox">
+                <Setter Property="FontSize" Value="15"></Setter>
+            </Style>
+            <Style TargetType="control:CustomPicker">
+                <Setter Property="FontSize" Value="15"></Setter>
+                <Setter Property="TextColor" Value="#333942"></Setter>
+            </Style>
+            <Style TargetType="control:TextArea">
+                <Setter Property="FontSize" Value="15"></Setter>
+                <Setter Property="HeightRequest" Value="100"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ContentView.Content>
         <Grid BackgroundColor="#eee" RowSpacing="1" ColumnSpacing="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"></RowDefinition>
@@ -44,7 +71,7 @@
                             Margin="10,0,0,0"
                             VerticalTextAlignment="Center"/>
                         </FlexLayout>
-                        <BoxView HeightRequest="2" x:Name="FilterSelection" VerticalOptions="End" Color="{StaticResource Blue-Dark}"></BoxView>
+                        <BoxView HeightRequest="2" x:Name="FilterSelection" VerticalOptions="End" Color="{DynamicResource Primary_Color}"></BoxView>
                     </StackLayout>
                 </Frame.Content>
             </Frame>
@@ -72,7 +99,7 @@
                             Margin="10,0,0,0"
                             VerticalTextAlignment="Center"/>
                         </FlexLayout>
-                        <BoxView HeightRequest="2" x:Name="SortSelection" IsVisible="False" VerticalOptions="End" Color="{StaticResource Blue-Dark}"></BoxView>
+                        <BoxView HeightRequest="2" x:Name="SortSelection" IsVisible="False" VerticalOptions="End" Color="{DynamicResource Primary_Color}"></BoxView>
                     </StackLayout>
                 </Frame.Content>
             </Frame>
@@ -134,7 +161,7 @@
                                 </Grid.ColumnDefinitions>
                                 <CheckBox 
                                     Grid.Column="0"
-                                    Color="{StaticResource Blue-Dark}"
+                                    Color="{DynamicResource Primary_Color}"
                                     IsChecked="{Binding Selected}">
                                 </CheckBox>
                                 <Label 
@@ -150,7 +177,7 @@
                                     <Switch 
                                         x:Name="OrderSwitch"
                                         IsToggled="{Binding IsToggled}"
-                                        ThumbColor="{StaticResource Blue-Dark}"
+                                        ThumbColor="{DynamicResource Primary_Color}"
                                         OnColor="#afafaf">
                                     </Switch>
                                     <Label Text="DESC" FontSize="12" VerticalTextAlignment="Center"></Label>
@@ -170,9 +197,9 @@
                     x:Name="CancelButton"
                     Text="Cancel" 
                     BackgroundColor="White" 
-                    TextColor="{StaticResource Blue-Dark}"
+                    TextColor="{DynamicResource Primary_Color}"
                     Margin="0" 
-                    BorderColor="{StaticResource Blue-Dark}" 
+                    BorderColor="{DynamicResource Primary_Color}" 
                     BorderWidth="1"
                     CornerRadius="0"
                     FlexLayout.Grow="1"
@@ -180,11 +207,11 @@
                 <Button
                     x:Name="ConfirmButton"
                     Text="Apply" 
-                    BackgroundColor="{StaticResource Blue-Dark}"
+                    BackgroundColor="{DynamicResource Primary_Color}"
                     Margin="0"
                     TextColor="White"
                     CornerRadius="0"
-                    BorderColor="{StaticResource Blue-Dark}" 
+                    BorderColor="{DynamicResource Primary_Color}" 
                     BorderWidth="1"
                     FlexLayout.Grow="1"
                     Clicked="ConfirmButton_Clicked"/>

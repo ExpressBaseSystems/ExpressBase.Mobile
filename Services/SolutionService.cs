@@ -120,7 +120,7 @@ namespace ExpressBase.Mobile.Services
                 await Task.Delay(1);
 
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
-                string root = EbBuildConfig.VendorName;
+                string root = App.Settings.AppDirectory;
 
                 if (!helper.DirectoryOrFileExist($"{root}/{solutionname}/logo.png", SysContentType.File))
                 {

@@ -127,7 +127,14 @@ namespace ExpressBase.Mobile.Enums
 
     public enum LoginType
     {
+        NULL,
         SSO,
         CREDENTIALS
+    }
+
+    public enum AppBuildType
+    {
+        Dynamic,
+        Embedded
     }
 }

@@ -102,7 +102,7 @@
                 <ListView 
                     x:Name="EbListView"
                     HasUnevenRows="True"
-                    SeparatorVisibility="{Binding SeparatorVisibility}"
+                    SeparatorVisibility="None"
                     ItemsSource="{Binding DataRows}"
                     IsPullToRefreshEnabled="True"
                     IsRefreshing="{Binding IsRefreshing}"
@@ -112,7 +112,8 @@
                         <DataTemplate>
                             <control:DynamicViewCell 
                                 Visualization="{Binding Path=BindingContext.Visualization,Source={x:Reference EbListView}}"
-                                ItemSelected="{Binding Path=BindingContext.ItemTappedCommand,Source={x:Reference EbListView}}">
+                                ItemSelected="{Binding Path=BindingContext.ItemTappedCommand,Source={x:Reference EbListView}}"
+                                ItemIndex="{Binding Path=BindingContext.ListItemIndex,Source={x:Reference EbListView}}">
                             </control:DynamicViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -129,9 +130,11 @@
                 HorizontalOptions="End"
                 TextColor="White"
                 BackgroundColor="{DynamicResource Primary_Color}"
-                HeightRequest="60"
-                WidthRequest="60"
-                CornerRadius="30"
+                BorderColor="{DynamicResource Primary_Color}"
+                BorderWidth="2"
+                HeightRequest="58"
+                WidthRequest="58"
+                CornerRadius="29"
                 FontFamily="{StaticResource FontAwesome}"
                 Command="{Binding AddCommand}">
             </Button>

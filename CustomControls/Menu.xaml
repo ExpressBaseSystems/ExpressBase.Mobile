@@ -7,8 +7,11 @@
              x:Class="ExpressBase.Mobile.CustomControls.Menu">
     
   <ContentView.Content>
-      <StackLayout x:Name="Container" Padding="10,0">
-          
-      </StackLayout>
+            <Frame
+                x:Name="Container"
+                BackgroundColor="Transparent"
+                Margin="10,0,10,15"
+                Padding="0">
+            </Frame>
   </ContentView.Content>
 </ContentView>

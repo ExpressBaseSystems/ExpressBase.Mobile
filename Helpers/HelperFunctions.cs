@@ -125,7 +125,7 @@ namespace ExpressBase.Mobile.Helpers
         private static string CreatePlatFormDir(string FolderName)
         {
             string sid = App.Settings.Sid.ToUpper();
-            string root = EbBuildConfig.VendorName;
+            string root = App.Settings.AppDirectory;
 
             try
             {
@@ -179,7 +179,7 @@ namespace ExpressBase.Mobile.Helpers
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
                 string sid = App.Settings.Sid.ToUpper();
-                string root = EbBuildConfig.VendorName;
+                string root = App.Settings.AppDirectory;
 
                 string[] filenames = helper.GetFiles($"{root}/{sid}/FILES", Patten);
 
@@ -240,9 +240,8 @@ namespace ExpressBase.Mobile.Helpers
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
-                string root = EbBuildConfig.VendorName;
 
-                string path = $"{root}/{App.Settings.Sid}/FILES/{filename}";
+                string path = $"{App.Settings.AppDirectory}/{App.Settings.Sid}/FILES/{filename}";
 
                 if (!helper.DirectoryOrFileExist(path, SysContentType.File))
                 {

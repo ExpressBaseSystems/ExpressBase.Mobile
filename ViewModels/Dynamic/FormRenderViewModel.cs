@@ -130,6 +130,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 FormSaveResponse saveResponse = await this.Form.Save(this.rowId);
 
+                if (saveResponse.Status)
+                    NAVService.UpdateRenderStatusLast();
+
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     IsBusy = false;

@@ -220,14 +220,6 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        public void SetBackGroundColor(int RowIndex)
-        {
-            if (RowIndex % 2 == 0)
-                this.BackgroundColor = Color.Default;
-            else
-                this.BackgroundColor = Color.FromHex("F2F2F2");
-        }
-
         public void ShowSyncFlag(ColumnColletion columns)
         {
             EbDataColumn col = columns.Find(item => item.ColumnName == "eb_synced");

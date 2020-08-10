@@ -112,11 +112,5 @@
         <Setter Property="Text" Value="&#xf002;"></Setter>
         <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
     </Style>
-
-    <Style TargetType="Frame" x:Key="MenuItemFrame">
-        <Setter Property="Padding" Value="10"></Setter>
-        <Setter Property="CornerRadius" Value="8"></Setter>
-        <Setter Property="HasShadow" Value="True"></Setter>
-    </Style>
-
+    
 </ResourceDictionary>

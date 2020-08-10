@@ -38,9 +38,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public EbMobileVisualization Visualization { set; get; }
 
-        public List<EbMobileControl> FilterControls { set; get; }
+        public IntRef ListItemIndex { set; get; }
 
-        public SeparatorVisibility SeparatorVisibility { set; get; } = SeparatorVisibility.Default;
+        public List<EbMobileControl> FilterControls { set; get; }
 
         public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
 
@@ -55,14 +55,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public ListViewModel(EbMobilePage page) : base(page)
         {
             this.Visualization = (EbMobileVisualization)this.Page.Container;
+            this.ListItemIndex = new IntRef();
 
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
             this.FilterControls = this.Visualization.FilterControls;
-
-            if(this.Visualization.Style == RenderStyle.Tile)
-            {
-                SeparatorVisibility = SeparatorVisibility.None;
-            }
         }
 
         public override async Task InitializeAsync()

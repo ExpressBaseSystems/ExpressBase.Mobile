@@ -46,54 +46,70 @@
 
     <ContentPage.Content>
         <Grid ColumnSpacing="0" RowSpacing="0">
-            <ScrollView HorizontalOptions="Center" VerticalOptions="Center">
+            <ScrollView HorizontalOptions="Center">
                 <StackLayout
                     HorizontalOptions="Center"
                     Spacing="0"
-                    VerticalOptions="Center">
-                    
-                    <!--  Product image  -->
-                    <Image HeightRequest="150" Source="{Binding VendorLogo}"/>
+                    VerticalOptions="FillAndExpand">
 
-                    <!--  Product version  -->
-                    <Label
+                    <StackLayout VerticalOptions="Center">
+                        <!--  Product image  -->
+                        <Image 
+                        Margin="0,20,0,0"
+                        HeightRequest="150" 
+                        Source="{Binding VendorLogo}">
+                        </Image>
+
+                        <!--  Product version  -->
+                        <Label
                         x:Name="AppVersion"
                         Margin="0,8.7,0,0"
                         HorizontalOptions="CenterAndExpand"
                         Text="Version 1.0.0"
-                        Style="{StaticResource VersionLabelStyle}"/>
+                        Style="{StaticResource VersionLabelStyle}">
+                        </Label>
 
-                    <!--  Product title  -->
-                    <Label
+                        <!--  Product title  -->
+                        <Label
                         HorizontalOptions="CenterAndExpand"
                         Text="{Binding VendorName}"
                         Style="{StaticResource HeaderLabelStyle}">
-                        <Label.Margin>
-                            <OnIdiom
+                            <Label.Margin>
+                                <OnIdiom
                                 x:TypeArguments="Thickness"
                                 Default="0, 32, 0, 8"
                                 Phone="0, 16, 0, 16" />
-                        </Label.Margin>
-                    </Label>
+                            </Label.Margin>
+                        </Label>
 
-                    <!--  Product description  -->
-                    <Label
-                        x:Name="VendorDescription"
-                        Margin="15,0,15,0"
-                        HorizontalOptions="Center"
-                        HorizontalTextAlignment="Center"
-                        Style="{StaticResource DescriptionLabelStyle}"
-                        Text="EXPRESSbase is a Platform on the cloud to build and run business applications 10x faster. Get the best of both worlds – stability of Ready-Made software, and flexibility of Custom software."/>
-                    
-                    <Frame
-                        Margin="20,30,20,20"
-                        CornerRadius="6"
-                        BackgroundColor="{StaticResource Eb-Blue2}">
-                        <Label FontSize="18"
+                        <!--  Product description  -->
+                        <Label
+                            x:Name="VendorDescription"
+                            Margin="15,0,15,0"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Style="{StaticResource DescriptionLabelStyle}">
+                        </Label>
+
+                        <Frame
+                            Margin="20,30,20,20"
+                            CornerRadius="6"
+                            BackgroundColor="{DynamicResource Primary_Color}">
+                            <Label FontSize="18"
                                HorizontalTextAlignment="Center"
                                TextColor="White"
-                               x:Name="DeviceId"></Label>
-                    </Frame>
+                               x:Name="DeviceId">
+                            </Label>
+                        </Frame>
+                    </StackLayout>
+
+                    <Label 
+                        IsVisible="{Binding ShowPoweredBy}"
+                        Margin="0,0,0,10"
+                        Text="Powered by EXPRESSbase"
+                        VerticalOptions="EndAndExpand"
+                        HorizontalTextAlignment="Center">
+                    </Label>
                     
                 </StackLayout>
             </ScrollView>

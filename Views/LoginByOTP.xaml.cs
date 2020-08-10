@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
@@ -13,6 +14,8 @@ namespace ExpressBase.Mobile.Views
     public partial class LoginByOTP : ContentPage, IDynamicContent
     {
         private bool isRendered;
+
+        private int backButtonCount;
 
         private readonly LoginByOTPViewModel viewModel;
 
@@ -69,6 +72,31 @@ namespace ExpressBase.Mobile.Views
         private async void NewSolutionButton_Clicked(object sender, EventArgs e)
         {
             await Application.Current.MainPage.Navigation.PushAsync(new NewSolution(true));
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (TwoFAWindow.IsVisible)
+            {
+                TwoFAWindow.IsVisible = false;
+                return true;
+            }
+
+            backButtonCount++;
+
+            if (backButtonCount == 2)
+            {
+                backButtonCount = 0;
+                return false;
+            }
+            else
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    DependencyService.Get<IToast>().Show("Press again to EXIT!");
+                });
+                return true;
+            }
         }
     }
 }

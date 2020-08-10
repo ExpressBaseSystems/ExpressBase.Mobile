@@ -165,11 +165,18 @@ namespace ExpressBase.Mobile.Services
             {
                 await Task.Delay(1);
 
-                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                if (App.Settings.Vendor.BuildType == AppBuildType.Embedded)
+                {
+                    return ImageSource.FromFile(App.Settings.Vendor.Logo);
+                }
+                else
+                {
+                    INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                var bytes = helper.GetPhoto($"ExpressBase/{sid}/logo.png");
-                if (bytes != null)
-                    return ImageSource.FromStream(() => new MemoryStream(bytes));
+                    byte[] bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{sid}/logo.png");
+                    if (bytes != null)
+                        return ImageSource.FromStream(() => new MemoryStream(bytes));
+                }
             }
             catch (Exception ex)
             {
@@ -195,9 +202,8 @@ namespace ExpressBase.Mobile.Services
                 if (resp.DisplayPicture != null)
                 {
                     INativeHelper helper = DependencyService.Get<INativeHelper>();
-                    string root = EbBuildConfig.VendorName;
 
-                    string url = helper.NativeRoot + $"/{root}/{ App.Settings.Sid.ToUpper()}/user.png";
+                    string url = helper.NativeRoot + $"/{App.Settings.AppDirectory}/{ App.Settings.Sid.ToUpper()}/user.png";
                     File.WriteAllBytes(url, resp.DisplayPicture);
                 }
             }

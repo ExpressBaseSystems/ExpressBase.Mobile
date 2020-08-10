@@ -1,10 +1,6 @@
 ﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -18,6 +14,9 @@ namespace ExpressBase.Mobile.CustomControls
         public static readonly BindableProperty ItemSelectedProperty =
             BindableProperty.Create(propertyName: "ItemSelected", typeof(ICommand), typeof(DynamicViewCell));
 
+        public static readonly BindableProperty ItemIndexProperty =
+            BindableProperty.Create(propertyName: "ItemIndex", typeof(IntRef), typeof(DynamicViewCell));
+
         public EbMobileVisualization Visualization
         {
             get { return (EbMobileVisualization)GetValue(VisualizationProperty); }
@@ -28,6 +27,12 @@ namespace ExpressBase.Mobile.CustomControls
         {
             get { return (ICommand)GetValue(ItemSelectedProperty); }
             set { SetValue(ItemSelectedProperty, value); }
+        }
+
+        public IntRef ItemIndex
+        {
+            get { return (IntRef)GetValue(ItemIndexProperty); }
+            set { SetValue(ItemIndexProperty, value); }
         }
 
         private TapGestureRecognizer tapGesture;
@@ -42,14 +47,21 @@ namespace ExpressBase.Mobile.CustomControls
 
             if (BindingContext != null)
             {
+                DynamicFrame li = new DynamicFrame(row, Visualization, false);
+
                 if (Visualization.HasLink())
                 {
                     tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
                     tapGesture.Tapped += TapGesture_Tapped;
+
+                    li.GestureRecognizers.Add(tapGesture);
                 }
 
-                DynamicFrame li = new DynamicFrame(row, Visualization, false);
-                li.GestureRecognizers.Add(tapGesture);
+                if(Visualization.Style == RenderStyle.Flat)
+                {
+                    this.SetBackGroundColor(ItemIndex.Value, li);
+                    ItemIndex.Increment();
+                }
                 View = li;
             }
         }
@@ -60,6 +72,14 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 ItemSelected.Execute(sender);
             }
+        }
+
+        public void SetBackGroundColor(int index, DynamicFrame frame)
+        {
+            if (index % 2 == 0)
+                frame.BackgroundColor = Color.Default;
+            else
+                frame.BackgroundColor = Color.FromHex("F2F2F2");
         }
     }
 }

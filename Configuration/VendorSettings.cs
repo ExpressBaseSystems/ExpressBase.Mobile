@@ -42,7 +42,7 @@ namespace ExpressBase.Mobile.Configuration
 
         public const string AppLabel = "Kudumbashree Community Loans";
 
-        public const string StatusBar = "#a4cc3c";
+        public const string StatusBar = "#a2217d";
 
         public const string SplashTheme = "@style/Theme.SplashKS";
 

@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
@@ -358,7 +359,7 @@ namespace ExpressBase.Mobile.Models
             INativeHelper helper = DependencyService.Get<INativeHelper>();
             try
             {
-                var bytes = helper.GetPhoto($"ExpressBase/{this.SolutionName}/logo.png");
+                byte[] bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{this.SolutionName}/logo.png");
 
                 if (bytes != null)
                     this.Logo = ImageSource.FromStream(() => new MemoryStream(bytes));
@@ -451,5 +452,35 @@ namespace ExpressBase.Mobile.Models
     public class MenuPreloadResponse : ApiResponse
     {
         public List<string> Result { set; get; }
+    }
+
+    public class IntRef
+    {
+        public int Value { set; get; }
+
+        public IntRef()
+        {
+            Value = 0;
+        }
+
+        public IntRef(int value)
+        {
+            Value = value;
+        }
+
+        public void Increment()
+        {
+            Value += 1;
+        }
+
+        public void Decrement()
+        {
+            Value -= 1;
+        }
+
+        public void Reset()
+        {
+            Value = 0;
+        }
     }
 }

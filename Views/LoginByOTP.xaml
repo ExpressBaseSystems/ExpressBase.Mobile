@@ -129,6 +129,7 @@
                         </Button>
 
                         <Label 
+                            IsVisible="{Binding ShowNewSolutionLink}"
                             x:Name="LoginButtonLabel"
                             Grid.Row="6"
                             VerticalOptions="EndAndExpand"
@@ -137,11 +138,13 @@
                             FontSize="15"
                             TextColor="{DynamicResource Primary_Color}">
                         </Label>
-                        <Button Grid.Row="6"
-                                BackgroundColor="Transparent"
-                                VerticalOptions="EndAndExpand"
-                                HorizontalOptions="FillAndExpand"
-                                Clicked="NewSolutionButton_Clicked">
+                        <Button 
+                            IsVisible="{Binding ShowNewSolutionLink}"
+                            Grid.Row="6"
+                            BackgroundColor="Transparent"
+                            VerticalOptions="EndAndExpand"
+                            HorizontalOptions="FillAndExpand"
+                            Clicked="NewSolutionButton_Clicked">
                         </Button>
 
                     </Grid>

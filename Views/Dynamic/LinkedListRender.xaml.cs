@@ -143,5 +143,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
             this.UpdatePaginationBar();
             this.ToggleDataLength();
         }
+
+        public void UpdateRenderStatus()
+        {
+            isRendered = false;
+        }
     }
 }

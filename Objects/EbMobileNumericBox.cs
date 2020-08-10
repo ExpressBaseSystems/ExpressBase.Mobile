@@ -98,10 +98,23 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
-            if (RenderType == NumericBoxTypes.ButtonType)
-                return valueBoxNumber.ToString();
-            else
-                return (this.XControl as NumericTextBox).Text;
+            object value = null;
+            try
+            {
+                if (RenderType == NumericBoxTypes.ButtonType)
+                    value = valueBoxNumber.ToString();
+                else
+                    value = (this.XControl as NumericTextBox).Text;
+
+                if (this.Required && Convert.ToInt32(value) <= 0)
+                    value = null;
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Numeric box getvalue error !");
+                EbLog.Write(ex.Message + ex.StackTrace);
+            }
+            return value;
         }
 
         public override bool SetValue(object value)

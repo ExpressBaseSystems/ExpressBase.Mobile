@@ -1,6 +1,7 @@
 {
   "Vendors": {
     "ExpressBase": {
+      "BuildType": "Dynamic",
       "AllowNotifications": true,
       "PrimaryColor": "0046bb",
       "HasOfflineFeature": true,
@@ -9,7 +10,6 @@
       "HasLocationswitcher": true,
       "HasSolutionSwitcher": true,
       "Logo": "icon_eb.png",
-      "AllowMenuRefresh": true,
       "PoweredBy": "Powered by EXPRESSbase",
       "DefaultLoginType": "SSO",
       "Content": {
@@ -30,15 +30,15 @@
       }
     },
     "MoveOn": {
+      "BuildType": "Dynamic",
       "AllowNotifications": false,
       "PrimaryColor": "283b97",
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": true,
-      "HasLocationswitcher": false,
+      "HasLocationswitcher": true,
       "HasSolutionSwitcher": false,
       "Logo": "icon_mo.png",
-      "AllowMenuRefresh": false,
       "PoweredBy": "Powered by EXPRESSbase",
       "DefaultLoginType": "SSO",
       "Content": {
@@ -59,17 +59,18 @@
       }
     },
     "Kudumbashree": {
+      "BuildType": "Embedded",
+      "SolutionURL": "kudumbashree.expressbase.com",
       "AllowNotifications": false,
-      "PrimaryColor": "a4cc3c",
+      "PrimaryColor": "a2217d",
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": true,
       "HasLocationswitcher": true,
-      "HasSolutionSwitcher": true,
+      "HasSolutionSwitcher": false,
       "Logo": "icon_ks.png",
-      "AllowMenuRefresh": true,
       "PoweredBy": "Powered by EXPRESSbase",
-      "DefaultLoginType": "SSO",
+      "DefaultLoginType": "CREDENTIALS",
       "Content": {
         "NewSolution": {
           "WallLabel": "Add new Solution",

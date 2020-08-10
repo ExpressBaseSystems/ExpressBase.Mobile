@@ -5,6 +5,7 @@ using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -15,9 +16,11 @@ namespace ExpressBase.Mobile.CustomControls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Menu : ContentView
     {
-        public static readonly BindableProperty ItemSourceProperty = BindableProperty.Create("ItemSource", typeof(IEnumerable<MobilePagesWraper>), typeof(Menu));
+        public static readonly BindableProperty ItemSourceProperty =
+            BindableProperty.Create("ItemSource", typeof(IEnumerable<MobilePagesWraper>), typeof(Menu));
 
-        public static readonly BindableProperty ItemTapedProperty = BindableProperty.Create(propertyName: "ItemTaped", typeof(ICommand), typeof(Menu));
+        public static readonly BindableProperty ItemTapedProperty =
+            BindableProperty.Create(propertyName: "ItemTaped", typeof(ICommand), typeof(Menu));
 
         public IEnumerable<MobilePagesWraper> ItemSource
         {
@@ -31,13 +34,20 @@ namespace ExpressBase.Mobile.CustomControls
             set { SetValue(ItemTapedProperty, value); }
         }
 
+        private TapGestureRecognizer gesture;
+
         private int rownum;
 
         private int colnum;
 
+        private MobilePagesWraper lastItem;
+
         public Menu()
         {
             InitializeComponent();
+
+            gesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+            gesture.Tapped += MenuItemTapped;
         }
 
         protected override void OnPropertyChanged(string propertyName = null)
@@ -46,63 +56,26 @@ namespace ExpressBase.Mobile.CustomControls
 
             if (propertyName == ItemSourceProperty.PropertyName)
             {
-                Container.Children.Clear();
+                Container.Content = null;
 
-                if (ItemSource != null)
+                if (ItemSource != null && ItemSource.Any())
+                {
+                    lastItem = ItemSource.Last();
                     Render();
+                }
             }
-        }
-
-        protected override void OnBindingContextChanged()
-        {
-            base.OnBindingContextChanged();
-        }
-
-        public void Notify(string propname)
-        {
-            this.OnPropertyChanged(propname);
         }
 
         private void Render()
         {
+            rownum = colnum = 0;
+
+            Grid grid = this.CreateGrid();
+            Container.Content = grid;
+
             try
             {
-                TapGestureRecognizer tap = new TapGestureRecognizer();
-                tap.Tapped += MenuItemTapped;
-
-                Dictionary<string, List<MobilePagesWraper>> grouped = ItemSource.Group();
-
-                foreach (string label in ContainerLabels.ListOrder)
-                {
-                    if (grouped.ContainsKey(label) && grouped[label].Any())
-                    {
-                        Container.Children.Add(new Label
-                        {
-                            Text = label + $" ({grouped[label].Count})",
-                            Style = (Style)HelperFunctions.GetResourceValue("MenuGroupLabel")
-                        });
-
-                        RenderGroupElements(grouped[label], tap);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Write(ex.Message);
-            }
-        }
-
-        private void RenderGroupElements(List<MobilePagesWraper> items, TapGestureRecognizer gesture)
-        {
-            try
-            {
-                Grid grd = this.CreateGrid();
-                Container.Children.Add(grd);
-
-                rownum = 0;
-                colnum = 0;
-
-                foreach (MobilePagesWraper wrpr in items)
+                foreach (MobilePagesWraper wrpr in this.ItemSource)
                 {
                     if (wrpr.IsHidden) continue;
 
@@ -113,7 +86,6 @@ namespace ExpressBase.Mobile.CustomControls
                         Style = (Style)HelperFunctions.GetResourceValue("MenuItemFrame"),
                         GestureRecognizers = { gesture }
                     };
-
                     container.Children.Add(iconFrame);
 
                     Label icon = new Label
@@ -132,7 +104,7 @@ namespace ExpressBase.Mobile.CustomControls
                     };
                     container.Children.Add(name);
 
-                    SetGrid(grd, container, wrpr == items.Last());
+                    SetGrid(grid, container, wrpr);
                 }
             }
             catch (Exception ex)
@@ -141,17 +113,10 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private void IconContainer_SizeChanged(object sender, EventArgs e)
-        {
-            Label lay = (sender as Label);
-            lay.HeightRequest = lay.Width;
-        }
-
         private Grid CreateGrid()
         {
             return new Grid
             {
-                Padding = 5,
                 RowSpacing = 15,
                 ColumnSpacing = 15,
                 RowDefinitions = { new RowDefinition() },
@@ -161,6 +126,12 @@ namespace ExpressBase.Mobile.CustomControls
                         new ColumnDefinition()
                 }
             };
+        }
+
+        private void IconContainer_SizeChanged(object sender, EventArgs e)
+        {
+            Label lay = (sender as Label);
+            lay.HeightRequest = lay.Width;
         }
 
         private string GetIcon(MobilePagesWraper wrpr)
@@ -180,21 +151,21 @@ namespace ExpressBase.Mobile.CustomControls
             return labelIcon;
         }
 
-        private void SetGrid(Grid grid, View item, bool isLast)
+        private void SetGrid(Grid grid, View item, MobilePagesWraper current)
         {
             grid.Children.Add(item, colnum, rownum);
 
-            if (!isLast)
+            if (colnum == 2)
             {
-                if (colnum == 2)
+                if (current != lastItem)
                 {
                     grid.RowDefinitions.Add(new RowDefinition());
                     rownum++;
-                    colnum = 0;
                 }
-                else
-                    colnum += 1;
+                colnum = 0;
             }
+            else
+                colnum += 1;
         }
 
         private void MenuItemTapped(object sender, EventArgs e)

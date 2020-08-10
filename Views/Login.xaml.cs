@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
@@ -13,6 +14,8 @@ namespace ExpressBase.Mobile.Views
     public partial class Login : ContentPage, IDynamicContent
     {
         private bool isRendered;
+
+        private int backButtonCount;
 
         private readonly LoginViewModel viewModel;
 
@@ -69,11 +72,6 @@ namespace ExpressBase.Mobile.Views
                 PassWord.CursorPosition = PassWord.Text.Length;
         }
 
-        protected override bool OnBackButtonPressed()
-        {
-            return true;
-        }
-
         public void ShowTwoFAWindow(ApiAuthResponse auth)
         {
             TwoFAWindow.SetAddress(auth.TwoFAToAddress);
@@ -98,6 +96,31 @@ namespace ExpressBase.Mobile.Views
         private async void SSOLoginButton_Clicked(object sender, EventArgs e)
         {
             await NAVService.ReplaceTopAsync(new LoginByOTP());
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (TwoFAWindow.IsVisible)
+            {
+                TwoFAWindow.IsVisible = false;
+                return true;
+            }
+
+            backButtonCount++;
+
+            if (backButtonCount == 2)
+            {
+                backButtonCount = 0;
+                return false;
+            }
+            else
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    DependencyService.Get<IToast>().Show("Press again to EXIT!");
+                });
+                return true;
+            }
         }
     }
 }

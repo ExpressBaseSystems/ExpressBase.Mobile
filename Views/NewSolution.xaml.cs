@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -28,14 +27,22 @@ namespace ExpressBase.Mobile.Views
         public NewSolution(bool hasBackButton = false)
         {
             InitializeComponent();
-            isMasterPage = hasBackButton;
-            if (hasBackButton)
-            {
-                NavigationPage.SetHasNavigationBar(this, true);
-                NavigationPage.SetHasBackButton(this, true);
-            }
 
-            BindingContext = viewModel = new NewSolutionViewModel();
+            try
+            {
+                isMasterPage = hasBackButton;
+                if (hasBackButton)
+                {
+                    NavigationPage.SetHasNavigationBar(this, true);
+                    NavigationPage.SetHasBackButton(this, true);
+                }
+
+                BindingContext = viewModel = new NewSolutionViewModel();
+            }
+            catch(Exception ex)
+            {
+                DependencyService.Get<IToast>().Show(ex.Message);
+            }
         }
 
         protected override void OnAppearing()

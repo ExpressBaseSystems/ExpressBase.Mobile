@@ -8,13 +8,12 @@
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.NewSolution"
              NavigationPage.HasNavigationBar="False"
-             NavigationPage.HasBackButton="False">
+             NavigationPage.HasBackButton="False"
+             BackgroundColor="White">
     <ContentPage.Content>
         <Grid>
             <ScrollView>
-                <StackLayout 
-                BackgroundColor="#eee"
-                Padding="15,0">
+                <StackLayout Padding="15,0">
                     <Grid Margin="-15,0,-15,-70">
                         <Image Source="connect.jpg"/>
                         <BoxView 
@@ -36,7 +35,8 @@
                         </StackLayout>
                         <Frame
                             Margin="0,0,0,-20"
-                            BackgroundColor="#eee"
+                            HasShadow="False"
+                            BackgroundColor="Transparent"
                             CornerRadius="10"
                             Padding="15"
                             VerticalOptions="End">

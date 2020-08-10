@@ -6,7 +6,7 @@
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Home"
-             BackgroundColor="White">
+             BackgroundColor="#f3f7f8">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
@@ -15,6 +15,12 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Label Text="{Binding PageTitle}" Style="{StaticResource ToolBarLabelStyle}"/>
+            <Button 
+                IsVisible="False"
+                Text="&#xf002;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="1">
+            </Button>
         </Grid>
     </NavigationPage.TitleView>
 
@@ -28,7 +34,7 @@
                     <StackLayout VerticalOptions="FillAndExpand">
                         <Frame
                             Padding="10"
-                            Margin="15,10"
+                            Margin="15,15"
                             CornerRadius="8"
                             BackgroundColor="#e8f0fe"
                             BorderColor="#e8f0fe"
@@ -44,24 +50,30 @@
                                     CornerRadius="28"
                                     BackgroundColor="White">
                                 </BoxView>
-                                <control:ImageCircle 
+                                <Frame 
                                     HeightRequest="50"
+                                    Padding="0"
                                     WidthRequest="50"
-                                    Source="{Binding SolutionLogo}" 
-                                    VerticalOptions="Center"
-                                    Aspect="AspectFit">
-                                </control:ImageCircle>
+                                    CornerRadius="25"
+                                    IsClippedToBounds="True">
+                                    <Image 
+                                        Source="{Binding SolutionLogo}" 
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Center"
+                                        Aspect="AspectFit">
+                                    </Image>
+                                </Frame>
+                                
                                 <StackLayout Grid.Column="1">
                                     <Label 
                                         x:Name="CurrentSolution"
                                         FontSize="15"
-                                        TextColor="#1a73e8"
                                         FontFamily="{StaticResource Roboto-Medium}">
                                     </Label>
                                     <Label LineBreakMode="TailTruncation">
                                         <Label.FormattedText>
                                             <FormattedString>
-                                                <Span Text="&#xf041;" TextColor="#1a73e8" FontFamily="{StaticResource FontAwesome}"></Span>
+                                                <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
                                                 <Span Text=" "></Span>
                                                 <Span 
                                                     Text="Default" 

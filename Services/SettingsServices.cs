@@ -65,13 +65,31 @@ namespace ExpressBase.Mobile.Services
             get => CurrentLocation.LocId;
         }
 
-        public LoginType LoginType => CurrentSolution == null ? Vendor.DefaultLoginType : CurrentSolution.LoginType;
+        public LoginType LoginType
+        {
+            get
+            {
+                LoginType lType = Vendor.DefaultLoginType;
+
+                if (CurrentSolution != null && CurrentSolution.LoginType != LoginType.NULL)
+                    lType = CurrentSolution.LoginType;
+
+                return lType;
+            }
+        }
+
+        public string AppDirectory => EbBuildConfig.VendorName.ToUpper();
 
         public async Task InitializeSettings()
         {
             try
             {
                 CurrentSolution = this.GetSolution();
+
+                if (CurrentSolution == null && Vendor.BuildType == AppBuildType.Embedded)
+                {
+                    await CreateEmbeddedSolution();
+                }
 
                 if (CurrentSolution != null)
                 {
@@ -94,6 +112,30 @@ namespace ExpressBase.Mobile.Services
             catch (Exception ex)
             {
                 EbLog.Write(ex.Message);
+            }
+        }
+
+        private async Task CreateEmbeddedSolution()
+        {
+            SolutionInfo sln = new SolutionInfo
+            {
+                SolutionName = Vendor.SolutionURL.Split(CharConstants.DOT)[0],
+                RootUrl = Vendor.SolutionURL,
+                IsCurrent = true,
+            };
+            CurrentSolution = sln;
+
+            try
+            {
+                await Store.SetJSONAsync(AppConst.MYSOLUTIONS, new List<SolutionInfo> { sln });
+                await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, sln);
+
+                App.DataDB.CreateDB(sln.SolutionName);
+                await HelperFunctions.CreateDirectory();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 

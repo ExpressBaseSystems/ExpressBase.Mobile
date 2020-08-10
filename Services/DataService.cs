@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -132,7 +133,7 @@ namespace ExpressBase.Mobile.Services
 
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                var bytes = helper.GetPhoto($"ExpressBase/{App.Settings.Sid}/FILES/{filename}");
+                byte[] bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{App.Settings.Sid}/FILES/{filename}");
                 if (bytes != null)
                     return bytes;
             }

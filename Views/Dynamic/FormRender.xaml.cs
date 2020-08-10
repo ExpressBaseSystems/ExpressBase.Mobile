@@ -75,9 +75,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             if (tapedImage != null)
             {
-                ImageFullScreen.Source = tapedImage.Source;
-                ImageFullScreen.Show();
+                FullScreenImage.Source = tapedImage.Source;
+                ImageFullScreen.IsVisible = true;
             }
+        }
+
+        private void FullScreenClose_Clicked(object sender, EventArgs e)
+        {
+            ImageFullScreen.IsVisible = false;
         }
     }
 }

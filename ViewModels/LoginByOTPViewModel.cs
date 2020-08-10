@@ -42,6 +42,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         private readonly IIdentityService identityService;
 
+        public bool ShowNewSolutionLink => (App.Settings.Vendor.BuildType != AppBuildType.Embedded);
+
         public bool IsResetVisible => App.Settings.Vendor.HasSolutionSwitcher;
 
         public Command SendOTPCommand => new Command(async (o) => await SendOTP());

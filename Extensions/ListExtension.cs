@@ -10,22 +10,6 @@ namespace ExpressBase.Mobile.Extensions
 {
     public static class ListExtension
     {
-        public static Dictionary<string, List<MobilePagesWraper>> Group(this IEnumerable<MobilePagesWraper> Pages)
-        {
-            Dictionary<string, List<MobilePagesWraper>> dict = new Dictionary<string, List<MobilePagesWraper>>();
-
-            foreach (MobilePagesWraper wrpr in Pages)
-            {
-                if (wrpr.IsHidden)
-                    continue;
-
-                if (!dict.ContainsKey(wrpr.ContainerType))
-                    dict.Add(wrpr.ContainerType, new List<MobilePagesWraper>());
-                dict[wrpr.ContainerType].Add(wrpr);
-            }
-            return dict;
-        }
-
         public static bool IsNullOrEmpty<T>(this List<T> source)
         {
             return source == null || source.Count < 1;

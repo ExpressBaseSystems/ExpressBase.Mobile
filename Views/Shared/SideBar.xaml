@@ -14,7 +14,8 @@
                 <Setter Property="Padding" Value="0" />
                 <Setter Property="HasShadow" Value="False" />
                 <Setter Property="CornerRadius" Value="0" />
-                <Setter Property="Padding" Value="10,0,0,0"/>
+                <Setter Property="BorderColor" Value="White"></Setter>
+                <Setter Property="BackgroundColor" Value="Transparent"></Setter>
             </Style>
             
             <Style x:Key="SideBarIconStyle" TargetType="Label">
@@ -56,42 +57,38 @@
                     VerticalOptions="FillAndExpand"
                     x:Name="SideBarLayout">
                     <StackLayout VerticalOptions="Start">
-                        <Grid BackgroundColor="#eeeeee" Padding="10" ColumnSpacing="10">
+                        <Grid BackgroundColor="{DynamicResource Primary_Color}" Padding="10" ColumnSpacing="10">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
 
                             <customcontrols:ImageCircle
                                x:Name="UserDp"
-                               Grid.RowSpan="2"
-                               HeightRequest="48"
-                               WidthRequest="48"
-                               VerticalOptions="Center"
+                               Grid.Row="0"
+                               HeightRequest="70"
+                               WidthRequest="70"
+                               HorizontalOptions="Center"
                                Source="user_avatar.jpg">
                             </customcontrols:ImageCircle>
 
                             <Label
                                 x:Name="UserName"
-                                TextColor="#333"
-                                Grid.Row="0"
-                                Grid.Column="1"
+                                TextColor="White"
+                                Grid.Row="1"
                                 FontFamily="{StaticResource Roboto-Medium}"
+                                HorizontalTextAlignment="Center"
                                 FontSize="16">
                             </Label>
 
                             <Label
                                 x:Name="Email"
-                                Grid.Row="1"
-                                Grid.Column="1"
+                                Grid.Row="2"
                                 FontFamily="{StaticResource Roboto-Regular}"
                                 FontSize="12"
-                                HorizontalOptions="StartAndExpand"
-                                Text="{Binding UserEmail}">
+                                TextColor="White"
+                                HorizontalTextAlignment="Center">
                             </Label>
                         </Grid>
                     </StackLayout>

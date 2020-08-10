@@ -10,6 +10,8 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class About : ContentPage, IDynamicContent
     {
+        public bool ShowPoweredBy => (EbBuildConfig.VendorName != Expressbase.VendorName);
+
         public About()
         {
             InitializeComponent();
@@ -26,7 +28,9 @@ namespace ExpressBase.Mobile.Views
         public void SetContentFromConfig()
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
+
             DeviceId.Text = $"DEVICE ID : {helper.DeviceId}";
+
             AppVersion.Text = $"Version {helper.AppVersion}";
 
             if(EbBuildConfig.VendorName == Expressbase.VendorName)
@@ -35,7 +39,7 @@ namespace ExpressBase.Mobile.Views
             }
             else if(EbBuildConfig.VendorName == MoveOn.VendorName)
             {
-                VendorDescription.Text = string.Empty;
+                VendorDescription.Text = @"Self Check-In / Self Service App for Hotel Guests";
             }
             else
             {

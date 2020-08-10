@@ -14,7 +14,13 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Label Text="Application Switcher" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
-            <Button Text="&#xf013;" x:Name="ResetButton" Style="{StaticResource ToolBarButtonStyle}" Clicked="ResetButton_Clicked" Grid.Column="1"/>
+            <Button 
+                IsVisible="{Binding IsResetVisible}"
+                Text="&#xf013;" 
+                x:Name="ResetButton" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Clicked="ResetButton_Clicked" Grid.Column="1">
+            </Button>
         </Grid>
     </NavigationPage.TitleView>
 
