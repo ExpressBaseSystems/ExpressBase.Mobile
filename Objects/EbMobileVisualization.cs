@@ -110,8 +110,7 @@ namespace ExpressBase.Mobile
             EbDataSet Data = null;
             try
             {
-                if (dbParameters == null)
-                    dbParameters = new List<DbParameter>();
+                dbParameters ??= new List<DbParameter>();
 
                 DbParameter userParam = dbParameters.Find(item => item.ParameterName == "current_userid");
 
@@ -143,8 +142,21 @@ namespace ExpressBase.Mobile
             try
             {
                 int len = this.PageLength == 0 ? 30 : this.PageLength;
+
+                dbParameters ??= new List<DbParameter>();
+
+                if (App.Settings.CurrentLocation != null)
+                {
+                    dbParameters.Add(new DbParameter
+                    {
+                        ParameterName = "eb_loc_id",
+                        DbType = 11,
+                        Value = App.Settings.CurrentLocation.LocId
+                    });
+                }
+
                 VisualizationLiveData vd = await DataService.Instance.GetDataAsync(this.DataSourceRefId, dbParameters.ToParams(), sortOrder, len, offset);
-                Data = vd.Data;
+                Data = vd?.Data;
             }
             catch (Exception ex)
             {
