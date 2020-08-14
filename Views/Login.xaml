@@ -6,49 +6,38 @@
              mc:Ignorable="d"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.Views.Login"
-             NavigationPage.HasBackButton="False"
-             NavigationPage.HasNavigationBar="False">
-    
+             NavigationPage.HasBackButton="False">
+
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button
+                IsVisible="False"
+                x:Name="BackButton"
+                Grid.Column="0"
+                Style="{StaticResource ToolBarButtonStyle}"
+                Text="&#xf177;"
+                HorizontalOptions="Start"
+                Clicked="BackButton_Clicked">
+            </Button>
+            <Button 
+                IsVisible="{Binding IsResetVisible}"
+                x:Name="RestButton"
+                Text="&#xf013;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="1" 
+                Command="{Binding ResetConfig}">
+            </Button>
+        </Grid>
+    </NavigationPage.TitleView>
+
     <ContentPage.Content>
         <Grid BackgroundColor="White">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
-
-            <Grid 
-                Grid.Row="0"
-                RowSpacing="0" 
-                ColumnSpacing="2"
-                Padding="10,0,5,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Button
-                    IsVisible="False"
-                    x:Name="BackButton"
-                    Grid.Column="0"
-                    Style="{StaticResource ToolBarButtonStyle}"
-                    TextColor="#333333"
-                    Text="&#xf177;"
-                    HorizontalOptions="Start"
-                    Clicked="BackButton_Clicked">
-                </Button>
-                <Button 
-                    IsVisible="{Binding IsResetVisible}"
-                    x:Name="RestButton"
-                    Text="&#xf013;" 
-                    Style="{StaticResource ToolBarButtonStyle}" 
-                    TextColor="#333333"
-                    Grid.Column="1" 
-                    Command="{Binding ResetConfig}">
-                </Button>
-            </Grid>
-
             <ScrollView 
-                Grid.Row="1"
                 x:Name="scrollView">
                 <ScrollView.VerticalOptions>
                     <OnIdiom
@@ -188,7 +177,6 @@
             </ScrollView>
 
             <control:TwoFAView
-                Grid.Row="1"
                 x:Name="TwoFAWindow"
                 ResendClicked="{Binding ResendOtpCommand}"
                 SubmitClicked="{Binding SubmitOtpCommand}">
@@ -196,7 +184,6 @@
 
             <!--loader-->
             <control:LoaderIconed 
-                Grid.RowSpan="2"
                 IsVisible="{Binding IsBusy}" 
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">

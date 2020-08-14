@@ -16,6 +16,7 @@
                 <Setter Property="CornerRadius" Value="0" />
                 <Setter Property="BorderColor" Value="White"></Setter>
                 <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+                <Setter Property="Margin" Value="10,0,0,0"></Setter>
             </Style>
             
             <Style x:Key="SideBarIconStyle" TargetType="Label">
@@ -170,7 +171,7 @@
                         </Frame>
                     </StackLayout>
                     <StackLayout VerticalOptions="End" Padding="0" Spacing="0">
-                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="False">
+                        <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer x:Name="Setup" Tapped="Setup_Tapped"/>
                             </Frame.GestureRecognizers>

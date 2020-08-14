@@ -84,9 +84,10 @@ namespace ExpressBase.Mobile.Views.Shared
             }
         }
 
-        private void Setup_Tapped(object sender, EventArgs e)
+        private async void Setup_Tapped(object sender, EventArgs e)
         {
-
+            App.RootMaster.IsPresented = false;
+            await App.RootMaster.Detail.Navigation.PushAsync(new SettingsView());
         }
 
         private async void MyActions_Tapped(object sender, EventArgs e)

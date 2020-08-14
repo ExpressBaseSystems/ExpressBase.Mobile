@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ExpressBase.Mobile.Views.SettingsView">
+
+    <NavigationPage.TitleView>
+        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Text="Settings" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
+        </Grid>
+    </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <Grid>
+            <StackLayout 
+                BackgroundColor="#eee"
+                Padding="15">
+
+                <Frame
+                    Padding="10"
+                    HasShadow="False"
+                    CornerRadius="6">
+                    <Grid RowSpacing="10">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Label
+                            FontSize="16"
+                            FontFamily="{StaticResource Roboto-Medium}"
+                            Text="App Log"
+                            TextColor="#333">
+                        </Label>
+
+                        <Label
+                            x:Name="LocalPath"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            FontSize="13"
+                            Text="{Binding LogFilePath}"
+                            TextColor="Gray">
+                        </Label>
+
+                        <Button
+                            x:Name="ShareLog"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            VerticalOptions="Center"
+                            HeightRequest="40"
+                            FontSize="14"
+                            Margin="0"
+                            Padding="0"
+                            CornerRadius="6"
+                            Text="Share Log"
+                            Clicked="ShareLog_Clicked">
+                        </Button>
+
+                        <Button
+                            x:Name="ClearLog"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            HeightRequest="40"
+                            VerticalOptions="Center"
+                            FontSize="14"
+                            Margin="0"
+                            Padding="0"
+                            Text="Clear Log"
+                            TextColor="White"
+                            CornerRadius="6"
+                            BackgroundColor="#e51e50"
+                            Clicked="ClearLog_Clicked">
+                        </Button>
+
+                    </Grid>
+                </Frame>
+                
+                
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -51,7 +51,7 @@
         },
         "Login": {
           "NewSolutionButtonText": "Check-In to another Hotel",
-          "LoginButtonText": "CHECK-IN"
+          "LoginButtonText": "Login"
         },
         "About": {
           "VendorName": "Move On"
