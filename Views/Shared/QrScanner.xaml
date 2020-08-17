@@ -5,20 +5,92 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Shared.QrScanner">
+             x:Class="ExpressBase.Mobile.Views.Shared.QrScanner"
+             BackgroundColor="White">
+    
     <ContentPage.Content>
-        <Grid VerticalOptions="CenterAndExpand"
-              BackgroundColor="Black"
-              HorizontalOptions="CenterAndExpand">
-                <zxing:ZXingScannerView 
-                    x:Name="ScannerView"
-                    OnScanResult="ScannerView_OnScanResult"
-                    HeightRequest="250"
-                    WidthRequest="250"
-                    IsScanning="True"
-                    VerticalOptions="CenterAndExpand"
-                    HorizontalOptions="CenterAndExpand">
-                </zxing:ZXingScannerView>
+        <Grid RowSpacing="0" ColumnSpacing="0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="200"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="200"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <zxing:ZXingScannerView 
+                Grid.Row="1"
+                Grid.Column="1"
+                x:Name="ScannerView"
+                OnScanResult="ScannerView_OnScanResult"
+                IsScanning="True"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand">
+            </zxing:ZXingScannerView>
+
+            <StackLayout 
+                Grid.ColumnSpan="3"
+                VerticalOptions="Center"
+                Padding="20,0">
+                <Label 
+                    Text="Scan QR code"
+                    FontSize="16"
+                    FontFamily="{StaticResource Roboto-Medium}"
+                    HorizontalTextAlignment="Center">
+                </Label>
+                <Label 
+                    FontFamily="{StaticResource Roboto-Light}"
+                    Text="Place qr code inside the frame to scan." 
+                    HorizontalTextAlignment="Center">
+                </Label>
+            </StackLayout>
+
+            <BoxView Grid.Row="1" Grid.Column="1" Margin="-5,-5,0,0" 
+                     HeightRequest="5" VerticalOptions="Start" HorizontalOptions="Start" 
+                     BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
+            
+            <BoxView Grid.Row="1" Grid.Column="1" Margin="0,-5,-5,0" 
+                     HeightRequest="5" VerticalOptions="Start" HorizontalOptions="End" 
+                     BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
+
+            <BoxView Grid.Row="1" Grid.Column="1" Margin="-5,-5,0,0" WidthRequest="5" 
+                     VerticalOptions="Start" HorizontalOptions="Start" 
+                     BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
+            
+            <BoxView Grid.Row="1" Grid.Column="1" Margin="0,-5,-5,0" WidthRequest="5" 
+                     VerticalOptions="Start" HorizontalOptions="End" 
+                     BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
+
+            <BoxView Grid.Row="1" Grid.Column="1" Margin="-5,0,0,-5" HeightRequest="5" 
+                     VerticalOptions="End" HorizontalOptions="Start" 
+                     BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
+            
+            <BoxView Grid.Row="1" Grid.Column="1" Margin="0,0,-5,-5" HeightRequest="5" 
+                     VerticalOptions="End" HorizontalOptions="End" 
+                     BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
+
+            <BoxView Grid.Row="1" Grid.Column="1" Margin="-5,0,0,-5" WidthRequest="5" 
+                     VerticalOptions="End" HorizontalOptions="Start" 
+                     BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
+            
+            <BoxView Grid.Row="1" Grid.Column="1" Margin="0,0,-5,-5" WidthRequest="5" 
+                     VerticalOptions="End" HorizontalOptions="End" 
+                     BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
+
+            <Label 
+                Grid.Row="2"
+                Grid.ColumnSpan="3"
+                VerticalOptions="Center"
+                FontFamily="{StaticResource Roboto-Light}"
+                Text="Scanning Code..." 
+                HorizontalTextAlignment="Center">
+            </Label>
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

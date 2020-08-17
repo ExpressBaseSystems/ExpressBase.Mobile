@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using System;
@@ -8,7 +9,7 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Home : ContentPage
+    public partial class Home : ContentPage, IRefreshable
     {
         private bool isRendered;
 
@@ -107,12 +108,6 @@ namespace ExpressBase.Mobile.Views
             LogoutDialog.Show();
         }
 
-        public async void RefreshView()
-        {
-            await viewModel.LocationSwitched();
-            this.ToggleStatus();
-        }
-
         public void TriggerSync()
         {
             if (!Utils.HasInternet)
@@ -130,6 +125,13 @@ namespace ExpressBase.Mobile.Views
                 EmptyMessage.IsVisible = true;
             else
                 EmptyMessage.IsVisible = false;
+        }
+
+        public void Refreshed() { }
+
+        public void UpdateRenderStatus()
+        {
+            isRendered = false;
         }
     }
 }

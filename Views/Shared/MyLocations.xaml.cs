@@ -1,10 +1,7 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -13,37 +10,24 @@ namespace ExpressBase.Mobile.Views.Shared
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MyLocations : ContentPage
     {
-        public ObservableCollection<EbLocation> Locations { get; private set; }
+        public bool isRendered;
 
-        private EbLocation selectedLocation;
+        private readonly LocationsViewModel viewModel;
 
         public MyLocations()
         {
             InitializeComponent();
-
-            this.SetLocations();
-            BindingContext = this;
+            BindingContext = viewModel = new LocationsViewModel();
         }
 
-        public void SetLocations()
+        protected override async void OnAppearing()
         {
-            try
-            {
-                Locations = new ObservableCollection<EbLocation>(Utils.Locations);
+            base.OnAppearing();
 
-                foreach (EbLocation loc in Locations)
-                {
-                    if (loc.LocId == App.Settings.CurrentLocId)
-                    {
-                        selectedLocation = loc;
-                        loc.Selected = true;
-                        break;
-                    }
-                }
-            }
-            catch (Exception ex)
+            if (!isRendered)
             {
-                EbLog.Write(ex.Message);
+                await viewModel.InitializeAsync();
+                isRendered = true;
             }
         }
 
@@ -55,37 +39,52 @@ namespace ExpressBase.Mobile.Views.Shared
 
             EbLocation loc = (EbLocation)e.Item;
 
-            if (loc != selectedLocation)
+            if (loc != viewModel.SelectedLocation)
             {
-                selectedLocation?.UnSelect();
-                selectedLocation = loc;
+                viewModel.SelectedLocation?.UnSelect();
+                viewModel.SelectedLocation = loc;
                 loc.Select();
             }
         }
 
-        private async void ApplyButton_Clicked(object sender, EventArgs e)
+        private void SearchButton_Clicked(object sender, EventArgs e)
         {
-            if (selectedLocation != null)
+            SearchButton.IsVisible = false;
+            LocSearchBox.IsVisible = true;
+            LocSearchBox.Focus();
+        }
+
+        private async void LocSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string search = LocSearchBox.Text;
+
+            if (search != null)
             {
-                await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, selectedLocation);
-                App.Settings.CurrentLocation = selectedLocation;
+                SearchClear.IsVisible = search.Length > 0;
 
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
-
-                try
+                if (search.Length >= 3)
                 {
-                    IReadOnlyList<Page> stack = (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.NavigationStack;
-
-                    if (stack.Any() && stack[0] is Home)
+                    SearchLoader.IsVisible = true;
+                    await viewModel.FilterBySearchValue(search);
+                    SearchLoader.IsVisible = false;
+                    EmptyLabel.IsVisible = viewModel.Locations.Count <= 0;
+                }
+                else
+                {
+                    if (!viewModel.IsInitialState)
                     {
-                        (stack[0] as Home).RefreshView();
+                        viewModel.UpdateToInitial();
                     }
                 }
-                catch (Exception)
-                {
-                    EbLog.Write($"Location changed to {selectedLocation.LongName}, failed to update menu");
-                }
             }
+        }
+
+        private void SearchClear_Clicked(object sender, EventArgs e)
+        {
+            LocSearchBox.ClearValue(TextBox.TextProperty);
+            SearchClear.IsVisible = false;
+            viewModel.UpdateToInitial();
+            EmptyLabel.IsVisible = false;
         }
     }
 }
