@@ -47,6 +47,8 @@ namespace ExpressBase.Mobile
         //mobile prop
         public View XControl { set; get; }
 
+        public virtual void InitXControl() { }
+
         public virtual void InitXControl(FormMode mode, NetworkMode network)
         {
             this.FormMode = mode;
@@ -108,7 +110,7 @@ namespace ExpressBase.Mobile
         }
     }
 
-    public class EbMobileTableLayout : EbMobileControl
+    public class EbMobileTableLayout : EbMobileControl, ILayoutControl
     {
         public EbMobileTableLayout()
         {
@@ -140,5 +142,10 @@ namespace ExpressBase.Mobile
         public int Width { set; get; }
 
         public List<EbMobileControl> ControlCollection { set; get; }
+
+        public bool IsEmpty()
+        {
+            return this.ControlCollection.Count <= 0;
+        }
     }
 }

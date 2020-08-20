@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile.CustomControls
                     li.GestureRecognizers.Add(tapGesture);
                 }
 
-                if(Visualization.Style == RenderStyle.Flat)
+                if (Visualization.Style == RenderStyle.Flat)
                 {
                     this.SetBackGroundColor(ItemIndex.Value, li);
                     ItemIndex.Increment();

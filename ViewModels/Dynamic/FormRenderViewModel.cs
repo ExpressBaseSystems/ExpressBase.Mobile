@@ -33,7 +33,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private readonly EbMobileVisualization context;
 
-        public Command SaveCommand => new Command(async () => await OnSaveClicked());
+        public Command SaveCommand => new Command(async () => await FormSubmitClicked());
 
         //new mode
         public FormRenderViewModel(EbMobilePage page) : base(page)
@@ -96,7 +96,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             });
         }
 
-        public async Task SetDataOnEdit()
+        public async Task GetRecord()
         {
             if (this.Page.NetworkMode == NetworkMode.Offline)
             {
@@ -115,7 +115,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public async Task OnSaveClicked()
+        public async Task FormSubmitClicked()
         {
             IToast toast = DependencyService.Get<IToast>();
 
@@ -148,7 +148,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (this.Mode == FormMode.EDIT)
             {
-                await this.SetDataOnEdit();
+                await this.GetRecord();
                 this.SetDataForEdit();
             }
             else if (this.Mode == FormMode.PREFILL)

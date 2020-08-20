@@ -22,19 +22,6 @@ namespace ExpressBase.Mobile
         public virtual string Status { get; set; }
     }
 
-    public enum NetworkMode
-    {
-        Online,
-        Offline,
-        Mixed
-    }
-
-    public enum SortOrder
-    {
-        Ascending = 0,
-        Descending = 1
-    }
-
     public abstract class EbMobilePageBase : EbObject { }
 
     public class EbMobilePage : EbMobilePageBase
@@ -56,7 +43,7 @@ namespace ExpressBase.Mobile
     {
         public EbScript()
         {
-            Code = Code ?? string.Empty;
+            Code ??= string.Empty;
         }
 
         public string Code { get; set; }

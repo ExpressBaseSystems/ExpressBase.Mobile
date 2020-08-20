@@ -56,7 +56,7 @@
                         Grid.Column="0"
                         CornerRadius="4"
                         HorizontalOptions="FillAndExpand"
-                        BackgroundColor="{StaticResource Blue-Dark}"
+                        BackgroundColor="{DynamicResource Primary_Color}"
                         Text="Save &amp; Continue"
                         TextColor="White"
                         Clicked="SaveAndContinue_Clicked"/>

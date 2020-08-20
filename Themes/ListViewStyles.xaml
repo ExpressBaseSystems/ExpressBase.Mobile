@@ -13,16 +13,16 @@
         <Setter Property="Source" Value="image_avatar.jpg"></Setter>
     </Style>
 
-    <Style TargetType="Button" x:Key="ListViewPhoneNumber">
-        <Setter Property="BackgroundColor" Value="#47af08"></Setter>
-        <Setter Property="BorderWidth" Value="2"></Setter>
-        <Setter Property="BorderColor" Value="#47af08"></Setter>
+    <Style TargetType="Button" x:Key="ListViewGoogleMap">
+        <Setter Property="BackgroundColor" Value="White"></Setter>
+        <Setter Property="BorderWidth" Value="1"></Setter>
+        <Setter Property="BorderColor" Value="#ccc"></Setter>
         <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
-        <Setter Property="Text" Value="&#xf095;"></Setter>
-        <Setter Property="TextColor" Value="White"></Setter>
-        <Setter Property="WidthRequest" Value="25"></Setter>
-        <Setter Property="HeightRequest" Value="25"></Setter>
-        <Setter Property="CornerRadius" Value="13"></Setter>
+        <Setter Property="Text" Value="&#xf041;"></Setter>
+        <Setter Property="TextColor" Value="#616161"></Setter>
+        <Setter Property="WidthRequest" Value="30"></Setter>
+        <Setter Property="HeightRequest" Value="30"></Setter>
+        <Setter Property="CornerRadius" Value="15"></Setter>
         <Setter Property="Padding" Value="0"></Setter>
         <Setter Property="HorizontalOptions" Value="EndAndExpand"></Setter>
     </Style>

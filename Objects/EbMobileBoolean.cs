@@ -36,9 +36,29 @@ namespace ExpressBase.Mobile
         {
             if (value == null)
                 return false;
+            try
+            {
+                bool isChecked = false;
 
-            int val = Convert.ToInt32(value);
-            (this.XControl as CheckBox).IsChecked = val != 0;
+                if (value is int)
+                {
+                    isChecked = Convert.ToInt32(value) != 0;
+                }
+                else if (value is bool boolean)
+                {
+                    isChecked = boolean;
+                }
+                else if (value is string s)
+                {
+                    isChecked = bool.Parse(s);
+                }
+                (this.XControl as CheckBox).IsChecked = isChecked;
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Boolean setvalue error");
+                EbLog.Write(ex.Message);
+            }
             return true;
         }
 

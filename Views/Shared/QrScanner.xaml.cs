@@ -52,5 +52,13 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             viewAction = action;
         }
+
+        private void BackButton_Clicked(object sender, EventArgs e)
+        {
+            if (isMasterPage)
+                App.RootMaster.Detail.Navigation.PopModalAsync(true);
+            else
+                Application.Current.MainPage.Navigation.PopModalAsync(true);
+        }
     }
 }

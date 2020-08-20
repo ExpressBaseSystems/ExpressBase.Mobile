@@ -11,12 +11,6 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile
 {
-    public enum RenderStyle
-    {
-        Flat = 1,
-        Tile = 2
-    }
-
     public class EbMobileVisualization : EbMobileContainer
     {
         public string DataSourceRefId { set; get; }
@@ -44,6 +38,8 @@ namespace ExpressBase.Mobile
         public List<EbCTCMapper> ContextToControlMap { set; get; }
 
         public bool ShowNewButton { set; get; }
+
+        public bool ShowLinkIcon { set; get; }
 
         public EbThickness Margin { set; get; }
 
@@ -89,20 +85,18 @@ namespace ExpressBase.Mobile
 
         public async Task<EbDataSet> GetData(NetworkMode networkType, int offset, List<DbParameter> parameters = null, List<SortColumn> sortOrder = null)
         {
-            try
+            if (networkType == NetworkMode.Online)
             {
-                if (networkType == NetworkMode.Online)
-                    return await this.GetLiveData(parameters, sortOrder, offset);
-                else if (networkType == NetworkMode.Offline)
-                    return this.GetLocalData(parameters, sortOrder, offset);
-                else
-                    return null;
+                return await this.GetLiveData(parameters, sortOrder, offset);
             }
-            catch (Exception ex)
+            else if (networkType == NetworkMode.Offline)
             {
-                EbLog.Write(ex.Message);
+                return this.GetLocalData(parameters, sortOrder, offset);
             }
-            return null;
+            else
+            {
+                return null;
+            }
         }
 
         public EbDataSet GetLocalData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, int offset)
@@ -139,29 +133,34 @@ namespace ExpressBase.Mobile
         public async Task<EbDataSet> GetLiveData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, int offset)
         {
             EbDataSet Data = null;
+
+            int len = this.PageLength == 0 ? 30 : this.PageLength;
+
+            dbParameters ??= new List<DbParameter>();
+
+            if (App.Settings.CurrentLocation != null)
+            {
+                //dbParameters.Add(new DbParameter
+                //{
+                //    ParameterName = "eb_loc_id",
+                //    DbType = 11,
+                //    Value = App.Settings.CurrentLocation.LocId
+                //});
+            }
+
+            List<Param> paramsArray = dbParameters.ToParams();
+
             try
             {
-                int len = this.PageLength == 0 ? 30 : this.PageLength;
-
-                dbParameters ??= new List<DbParameter>();
-
-                if (App.Settings.CurrentLocation != null)
-                {
-                    dbParameters.Add(new DbParameter
-                    {
-                        ParameterName = "eb_loc_id",
-                        DbType = 11,
-                        Value = App.Settings.CurrentLocation.LocId
-                    });
-                }
-
-                VisualizationLiveData vd = await DataService.Instance.GetDataAsync(this.DataSourceRefId, dbParameters.ToParams(), sortOrder, len, offset);
+                VisualizationLiveData vd = await DataService.Instance.GetDataAsync(this.DataSourceRefId, paramsArray, sortOrder, len, offset);
                 Data = vd?.Data;
             }
             catch (Exception ex)
             {
-                EbLog.Write("EbMobileVisualization.GetLiveData with params---" + ex.Message);
+                EbLog.Write($"Failed to get Live data for '{DataSourceRefId}'");
+                EbLog.Write(ex.Message);
             }
+
             return Data;
         }
     }

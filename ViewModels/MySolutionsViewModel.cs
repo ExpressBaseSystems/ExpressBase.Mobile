@@ -53,7 +53,9 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 SolutionInfo tapedInfo = (SolutionInfo)obj;
-                if (tapedInfo.SolutionName == sid) return;
+
+                if (tapedInfo.SolutionName == sid && tapedInfo.RootUrl == current.RootUrl)
+                    return;
 
                 SolutionInfo copy = Clone(tapedInfo);
 

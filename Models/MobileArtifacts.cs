@@ -13,21 +13,6 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
 {
-    public interface INonPersistControl { }
-
-    public interface ILinesEnabled
-    {
-        string TableName { set; get; }
-
-        List<EbMobileControl> ChildControls { set; get; }
-
-        EbDataTable GetLocalData(string parentTable, int rowid);
-
-        string GetQuery(string parentTable);
-
-        List<SingleColumn> GetColumnValues(ColumnColletion columns, EbDataRow row);
-    }
-
     public class MobileFormData
     {
         public string MasterTable { set; get; }

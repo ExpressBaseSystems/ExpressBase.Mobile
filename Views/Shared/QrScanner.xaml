@@ -12,6 +12,7 @@
         <Grid RowSpacing="0" ColumnSpacing="0">
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="200"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
@@ -23,17 +24,24 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <zxing:ZXingScannerView 
-                Grid.Row="1"
-                Grid.Column="1"
-                x:Name="ScannerView"
-                OnScanResult="ScannerView_OnScanResult"
-                IsScanning="True"
-                VerticalOptions="FillAndExpand"
-                HorizontalOptions="FillAndExpand">
-            </zxing:ZXingScannerView>
+            <Button
+                Margin="0,20"
+                Grid.Column="0"
+                Padding="0"
+                FontSize="18"
+                FontFamily="{StaticResource FontAwesome}"
+                HeightRequest="40"
+                WidthRequest="40"
+                CornerRadius="20"
+                BorderColor="#ccc"
+                BorderWidth="1"
+                HorizontalOptions="Center"
+                Text="&#xf177;"
+                Clicked="BackButton_Clicked">
+            </Button>
 
             <StackLayout 
+                Grid.Row="1"
                 Grid.ColumnSpan="3"
                 VerticalOptions="Center"
                 Padding="20,0">
@@ -50,40 +58,50 @@
                 </Label>
             </StackLayout>
 
-            <BoxView Grid.Row="1" Grid.Column="1" Margin="-5,-5,0,0" 
+            <zxing:ZXingScannerView 
+                Grid.Row="2"
+                Grid.Column="1"
+                x:Name="ScannerView"
+                OnScanResult="ScannerView_OnScanResult"
+                IsScanning="True"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand">
+            </zxing:ZXingScannerView>
+
+            <BoxView Grid.Row="2" Grid.Column="1" Margin="-5,-5,0,0" 
                      HeightRequest="5" VerticalOptions="Start" HorizontalOptions="Start" 
                      BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
             
-            <BoxView Grid.Row="1" Grid.Column="1" Margin="0,-5,-5,0" 
+            <BoxView Grid.Row="2" Grid.Column="1" Margin="0,-5,-5,0" 
                      HeightRequest="5" VerticalOptions="Start" HorizontalOptions="End" 
                      BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
 
-            <BoxView Grid.Row="1" Grid.Column="1" Margin="-5,-5,0,0" WidthRequest="5" 
+            <BoxView Grid.Row="2" Grid.Column="1" Margin="-5,-5,0,0" WidthRequest="5" 
                      VerticalOptions="Start" HorizontalOptions="Start" 
                      BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
             
-            <BoxView Grid.Row="1" Grid.Column="1" Margin="0,-5,-5,0" WidthRequest="5" 
+            <BoxView Grid.Row="2" Grid.Column="1" Margin="0,-5,-5,0" WidthRequest="5" 
                      VerticalOptions="Start" HorizontalOptions="End" 
                      BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
 
-            <BoxView Grid.Row="1" Grid.Column="1" Margin="-5,0,0,-5" HeightRequest="5" 
+            <BoxView Grid.Row="2" Grid.Column="1" Margin="-5,0,0,-5" HeightRequest="5" 
                      VerticalOptions="End" HorizontalOptions="Start" 
                      BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
             
-            <BoxView Grid.Row="1" Grid.Column="1" Margin="0,0,-5,-5" HeightRequest="5" 
+            <BoxView Grid.Row="2" Grid.Column="1" Margin="0,0,-5,-5" HeightRequest="5" 
                      VerticalOptions="End" HorizontalOptions="End" 
                      BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
 
-            <BoxView Grid.Row="1" Grid.Column="1" Margin="-5,0,0,-5" WidthRequest="5" 
+            <BoxView Grid.Row="2" Grid.Column="1" Margin="-5,0,0,-5" WidthRequest="5" 
                      VerticalOptions="End" HorizontalOptions="Start" 
                      BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
             
-            <BoxView Grid.Row="1" Grid.Column="1" Margin="0,0,-5,-5" WidthRequest="5" 
+            <BoxView Grid.Row="2" Grid.Column="1" Margin="0,0,-5,-5" WidthRequest="5" 
                      VerticalOptions="End" HorizontalOptions="End" 
                      BackgroundColor="{DynamicResource Primary_Color}"></BoxView>
 
             <Label 
-                Grid.Row="2"
+                Grid.Row="3"
                 Grid.ColumnSpan="3"
                 VerticalOptions="Center"
                 FontFamily="{StaticResource Roboto-Light}"
