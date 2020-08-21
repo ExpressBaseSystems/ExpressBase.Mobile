@@ -24,18 +24,9 @@
                 <Setter Property="FontSize" Value="20" />
                 <Setter Property="VerticalOptions" Value="Center"></Setter>
                 <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
-                <Setter Property="HorizontalTextAlignment" Value="Center"></Setter>
+                <Setter Property="HorizontalTextAlignment" Value="Start"></Setter>
                 <Setter Property="Margin" Value="0"></Setter>
                 <Setter Property="TextColor" Value="#737373"></Setter>
-            </Style>
-
-            <Style x:Key="LinkIcon" TargetType="Frame">
-                <Setter Property="WidthRequest" Value="25"></Setter>
-                <Setter Property="HeightRequest" Value="25"></Setter>
-                <Setter Property="Padding" Value="0"></Setter>
-                <Setter Property="CornerRadius" Value="13"></Setter>
-                <Setter Property="HasShadow" Value="True"></Setter>
-                <Setter Property="Margin" Value="0,0,5,0"></Setter>
             </Style>
 
             <Style x:Key="LinkLabel" TargetType="Label">
@@ -94,18 +85,18 @@
                         </Grid>
                     </StackLayout>
                     <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="0" Spacing="0">
-                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasSolutionSwitcher}">
+                        <Frame Style="{StaticResource SideBarFrame}" Margin="10,5,0,0" IsVisible="{Binding HasSolutionSwitcher}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="ChangeSolution_Tapped"/>
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
-                                    <Label Text="&#xf140;" Style="{StaticResource SideBarIconStyle}"/>
-                                </Frame>
+                                
+                                <Label Text="&#xf140;" Style="{StaticResource SideBarIconStyle}"/>
+                                
                                 <Label Grid.Column="1" Text="Switch Solution" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
@@ -115,12 +106,10 @@
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
-                                    <Label Text="&#xf009;" Style="{StaticResource SideBarIconStyle}"/>
-                                </Frame>
+                                <Label Text="&#xf009;" Style="{StaticResource SideBarIconStyle}"/>
                                 <Label Grid.Column="1" Text="Switch Application" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
@@ -130,12 +119,10 @@
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
-                                    <Label Text="&#xf041;" Style="{StaticResource SideBarIconStyle}"/>
-                                </Frame>
+                                <Label Text="&#xf041;" Style="{StaticResource SideBarIconStyle}"/>
                                 <Label Grid.Column="1" Text="Switch Location" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
@@ -145,12 +132,10 @@
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
-                                    <Label Text="&#xf25a;" Style="{StaticResource SideBarIconStyle}"/>
-                                </Frame>
+                                <Label Text="&#xf25a;" Style="{StaticResource SideBarIconStyle}"/>
                                 <Label Grid.Column="1" Text="My Actions" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
@@ -160,12 +145,10 @@
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
-                                    <Label Text="&#xf021;" Style="{StaticResource SideBarIconStyle}"/>
-                                </Frame>
+                                <Label Text="&#xf021;" Style="{StaticResource SideBarIconStyle}"/>
                                 <Label Grid.Column="1" Text="Sync" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
@@ -177,12 +160,10 @@
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
-                                    <Label Text="&#xf013;" Style="{StaticResource SideBarIconStyle}"/>
-                                </Frame>
+                                <Label Text="&#xf013;" Style="{StaticResource SideBarIconStyle}"/>
                                 <Label Grid.Column="1" Text="Settings" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
@@ -192,12 +173,10 @@
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
-                                    <Label Text="&#xf05a;" Style="{StaticResource SideBarIconStyle}"/>
-                                </Frame>
+                                <Label Text="&#xf05a;" Style="{StaticResource SideBarIconStyle}"/>
                                 <Label Grid.Column="1" Text="About" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
@@ -207,12 +186,10 @@
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Frame Grid.Column="0" Style="{StaticResource LinkIcon}">
-                                    <Label Text="&#xf08b;" Style="{StaticResource SideBarIconStyle}"/>
-                                </Frame>
+                                <Label Text="&#xf08b;" Style="{StaticResource SideBarIconStyle}"/>
                                 <Label Grid.Column="1" Text="Logout" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>

@@ -13,31 +13,28 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-
-            <Button 
+            <StackLayout 
                 Grid.Row="0"
-                Grid.Column="0"
-                x:Name="FilesButton"
-                Style="{DynamicResource FupFileButton}"
-                Clicked="FilesButton_Clicked">
-            </Button>
+                Orientation="Horizontal">
+                
+                <Button 
+                    HorizontalOptions="FillAndExpand"
+                    x:Name="FilesButton"
+                    Style="{DynamicResource FupFileButton}"
+                    Clicked="FilesButton_Clicked">
+                </Button>
 
-            <Button 
-                Grid.Row="0"
-                Grid.Column="1"
-                x:Name="CameraButton"
-                Style="{DynamicResource FupCameraButton}"
-                Clicked="CameraButton_Clicked">
-            </Button>
+                <Button 
+                    x:Name="CameraButton"
+                    HorizontalOptions="FillAndExpand"
+                    Style="{DynamicResource FupCameraButton}"
+                    Clicked="CameraButton_Clicked">
+                </Button>
+            </StackLayout>
 
             <Frame
                 x:Name="Gallery"
                 Grid.Row="1"
-                Grid.ColumnSpan="2"
                 Padding="5"
                 BackgroundColor="Transparent"
                 HasShadow="False"

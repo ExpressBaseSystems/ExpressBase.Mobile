@@ -55,10 +55,6 @@ namespace ExpressBase.Mobile.CustomControls
             if (!fup.EnableFileSelect)
             {
                 FilesButton.IsVisible = false;
-                if (!fup.EnableCameraSelect)
-                {
-                    Grid.SetColumn(FilesButton, 0);
-                }
             }
         }
 
