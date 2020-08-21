@@ -39,14 +39,17 @@ namespace ExpressBase.Mobile
         public override void InitXControl()
         {
             base.InitXControl();
-
-            this.InitXControl(FormMode.NEW, NetworkMode.Online);
         }
 
         public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
             base.InitXControl(Mode, Network);
 
+            this.XControl = CreateView();
+        }
+
+        public Button CreateView()
+        {
             Button btn = new Button
             {
                 BackgroundColor = Color.FromHex(this.BackgroundColor),
@@ -61,7 +64,7 @@ namespace ExpressBase.Mobile
             SetText(btn);
             SetFontStyle(btn);
 
-            this.XControl = btn;
+            return btn;
         }
 
         public void SetText(Button btn)

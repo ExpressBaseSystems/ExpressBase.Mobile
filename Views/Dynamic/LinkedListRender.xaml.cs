@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
@@ -20,12 +21,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private bool HasLink => viewModel.Visualization.HasLink();
 
-        public LinkedListRender(EbMobilePage page, EbMobileVisualization context, DynamicFrame sender)
+        public LinkedListRender(EbMobilePage page, EbMobileVisualization context, EbDataRow row)
         {
             InitializeComponent();
-            BindingContext = viewModel = new LinkedListViewModel(page, context, sender);
+            BindingContext = viewModel = new LinkedListViewModel(page, context, row);
 
-            this.DrawContextHeader(sender, context);
+            this.DrawContextHeader(row, context);
             this.Loader.IsVisible = true;
         }
 
@@ -43,9 +44,9 @@ namespace ExpressBase.Mobile.Views.Dynamic
             this.Loader.IsVisible = false;
         }
 
-        private void DrawContextHeader(DynamicFrame sender, EbMobileVisualization context)
+        private void DrawContextHeader(EbDataRow row, EbMobileVisualization context)
         {
-            var header = new DynamicFrame(sender.DataRow, context, true)
+            var header = new DynamicFrame(row, context, true)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = new Thickness(20, 10, 20, 0),
@@ -57,7 +58,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void ToggleLinks()
         {
-            if (this.HasSourceLink) 
+            if (this.HasSourceLink)
                 SourceDataEdit.IsVisible = true;
 
             if (this.HasLink && viewModel.Visualization.ShowNewButton)

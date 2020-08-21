@@ -11,22 +11,11 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public interface INotificationService
-    {
-        Task<string> GetAzureTokenAsync();
-
-        Task<bool> CreateOrUpdateRegistration(string regId, DeviceRegistration device);
-
-        Task<bool> UnRegisterAsync(string regId);
-
-        Task UpdateNHRegisratation();
-    }
-
     public class NotificationService : INotificationService
     {
         private static NotificationService instance;
 
-        public static NotificationService Instance => instance ?? (instance = new NotificationService());
+        public static NotificationService Instance => instance ??= new NotificationService();
 
         public async Task<string> GetAzureTokenAsync()
         {

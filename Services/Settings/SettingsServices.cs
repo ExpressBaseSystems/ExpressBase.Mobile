@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class SettingsServices
+    public class SettingsServices : ISettingsService
     {
         public SolutionInfo CurrentSolution { set; get; }
 

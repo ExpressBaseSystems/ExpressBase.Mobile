@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views;
+using ExpressBase.Mobile.Views.Dynamic;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class NAVService
+    public class NavigationService
     {
         //login with new stack
         public static async Task LoginWithNS()
@@ -94,10 +96,48 @@ namespace ExpressBase.Mobile.Services
                     (lastPage as IRefreshable).UpdateRenderStatus();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Write("Failed to auto refresh listview :" + ex.Message);
             }
+        }
+
+        public static async Task GetButtonLinkPage(EbMobileVisualization context, EbDataRow row, EbMobilePage page)
+        {
+            ContentPage renderer = null;
+            try
+            {
+                switch (page.Container)
+                {
+                    case EbMobileForm f:
+                        if (context.FormMode == WebFormDVModes.New_Mode)
+                            renderer = new FormRender(page, context, row);
+                        else
+                        {
+                            int id = Convert.ToInt32(row["id"]);
+                            if (id <= 0) throw new Exception("id has ivalid value" + id);
+                            renderer = new FormRender(page, id);
+                        }
+                        break;
+                    case EbMobileVisualization v:
+                        renderer = new LinkedListRender(page, context, row);
+                        break;
+                    case EbMobileDashBoard d:
+                        renderer = new DashBoardRender(page, row);
+                        break;
+                    default:
+                        EbLog.Write("inavlid container type");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Write("Button navigation failed");
+                EbLog.Write(ex.Message);
+            }
+
+            if (renderer != null)
+                await App.RootMaster.Detail.Navigation.PushAsync(renderer);
         }
     }
 }

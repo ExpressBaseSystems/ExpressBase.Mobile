@@ -176,7 +176,7 @@ namespace ExpressBase.Mobile.Views
                         BarTextColor = Color.White
                     };
                 }
-                await NAVService.LoginWithCS();
+                await NavigationService.LoginWithCS();
             }
             catch (Exception ex)
             {

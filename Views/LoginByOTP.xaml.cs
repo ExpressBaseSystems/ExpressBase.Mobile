@@ -59,7 +59,7 @@ namespace ExpressBase.Mobile.Views
 
         private async void CredLoginButton_Clicked(object sender, EventArgs e)
         {
-            await NAVService.ReplaceTopAsync(new Login());
+            await NavigationService.ReplaceTopAsync(new Login());
         }
 
         private void BackButton_Clicked(object sender, EventArgs e)

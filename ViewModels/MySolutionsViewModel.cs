@@ -28,7 +28,7 @@ namespace ExpressBase.Mobile.ViewModels
                 _mysolution = value;
                 NotifyPropertyChanged();
             }
-            get { return _mysolution; }
+            get => _mysolution;
         }
 
         public Command SolutionTapedCommand => new Command<object>(async (o) => await SolutionTapedEvent(o));

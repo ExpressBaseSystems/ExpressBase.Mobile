@@ -17,27 +17,6 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
-    public interface IIdentityService
-    {
-        Task<ApiAuthResponse> AuthenticateAsync(string username, string password);
-
-        Task<ApiAuthResponse> AuthenticateSSOAsync(string username, SignInOtpType type);
-
-        Task<ImageSource> GetLogo(string sid);
-
-        Task UpdateAuthInfo(ApiAuthResponse resp, string username);
-
-        Task UpdateLastUser(string username, LoginType logintype = LoginType.SSO);
-
-        Task<ApiAuthResponse> VerifyOTP(ApiAuthResponse autheresp, string otp);
-
-        Task<ApiGenerateOTPResponse> GenerateOTP(ApiAuthResponse autheresp);
-
-        Task Navigate(EbMobileSolutionData data);
-
-        bool IsValidOTP(string otp);
-    }
-
     public class IdentityService : IIdentityService
     {
         public RestClient Client { set; get; }

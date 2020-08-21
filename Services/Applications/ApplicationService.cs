@@ -9,13 +9,6 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public interface IApplicationService
-    {
-        Task<ObservableCollection<AppData>> GetDataAsync();
-
-        Task UpdateDataAsync(ObservableCollection<AppData> collection);
-    }
-
     public class ApplicationService : IApplicationService
     {
         public async Task<ObservableCollection<AppData>> GetDataAsync()

@@ -95,9 +95,9 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                if (NAVService.IsTokenExpired(App.Settings.RToken))
+                if (NavigationService.IsTokenExpired(App.Settings.RToken))
                 {
-                    await NAVService.LoginAction();
+                    await NavigationService.LoginAction();
                 }
                 else
                 {

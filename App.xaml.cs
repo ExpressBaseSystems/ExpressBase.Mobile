@@ -57,8 +57,8 @@ namespace ExpressBase.Mobile
             {
                 if (Settings.RToken != null)
                 {
-                    if (NAVService.IsTokenExpired(Settings.RToken))
-                        await NAVService.LoginWithCS();
+                    if (NavigationService.IsTokenExpired(Settings.RToken))
+                        await NavigationService.LoginWithCS();
                     else
                     {
                         if (Settings.AppId <= 0)
@@ -71,7 +71,7 @@ namespace ExpressBase.Mobile
                     }
                 }
                 else
-                    await NAVService.LoginWithCS();
+                    await NavigationService.LoginWithCS();
             }
         }
     }

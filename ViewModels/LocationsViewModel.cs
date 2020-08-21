@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile.ViewModels
                 await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, SelectedLocation);
                 App.Settings.CurrentLocation = SelectedLocation;
 
-                NAVService.UpdateRenderStatusLast();
+                NavigationService.UpdateRenderStatusLast();
 
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
             }

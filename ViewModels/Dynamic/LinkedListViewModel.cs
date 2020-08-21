@@ -54,18 +54,18 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command ApplyFilterCommand => new Command(async (o) => await ApplyFilterClicked(o));
 
-        private readonly DynamicFrame sender;
+        private readonly EbDataRow sourceRecord;
 
         private List<DbParameter> contextParams;
 
         private List<DbParameter> filterParams;
 
-        public LinkedListViewModel(EbMobilePage page, EbMobileVisualization context, DynamicFrame sender) : base(page)
+        public LinkedListViewModel(EbMobilePage page, EbMobileVisualization context, EbDataRow row) : base(page)
         {
             this.Visualization = (EbMobileVisualization)page.Container;
             this.ListItemIndex = new IntRef();
             this.Context = context;
-            this.sender = sender;
+            this.sourceRecord = row;
 
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
             this.FilterControls = this.Visualization.FilterControls;
@@ -79,7 +79,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private void SetContextParams()
         {
-            EbDataRow dataRow = sender.DataRow;
+            EbDataRow dataRow = sourceRecord;
             contextParams = new List<DbParameter>();
 
             try
@@ -165,7 +165,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
                 else
                 {
-                    ContentPage renderer = this.GetPageByContainer(dyFrame, page);
+                    ContentPage renderer = this.GetPageByContainer(dyFrame.DataRow, page);
 
                     if (renderer != null)
                         await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
@@ -183,7 +183,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             if (page != null && page.Container is EbMobileForm)
             {
-                FormRender Renderer = new FormRender(page, Visualization, sender.DataRow, 0);
+                FormRender Renderer = new FormRender(page, Visualization, sourceRecord, 0);
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
             }
         }
@@ -194,7 +194,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             if (_page != null)
             {
-                int id = Convert.ToInt32(sender.DataRow["id"]);
+                int id = Convert.ToInt32(sourceRecord["id"]);
                 if (id != 0)
                 {
                     FormRender Renderer = new FormRender(_page, id);
@@ -203,7 +203,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private ContentPage GetPageByContainer(DynamicFrame senderInner, EbMobilePage page)
+        private ContentPage GetPageByContainer(EbDataRow row, EbMobilePage page)
         {
             ContentPage renderer = null;
             try
@@ -212,19 +212,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     case EbMobileForm f:
                         if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
-                            renderer = new FormRender(page, Visualization, senderInner.DataRow);
+                            renderer = new FormRender(page, Visualization, row);
                         else
                         {
-                            int id = Convert.ToInt32(senderInner.DataRow["id"]);
+                            int id = Convert.ToInt32(row["id"]);
                             if (id <= 0) throw new Exception("id has ivalid value" + id);
                             renderer = new FormRender(page, id);
                         }
                         break;
                     case EbMobileVisualization v:
-                        renderer = new LinkedListRender(page, this.Visualization, senderInner);
+                        renderer = new LinkedListRender(page, this.Visualization, row);
                         break;
                     case EbMobileDashBoard d:
-                        renderer = new DashBoardRender(page, senderInner.DataRow);
+                        renderer = new DashBoardRender(page, row);
                         break;
                     default:
                         EbLog.Write("inavlid container type");

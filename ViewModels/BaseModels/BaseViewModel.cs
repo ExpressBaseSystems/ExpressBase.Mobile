@@ -1,8 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
 using System;
@@ -84,7 +81,7 @@ namespace ExpressBase.Mobile.ViewModels
         public async Task Logout()
         {
             Store.ResetCashedSolutionData();
-            await NAVService.LoginWithNS();
+            await NavigationService.LoginWithNS();
         }
 
         public virtual void RefreshPage() { }

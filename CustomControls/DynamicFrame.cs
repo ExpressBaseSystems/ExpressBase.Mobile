@@ -7,6 +7,7 @@ using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
@@ -19,12 +20,15 @@ namespace ExpressBase.Mobile.CustomControls
 
         protected Grid ContentGrid { set; get; }
 
+        private readonly EbMobileVisualization context;
+
         public DynamicFrame() { }
 
         public DynamicFrame(EbDataRow row, EbMobileVisualization visualization, bool isHeader = false)
         {
             this.IsHeader = isHeader;
             this.DataRow = row;
+            this.context = visualization;
 
             this.SetFrameStyle(visualization);
 
@@ -103,13 +107,15 @@ namespace ExpressBase.Mobile.CustomControls
 
             if (ctrl is EbMobileButton button)
             {
-                button.InitXControl();
-                SetHorrizontalAlign(button.HorrizontalAlign, button.XControl);
-                SetVerticalAlign(button.VerticalAlign, button.XControl);
+                var btn = button.CreateView();
+                btn.Clicked += async (sender, args) => await ButtonControlClick(button.LinkRefId);
+
+                SetHorrizontalAlign(button.HorrizontalAlign, btn);
+                SetVerticalAlign(button.VerticalAlign, btn);
 
                 rowSpan = button.RowSpan;
                 colSpan = button.ColumnSpan;
-                view = button.XControl;
+                view = btn;
             }
             else if (ctrl is EbMobileDataColumn dc)
             {
@@ -125,6 +131,11 @@ namespace ExpressBase.Mobile.CustomControls
                 //set grid positions
                 SetGrid(view, cell.RowIndex, cell.ColIndex, rowSpan, colSpan);
             }
+        }
+
+        private void Btn_Clicked(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void SetGrid(View view, int row, int col, int rowspan, int colspan)
@@ -149,7 +160,10 @@ namespace ExpressBase.Mobile.CustomControls
                     view = this.DC2PhoneNumber(dc, value);
                     break;
                 case DataColumnRenderType.Map:
-                    view = DC2Map(value);
+                    view = this.DC2Map(value);
+                    break;
+                case DataColumnRenderType.Email:
+                    view = this.DC2Email(dc, value);
                     break;
                 default:
                     Label label = new Label { Text = dc.GetContent(value) };
@@ -358,6 +372,8 @@ namespace ExpressBase.Mobile.CustomControls
                 TextColor = Color.FromHex("315eff")
             };
 
+            ApplyLabelStyle(label, dc);
+
             var gesture = new TapGestureRecognizer();
             gesture.Tapped += (sender, args) => NativeLauncher.OpenDialerAsync(label.Text);
             label.GestureRecognizers.Add(gesture);
@@ -373,6 +389,34 @@ namespace ExpressBase.Mobile.CustomControls
             };
             mapbtn.Clicked += async (sender, args) => await NativeLauncher.OpenMapAsync(value?.ToString());
             return mapbtn;
+        }
+
+        private View DC2Email(EbMobileDataColumn dc, object value)
+        {
+            Label label = new Label
+            {
+                Text = dc.GetContent(value),
+                TextColor = Color.FromHex("315eff")
+            };
+            ApplyLabelStyle(label, dc);
+
+            var gesture = new TapGestureRecognizer();
+            gesture.Tapped += async (sender, args) => await NativeLauncher.OpenEmailAsync(value?.ToString());
+            label.GestureRecognizers.Add(gesture);
+
+            return label;
+        }
+
+        public async Task ButtonControlClick(string linkRefId)
+        {
+            if (string.IsNullOrEmpty(linkRefId))
+                return;
+
+            EbMobilePage page = HelperFunctions.GetPage(linkRefId);
+            if (page != null)
+            {
+                await NavigationService.GetButtonLinkPage(context, this.DataRow, page);
+            }
         }
     }
 }

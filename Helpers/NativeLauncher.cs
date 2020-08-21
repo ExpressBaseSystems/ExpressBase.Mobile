@@ -63,5 +63,40 @@ namespace ExpressBase.Mobile.Helpers
                 toast.Show("Something went wrong");
             }
         }
+
+        public static async Task OpenEmailAsync(string email)
+        {
+            IToast toast = DependencyService.Get<IToast>();
+
+            if (string.IsNullOrEmpty(email))
+            {
+                toast.Show("email empty");
+                return;
+            }
+
+            try
+            {
+                var message = new EmailMessage
+                {
+                    To = new List<string> { email },
+                };
+                await Email.ComposeAsync(message);
+            }
+            catch (FeatureNotSupportedException fbsEx)
+            {
+                toast.Show("Email is not supported on this device");
+                WriteLogEntry("Email is not supported on this device");
+                WriteLogEntry(fbsEx.Message);
+            }
+            catch (Exception ex)
+            {
+                WriteLogEntry(ex.Message);
+            }
+        }
+
+        private static void WriteLogEntry(string message)
+        {
+            EbLog.Write(message);
+        }
     }
 }

@@ -95,7 +95,7 @@ namespace ExpressBase.Mobile.Views
 
         private async void SSOLoginButton_Clicked(object sender, EventArgs e)
         {
-            await NAVService.ReplaceTopAsync(new LoginByOTP());
+            await NavigationService.ReplaceTopAsync(new LoginByOTP());
         }
 
         protected override bool OnBackButtonPressed()

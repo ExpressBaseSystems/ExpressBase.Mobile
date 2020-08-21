@@ -80,8 +80,8 @@ namespace ExpressBase.Mobile.Views
                 }
                 else
                 {
-                    if (NAVService.IsTokenExpired(App.Settings.RToken))
-                        await NAVService.LoginWithNS();
+                    if (NavigationService.IsTokenExpired(App.Settings.RToken))
+                        await NavigationService.LoginWithNS();
                     else
                     {
                         IconedLoader.IsVisible = true;

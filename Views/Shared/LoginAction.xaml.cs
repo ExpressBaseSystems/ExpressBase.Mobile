@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void GoToLogin_Clicked(object sender, EventArgs e)
         {
-            await NAVService.LoginWithNS();
+            await NavigationService.LoginWithNS();
         }
     }
 }

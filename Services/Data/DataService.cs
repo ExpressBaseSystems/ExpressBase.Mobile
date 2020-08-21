@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Configuration;
-using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -7,25 +6,12 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
-    public interface IDataService
-    {
-        VisualizationLiveData GetData(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false);
-
-        Task<VisualizationLiveData> GetDataAsync(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false);
-
-        Task<ApiFileResponse> GetFile(EbFileCategory category, string filename);
-
-        Task<byte[]> GetLocalFile(string filename);
-    }
-
     public class DataService : IDataService
     {
         private static DataService _instance;

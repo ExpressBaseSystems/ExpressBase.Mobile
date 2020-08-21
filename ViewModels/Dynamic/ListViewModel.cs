@@ -116,7 +116,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
                 else
                 {
-                    ContentPage renderer = this.GetPageByContainer(customFrame, page);
+                    ContentPage renderer = this.GetPageByContainer(customFrame.DataRow, page);
 
                     if (renderer != null)
                         await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
@@ -128,7 +128,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public ContentPage GetPageByContainer(DynamicFrame frame, EbMobilePage page)
+        public ContentPage GetPageByContainer(EbDataRow row, EbMobilePage page)
         {
             ContentPage renderer = null;
             try
@@ -138,19 +138,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     case EbMobileForm f:
 
                         if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
-                            renderer = new FormRender(page, Visualization, frame.DataRow);
+                            renderer = new FormRender(page, Visualization, row);
                         else
                         {
-                            int id = Convert.ToInt32(frame.DataRow["id"]);
+                            int id = Convert.ToInt32(row["id"]);
                             if (id <= 0) throw new Exception("id has ivalid value" + id);
                             renderer = new FormRender(page, id);
                         }
                         break;
                     case EbMobileVisualization v:
-                        renderer = new LinkedListRender(page, this.Visualization, frame);
+                        renderer = new LinkedListRender(page, this.Visualization, row);
                         break;
                     case EbMobileDashBoard d:
-                        renderer = new DashBoardRender(page, frame.DataRow);
+                        renderer = new DashBoardRender(page, row);
                         break;
                     default:
                         EbLog.Write("inavlid container type");
