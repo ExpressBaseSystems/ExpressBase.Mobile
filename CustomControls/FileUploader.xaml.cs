@@ -78,7 +78,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -101,7 +101,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -240,7 +240,7 @@ namespace ExpressBase.Mobile.CustomControls
                     }
                     catch(Exception ex)
                     {
-                        EbLog.Write("GetFile api error ::" + ex.Message);
+                        EbLog.Error("GetFile api error ::" + ex.Message);
                     }
                 }
             }

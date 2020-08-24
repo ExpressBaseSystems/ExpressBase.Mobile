@@ -40,7 +40,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception e)
             {
-                EbLog.Write("Exception at deserialize :: " + e.Message);
+                EbLog.Error("Exception at deserialize :: " + e.Message);
                 return null;
             }
         }
@@ -72,7 +72,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to deserialize Json file :: " + ex.Message);
+                EbLog.Error("Failed to deserialize Json file :: " + ex.Message);
             }
             return obj;
         }

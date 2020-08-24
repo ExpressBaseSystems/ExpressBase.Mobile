@@ -55,7 +55,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to update or create registration::" + ex.Message);
+                EbLog.Error("Failed to update or create registration::" + ex.Message);
             }
             return false;
         }
@@ -110,7 +110,7 @@ namespace ExpressBase.Mobile.Services
         {
             string pns_token = Store.GetValue(AppConst.PNS_TOKEN);
 
-            EbLog.Write("DEVICE TOKEN:" + pns_token, LogTypes.MESSAGE);
+            EbLog.Message("DEVICE TOKEN:" + pns_token);
 
             DeviceRegistration device = new DeviceRegistration()
             {
@@ -152,11 +152,11 @@ namespace ExpressBase.Mobile.Services
                     }
                 }
 
-                EbLog.Write("NH REG ID:" + azure_regid, LogTypes.MESSAGE);
+                EbLog.Message("NH REG ID:" + azure_regid);
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to update NHub registration" + ex.Message);
+                EbLog.Error("Failed to update NHub registration" + ex.Message);
             }
         }
     }

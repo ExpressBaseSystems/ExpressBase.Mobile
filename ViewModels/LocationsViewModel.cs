@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile.ViewModels
                 await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, SelectedLocation);
                 App.Settings.CurrentLocation = SelectedLocation;
 
-                NavigationService.UpdateRenderStatusLast();
+                NavigationService.UpdateViewStack();
 
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
             }
@@ -86,8 +86,8 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception Ex)
             {
-                EbLog.Write("Locations search got an error");
-                EbLog.Write(Ex.Message);
+                EbLog.Error("Locations search got an error");
+                EbLog.Error(Ex.Message);
             }
         }
     }

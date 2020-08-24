@@ -1,7 +1,5 @@
-﻿using ExpressBase.Mobile.Configuration;
-using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
@@ -11,8 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -20,8 +16,6 @@ namespace ExpressBase.Mobile.Services
 {
     public class SolutionService : ISolutionService
     {
-        public static SolutionService Instance => new SolutionService();
-
         public async Task<ObservableCollection<SolutionInfo>> GetDataAsync()
         {
             ObservableCollection<SolutionInfo> sln = new ObservableCollection<SolutionInfo>();
@@ -29,66 +23,69 @@ namespace ExpressBase.Mobile.Services
             {
                 await Task.Delay(1);
 
-                List<SolutionInfo> solutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
+                List<SolutionInfo> solutions = Utils.Solutions;
 
                 string _currentroot = App.Settings.RootUrl.Replace("https://", string.Empty);
 
                 foreach (SolutionInfo info in solutions)
                 {
                     info.SetLogo();
-                    info.IsCurrent = (info.SolutionName == App.Settings.Sid && info.RootUrl == _currentroot) ? true : false;
-
-                    sln.Add(info);//add to the observable collection
+                    info.IsCurrent = (info.SolutionName == App.Settings.Sid && info.RootUrl == _currentroot);
+                    sln.Add(info);
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return sln;
         }
 
         public async Task<ValidateSidResponse> ValidateSid(string url)
         {
-            ValidateSidResponse Vresp = new ValidateSidResponse();
+            ValidateSidResponse response = null;
+
+            RestClient client = new RestClient(ApiConstants.PROTOCOL + url);
+            RestRequest request = new RestRequest(ApiConstants.VALIDATE_SOL, Method.GET);
+
             try
             {
-                RestClient client = new RestClient("https://" + url);
-                RestRequest request = new RestRequest("api/validate_solution", Method.GET);
-                IRestResponse response = await client.ExecuteAsync(request);
-                if (response.StatusCode == HttpStatusCode.OK)
-                    Vresp = JsonConvert.DeserializeObject<ValidateSidResponse>(response.Content);
+                IRestResponse iresp = await client.ExecuteAsync(request);
+                if (iresp.IsSuccessful)
+                {
+                    response = JsonConvert.DeserializeObject<ValidateSidResponse>(iresp.Content);
+                }
             }
             catch (Exception e)
             {
-                Vresp.IsValid = false;
-                EbLog.Write("Validate Sid---" + e.Message);
+                EbLog.Message("validate_solution api failure");
+                EbLog.Error(e.Message);
             }
-            return Vresp;
+            return response ?? new ValidateSidResponse();
         }
 
         public async Task SetDataAsync(SolutionInfo info)
         {
             try
             {
-                List<SolutionInfo> sol = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
+                List<SolutionInfo> solutions = Utils.Solutions;
 
-                if(App.Settings.Vendor.HasSolutionSwitcher) 
-                    sol.Add(info);
+                if (App.Settings.Vendor.HasSolutionSwitcher)
+                    solutions.Add(info);
                 else
                 {
-                    sol.Clear();
-                    sol.Add(info);
+                    solutions.Clear();
+                    solutions.Add(info);
                 }
 
-                await Store.SetJSONAsync(AppConst.MYSOLUTIONS, sol);
+                await Store.SetJSONAsync(AppConst.MYSOLUTIONS, solutions);
                 await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, info);
 
                 App.Settings.CurrentSolution = info;
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -101,14 +98,15 @@ namespace ExpressBase.Mobile.Services
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
                 string root = App.Settings.AppDirectory;
 
-                if (!helper.DirectoryOrFileExist($"{root}/{solutionname}/logo.png", SysContentType.File))
+                if (!helper.Exist($"{root}/{solutionname}/logo.png", SysContentType.File))
                 {
                     File.WriteAllBytes(helper.NativeRoot + $"/{root}/{solutionname}/logo.png", imageByte);
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write("SolutionSelect_SaveLogo" + ex.Message);
+                EbLog.Message($"Unable to create logo for solution '{solutionname}'");
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -133,9 +131,20 @@ namespace ExpressBase.Mobile.Services
             await HelperFunctions.CreateDirectory();
         }
 
+        public SolutionInfo Clone(SolutionInfo info)
+        {
+            return new SolutionInfo
+            {
+                SolutionName = info.SolutionName,
+                RootUrl = info.RootUrl,
+                LastUser = info.LastUser,
+            };
+        }
+
         public async Task Remove(SolutionInfo info)
         {
-            List<SolutionInfo> sol = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
+            List<SolutionInfo> sol = Utils.Solutions;
+
             sol.Remove(sol.Find(item => item.SolutionName == info.SolutionName && item.RootUrl == info.RootUrl));
             await Store.SetJSONAsync(AppConst.MYSOLUTIONS, sol);
         }
@@ -148,8 +157,8 @@ namespace ExpressBase.Mobile.Services
             }
 
             url = url.Trim();
-            List<SolutionInfo> solutions = Store.GetJSON<List<SolutionInfo>>(AppConst.MYSOLUTIONS) ?? new List<SolutionInfo>();
-            return solutions.Any(item => item.SolutionName == url.Split('.')[0] && item.RootUrl == url);
+            string sname = url.Split(CharConstants.DOT)[0];
+            return Utils.Solutions.Any(item => item.SolutionName == sname && item.RootUrl == url);
         }
     }
 }

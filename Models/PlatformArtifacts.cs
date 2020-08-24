@@ -83,10 +83,19 @@ namespace ExpressBase.Mobile.Models
                 }
                 catch (Exception ex)
                 {
-                    EbLog.Write(ex.Message);
+                    EbLog.Error(ex.Message);
                     return "??";
                 }
             }
+        }
+
+        public bool HasMenuApi()
+        {
+            if(AppSettings != null)
+            {
+                return AppSettings.HasMenuPreloadApi && !App.Settings.CurrentUser.IsAdmin;
+            }
+            return false;
         }
     }
 
@@ -160,7 +169,7 @@ namespace ExpressBase.Mobile.Models
                 }
                 catch (Exception ex)
                 {
-                    EbLog.Write(ex.Message);
+                    EbLog.Error(ex.Message);
                     return "??";
                 }
             }
@@ -280,6 +289,8 @@ namespace ExpressBase.Mobile.Models
         public bool IsValid { set; get; }
 
         public byte[] Logo { set; get; }
+
+        public ValidateSidResponse() { }
     }
 
     public class VisualizationLiveData

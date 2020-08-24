@@ -20,6 +20,8 @@ namespace ExpressBase.Mobile.Services
 
         Task CreateDirectory();
 
+        SolutionInfo Clone(SolutionInfo info);
+
         Task Remove(SolutionInfo info);
 
         bool IsSolutionExist(string url);

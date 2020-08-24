@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile.Helpers
         {
             IToast toast = DependencyService.Get<IToast>();
 
-            EbLog.Write(_Exception.Message);
+            EbLog.Error(_Exception.Message);
 
             if (_Exception is FeatureNotSupportedException)
                 toast.Show("Feature not supproted");

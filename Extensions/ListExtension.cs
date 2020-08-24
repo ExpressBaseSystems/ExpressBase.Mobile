@@ -41,7 +41,7 @@ namespace ExpressBase.Mobile.Extensions
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return _dict;
         }
@@ -63,7 +63,7 @@ namespace ExpressBase.Mobile.Extensions
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return p;
         }

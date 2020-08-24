@@ -38,13 +38,13 @@ namespace ExpressBase.Mobile.Views.Shared
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                byte[] bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{App.Settings.Sid}/user.png");
+                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{App.Settings.Sid}/user.png");
                 if (bytes != null)
                     UserDp.Source = ImageSource.FromStream(() => new MemoryStream(bytes));
             }
             catch (Exception ex)
             {
-                EbLog.Write("SideBar.SetDp---" + ex.Message);
+                EbLog.Error("SideBar.SetDp---" + ex.Message);
             }
         }
 

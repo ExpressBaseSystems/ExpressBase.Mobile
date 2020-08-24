@@ -81,7 +81,7 @@ namespace ExpressBase.Mobile.Models
             }
             catch (Exception ex)
             {
-                EbLog.Write("MobileFormData.GetQuery---" + ex.Message);
+                EbLog.Error("MobileFormData.GetQuery---" + ex.Message);
             }
             return sb.ToString();
         }
@@ -197,7 +197,7 @@ namespace ExpressBase.Mobile.Models
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return sb.ToString();
         }
@@ -263,7 +263,7 @@ namespace ExpressBase.Mobile.Models
             }
             catch(Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -344,14 +344,14 @@ namespace ExpressBase.Mobile.Models
             INativeHelper helper = DependencyService.Get<INativeHelper>();
             try
             {
-                byte[] bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{this.SolutionName}/logo.png");
+                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{this.SolutionName}/logo.png");
 
                 if (bytes != null)
                     this.Logo = ImageSource.FromStream(() => new MemoryStream(bytes));
             }
             catch (Exception ex)
             {
-                EbLog.Write("Login_SetLogo" + ex.Message);
+                EbLog.Error("Login_SetLogo" + ex.Message);
             }
         }
     }

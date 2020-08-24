@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (tapedInfo.SolutionName == sid && tapedInfo.RootUrl == current.RootUrl)
                     return;
 
-                SolutionInfo copy = Clone(tapedInfo);
+                SolutionInfo copy = solutionService.Clone(tapedInfo);
 
                 await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, copy);
                 App.Settings.CurrentSolution = copy;
@@ -71,23 +71,13 @@ namespace ExpressBase.Mobile.ViewModels
                     BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
                     BarTextColor = Color.White
                 };
-                await Application.Current.MainPage.Navigation.PushAsync(new Login());
+                await NavigationService.LoginWithCS();
                 App.RootMaster = null;
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
-        }
-
-        private SolutionInfo Clone(SolutionInfo info)
-        {
-            return new SolutionInfo
-            {
-                SolutionName = info.SolutionName,
-                RootUrl = info.RootUrl,
-                LastUser = info.LastUser,
-            };
         }
 
         private async Task SolutionRemoveEvent(object obj)
@@ -103,7 +93,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
     }

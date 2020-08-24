@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.Services
     {
         private static MenuServices instance;
 
-        public static MenuServices Instance => instance ?? (instance = new MenuServices());
+        public static MenuServices Instance => instance ??= new MenuServices();
 
         public async Task<List<MobilePagesWraper>> GetDataAsync()
         {
@@ -45,7 +45,6 @@ namespace ExpressBase.Mobile.Services
                     }
                 }
             }
-
             return objectList;
         }
 
@@ -71,9 +70,8 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("menu update failed :: " + ex.Message);
+                EbLog.Error("menu update failed :: " + ex.Message);
             }
-
             return collection ?? new List<MobilePagesWraper>();
         }
 
@@ -96,7 +94,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("Error on menu preload api request :: " + ex.Message);
+                EbLog.Error("Error on menu preload api request :: " + ex.Message);
             }
 
             List<MobilePagesWraper> pages = new List<MobilePagesWraper>();
@@ -105,15 +103,16 @@ namespace ExpressBase.Mobile.Services
             {
                 List<MobilePagesWraper> all = App.Settings.MobilePages ?? new List<MobilePagesWraper>();
 
-                foreach (MobilePagesWraper item in all)
+                foreach (string objName in resp.Result)
                 {
-                    if (resp.Result.Contains(item.Name))
+                    MobilePagesWraper wraper = all.Find(item => item.Name == objName);
+
+                    if (wraper != null)
                     {
-                        pages.Add(item);
+                        pages.Add(wraper);
                     }
                 }
             }
-
             return pages;
         }
 
@@ -128,11 +127,11 @@ namespace ExpressBase.Mobile.Services
                 {
                     EbMobilePage mpage = page.ToPage();
 
-                    if (mpage != null && mpage.Container is EbMobileForm)
+                    if (mpage != null && mpage.Container is EbMobileForm form)
                     {
                         if (mpage.NetworkMode != NetworkMode.Online)
                         {
-                            (mpage.Container as EbMobileForm).CreateTableSchema();
+                            form.CreateTableSchema();
                         }
                     }
                 }
@@ -180,7 +179,7 @@ namespace ExpressBase.Mobile.Services
             {
                 response.Status = false;
                 response.Message = "Sync failed";
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return response;
         }
@@ -207,7 +206,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("SyncServices.PushRow---" + ex.Message);
+                EbLog.Error("SyncServices.PushRow---" + ex.Message);
             }
             return response;
         }
@@ -240,7 +239,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -293,7 +292,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("SyncServices.PushDependencyData---" + ex.Message);
+                EbLog.Error("SyncServices.PushDependencyData---" + ex.Message);
             }
         }
 
@@ -320,14 +319,14 @@ namespace ExpressBase.Mobile.Services
                 {
                     INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                    var bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{sid}/logo.png");
+                    var bytes = helper.GetFile($"{App.Settings.AppDirectory}/{sid}/logo.png");
                     if (bytes != null)
                         return ImageSource.FromStream(() => new MemoryStream(bytes));
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write("GetLogo" + ex.Message);
+                EbLog.Error("GetLogo" + ex.Message);
             }
             return null;
         }

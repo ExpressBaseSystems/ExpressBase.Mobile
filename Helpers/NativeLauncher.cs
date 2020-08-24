@@ -35,8 +35,8 @@ namespace ExpressBase.Mobile.Helpers
                 }
                 catch (Exception ex)
                 {
-                    EbLog.Write($"Cordinates value format error 'Value:{cordinates}'");
-                    EbLog.Write(ex.Message);
+                    EbLog.Error($"Cordinates value format error 'Value:{cordinates}'");
+                    EbLog.Error(ex.Message);
 
                     toast.Show("Unable to open map");
                 }
@@ -96,7 +96,7 @@ namespace ExpressBase.Mobile.Helpers
 
         private static void WriteLogEntry(string message)
         {
-            EbLog.Write(message);
+            EbLog.Error(message);
         }
     }
 }

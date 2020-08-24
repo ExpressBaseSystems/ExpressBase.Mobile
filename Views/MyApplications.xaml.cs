@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
                 Loader.IsVisible = false;
             }
         }
@@ -74,7 +74,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to refresh applications" + ex.Message);
+                EbLog.Error("Failed to refresh applications" + ex.Message);
             }
 
             ToggleStatus();

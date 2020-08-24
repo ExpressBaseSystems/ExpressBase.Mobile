@@ -106,7 +106,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 if (string.IsNullOrEmpty(this.Form.WebFormRefId))
                 {
-                    EbLog.Write("Web form refid is empty");
+                    EbLog.Message("Web form refid is empty");
                 }
 
                 WebformData data = await formDataService.GetFormLiveDataAsync(this.Page.RefId, this.rowId, App.Settings.CurrentLocId);
@@ -120,7 +120,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             IToast toast = DependencyService.Get<IToast>();
 
             if (this.NetworkType == NetworkMode.Online && !Utils.HasInternet)
-                toast.Show("you are not connected to Internet");
+            {
+                Utils.Alert_NoInternet(toast);
+            }
 
             if (Form.Validate())
             {
@@ -131,7 +133,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 FormSaveResponse saveResponse = await this.Form.Save(this.rowId);
 
                 if (saveResponse.Status)
-                    NavigationService.UpdateRenderStatusLast();
+                {
+                    EbLog.Message($"{this.Page.DisplayName} save status = {saveResponse.Status}");
+
+                    NavigationService.UpdateViewStack();
+                }
 
                 Device.BeginInvokeOnMainThread(async () =>
                 {
@@ -196,7 +202,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 

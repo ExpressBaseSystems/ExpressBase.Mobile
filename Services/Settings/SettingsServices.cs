@@ -111,7 +111,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -183,7 +183,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("Error on get_solution_data request" + ex.Message);
+                EbLog.Error("Error on get_solution_data request" + ex.Message);
             }
 
             if (solData != null)
@@ -228,7 +228,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to set location :: " + ex.Message);
+                EbLog.Error("Failed to set location :: " + ex.Message);
             }
         }
     }

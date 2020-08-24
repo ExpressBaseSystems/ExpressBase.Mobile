@@ -96,7 +96,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write("EbMobileForm.SaveForm::" + ex.Message);
+                EbLog.Error("EbMobileForm.SaveForm::" + ex.Message);
             }
             return response;
         }
@@ -153,7 +153,7 @@ namespace ExpressBase.Mobile
                 }
                 catch (Exception)
                 {
-                    EbLog.Write("Upload file api error");
+                    EbLog.Error("Upload file api error");
                 }
             }
             else
@@ -195,7 +195,7 @@ namespace ExpressBase.Mobile
             {
                 response.Status = false;
                 response.Message = "Something went wrong :(";
-                EbLog.Write("EbMobileForm.PushToCloud---" + ex.Message);
+                EbLog.Error("EbMobileForm.PushToCloud---" + ex.Message);
             }
         }
 
@@ -212,13 +212,13 @@ namespace ExpressBase.Mobile
 
                     if (!webformdata.ExtendedTables.Any())
                     {
-                        EbLog.Write("Image upload response empty, breaking save");
+                        EbLog.Error("Image upload response empty, breaking save");
                         return false;
                     }
                 }
                 catch (Exception ex)
                 {
-                    EbLog.Write("SendFilesAsync error :: " + ex.Message);
+                    EbLog.Error("SendFilesAsync error :: " + ex.Message);
                 }
             }
             return true;
@@ -252,7 +252,7 @@ namespace ExpressBase.Mobile
             {
                 response.Status = false;
                 response.Message = "Something went wrong :(";
-                EbLog.Write("EbMobileForm.PersistOnLocal::" + ex.Message);
+                EbLog.Error("EbMobileForm.PersistOnLocal::" + ex.Message);
             }
         }
 
@@ -404,7 +404,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 

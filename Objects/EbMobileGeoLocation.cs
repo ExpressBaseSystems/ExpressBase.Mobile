@@ -69,7 +69,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -102,7 +102,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -124,7 +124,7 @@ namespace ExpressBase.Mobile
             }
             catch(Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -137,7 +137,7 @@ namespace ExpressBase.Mobile
             }
             catch(Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -161,7 +161,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write("EbMobileGeoLocation.GetValue Failed :: " + ex.Message);
+                EbLog.Error("EbMobileGeoLocation.GetValue Failed :: " + ex.Message);
             }
             return null;
         }
@@ -184,8 +184,8 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
-                EbLog.Write(ex.StackTrace);
+                EbLog.Error(ex.Message);
+                EbLog.Error(ex.StackTrace);
             }
             return true;
         }

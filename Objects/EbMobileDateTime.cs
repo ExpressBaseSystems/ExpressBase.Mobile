@@ -115,8 +115,8 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
-                EbLog.Write(ex.StackTrace);
+                EbLog.Error(ex.Message);
+                EbLog.Error(ex.StackTrace);
                 return false;
             }
             return true;

@@ -14,19 +14,19 @@ namespace ExpressBase.Mobile.Helpers
 
         string AppVersion { get; }
 
-        void CloseApp();
+        void Close();
 
         string NativeRoot { get; }
 
-        bool DirectoryOrFileExist(string Path, SysContentType Type);
+        bool Exist(string Path, SysContentType Type);
 
-        string CreateDirectoryOrFile(string DirectoryPath, SysContentType Type);
+        string Create(string DirectoryPath, SysContentType Type);
 
-        byte[] GetPhoto(string url);
+        byte[] GetFile(string url);
 
         string[] GetFiles(string Url, string Pattern);
 
-        string GetBaseURl();
+        string GetAssetsURl();
 
         void WriteLogs(string message, LogTypes logType);
     }
@@ -36,14 +36,45 @@ namespace ExpressBase.Mobile.Helpers
         void Show(string message);
     }
 
-
     public class EbLog
     {
-        public static void Write(string message, LogTypes logType = LogTypes.EXCEPTION)
+        private static INativeHelper _helper;
+
+        public static void Error(string message)
         {
             try
             {
-                DependencyService.Get<INativeHelper>().WriteLogs(message, logType);
+                _helper ??= DependencyService.Get<INativeHelper>();
+
+                _helper.WriteLogs(message, LogTypes.EXCEPTION);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public static void Message(string message)
+        {
+            try
+            {
+                _helper ??= DependencyService.Get<INativeHelper>();
+
+                _helper.WriteLogs(message, LogTypes.MESSAGE);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public static void StackTrace(string message)
+        {
+            try
+            {
+                _helper ??= DependencyService.Get<INativeHelper>();
+
+                _helper.WriteLogs(message, LogTypes.STACKTRACE);
             }
             catch (Exception ex)
             {

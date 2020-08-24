@@ -2,12 +2,14 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views;
 using ExpressBase.Mobile.Views.Dynamic;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -79,26 +81,24 @@ namespace ExpressBase.Mobile.Services
             await App.RootMaster.Detail.Navigation.PushModalAsync(new LoginAction());
         }
 
-        public static void UpdateRenderStatusLast()
+        public static void UpdateViewStack()
         {
             try
             {
                 IReadOnlyList<Page> stack = App.RootMaster.Detail.Navigation.NavigationStack;
 
-                if (stack.Count <= 1) return;
-
-                int currentIndex = stack.Count - 1;
-
-                Page lastPage = stack[currentIndex - 1];
-
-                if (lastPage is IRefreshable)
+                foreach(var page in stack)
                 {
-                    (lastPage as IRefreshable).UpdateRenderStatus();
+                    if(page is IRefreshable iref && iref.CanRefresh())
+                    {
+                        iref.UpdateRenderStatus();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to auto refresh listview :" + ex.Message);
+                EbLog.Error("Failed to auto refresh listview");
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -126,14 +126,14 @@ namespace ExpressBase.Mobile.Services
                         renderer = new DashBoardRender(page, row);
                         break;
                     default:
-                        EbLog.Write("inavlid container type");
+                        EbLog.Message("inavlid container type");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write("Button navigation failed");
-                EbLog.Write(ex.Message);
+                EbLog.Error("Button navigation failed");
+                EbLog.Error(ex.Message);
             }
 
             if (renderer != null)

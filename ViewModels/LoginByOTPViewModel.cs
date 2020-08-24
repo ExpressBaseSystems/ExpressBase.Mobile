@@ -92,7 +92,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to send otp :: " + ex.Message);
+                EbLog.Error("Failed to send otp :: " + ex.Message);
             }
 
             IsBusy = false;
@@ -116,7 +116,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Write("OTP verification failed :: " + ex.Message);
+                EbLog.Error("OTP verification failed :: " + ex.Message);
             }
 
             IsBusy = false;
@@ -139,7 +139,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Write("Exception at after login :: " + ex.Message);
+                EbLog.Error("Exception at after login :: " + ex.Message);
             }
         }
 
@@ -152,7 +152,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to regenerate otp :: " + ex.Message);
+                EbLog.Error("Failed to regenerate otp :: " + ex.Message);
             }
 
             if (resp != null && resp.IsValid)

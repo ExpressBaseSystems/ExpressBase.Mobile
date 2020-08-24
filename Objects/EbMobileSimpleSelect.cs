@@ -193,10 +193,10 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write($"*********Exception on geting display value*********");
+                EbLog.Error($"*********Exception on geting display value*********");
 
-                EbLog.Write($"DisplayMember:{this.DisplayMember.ColumnName}");
-                EbLog.Write($"ValueMember:{this.ValueMember.ColumnName}" + ex.Message);
+                EbLog.Error($"DisplayMember:{this.DisplayMember.ColumnName}");
+                EbLog.Error($"ValueMember:{this.ValueMember.ColumnName}" + ex.Message);
                 dt = new EbDataTable();
             }
             return dt;

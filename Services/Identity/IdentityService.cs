@@ -47,7 +47,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("Auth.TryAuthenticate---" + ex.Message);
+                EbLog.Error("Auth.TryAuthenticate---" + ex.Message);
                 resp = new ApiAuthResponse { IsValid = false };
             }
             return resp;
@@ -73,7 +73,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("AuthenticateSSOAsync failed :: " + ex.Message);
+                EbLog.Error("AuthenticateSSOAsync failed :: " + ex.Message);
                 resp = new ApiAuthResponse { IsValid = false };
             }
             return resp;
@@ -103,7 +103,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("2FA verification failed :: " + ex.Message);
+                EbLog.Error("2FA verification failed :: " + ex.Message);
             }
 
             return null;
@@ -132,7 +132,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("2FA verification failed :: " + ex.Message);
+                EbLog.Error("2FA verification failed :: " + ex.Message);
             }
 
             return null;
@@ -152,14 +152,14 @@ namespace ExpressBase.Mobile.Services
                 {
                     INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                    byte[] bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{sid}/logo.png");
+                    byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{sid}/logo.png");
                     if (bytes != null)
                         return ImageSource.FromStream(() => new MemoryStream(bytes));
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write("GetLogo" + ex.Message);
+                EbLog.Error("GetLogo" + ex.Message);
             }
             return null;
         }
@@ -188,7 +188,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("UpdateAuthInfo---" + ex.Message);
+                EbLog.Error("UpdateAuthInfo---" + ex.Message);
             }
         }
 

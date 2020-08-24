@@ -133,7 +133,7 @@
                 <ListView 
                     x:Name="EbListView"
                     HasUnevenRows="True"
-                    SeparatorVisibility="None"
+                    SeparatorVisibility="{Binding ShowRowSeperator}"
                     ItemsSource="{Binding DataRows}"
                     IsPullToRefreshEnabled="True"
                     IsRefreshing="{Binding IsRefreshing}"

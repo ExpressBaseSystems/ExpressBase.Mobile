@@ -36,6 +36,8 @@ namespace ExpressBase.Mobile
 
         public MobileVerticalAlign VerticalAlign { set; get; }
 
+        public bool HideInContext { set; get; }
+
         public override void InitXControl()
         {
             base.InitXControl();

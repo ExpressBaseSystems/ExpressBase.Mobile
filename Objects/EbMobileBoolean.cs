@@ -56,8 +56,8 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write("Boolean setvalue error");
-                EbLog.Write(ex.Message);
+                EbLog.Error("Boolean setvalue error");
+                EbLog.Error(ex.Message);
             }
             return true;
         }

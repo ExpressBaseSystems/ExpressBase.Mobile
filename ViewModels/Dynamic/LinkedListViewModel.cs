@@ -42,6 +42,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<EbMobileControl> FilterControls { set; get; }
 
+        public SeparatorVisibility ShowRowSeperator { set; get; }
+
         public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
 
         public Command AddCommand => new Command(async () => await AddButtonClicked());
@@ -69,6 +71,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
             this.FilterControls = this.Visualization.FilterControls;
+
+            ShowRowSeperator = Visualization.ShowRowSeperator ? SeparatorVisibility.Default : SeparatorVisibility.None;
         }
 
         public override async Task InitializeAsync()
@@ -122,7 +126,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -147,7 +151,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                EbLog.Write("LinkedList_SetData---" + ex.Message);
+                EbLog.Error("LinkedList_SetData---" + ex.Message);
             }
         }
 
@@ -227,13 +231,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         renderer = new DashBoardRender(page, row);
                         break;
                     default:
-                        EbLog.Write("inavlid container type");
+                        EbLog.Error("inavlid container type");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return renderer;
         }
@@ -262,7 +266,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 

@@ -29,7 +29,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                EbLog.Write("Page not found" + ex.Message);
+                EbLog.Error("Page not found" + ex.Message);
             }
 
             return page;
@@ -64,7 +64,7 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return query;
         }
@@ -131,28 +131,28 @@ namespace ExpressBase.Mobile.Helpers
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                if (helper.DirectoryOrFileExist(root, SysContentType.Directory))
+                if (helper.Exist(root, SysContentType.Directory))
                 {
-                    if (!helper.DirectoryOrFileExist($"{root}/{sid}", SysContentType.Directory))
+                    if (!helper.Exist($"{root}/{sid}", SysContentType.Directory))
                     {
-                        helper.CreateDirectoryOrFile($"{root}/{sid}", SysContentType.Directory);
+                        helper.Create($"{root}/{sid}", SysContentType.Directory);
 
                         if (FolderName != null)
-                            return helper.CreateDirectoryOrFile($"{root}/{sid}/{FolderName}", SysContentType.Directory);
+                            return helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
                     }
                     else
                     {
                         if (FolderName != null)
-                            return helper.CreateDirectoryOrFile($"{root}/{sid}/{FolderName}", SysContentType.Directory);
+                            return helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
                     }
                 }
                 else
                 {
-                    helper.CreateDirectoryOrFile(root, SysContentType.Directory);
-                    helper.CreateDirectoryOrFile($"{root}/{sid}", SysContentType.Directory);
+                    helper.Create(root, SysContentType.Directory);
+                    helper.Create($"{root}/{sid}", SysContentType.Directory);
 
                     if (FolderName != null)
-                        return helper.CreateDirectoryOrFile($"{root}/{sid}/{FolderName}", SysContentType.Directory);
+                        return helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
                 }
             }
             catch (Exception ex)
@@ -187,7 +187,7 @@ namespace ExpressBase.Mobile.Helpers
                 {
                     string filename = Path.GetFileName(filepath);
 
-                    var bytes = helper.GetPhoto($"{root}/{sid}/FILES/{filename}");
+                    var bytes = helper.GetFile($"{root}/{sid}/FILES/{filename}");
 
                     Files.Add(new FileWrapper
                     {
@@ -243,15 +243,15 @@ namespace ExpressBase.Mobile.Helpers
 
                 string path = $"{App.Settings.AppDirectory}/{App.Settings.Sid}/FILES/{filename}";
 
-                if (!helper.DirectoryOrFileExist(path, SysContentType.File))
+                if (!helper.Exist(path, SysContentType.File))
                 {
                     File.WriteAllBytes(helper.NativeRoot + $"/{path}", fileBytea);
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
-                EbLog.Write(ex.StackTrace);
+                EbLog.Error(ex.Message);
+                EbLog.Error(ex.StackTrace);
             }
         }
     }

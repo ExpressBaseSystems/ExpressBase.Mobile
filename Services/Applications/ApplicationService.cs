@@ -33,7 +33,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to get solution data :: " + ex.Message);
+                EbLog.Error("Failed to get solution data :: " + ex.Message);
             }
         }
     }

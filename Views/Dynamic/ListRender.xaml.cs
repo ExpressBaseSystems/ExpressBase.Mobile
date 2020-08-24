@@ -39,6 +39,20 @@ namespace ExpressBase.Mobile.Views.Dynamic
             this.Loader.IsVisible = false;
         }
 
+        protected override bool OnBackButtonPressed()
+        {
+            if (FilterView.IsVisible)
+            {
+                FilterView.IsVisible = false;
+                return true;
+            }
+            else
+            {
+                base.OnBackButtonPressed();
+                return false;
+            }
+        }
+
         private void ToggleLinks()
         {
             if (this.HasLink && viewModel.Visualization.ShowNewButton)
@@ -54,16 +68,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void ToggleDataLength()
         {
-            if (viewModel.DataCount <= 0)
-            {
-                PagingContainer.IsVisible = false;
-                EmptyMessage.IsVisible = true;
-            }
-            else
-            {
-                PagingContainer.IsVisible = true;
-                EmptyMessage.IsVisible = false;
-            }
+            bool isEmpty = viewModel.DataCount <= 0;
+
+            PagingContainer.IsVisible = !isEmpty;
+            EmptyMessage.IsVisible = isEmpty;
         }
 
         private void FilterButton_Clicked(object sender, EventArgs e)
@@ -112,7 +120,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -125,6 +133,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
         public void UpdateRenderStatus()
         {
             isRendered = false;
+        }
+
+        public bool CanRefresh()
+        {
+            return true;
         }
     }
 }

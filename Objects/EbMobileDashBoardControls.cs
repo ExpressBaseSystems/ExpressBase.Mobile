@@ -46,7 +46,7 @@ namespace ExpressBase.Mobile
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Source = new UrlWebViewSource
                 {
-                    Url = DependencyService.Get<INativeHelper>().GetBaseURl() + "WebView/DataTable.html"
+                    Url = DependencyService.Get<INativeHelper>().GetAssetsURl() + "WebView/DataTable.html"
                 }
             };
             wview.Navigated += Wview_Navigated;

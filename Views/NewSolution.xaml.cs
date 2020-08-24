@@ -83,7 +83,7 @@ namespace ExpressBase.Mobile.Views
                                 BarTextColor = Color.White
                             };
                         }
-                        await Application.Current.MainPage.Navigation.PushAsync(new Login());
+                        await NavigationService.LoginWithCS();
                     }
                     else
                         throw new Exception("invalid qr code meta");
@@ -92,7 +92,7 @@ namespace ExpressBase.Mobile.Views
                 }
                 catch (Exception ex)
                 {
-                    EbLog.Write(ex.Message);
+                    EbLog.Error(ex.Message);
                     Loader.IsVisible = true;
                 }
             });
@@ -149,7 +149,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -180,7 +180,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
     }

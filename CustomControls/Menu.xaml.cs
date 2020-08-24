@@ -109,7 +109,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -146,7 +146,7 @@ namespace ExpressBase.Mobile.CustomControls
             catch (Exception ex)
             {
                 labelIcon = Regex.Unescape("\\u" + wrpr.GetDefaultIcon());
-                EbLog.Write("font icon format is invalid." + ex.Message);
+                EbLog.Error("font icon format is invalid." + ex.Message);
             }
             return labelIcon;
         }

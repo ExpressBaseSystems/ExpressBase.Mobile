@@ -41,6 +41,10 @@ namespace ExpressBase.Mobile
 
         public bool ShowLinkIcon { set; get; }
 
+        public bool EnableAlternateRowColoring { set; get; }
+
+        public bool ShowRowSeperator { set; get; }
+
         public EbThickness Margin { set; get; }
 
         public EbThickness Padding { set; get; }
@@ -58,8 +62,6 @@ namespace ExpressBase.Mobile
         public string BackgroundColor { set; get; }
 
         public bool BoxShadow { set; get; }
-
-        public string ShadowColor { set; get; }
 
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
@@ -125,7 +127,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write("EbMobileVisualization.GetData with params---" + ex.Message);
+                EbLog.Error("EbMobileVisualization.GetData with params---" + ex.Message);
             }
             return Data;
         }
@@ -157,8 +159,8 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Write($"Failed to get Live data for '{DataSourceRefId}'");
-                EbLog.Write(ex.Message);
+                EbLog.Error($"Failed to get Live data for '{DataSourceRefId}'");
+                EbLog.Error(ex.Message);
             }
 
             return Data;

@@ -46,7 +46,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return new VisualizationLiveData();
         }
@@ -79,7 +79,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return new VisualizationLiveData();
         }
@@ -106,7 +106,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return resp;
         }
@@ -119,13 +119,13 @@ namespace ExpressBase.Mobile.Services
 
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                byte[] bytes = helper.GetPhoto($"{App.Settings.AppDirectory}/{App.Settings.Sid}/FILES/{filename}");
+                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{App.Settings.Sid}/FILES/{filename}");
                 if (bytes != null)
                     return bytes;
             }
             catch (Exception ex)
             {
-                EbLog.Write("GetLocalFile in Dataservice got some error :: " + ex.Message);
+                EbLog.Error("GetLocalFile in Dataservice got some error :: " + ex.Message);
             }
             return null;
         }

@@ -87,7 +87,7 @@ namespace ExpressBase.Mobile.Views
             if (backButtonCount == 2)
             {
                 backButtonCount = 0;
-                return false;
+                DependencyService.Get<INativeHelper>().Close();
             }
             else
             {
@@ -95,8 +95,9 @@ namespace ExpressBase.Mobile.Views
                 {
                     DependencyService.Get<IToast>().Show("Press again to EXIT!");
                 });
-                return true;
             }
+
+            return true;
         }
     }
 }

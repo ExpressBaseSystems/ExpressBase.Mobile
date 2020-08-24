@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
@@ -35,15 +36,14 @@ namespace ExpressBase.Mobile.Views
                 if (!isRendered)
                 {
                     await viewModel.InitializeAsync();
-                    isRendered = !viewModel.RefreshOnAppearing;
+                    isRendered = true;
                 }
-
                 ToggleStatus();
                 IconedLoader.IsVisible = false;
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
                 IconedLoader.IsVisible = false;
             }
         }
@@ -98,9 +98,14 @@ namespace ExpressBase.Mobile.Views
             catch (Exception ex)
             {
                 toast.Show("Something went wrong. Please try again");
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
                 IconedLoader.IsVisible = false;
             }
+        }
+
+        private void ToggleStatus()
+        {
+            EmptyMessage.IsVisible = viewModel.IsEmpty();
         }
 
         public void ShowLogoutConfirmBox()
@@ -115,19 +120,18 @@ namespace ExpressBase.Mobile.Views
                 Utils.Alert_NoInternet();
                 return;
             }
-
             PushConfirmBox.Show();
         }
 
-        private void ToggleStatus()
+        public void Refreshed()
         {
-            if (viewModel.IsEmpty())
-                EmptyMessage.IsVisible = true;
-            else
-                EmptyMessage.IsVisible = false;
+            EbLog.Message("IRefreshable refresh() not implemented.");
         }
 
-        public void Refreshed() { }
+        public bool CanRefresh()
+        {
+            return viewModel.RefreshOnAppearing;
+        }
 
         public void UpdateRenderStatus()
         {

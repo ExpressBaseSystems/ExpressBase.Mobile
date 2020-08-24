@@ -26,6 +26,8 @@ namespace ExpressBase.Mobile
 
         public MobileVerticalAlign VerticalAlign { set; get; }
 
+        public bool HideInContext { set; get; }
+
         public string GetContent(object value)
         {
             if (!string.IsNullOrEmpty(TextFormat))

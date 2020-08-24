@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile.Views
 
                 string path = $"{App.Settings.AppDirectory}/{sid}/logs.txt";
 
-                if (helper.DirectoryOrFileExist(path, SysContentType.File))
+                if (helper.Exist(path, SysContentType.File))
                 {
                     message.Attachments.Add(new EmailAttachment($"{helper.NativeRoot}/{path}"));
                     await Email.ComposeAsync(message);
@@ -57,12 +57,12 @@ namespace ExpressBase.Mobile.Views
             }
             catch (FeatureNotSupportedException)
             {
-                EbLog.Write("Email is not supported on this device");
+                EbLog.Error("Email is not supported on this device");
             }
             catch (Exception ex)
             {
-                EbLog.Write("Unknown exception while sharing log.txt");
-                EbLog.Write(ex.Message);
+                EbLog.Error("Unknown exception while sharing log.txt");
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -79,8 +79,8 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to clear logs");
-                EbLog.Write(ex.Message);
+                EbLog.Error("Failed to clear logs");
+                EbLog.Error(ex.Message);
             }
         }
     }

@@ -39,7 +39,7 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 this.ShowLinkIcon();
             }
-            this.Content = ContentGrid;
+            this.Content = new StackLayout { Children = { ContentGrid } };
         }
 
         private void SetFrameStyle(EbMobileVisualization viz)
@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
             catch (Exception ex)
             {
-                EbLog.Write("Frame style issue :: " + ex.Message);
+                EbLog.Error("Frame style issue :: " + ex.Message);
             }
         }
 
@@ -104,6 +104,7 @@ namespace ExpressBase.Mobile.CustomControls
             View view = null;
             int rowSpan = 0;
             int colSpan = 0;
+            bool hideInContext = false;
 
             if (ctrl is EbMobileButton button)
             {
@@ -115,12 +116,15 @@ namespace ExpressBase.Mobile.CustomControls
 
                 rowSpan = button.RowSpan;
                 colSpan = button.ColumnSpan;
+                hideInContext = button.HideInContext;
+
                 view = btn;
             }
             else if (ctrl is EbMobileDataColumn dc)
             {
                 rowSpan = dc.RowSpan;
                 colSpan = dc.ColumnSpan;
+                hideInContext = dc.HideInContext;
 
                 object data = this.DataRow[dc.ColumnName];
                 view = ResolveContentType(dc, data);
@@ -128,7 +132,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             if (view != null)
             {
-                //set grid positions
+                view.IsVisible = !IsHeader || !hideInContext;
                 SetGrid(view, cell.RowIndex, cell.ColIndex, rowSpan, colSpan);
             }
         }
@@ -355,7 +359,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
             catch (Exception)
             {
-                EbLog.Write("failed to load image ,getfile api error");
+                EbLog.Error("failed to load image ,getfile api error");
             }
         }
 

@@ -97,7 +97,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch(Exception ex)
             {
-                EbLog.Write("Failed to Render select ::" + ex.Message);
+                EbLog.Error("Failed to Render select ::" + ex.Message);
             }
 
             await Task.Delay(1);
@@ -140,7 +140,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
                 dt = new EbDataTable();
             }
             return dt;
@@ -163,7 +163,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
                 dt = new EbDataTable();
             }
 
@@ -204,7 +204,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
                 dt = new EbDataTable();
             }
             return dt;

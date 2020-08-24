@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -41,7 +40,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public bool RefreshOnAppearing { set; get; }
+        public bool RefreshOnAppearing => App.Settings.CurrentApplication.HasMenuApi();
 
         public Command SyncButtonCommand => new Command(async () => await SyncButtonEvent());
 
@@ -53,12 +52,6 @@ namespace ExpressBase.Mobile.ViewModels
         {
             PageTitle = App.Settings.CurrentApplication?.AppName;
             menuServices = new MenuServices();
-
-            EbMobileSettings settings = App.Settings.CurrentApplication.AppSettings;
-            if(settings != null)
-            {
-                RefreshOnAppearing = !App.Settings.CurrentUser.IsAdmin && settings.HasMenuPreloadApi;
-            }
         }
 
         public override async Task InitializeAsync()
@@ -67,13 +60,13 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 this.ObjectList = await menuServices.GetDataAsync();
                 await menuServices.DeployFormTables(ObjectList);
-                EbLog.Write($"Current Application :'{PageTitle}' with page count of {this.ObjectList.Count}.");
+                EbLog.Error($"Current Application :'{PageTitle}' with page count of {this.ObjectList.Count}.");
                 SolutionLogo = await menuServices.GetLogo(App.Settings.Sid);
                 await HelperFunctions.CreateDirectory("FILES");
             }
             catch (Exception ex)
             {
-                EbLog.Write("Home page initialization data request failed ::" + ex.Message);
+                EbLog.Error("Home page initialization data request failed ::" + ex.Message);
             }
         }
 
@@ -82,12 +75,13 @@ namespace ExpressBase.Mobile.ViewModels
             try
             {
                 this.ObjectList = await menuServices.UpdateDataAsync();
+
                 await menuServices.DeployFormTables(ObjectList);
-                EbLog.Write($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
+                EbLog.Error($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                EbLog.Write("Home page update data request failed ::" + ex.Message);
+                EbLog.Error("Home page update data request failed ::" + ex.Message);
             }
         }
 
@@ -117,7 +111,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to sync::" + ex.Message);
+                EbLog.Error("Failed to sync::" + ex.Message);
             }
         }
 
@@ -143,7 +137,7 @@ namespace ExpressBase.Mobile.ViewModels
             catch (Exception ex)
             {
                 isTapped = false;
-                EbLog.Write("Failed to open page ::" + ex.Message);
+                EbLog.Error("Failed to open page ::" + ex.Message);
             }
         }
 
@@ -167,13 +161,13 @@ namespace ExpressBase.Mobile.ViewModels
                         renderer = new PdfRender(page);
                         break;
                     default:
-                        EbLog.Write("inavlid container type");
+                        EbLog.Error("inavlid container type");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
             return renderer;
         }

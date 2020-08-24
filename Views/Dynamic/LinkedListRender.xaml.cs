@@ -44,6 +44,20 @@ namespace ExpressBase.Mobile.Views.Dynamic
             this.Loader.IsVisible = false;
         }
 
+        protected override bool OnBackButtonPressed()
+        {
+            if (FilterView.IsVisible)
+            {
+                FilterView.IsVisible = false;
+                return true;
+            }
+            else
+            {
+                base.OnBackButtonPressed();
+                return false;
+            }
+        }
+
         private void DrawContextHeader(EbDataRow row, EbMobileVisualization context)
         {
             var header = new DynamicFrame(row, context, true)
@@ -58,8 +72,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void ToggleLinks()
         {
-            if (this.HasSourceLink)
-                SourceDataEdit.IsVisible = true;
+            SourceDataEdit.IsVisible = this.HasSourceLink;
 
             if (this.HasLink && viewModel.Visualization.ShowNewButton)
             {
@@ -74,16 +87,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void ToggleDataLength()
         {
-            if (viewModel.DataCount <= 0)
-            {
-                PagingContainer.IsVisible = false;
-                EmptyMessage.IsVisible = true;
-            }
-            else
-            {
-                PagingContainer.IsVisible = true;
-                EmptyMessage.IsVisible = false;
-            }
+            bool isEmpty = viewModel.DataCount <= 0;
+
+            PagingContainer.IsVisible = !isEmpty;
+            EmptyMessage.IsVisible = isEmpty;
         }
 
         private void FilterButton_Clicked(object sender, EventArgs e)
@@ -126,17 +133,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             catch (Exception ex)
             {
-                EbLog.Write(ex.Message);
+                EbLog.Error(ex.Message);
             }
         }
 
         private void FullScreenButton_Clicked(object sender, EventArgs e)
         {
-            bool flag = HeaderView.IsVisible;
-            if (flag)
-                HeaderView.IsVisible = false;
-            else
-                HeaderView.IsVisible = true;
+            HeaderView.IsVisible = !HeaderView.IsVisible;
         }
 
         public void Refreshed()
@@ -148,6 +151,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
         public void UpdateRenderStatus()
         {
             isRendered = false;
+        }
+
+        public bool CanRefresh()
+        {
+            return true;
         }
     }
 }

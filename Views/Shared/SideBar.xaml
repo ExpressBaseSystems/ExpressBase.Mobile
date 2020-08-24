@@ -164,7 +164,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Label Text="&#xf013;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="Settings" Style="{StaticResource LinkLabel}"/>
+                                <Label Grid.Column="1" Text="Options" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
                         <Frame Style="{StaticResource SideBarFrame}">

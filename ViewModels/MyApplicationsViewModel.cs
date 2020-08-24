@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Write("Failed to switch application :: " + ex.Message);
+                EbLog.Error("Failed to switch application :: " + ex.Message);
             }
         }
 
