@@ -87,9 +87,9 @@ namespace ExpressBase.Mobile.Services
             {
                 IReadOnlyList<Page> stack = App.RootMaster.Detail.Navigation.NavigationStack;
 
-                foreach(var page in stack)
+                foreach (var page in stack)
                 {
-                    if(page is IRefreshable iref && iref.CanRefresh())
+                    if (page is IRefreshable iref && iref.CanRefresh())
                     {
                         iref.UpdateRenderStatus();
                     }
@@ -102,38 +102,45 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
-        public static async Task GetButtonLinkPage(EbMobileVisualization context, EbDataRow row, EbMobilePage page)
+        public static async Task NavigateButtonLinkPage(EbMobileButton button, EbDataRow row, EbMobilePage page)
         {
             ContentPage renderer = null;
-            try
+            var container = page.Container;
+
+            if (container is EbMobileForm)
             {
-                switch (page.Container)
+                if (button.FormMode == WebFormDVModes.New_Mode)
+                    renderer = new FormRender(page, button.LinkFormParameters, row);
+                else
                 {
-                    case EbMobileForm f:
-                        if (context.FormMode == WebFormDVModes.New_Mode)
-                            renderer = new FormRender(page, context, row);
+                    try
+                    {
+                        var map = button.FormId;
+                        if (map == null)
+                        {
+                            EbLog.Message("form id should be set");
+                            throw new Exception("Form rendering exited! due to null value for 'FormId'");
+                        }
                         else
                         {
-                            int id = Convert.ToInt32(row["id"]);
-                            if (id <= 0) throw new Exception("id has ivalid value" + id);
+                            int id = Convert.ToInt32(row[map.ColumnName]);
+                            if (id <= 0)
+                            {
+                                EbLog.Message("id has ivalid value" + id);
+                                throw new Exception("Form rendering exited! due to invalid id");
+                            }
                             renderer = new FormRender(page, id);
                         }
-                        break;
-                    case EbMobileVisualization v:
-                        renderer = new LinkedListRender(page, context, row);
-                        break;
-                    case EbMobileDashBoard d:
-                        renderer = new DashBoardRender(page, row);
-                        break;
-                    default:
-                        EbLog.Message("inavlid container type");
-                        break;
+                    }
+                    catch(Exception ex)
+                    {
+                        EbLog.Error(ex.Message);
+                    }
                 }
             }
-            catch (Exception ex)
+            else if(container is EbMobileVisualization)
             {
-                EbLog.Error("Button navigation failed");
-                EbLog.Error(ex.Message);
+                renderer = new ListRender(page, row);
             }
 
             if (renderer != null)

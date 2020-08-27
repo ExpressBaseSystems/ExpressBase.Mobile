@@ -1,11 +1,13 @@
 ﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Structures;
-using System;
+using ExpressBase.Mobile.Enums;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ExpressBase.Mobile
 {
+    /*
+     Namespace containing interfaces eb mobile page objects
+     */
+
     public interface INonPersistControl { }
 
     public interface ILinesEnabled
@@ -23,30 +25,34 @@ namespace ExpressBase.Mobile
 
     public interface ILayoutControl { }
 
-    public interface IMobileDataPart
-    {
-        int TableIndex { get; set; }
-
-        int ColumnIndex { get; set; }
-
-        string ColumnName { get; set; }
-
-        EbDbTypes Type { get; set; }
-    }
-
-    public interface IMobileUIStyles
-    {
-        string BackgroundColor { set; get; }
-
-        int BorderThickness { set; get; }
-
-        string BorderColor { set; get; }
-
-        int BorderRadius { set; get; }
-    }
-
     public interface IMobileLink
     {
         string LinkRefId { set; get; }
+
+        WebFormDVModes FormMode { set; get; }
+
+        List<EbMobileDataColToControlMap> LinkFormParameters { get; set; }
+    }
+
+    /// <summary>
+    /// Interface for Vertical and Horrizontal alignment
+    /// only using in mobile platform
+    /// </summary>
+    public interface IMobileAlignment
+    {
+        public MobileHorrizontalAlign HorrizontalAlign { set; get; }
+
+        public MobileVerticalAlign VerticalAlign { set; get; }
+    }
+
+    /// <summary>
+    /// Interface for setting span on grid in listview (dynamic frame)
+    /// only using in mobile platform
+    /// </summary>
+    public interface IGridSpan
+    {
+        int RowSpan { set; get; }
+
+        int ColumnSpan { set; get; }
     }
 }

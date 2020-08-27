@@ -1,8 +1,7 @@
 ﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
+using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -14,6 +13,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
         private bool isRendered;
 
         private readonly FormRenderViewModel viewModel;
+
+        #region constructor @overloads
 
         //new mode
         public FormRender(EbMobilePage page)
@@ -33,11 +34,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EditButton.IsVisible = true;
         }
 
-        //prefill mode
-        public FormRender(EbMobilePage page, EbMobileVisualization context, EbDataRow contextRow)
+        //prefill/new mode 
+        public FormRender(EbMobilePage page, List<EbMobileDataColToControlMap> linkMap, EbDataRow contextRow)
         {
             InitializeComponent();
-            BindingContext = viewModel = new FormRenderViewModel(page, context, contextRow);
+            BindingContext = viewModel = new FormRenderViewModel(page, linkMap, contextRow);
         }
 
         //reference mode
@@ -46,6 +47,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             BindingContext = viewModel = new FormRenderViewModel(page, context, contextRow, unused);
         }
+
+        #endregion
 
         protected override async void OnAppearing()
         {

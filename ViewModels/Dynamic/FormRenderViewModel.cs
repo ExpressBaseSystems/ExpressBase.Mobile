@@ -33,7 +33,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private readonly EbMobileVisualization context;
 
+        private List<EbMobileDataColToControlMap> linkFormParameters;
+
         public Command SaveCommand => new Command(async () => await FormSubmitClicked());
+
+        #region constructor @overloads
 
         //new mode
         public FormRenderViewModel(EbMobilePage page) : base(page)
@@ -54,13 +58,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             InitializeService();
         }
 
-        //prefill mode
-        public FormRenderViewModel(EbMobilePage page, EbMobileVisualization source, EbDataRow contextrow) : base(page)
+        //prefill/new mode
+        public FormRenderViewModel(EbMobilePage page, List<EbMobileDataColToControlMap> linkMap, EbDataRow contextrow) : base(page)
         {
             this.Mode = FormMode.PREFILL;
             this.Form = (EbMobileForm)page.Container;
 
-            context = source;
+            linkFormParameters = linkMap;
             contextRow = contextrow;
 
             InitializeService();
@@ -77,6 +81,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             InitializeService();
         }
+
+        #endregion
 
         private void InitializeService()
         {
@@ -229,15 +235,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     fup.Files.AddRange(this.filesOnEdit[ctrl.Name]);
                 }
             }
-
             ctrl.SetValue(fup);
         }
 
         private void SetDataForPrefill()
         {
-            if (context.LinkFormParameters == null) return;
+            if (this.linkFormParameters == null) return;
 
-            foreach (EbMobileDataColToControlMap map in context.LinkFormParameters)
+            foreach (EbMobileDataColToControlMap map in this.linkFormParameters)
             {
                 object value = contextRow[map.ColumnName];
 

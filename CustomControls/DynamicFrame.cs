@@ -20,22 +20,20 @@ namespace ExpressBase.Mobile.CustomControls
 
         protected Grid ContentGrid { set; get; }
 
-        private readonly EbMobileVisualization context;
-
         public DynamicFrame() { }
 
-        public DynamicFrame(EbDataRow row, EbMobileVisualization visualization, bool isHeader = false)
+        public DynamicFrame(EbDataRow row, EbMobileVisualization viz, bool isHeader = false)
         {
             this.IsHeader = isHeader;
             this.DataRow = row;
-            this.context = visualization;
 
-            this.SetFrameStyle(visualization);
+            this.SetFrameStyle(viz);
 
-            this.CreateGrid(visualization.DataLayout.CellCollection, visualization.DataLayout.RowCount, visualization.DataLayout.ColumCount);
-            this.FillData(visualization.DataLayout.CellCollection);
+            this.CreateGrid(viz.DataLayout.CellCollection, viz.DataLayout.RowCount, viz.DataLayout.ColumCount);
+            this.SetGridSpacing(viz.RowSpacing, viz.ColumnSpacing);
+            this.FillData(viz.DataLayout.CellCollection);
 
-            if (visualization.ShowLinkIcon && !isHeader)
+            if (viz.ShowLinkIcon && !isHeader)
             {
                 this.ShowLinkIcon();
             }
@@ -52,20 +50,20 @@ namespace ExpressBase.Mobile.CustomControls
                 this.Padding = new Thickness(pd.Left, pd.Top, pd.Right, pd.Bottom);
                 this.Margin = new Thickness(mr.Left, mr.Top, mr.Right, mr.Bottom);
             }
-
             try
             {
-                if (viz.Style == RenderStyle.Tile)
+                this.BackgroundColor = Color.FromHex(viz.BackgroundColor ?? "#ffffff");
+                this.CornerRadius = viz.BorderRadius;
+                if (!IsHeader)
                 {
-                    this.BackgroundColor = Color.FromHex(viz.BackgroundColor ?? "#ffffff");
                     this.BorderColor = Color.FromHex(viz.BorderColor ?? "#ffffff");
-                    this.CornerRadius = viz.BorderRadius;
                     this.HasShadow = viz.BoxShadow;
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Error("Frame style issue :: " + ex.Message);
+                EbLog.Message("Frame style issue");
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -85,6 +83,12 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
+        private void SetGridSpacing(int rowspace, int colspace)
+        {
+            ContentGrid.RowSpacing = rowspace;
+            ContentGrid.ColumnSpacing = colspace;
+        }
+
         private void FillData(List<EbMobileTableCell> CellCollection)
         {
             foreach (EbMobileTableCell cell in CellCollection)
@@ -92,54 +96,53 @@ namespace ExpressBase.Mobile.CustomControls
                 if (cell.IsEmpty())
                     continue;
 
-                foreach (var ctrl in cell.ControlCollection)
+                foreach (EbMobileControl ctrl in cell.ControlCollection)
                 {
-                    this.ResolveControlType(ctrl, cell);
+                    try
+                    {
+                        View view = this.ResolveControlType(ctrl);
+
+                        if (view != null)
+                        {
+                            IMobileAlignment algn = (ctrl as IMobileAlignment);
+                            SetHorrizontalAlign(algn.HorrizontalAlign, view);
+                            SetVerticalAlign(algn.VerticalAlign, view);
+
+                            IGridSpan span = (ctrl as IGridSpan);
+                            SetGrid(view, cell.RowIndex, cell.ColIndex, span.RowSpan, span.ColumnSpan);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EbLog.Message("Failed to resolve grid content type in dynamic frame");
+                        EbLog.Error(ex.Message);
+                    }
                 }
             }
         }
 
-        private void ResolveControlType(EbMobileControl ctrl, EbMobileTableCell cell)
+        private View ResolveControlType(EbMobileControl ctrl)
         {
             View view = null;
-            int rowSpan = 0;
-            int colSpan = 0;
-            bool hideInContext = false;
 
             if (ctrl is EbMobileButton button)
             {
+                if (button.HideInContext && IsHeader)
+                    return null;
+
                 var btn = button.CreateView();
-                btn.Clicked += async (sender, args) => await ButtonControlClick(button.LinkRefId);
-
-                SetHorrizontalAlign(button.HorrizontalAlign, btn);
-                SetVerticalAlign(button.VerticalAlign, btn);
-
-                rowSpan = button.RowSpan;
-                colSpan = button.ColumnSpan;
-                hideInContext = button.HideInContext;
-
+                btn.Clicked += async (sender, args) => await ButtonControlClick(button);
                 view = btn;
             }
             else if (ctrl is EbMobileDataColumn dc)
             {
-                rowSpan = dc.RowSpan;
-                colSpan = dc.ColumnSpan;
-                hideInContext = dc.HideInContext;
+                if (dc.HideInContext && IsHeader)
+                    return null;
 
                 object data = this.DataRow[dc.ColumnName];
-                view = ResolveContentType(dc, data);
+                view = this.ResolveContentType(dc, data);
             }
-
-            if (view != null)
-            {
-                view.IsVisible = !IsHeader || !hideInContext;
-                SetGrid(view, cell.RowIndex, cell.ColIndex, rowSpan, colSpan);
-            }
-        }
-
-        private void Btn_Clicked(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
+            return view;
         }
 
         private void SetGrid(View view, int row, int col, int rowspan, int colspan)
@@ -181,9 +184,6 @@ namespace ExpressBase.Mobile.CustomControls
         protected void ApplyLabelStyle(Label label, EbMobileDataColumn dc)
         {
             EbFont font = dc.Font;
-
-            SetHorrizontalAlign(dc.HorrizontalAlign, label);
-            SetVerticalAlign(dc.VerticalAlign, label);
 
             if (font != null)
             {
@@ -237,66 +237,46 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private void SetHorrizontalAlign(MobileHorrizontalAlign align, View label)
+        private void SetHorrizontalAlign(MobileHorrizontalAlign align, View view)
         {
             switch (align)
             {
                 case MobileHorrizontalAlign.Center:
-                    label.HorizontalOptions = LayoutOptions.Center;
+                    view.HorizontalOptions = LayoutOptions.Center;
                     break;
                 case MobileHorrizontalAlign.Right:
-                    label.HorizontalOptions = LayoutOptions.End;
+                    view.HorizontalOptions = LayoutOptions.End;
                     break;
                 case MobileHorrizontalAlign.Left:
-                    label.HorizontalOptions = LayoutOptions.Start;
+                    view.HorizontalOptions = LayoutOptions.Start;
                     break;
                 case MobileHorrizontalAlign.Fill:
-                    label.HorizontalOptions = LayoutOptions.FillAndExpand;
+                    view.HorizontalOptions = LayoutOptions.FillAndExpand;
                     break;
                 default:
                     break;
             }
         }
 
-        private void SetVerticalAlign(MobileVerticalAlign align, View label)
+        private void SetVerticalAlign(MobileVerticalAlign align, View view)
         {
             switch (align)
             {
                 case MobileVerticalAlign.Center:
-                    label.VerticalOptions = LayoutOptions.Center;
+                    view.VerticalOptions = LayoutOptions.Center;
                     break;
                 case MobileVerticalAlign.Bottom:
-                    label.VerticalOptions = LayoutOptions.End;
+                    view.VerticalOptions = LayoutOptions.End;
                     break;
                 case MobileVerticalAlign.Top:
-                    label.VerticalOptions = LayoutOptions.Start;
+                    view.VerticalOptions = LayoutOptions.Start;
                     break;
                 case MobileVerticalAlign.Fill:
-                    label.VerticalOptions = LayoutOptions.FillAndExpand;
+                    view.VerticalOptions = LayoutOptions.FillAndExpand;
                     break;
                 default:
                     break;
             }
-        }
-
-        public void ShowSyncFlag(ColumnColletion columns)
-        {
-            EbDataColumn col = columns.Find(item => item.ColumnName == "eb_synced");
-            if (col == null)
-                return;
-
-            int synced = Convert.ToInt32(DataRow["eb_synced"]);
-
-            Label lbl = new Label
-            {
-                Style = (Style)HelperFunctions.GetResourceValue("ListViewSyncFlagStyle"),
-                TextColor = (synced == 0) ? Color.FromHex("ff5f5f") : Color.Green,
-                Text = (synced == 0) ? "\uf06a" : "\uf058",
-            };
-
-            int colLength = ContentGrid.ColumnDefinitions.Count;
-
-            ContentGrid.Children.Add(lbl, colLength - 1, 0);
         }
 
         private void ShowLinkIcon()
@@ -411,15 +391,15 @@ namespace ExpressBase.Mobile.CustomControls
             return label;
         }
 
-        public async Task ButtonControlClick(string linkRefId)
+        public async Task ButtonControlClick(EbMobileButton button)
         {
-            if (string.IsNullOrEmpty(linkRefId))
+            if (string.IsNullOrEmpty(button.LinkRefId))
                 return;
 
-            EbMobilePage page = HelperFunctions.GetPage(linkRefId);
+            EbMobilePage page = HelperFunctions.GetPage(button.LinkRefId);
             if (page != null)
             {
-                await NavigationService.GetButtonLinkPage(context, this.DataRow, page);
+                await NavigationService.NavigateButtonLinkPage(button, this.DataRow, page);
             }
         }
     }

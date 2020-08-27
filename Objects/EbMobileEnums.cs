@@ -4,12 +4,6 @@ using System.Text;
 
 namespace ExpressBase.Mobile
 {
-    public enum RenderStyle
-    {
-        Flat = 1,
-        Tile = 2
-    }
-
     public enum NetworkMode
     {
         Online,

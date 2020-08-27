@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile.CustomControls
                     li.GestureRecognizers.Add(tapGesture);
                 }
 
-                if (Visualization.Style == RenderStyle.Flat && Visualization.EnableAlternateRowColoring)
+                if (Visualization.EnableAlternateRowColoring)
                 {
                     this.SetBackGroundColor(ItemIndex.Value, li);
                     ItemIndex.Increment();
@@ -66,12 +66,18 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
+        private bool isTapped = false;
+
         private void TapGesture_Tapped(object sender, EventArgs e)
         {
+            if (isTapped)
+                return;
+
             if (ItemSelected != null && ItemSelected.CanExecute(sender))
             {
                 ItemSelected.Execute(sender);
             }
+            isTapped = false;
         }
 
         public void SetBackGroundColor(int index, DynamicFrame frame)

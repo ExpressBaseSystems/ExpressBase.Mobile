@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public RowColletion DataRows
         {
-            get { return datarows; }
+            get => datarows;
             set
             {
                 datarows = value;
@@ -42,9 +42,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<EbMobileControl> FilterControls { set; get; }
 
-        public SeparatorVisibility ShowRowSeperator { set; get; }
+        public SeparatorVisibility ShowRowSeperator => Visualization.ShowRowSeperator ? SeparatorVisibility.Default : SeparatorVisibility.None;
 
         public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
+
+        #region commands
 
         public Command AddCommand => new Command(async () => await AddButtonClicked());
 
@@ -55,6 +57,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public Command ItemTappedCommand => new Command(async (o) => await ListItemTapped(o));
 
         public Command ApplyFilterCommand => new Command(async (o) => await ApplyFilterClicked(o));
+
+        #endregion
 
         private readonly EbDataRow sourceRecord;
 
@@ -71,63 +75,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
             this.FilterControls = this.Visualization.FilterControls;
-
-            ShowRowSeperator = Visualization.ShowRowSeperator ? SeparatorVisibility.Default : SeparatorVisibility.None;
         }
 
         public override async Task InitializeAsync()
         {
-            this.SetContextParams();
+            contextParams = this.Visualization.GetContextParams(sourceRecord, this.NetworkType);
             await SetDataAsync();
-        }
-
-        private void SetContextParams()
-        {
-            EbDataRow dataRow = sourceRecord;
-            contextParams = new List<DbParameter>();
-
-            try
-            {
-                if (this.NetworkType == NetworkMode.Online)
-                {
-                    foreach (Param param in this.Visualization.DataSourceParams)
-                    {
-                        object data = dataRow[param.Name];
-
-                        if (data != null)
-                        {
-                            contextParams.Add(new DbParameter
-                            {
-                                ParameterName = param.Name,
-                                DbType = Convert.ToInt32(param.Type),
-                                Value = data
-                            });
-                        }
-                    }
-                }
-                else
-                {
-                    string sql = HelperFunctions.B64ToString(this.Visualization.OfflineQuery.Code);
-                    List<string> _parameters = HelperFunctions.GetSqlParams(sql);
-
-                    foreach (string param in _parameters)
-                    {
-                        object data = dataRow[param];
-                        if (data != null)
-                        {
-                            contextParams.Add(new DbParameter
-                            {
-                                ParameterName = param,
-                                Value = data
-                            });
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error(ex.Message);
-            }
         }
 
         public async Task SetDataAsync()
@@ -141,6 +94,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
 
                 EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, this.Offset, this.contextParams);
+
                 if (ds != null && ds.Tables.HasLength(2))
                 {
                     DataRows = ds.Tables[1].Rows;
@@ -172,7 +126,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     ContentPage renderer = this.GetPageByContainer(dyFrame.DataRow, page);
 
                     if (renderer != null)
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+                        await App.RootMaster.Detail.Navigation.PushAsync(renderer);
                 }
             }
             catch (Exception ex)
@@ -215,13 +169,27 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 switch (page.Container)
                 {
                     case EbMobileForm f:
+
                         if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
-                            renderer = new FormRender(page, Visualization, row);
+                            renderer = new FormRender(page, Visualization.LinkFormParameters, row);
                         else
                         {
-                            int id = Convert.ToInt32(row["id"]);
-                            if (id <= 0) throw new Exception("id has ivalid value" + id);
-                            renderer = new FormRender(page, id);
+                            var map = Visualization.FormId;
+                            if (map == null)
+                            {
+                                EbLog.Message("form id should be set");
+                                throw new Exception("Form rendering exited! due to null value for 'FormId'");
+                            }
+                            else
+                            {
+                                int id = Convert.ToInt32(row[map.ColumnName]);
+                                if (id <= 0)
+                                {
+                                    EbLog.Message("id has ivalid value" + id);
+                                    throw new Exception("Form rendering exited! due to invalid id");
+                                }
+                                renderer = new FormRender(page, id);
+                            }
                         }
                         break;
                     case EbMobileVisualization v:
@@ -250,7 +218,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 List<SortColumn> sort = this.SortColumns.FindAll(item => item.Selected);
 
-                var temp = filterParams == null ? contextParams : contextParams.Union(filterParams).OrderBy(x => x.ParameterName).ToList();
+                var temp = filterParams == null ? contextParams : contextParams.Union(filterParams).ToList();
+
+                temp?.OrderBy(x => x.ParameterName);
 
                 EbDataSet ds = await this.Visualization.GetData(this.NetworkType, Offset, temp, sort);
 

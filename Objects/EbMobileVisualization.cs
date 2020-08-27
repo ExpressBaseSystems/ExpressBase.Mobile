@@ -13,6 +13,8 @@ namespace ExpressBase.Mobile
 {
     public class EbMobileVisualization : EbMobileContainer
     {
+        #region Properties
+
         public string DataSourceRefId { set; get; }
 
         public string SourceFormRefId { set; get; }
@@ -22,6 +24,8 @@ namespace ExpressBase.Mobile
         public int PageLength { set; get; } = 30;
 
         public WebFormDVModes FormMode { set; get; }
+
+        public EbMobileDataColToControlMap FormId { set; get; }
 
         public EbScript OfflineQuery { set; get; }
 
@@ -53,8 +57,6 @@ namespace ExpressBase.Mobile
 
         public int ColumnSpacing { set; get; }
 
-        public RenderStyle Style { set; get; } = RenderStyle.Flat;
-
         public int BorderRadius { set; get; }
 
         public string BorderColor { set; get; }
@@ -62,6 +64,8 @@ namespace ExpressBase.Mobile
         public string BackgroundColor { set; get; }
 
         public bool BoxShadow { set; get; }
+
+        #endregion
 
         //mobile property
         public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
@@ -74,6 +78,8 @@ namespace ExpressBase.Mobile
             SortColumns = new List<EbMobileDataColumn>();
             LinkFormParameters = new List<EbMobileDataColToControlMap>();
         }
+
+        #region Methods
 
         public bool HasLink()
         {
@@ -91,13 +97,9 @@ namespace ExpressBase.Mobile
             {
                 return await this.GetLiveData(parameters, sortOrder, offset);
             }
-            else if (networkType == NetworkMode.Offline)
-            {
-                return this.GetLocalData(parameters, sortOrder, offset);
-            }
             else
             {
-                return null;
+                return this.GetLocalData(parameters, sortOrder, offset);
             }
         }
 
@@ -127,7 +129,8 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Error("EbMobileVisualization.GetData with params---" + ex.Message);
+                EbLog.Error("Failed to get local data");
+                EbLog.Error(ex.Message);
             }
             return Data;
         }
@@ -142,12 +145,12 @@ namespace ExpressBase.Mobile
 
             if (App.Settings.CurrentLocation != null)
             {
-                //dbParameters.Add(new DbParameter
-                //{
-                //    ParameterName = "eb_loc_id",
-                //    DbType = 11,
-                //    Value = App.Settings.CurrentLocation.LocId
-                //});
+                dbParameters.Add(new DbParameter
+                {
+                    ParameterName = "eb_loc_id",
+                    DbType = 11,
+                    Value = App.Settings.CurrentLocation.LocId
+                });
             }
 
             List<Param> paramsArray = dbParameters.ToParams();
@@ -159,11 +162,69 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Error($"Failed to get Live data for '{DataSourceRefId}'");
+                EbLog.Message($"Failed to get Live data for '{DataSourceRefId}'");
                 EbLog.Error(ex.Message);
             }
 
             return Data;
         }
+
+        public List<DbParameter> GetContextParams(EbDataRow row, NetworkMode network)
+        {
+            return network == NetworkMode.Online ? this.GetParamLive(row) : this.GetParamLocal(row);
+        }
+
+        private List<DbParameter> GetParamLocal(EbDataRow row)
+        {
+            var parameters = new List<DbParameter>();
+            try
+            {
+                string sql = HelperFunctions.B64ToString(this.OfflineQuery.Code);
+                List<string> _parameters = HelperFunctions.GetSqlParams(sql);
+
+                foreach (string param in _parameters)
+                {
+                    object data = row[param];
+
+                    if (data != null)
+                    {
+                        parameters.Add(new DbParameter
+                        {
+                            ParameterName = param,
+                            Value = data
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Message("Visualization get parameters from local error");
+                EbLog.Error(ex.Message);
+            }
+            return parameters;
+        }
+
+        private List<DbParameter> GetParamLive(EbDataRow row)
+        {
+            var parameters = new List<DbParameter>();
+
+            foreach (Param param in this.DataSourceParams)
+            {
+                object data = row[param.Name];
+
+                if (data != null)
+                {
+                    parameters.Add(new DbParameter
+                    {
+                        ParameterName = param.Name,
+                        DbType = Convert.ToInt32(param.Type),
+                        Value = data
+                    });
+                }
+            }
+            return parameters;
+        }
+
+        #endregion
     }
 }

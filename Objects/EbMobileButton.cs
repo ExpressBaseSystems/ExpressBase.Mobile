@@ -1,14 +1,21 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileButton : EbMobileControl, IMobileUIStyles, IMobileLink, INonPersistControl
+    public class EbMobileButton : EbMobileControl, INonPersistControl, IMobileLink, IMobileAlignment, IGridSpan
     {
         public string LinkRefId { get; set; }
+
+        public WebFormDVModes FormMode { set; get; }
+
+        public EbMobileDataColToControlMap FormId { set; get; }
+
+        public List<EbMobileDataColToControlMap> LinkFormParameters { get; set; }
 
         public string Text { set; get; }
 
@@ -24,13 +31,13 @@ namespace ExpressBase.Mobile
 
         public int ColumnSpan { set; get; }
 
-        public string BackgroundColor { get; set; }
-
         public int BorderThickness { get; set; }
+
+        public int BorderRadius { get; set; }
 
         public string BorderColor { get; set; }
 
-        public int BorderRadius { get; set; }
+        public string BackgroundColor { get; set; }
 
         public MobileHorrizontalAlign HorrizontalAlign { set; get; }
 

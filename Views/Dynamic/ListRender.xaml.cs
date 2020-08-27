@@ -4,6 +4,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
@@ -22,6 +23,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             InitializeComponent();
             BindingContext = viewModel = new ListViewModel(Page);
+            this.Loader.IsVisible = true;
+        }
+
+        public ListRender(EbMobilePage Page, EbDataRow row)
+        {
+            InitializeComponent();
+            BindingContext = viewModel = new ListViewModel(Page, row);
             this.Loader.IsVisible = true;
         }
 

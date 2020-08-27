@@ -51,7 +51,7 @@ namespace ExpressBase.Mobile
 
         public virtual void InitXControl(FormMode mode, NetworkMode network)
         {
-            this.FormMode = mode;
+            this.FormRenderMode = mode;
             this.NetworkType = network;
         }
 
@@ -77,7 +77,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public FormMode FormMode { set; get; }
+        public FormMode FormRenderMode { set; get; }
 
         public NetworkMode NetworkType { set; get; }
 

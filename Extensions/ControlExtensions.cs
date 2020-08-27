@@ -16,35 +16,30 @@ namespace ExpressBase.Mobile.Extensions
         {
             try
             {
-                if (!string.IsNullOrEmpty(sourceForm.AutoGenMVRefid))
+                var autogenvis = HelperFunctions.GetPage(sourceForm.AutoGenMVRefid);
+
+                if (autogenvis != null)
                 {
-                    var autogenvis = HelperFunctions.GetPage(sourceForm.AutoGenMVRefid);
+                    string linkref = (autogenvis.Container as EbMobileVisualization).LinkRefId;
 
-                    if (autogenvis != null)
+                    if (!string.IsNullOrEmpty(linkref))
                     {
-                        string linkref = (autogenvis.Container as EbMobileVisualization).LinkRefId;
+                        var linkpage = HelperFunctions.GetPage(linkref);
 
-                        if (!string.IsNullOrEmpty(linkref))
+                        if (linkpage != null && linkpage.Container is EbMobileVisualization viz)
                         {
-                            var linkpage = HelperFunctions.GetPage(linkref);
+                            var innerlink = HelperFunctions.GetPage(viz.LinkRefId);
 
-                            if (linkpage != null && linkpage.Container is EbMobileVisualization)
-                            {
-                                if (!string.IsNullOrEmpty((linkpage.Container as EbMobileVisualization).LinkRefId))
-                                {
-                                    var innerlink = HelperFunctions.GetPage((linkpage.Container as EbMobileVisualization).LinkRefId);
-
-                                    if (innerlink != null && innerlink.Container is EbMobileForm)
-                                        return (innerlink.Container as EbMobileForm);
-                                }
-                            }
+                            if (innerlink != null && innerlink.Container is EbMobileForm mf)
+                                return mf;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                EbLog.Message("Failed to resolve form dependencies");
+                EbLog.Error(ex.Message);
             }
             return null;
         }
@@ -83,7 +78,7 @@ namespace ExpressBase.Mobile.Extensions
             }
             catch (Exception ex)
             {
-                EbLog.Error(ex.Message);
+                EbLog.Message("WebformData to dataset operation failed");
                 EbLog.Error(ex.StackTrace);
             }
             return ds;
@@ -91,7 +86,6 @@ namespace ExpressBase.Mobile.Extensions
 
         public static Dictionary<string, List<FileMetaInfo>> ToFilesMeta(this WebformData data)
         {
-            //<control name,file collection>
             Dictionary<string, List<FileMetaInfo>> files = new Dictionary<string, List<FileMetaInfo>>();
             try
             {

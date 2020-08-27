@@ -16,6 +16,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class ListViewModel : DynamicBaseViewModel
     {
+        #region properties
+
         public int Offset { set; get; }
 
         public int DataCount { set; get; }
@@ -32,8 +34,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private List<DbParameter> parameters;
-
         public List<SortColumn> SortColumns { set; get; }
 
         public EbMobileVisualization Visualization { set; get; }
@@ -42,9 +42,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<EbMobileControl> FilterControls { set; get; }
 
-        public SeparatorVisibility ShowRowSeperator { set; get; }
+        public SeparatorVisibility ShowRowSeperator => Visualization.ShowRowSeperator ? SeparatorVisibility.Default : SeparatorVisibility.None;
 
         public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
+
+        #endregion
+
+        #region commands
 
         public Command ItemTappedCommand => new Command(async (o) => await ListItemTapped(o));
 
@@ -54,6 +58,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command RefreshListCommand => new Command(async () => await RefreshDataAsync());
 
+        #endregion 
+
+        private readonly EbDataRow sourceRecord;
+
+        private List<DbParameter> contextParams;
+
+        private List<DbParameter> filterParams;
+
+        #region constructor @overloads
+
         public ListViewModel(EbMobilePage page) : base(page)
         {
             this.Visualization = (EbMobileVisualization)this.Page.Container;
@@ -61,12 +75,28 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
             this.FilterControls = this.Visualization.FilterControls;
-
-            ShowRowSeperator = Visualization.ShowRowSeperator ? SeparatorVisibility.Default : SeparatorVisibility.None;
         }
+
+        public ListViewModel(EbMobilePage page, EbDataRow row) : base(page)
+        {
+            this.Visualization = (EbMobileVisualization)this.Page.Container;
+            sourceRecord = row;
+            this.ListItemIndex = new IntRef();
+
+            this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
+            this.FilterControls = this.Visualization.FilterControls;
+        }
+
+        #endregion
+
+        #region methods
 
         public override async Task InitializeAsync()
         {
+            if (sourceRecord != null)
+            {
+                contextParams = this.Visualization.GetContextParams(sourceRecord, this.NetworkType);
+            }
             await this.SetDataAsync();
         }
 
@@ -80,7 +110,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     throw new Exception("no internet");
                 }
 
-                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, this.Offset);
+                EbDataSet ds = await this.Visualization.GetData(this.Page.NetworkMode, this.Offset, contextParams);
                 if (ds != null && ds.Tables.HasLength(2))
                 {
                     DataRows = ds.Tables[1].Rows;
@@ -102,7 +132,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             if (page != null && page.Container is EbMobileForm)
             {
                 FormRender Renderer = new FormRender(page);
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                await App.RootMaster.Detail.Navigation.PushAsync(Renderer);
             }
         }
 
@@ -123,7 +153,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     ContentPage renderer = this.GetPageByContainer(customFrame.DataRow, page);
 
                     if (renderer != null)
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+                        await App.RootMaster.Detail.Navigation.PushAsync(renderer);
                 }
             }
             catch (Exception ex)
@@ -142,12 +172,25 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     case EbMobileForm f:
 
                         if (this.Visualization.FormMode == WebFormDVModes.New_Mode)
-                            renderer = new FormRender(page, Visualization, row);
+                            renderer = new FormRender(page, Visualization.LinkFormParameters, row);
                         else
                         {
-                            int id = Convert.ToInt32(row["id"]);
-                            if (id <= 0) throw new Exception("id has ivalid value" + id);
-                            renderer = new FormRender(page, id);
+                            var map = Visualization.FormId;
+                            if (map == null)
+                            {
+                                EbLog.Message("form id should be set");
+                                throw new Exception("Form rendering exited! due to null value for 'FormId'");
+                            }
+                            else
+                            {
+                                int id = Convert.ToInt32(row[map.ColumnName]);
+                                if (id <= 0)
+                                {
+                                    EbLog.Message("id has ivalid value" + id);
+                                    throw new Exception("Form rendering exited! due to invalid id");
+                                }
+                                renderer = new FormRender(page, id);
+                            }
                         }
                         break;
                     case EbMobileVisualization v:
@@ -176,7 +219,18 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 List<SortColumn> sort = this.SortColumns.FindAll(item => item.Selected);
 
-                EbDataSet ds = await this.Visualization.GetData(this.NetworkType, Offset, parameters, sort);
+                List<DbParameter> temp = null;
+
+                if (contextParams != null)
+                {
+                    temp = filterParams == null ? contextParams : contextParams.Union(filterParams).ToList();
+                }
+                else
+                    temp = filterParams;
+
+                temp?.OrderBy(x => x.ParameterName);
+
+                EbDataSet ds = await this.Visualization.GetData(this.NetworkType, Offset, temp, sort);
 
                 if (ds != null && ds.Tables.HasLength(2))
                 {
@@ -196,8 +250,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private async Task ApplyFilterClicked(object filters)
         {
-            parameters = (List<DbParameter>)filters;
+            filterParams = (List<DbParameter>)filters;
             await RefreshDataAsync();
         }
+
+        #endregion
     }
 }

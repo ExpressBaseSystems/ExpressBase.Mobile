@@ -2,10 +2,8 @@
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileDataColumn : EbMobileControl, INonPersistControl, IMobileDataPart
+    public class EbMobileDataColumn : EbMobileControl, INonPersistControl, IMobileAlignment, IGridSpan
     {
-        public int TableIndex { get; set; }
-
         public int ColumnIndex { get; set; }
 
         public string ColumnName { get; set; }
@@ -13,6 +11,8 @@ namespace ExpressBase.Mobile
         public EbDbTypes Type { get; set; }
 
         public DataColumnRenderType RenderAs { set; get; }
+
+        public int BorderRadius { get; set; }
 
         public string TextFormat { get; set; }
 

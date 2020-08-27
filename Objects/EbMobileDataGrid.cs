@@ -8,7 +8,6 @@ using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -24,8 +23,6 @@ namespace ExpressBase.Mobile
         public string DataSourceRefId { set; get; }
 
         public EbScript OfflineQuery { set; get; }
-
-        public FormMode FormRenderMode { set; get; }
 
         //mobile props
         private Frame container;
@@ -60,7 +57,6 @@ namespace ExpressBase.Mobile
         {
             base.InitXControl(mode, network);
 
-            this.FormRenderMode = mode;
             try
             {
                 container = new Frame
