@@ -4,6 +4,10 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Configuration
 {
+    /// <summary>
+    /// EbMobile Application Build Vendor Settings
+    /// Contains all the settings of curresponding Vendor Type
+    /// </summary>
     public class AppVendor
     {
         public AppBuildType BuildType { set; get; }
@@ -38,6 +42,10 @@ namespace ExpressBase.Mobile.Configuration
         }
     }
 
+    /// <summary>
+    /// vendor specific content management
+    /// Properties are name of pages
+    /// </summary>
     public class AppContent
     {
         public Dictionary<string, string> NewSolution { set; get; }

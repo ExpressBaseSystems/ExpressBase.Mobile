@@ -1,12 +1,13 @@
 ﻿using ExpressBase.Mobile.CustomControls;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Behavior
 {
+    /// <summary>
+    /// NewSolution page textbox behavior
+    /// Contains solutionurl validation
+    /// </summary>
     public class SolutioUrlBehavior : Behavior<TextBox>
     {
         protected override void OnAttachedTo(TextBox numeric)
@@ -21,6 +22,12 @@ namespace ExpressBase.Mobile.Behavior
             base.OnDetachingFrom(numeric);
         }
 
+        /// <summary>
+        /// Inherited method
+        /// Removing whitespace on textbox change
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private static void OnEntryTextChanged(object sender, TextChangedEventArgs args)
         {
             if (!string.IsNullOrWhiteSpace(args.NewTextValue))

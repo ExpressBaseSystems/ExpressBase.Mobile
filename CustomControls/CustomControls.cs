@@ -6,8 +6,15 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
+
+    /// <summary>
+    /// Dynamic content I
+    /// </summary>
     public interface IDynamicContent
     {
+        /// <summary>
+        /// Page content dictionary from vendor JSON
+        /// </summary>
         Dictionary<string, string> PageContent { get; }
 
         void SetContentFromConfig();

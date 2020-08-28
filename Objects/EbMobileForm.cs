@@ -412,7 +412,7 @@ namespace ExpressBase.Mobile
         {
             foreach (EbMobileControl ctrl in this.ControlDictionary.Values)
             {
-                if (ctrl.Required && ctrl.GetValue() == null)
+                if (!ctrl.Validate())
                     return false;
             }
             return true;

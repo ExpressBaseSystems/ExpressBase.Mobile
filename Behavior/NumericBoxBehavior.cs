@@ -7,6 +7,10 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Behavior
 {
+    /// <summary>
+    /// MobileForm Numeric control validation
+    /// Allow numbers only
+    /// </summary>
     public class NumericBoxBehavior : Behavior<NumericTextBox>
     {
         protected override void OnAttachedTo(NumericTextBox numeric)
@@ -21,6 +25,11 @@ namespace ExpressBase.Mobile.Behavior
             base.OnDetachingFrom(numeric);
         }
 
+        /// <summary>
+        /// Inherited method
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private static void OnEntryTextChanged(object sender, TextChangedEventArgs args)
         {
             if (!string.IsNullOrWhiteSpace(args.NewTextValue))

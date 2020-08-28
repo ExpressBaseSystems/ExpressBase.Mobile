@@ -136,8 +136,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
+        private bool isTapped = false;
+
         private async Task ListItemTapped(object item)
         {
+            if (isTapped) return;
+
             IToast toast = DependencyService.Get<IToast>();
             try
             {
@@ -150,6 +154,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
                 else
                 {
+                    isTapped = true;
+
                     ContentPage renderer = this.GetPageByContainer(customFrame.DataRow, page);
 
                     if (renderer != null)
@@ -160,6 +166,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 Console.WriteLine(ex.Message);
             }
+
+            isTapped = false;
         }
 
         public ContentPage GetPageByContainer(EbDataRow row, EbMobilePage page)

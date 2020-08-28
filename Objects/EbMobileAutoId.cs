@@ -11,7 +11,7 @@ namespace ExpressBase.Mobile
 
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
 
-        public override void InitXControl(FormMode Mode,NetworkMode Network)
+        public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
             base.InitXControl(Mode, Network);
 
@@ -22,12 +22,17 @@ namespace ExpressBase.Mobile
             };
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
-            if (value == null)
+            (this.XControl as TextBox).Text = value?.ToString();
+        }
+
+        public override bool Validate()
+        {
+            bool isNull = string.IsNullOrEmpty((this.XControl as TextBox).Text);
+            if (this.Required && isNull)
                 return false;
 
-            (this.XControl as TextBox).Text = value.ToString();
             return true;
         }
     }

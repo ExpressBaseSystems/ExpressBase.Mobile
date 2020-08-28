@@ -112,5 +112,12 @@
         <Setter Property="Text" Value="&#xf002;"></Setter>
         <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
     </Style>
-    
+
+    <Style TargetType="Label" x:Key="DatePickerIcon">
+        <Setter Property="Padding" Value="10"></Setter>
+        <Setter Property="FontSize" Value="18"></Setter>
+        <Setter Property="VerticalOptions" Value="Center"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
 </ResourceDictionary>

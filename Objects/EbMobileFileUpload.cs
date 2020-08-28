@@ -91,7 +91,7 @@ namespace ExpressBase.Mobile
             return files;
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
             if (value != null)
             {
@@ -99,6 +99,15 @@ namespace ExpressBase.Mobile
 
                 XamControl.SetValue(this.NetworkType, value as FUPSetValueMeta, this.Name);
             }
+        }
+
+        public override bool Validate()
+        {
+            List<FileWrapper> files = this.GetValue() as List<FileWrapper>;
+
+            if (this.Required && !files.Any())
+                return false;
+
             return true;
         }
     }

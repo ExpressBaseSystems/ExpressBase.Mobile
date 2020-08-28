@@ -83,7 +83,7 @@ namespace ExpressBase.Mobile
 
         public virtual object GetValue() { return null; }
 
-        public virtual bool SetValue(object value) { return false; }
+        public virtual void SetValue(object value) { }
 
         public virtual void SetAsReadOnly(bool Enable)
         {
@@ -94,6 +94,14 @@ namespace ExpressBase.Mobile
         }
 
         public virtual void Reset() { }
+
+        public virtual bool Validate()
+        {
+            if (this.Required && GetValue() == null)
+                return false;
+
+            return true;
+        }
 
         public virtual MobileTableColumn GetMobileTableColumn()
         {
@@ -112,11 +120,6 @@ namespace ExpressBase.Mobile
 
     public class EbMobileTableLayout : EbMobileControl, ILayoutControl
     {
-        public EbMobileTableLayout()
-        {
-            this.CellCollection = new List<EbMobileTableCell>();
-        }
-
         public int RowCount { set; get; }
 
         public int ColumCount { set; get; }
@@ -126,15 +129,15 @@ namespace ExpressBase.Mobile
         public override bool Hidden { set; get; }
 
         public override bool Unique { get; set; }
+
+        public EbMobileTableLayout()
+        {
+            this.CellCollection = new List<EbMobileTableCell>();
+        }
     }
 
     public class EbMobileTableCell : EbMobilePageBase
     {
-        public EbMobileTableCell()
-        {
-            this.ControlCollection = new List<EbMobileControl>();
-        }
-
         public int RowIndex { set; get; }
 
         public int ColIndex { set; get; }
@@ -142,6 +145,11 @@ namespace ExpressBase.Mobile
         public int Width { set; get; }
 
         public List<EbMobileControl> ControlCollection { set; get; }
+
+        public EbMobileTableCell()
+        {
+            this.ControlCollection = new List<EbMobileControl>();
+        }
 
         public bool IsEmpty()
         {

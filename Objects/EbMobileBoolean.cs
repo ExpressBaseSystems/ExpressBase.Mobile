@@ -32,39 +32,42 @@ namespace ExpressBase.Mobile
             return (this.XControl as CheckBox).IsChecked;
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
-            if (value == null)
-                return false;
             try
             {
-                bool isChecked = false;
+                if (value != null)
+                {
+                    bool isChecked = false;
 
-                if (value is int)
-                {
-                    isChecked = Convert.ToInt32(value) != 0;
+                    if (value is int)
+                        isChecked = Convert.ToInt32(value) != 0;
+                    else if (value is bool boolean)
+                        isChecked = boolean;
+                    else if (value is string s)
+                        isChecked = bool.Parse(s);
+
+                    (this.XControl as CheckBox).IsChecked = isChecked;
                 }
-                else if (value is bool boolean)
-                {
-                    isChecked = boolean;
-                }
-                else if (value is string s)
-                {
-                    isChecked = bool.Parse(s);
-                }
-                (this.XControl as CheckBox).IsChecked = isChecked;
             }
             catch (Exception ex)
             {
                 EbLog.Error("Boolean setvalue error");
                 EbLog.Error(ex.Message);
             }
-            return true;
         }
 
         public override void Reset()
         {
             (this.XControl as CheckBox).ClearValue(CheckBox.IsCheckedProperty);
+        }
+
+        public override bool Validate()
+        {
+            if (this.Required && !(this.XControl as CheckBox).IsChecked)
+                return false;
+
+            return true;
         }
     }
 }

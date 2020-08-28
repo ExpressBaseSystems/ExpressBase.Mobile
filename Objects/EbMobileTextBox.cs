@@ -48,17 +48,15 @@ namespace ExpressBase.Mobile
                 return (this.XControl as TextBox).Text;
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
-            if (value == null)
-                return false;
-
-            if (TextMode == TextMode.MultiLine)
-                (this.XControl as TextArea).Text = value.ToString();
-            else
-                (this.XControl as TextBox).Text = value.ToString();
-
-            return true;
+            if (value != null)
+            {
+                if (TextMode == TextMode.MultiLine)
+                    (this.XControl as TextArea).Text = value.ToString();
+                else
+                    (this.XControl as TextBox).Text = value.ToString();
+            }
         }
 
         public override void Reset()
@@ -67,6 +65,16 @@ namespace ExpressBase.Mobile
                 (this.XControl as TextArea).ClearValue(TextBox.TextProperty);
             else
                 (this.XControl as TextBox).ClearValue(TextBox.TextProperty);
+        }
+
+        public override bool Validate()
+        {
+            string value = GetValue() as string;
+
+            if (Required && string.IsNullOrEmpty(value))
+                return false;
+
+            return true;
         }
     }
 }

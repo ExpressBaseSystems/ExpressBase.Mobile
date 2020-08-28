@@ -13,6 +13,10 @@ using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.Views
 {
+    /// <summary>
+    /// Page to add new solution
+    /// Includes QR scanner
+    /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewSolution : ContentPage, IDynamicContent
     {
@@ -22,6 +26,7 @@ namespace ExpressBase.Mobile.Views
 
         private readonly bool isMasterPage;
 
+        ///<value> return Dynamic content dictionary from vendor JSON </value>
         public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.NewSolution;
 
         public NewSolution(bool hasBackButton = false)
@@ -30,6 +35,7 @@ namespace ExpressBase.Mobile.Views
 
             try
             {
+                //decide show back button
                 isMasterPage = hasBackButton;
                 if (hasBackButton)
                 {
@@ -58,6 +64,10 @@ namespace ExpressBase.Mobile.Views
             SolutionName.Placeholder = PageContent["TextBoxPlaceHolder"];
         }
 
+        /// <summary>
+        /// Callbak method on qr scan
+        /// </summary>
+        /// <param name="meta"></param>
         private void QrScannerCallback(SolutionQrMeta meta)
         {
             if (string.IsNullOrEmpty(meta.Sid) || viewModel.IsSolutionExist(meta.Sid))
@@ -69,6 +79,7 @@ namespace ExpressBase.Mobile.Views
                 {
                     Loader.IsVisible = true;
 
+                    //api call for validating solution
                     response = await viewModel.Validate(meta.Sid);
                     if (response.IsValid)
                     {
@@ -98,6 +109,11 @@ namespace ExpressBase.Mobile.Views
             });
         }
 
+        /// <summary>
+        /// qr show button taped event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void QrButton_Tapped(object sender, EventArgs e)
         {
             QrScanner scannerPage = new QrScanner(isMasterPage);
@@ -109,6 +125,11 @@ namespace ExpressBase.Mobile.Views
                 await Application.Current.MainPage.Navigation.PushModalAsync(scannerPage);
         }
 
+        /// <summary>
+        /// Validate solution when solution url is typing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void SaveSolution_Clicked(object sender, EventArgs e)
         {
             try
@@ -131,7 +152,7 @@ namespace ExpressBase.Mobile.Views
                     surl += ".expressbase.com";
                     SolutionName.Text = surl;
                 }
-
+                //api call for validating solution
                 response = await viewModel.Validate(surl);
 
                 if (response.IsValid)
@@ -158,6 +179,11 @@ namespace ExpressBase.Mobile.Views
             PopupContainer.IsVisible = false;
         }
 
+        /// <summary>
+        /// After validation api response confirm solution when propmt
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void ConfirmButton_Clicked(object sender, EventArgs e)
         {
             try

@@ -92,39 +92,37 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
-            object value = null;
+            int value = 0;
             try
             {
                 if (RenderType == NumericBoxTypes.ButtonType)
-                    value = valueBoxNumber.ToString();
+                    value = valueBoxNumber;
                 else
-                    value = (this.XControl as NumericTextBox).Text;
-
-                if (this.Required && Convert.ToInt32(value) <= 0)
-                    value = null;
+                {
+                    var text = (this.XControl as NumericTextBox).Text;
+                    value = Convert.ToInt32(text);
+                }
             }
             catch (Exception ex)
             {
-                EbLog.Error("Numeric box getvalue error !");
+                EbLog.Message("Numeric box getvalue error !");
                 EbLog.Error(ex.Message + ex.StackTrace);
             }
             return value;
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
-            if (value == null)
-                return false;
-
-            if (RenderType == NumericBoxTypes.ButtonType)
+            if (value != null)
             {
-                valueBoxNumber = Convert.ToInt32(value);
-                valueBox.Text = valueBoxNumber.ToString();
+                if (RenderType == NumericBoxTypes.ButtonType)
+                {
+                    valueBoxNumber = Convert.ToInt32(value);
+                    valueBox.Text = valueBoxNumber.ToString();
+                }
+                else
+                    (this.XControl as NumericTextBox).Text = value.ToString();
             }
-            else
-                (this.XControl as NumericTextBox).Text = value.ToString();
-
-            return true;
         }
 
         public override void Reset()
@@ -136,6 +134,16 @@ namespace ExpressBase.Mobile
             }
             else
                 (this.XControl as NumericTextBox).ClearValue(NumericTextBox.TextProperty);
+        }
+
+        public override bool Validate()
+        {
+            var value = this.GetValue();
+
+            if (this.Required && Convert.ToInt32(value) <= 0)
+                return false;
+
+            return true;
         }
     }
 }

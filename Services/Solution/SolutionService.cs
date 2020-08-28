@@ -14,8 +14,15 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
+    /// <summary>
+    /// Service class for solution related tasks
+    /// </summary>
     public class SolutionService : ISolutionService
     {
+        /// <summary>
+        /// Method for list all the configured solutions
+        /// </summary>
+        /// <returns> List of Solutions meta</returns>
         public async Task<ObservableCollection<SolutionInfo>> GetDataAsync()
         {
             ObservableCollection<SolutionInfo> sln = new ObservableCollection<SolutionInfo>();
@@ -25,7 +32,7 @@ namespace ExpressBase.Mobile.Services
 
                 List<SolutionInfo> solutions = Utils.Solutions;
 
-                string _currentroot = App.Settings.RootUrl.Replace("https://", string.Empty);
+                string _currentroot = App.Settings.RootUrl.Replace(ApiConstants.PROTOCOL, string.Empty);
 
                 foreach (SolutionInfo info in solutions)
                 {
@@ -36,11 +43,17 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
+                EbLog.Message("Failed to get solution data");
                 EbLog.Error(ex.Message);
             }
             return sln;
         }
 
+        /// <summary>
+        /// Api for validate solution url
+        /// </summary>
+        /// <param name="url"> eg : abc.expressbase.com </param>
+        /// <returns> validation object contain isValid boolean </returns>
         public async Task<ValidateSidResponse> ValidateSid(string url)
         {
             ValidateSidResponse response = null;
@@ -61,9 +74,16 @@ namespace ExpressBase.Mobile.Services
                 EbLog.Message("validate_solution api failure");
                 EbLog.Error(e.Message);
             }
+            //safe return
             return response ?? new ValidateSidResponse();
         }
 
+        /// <summary>
+        /// Method to add new solution to store
+        /// contains rooturl,name,lastusername
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public async Task SetDataAsync(SolutionInfo info)
         {
             try
@@ -78,6 +98,7 @@ namespace ExpressBase.Mobile.Services
                     solutions.Add(info);
                 }
 
+                //store solution data to store
                 await Store.SetJSONAsync(AppConst.MYSOLUTIONS, solutions);
                 await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, info);
 
@@ -89,6 +110,13 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
+        /// <summary>
+        /// Writing solution logo to AppDirectory/<SolutionName>
+        /// Logo.png
+        /// </summary>
+        /// <param name="solutionname"></param>
+        /// <param name="imageByte"></param>
+        /// <returns></returns>
         public async Task SaveLogoAsync(string solutionname, byte[] imageByte)
         {
             try
@@ -131,6 +159,11 @@ namespace ExpressBase.Mobile.Services
             await HelperFunctions.CreateDirectory();
         }
 
+        /// <summary>
+        /// Clone solution object
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public SolutionInfo Clone(SolutionInfo info)
         {
             return new SolutionInfo
@@ -155,7 +188,6 @@ namespace ExpressBase.Mobile.Services
             {
                 return false;
             }
-
             url = url.Trim();
             string sname = url.Split(CharConstants.DOT)[0];
             return Utils.Solutions.Any(item => item.SolutionName == sname && item.RootUrl == url);

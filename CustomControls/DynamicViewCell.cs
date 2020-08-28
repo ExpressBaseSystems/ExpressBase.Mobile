@@ -66,18 +66,12 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private bool isTapped = false;
-
         private void TapGesture_Tapped(object sender, EventArgs e)
         {
-            if (isTapped)
-                return;
-
             if (ItemSelected != null && ItemSelected.CanExecute(sender))
             {
                 ItemSelected.Execute(sender);
             }
-            isTapped = false;
         }
 
         public void SetBackGroundColor(int index, DynamicFrame frame)

@@ -31,6 +31,14 @@ namespace ExpressBase.Mobile.Constants
         public const string AZURE_REGID = "azure_regid";
     }
 
+
+    /// <summary>
+    /// Eb object Assembly names
+    /// </summary>
+    ///<remarks>
+    ///Expressbase core objects are regex replaced with mobile project 
+    ///assembly constants
+    /// </remarks>
     public static class RegexConstants
     {
         public const string COR_LIB = "System.Private.CoreLib";

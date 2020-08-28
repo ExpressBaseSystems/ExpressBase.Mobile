@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ExpressBase.Mobile.Constants
 {
+    /*Charecter onstant class*/
     public static class CharConstants
     {
         public const char DOT = '.';

@@ -4,6 +4,11 @@ using System.Text;
 
 namespace ExpressBase.Mobile.Configuration
 {
+    /// <summary>
+    /// Namespace contains all the vendor settings constants
+    /// </summary>
+    /// 
+
     public static class Expressbase
     {
         public const string VendorName = "ExpressBase";

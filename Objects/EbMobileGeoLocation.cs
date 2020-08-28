@@ -89,7 +89,7 @@ namespace ExpressBase.Mobile
 
                 StackLayout Layout = new StackLayout
                 {
-                    Margin = new Thickness(-10,0),
+                    Margin = new Thickness(-10, 0),
                     BackgroundColor = Color.Transparent,
                     Children = { loader }
                 };
@@ -122,7 +122,7 @@ namespace ExpressBase.Mobile
                     this.SetWebViewUrl(cordinates.Latitude, cordinates.Longitude);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }
@@ -135,7 +135,7 @@ namespace ExpressBase.Mobile
                 string url = $"{App.Settings.RootUrl}/api/map?bToken={App.Settings.BToken}&rToken={App.Settings.RToken}&type=GOOGLEMAP&latitude={lat}&longitude={lon}";
                 this.webView.Source = new UrlWebViewSource { Url = url };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }
@@ -166,20 +166,20 @@ namespace ExpressBase.Mobile
             return null;
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
             try
             {
-                if (value == null)
-                    return false;
-
-                string[] cordinates = (value as string).Split(',');
-                if (cordinates.Length >= 2)
+                if (value != null)
                 {
-                    double lat = Convert.ToDouble(cordinates[0]);
-                    double lng = Convert.ToDouble(cordinates[1]);
+                    string[] cordinates = (value as string).Split(',');
+                    if (cordinates.Length >= 2)
+                    {
+                        double lat = Convert.ToDouble(cordinates[0]);
+                        double lng = Convert.ToDouble(cordinates[1]);
 
-                    this.SetWebViewUrl(lat, lng);
+                        this.SetWebViewUrl(lat, lng);
+                    }
                 }
             }
             catch (Exception ex)
@@ -187,6 +187,15 @@ namespace ExpressBase.Mobile
                 EbLog.Error(ex.Message);
                 EbLog.Error(ex.StackTrace);
             }
+        }
+
+        public override bool Validate()
+        {
+            string value = this.GetValue() as string;
+
+            if (this.Required && string.IsNullOrEmpty(value))
+                return false;
+
             return true;
         }
     }

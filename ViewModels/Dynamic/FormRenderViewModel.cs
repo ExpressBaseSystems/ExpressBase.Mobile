@@ -33,7 +33,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private readonly EbMobileVisualization context;
 
-        private List<EbMobileDataColToControlMap> linkFormParameters;
+        private readonly List<EbMobileDataColToControlMap> linkFormParameters;
 
         public Command SaveCommand => new Command(async () => await FormSubmitClicked());
 
@@ -149,7 +149,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     IsBusy = false;
                     toast.Show(saveResponse.Message);
-                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                    await App.RootMaster.Detail.Navigation.PopAsync(true);
                 });
             }
             else

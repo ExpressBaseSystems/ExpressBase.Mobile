@@ -402,7 +402,7 @@ namespace ExpressBase.Mobile
             return table_row;
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
             try
             {
@@ -420,7 +420,6 @@ namespace ExpressBase.Mobile
             {
                 EbLog.Error(ex.Message);
             }
-            return true;
         }
 
         public override void SetAsReadOnly(bool enable)

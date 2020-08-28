@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Shared;
@@ -12,8 +14,13 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
+    /*
+     Powerselect and simple select control
+     */
     public class EbMobileSimpleSelect : EbMobileControl
     {
+        #region Properties
+
         public override EbDbTypes EbDbType
         {
             get
@@ -54,6 +61,9 @@ namespace ExpressBase.Mobile
         //mobile props
         public TextBox SearchBox { set; get; }
 
+        /// <summary>
+        /// Check simple select or power select
+        /// </summary>
         public bool IsSimpleSelect
         {
             get
@@ -64,53 +74,80 @@ namespace ExpressBase.Mobile
             }
         }
 
+        #endregion
+
+        #region Local
+
         private ComboBoxLabel selected;
 
         private CustomPicker picker;
+
+        private Color Background => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
+
+        #endregion
+
+        #region Methods
 
         public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
             base.InitXControl(Mode, Network);
 
-            Color bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
+            TapGestureRecognizer recognizer = new TapGestureRecognizer();
+            recognizer.Tapped += Icon_Tapped;
 
             if (IsSimpleSelect)
-            {
-                picker = new CustomPicker
-                {
-                    Title = $"Select {this.Label}",
-                    ItemsSource = this.Options,
-                    ItemDisplayBinding = new Binding("DisplayName"),
-                    IsEnabled = !this.ReadOnly,
-                    BorderColor = Color.Transparent
-                };
-                var icon = new Label
-                {
-                    Style = (Style)HelperFunctions.GetResourceValue("PSIconLabel")
-                };
-                this.XControl = new InputGroup(picker, icon) { BgColor = bg };
-            }
+                InitSimpleSelect(recognizer);
             else
+                InitPowerSelect(recognizer);
+        }
+
+        private void Icon_Tapped(object sender, EventArgs e)
+        {
+            if (IsSimpleSelect)
+                picker?.Focus();
+            else
+                SearchBox?.Focus();
+        }
+
+        private void InitSimpleSelect(TapGestureRecognizer gesture)
+        {
+            picker = new CustomPicker
             {
-                SearchBox = new TextBox
-                {
-                    IsReadOnly = this.ReadOnly,
-                    Placeholder = $"Search {this.Label}...",
-                    BorderColor = Color.Transparent
-                };
-                SearchBox.Focused += SearchBox_Focused;
-                var icon = new Label
-                {
-                    Style = (Style)HelperFunctions.GetResourceValue("SSIconLabel")
-                };
-                this.XControl = new InputGroup(SearchBox, icon) { BgColor = bg };
-            }
+                Title = $"Select {this.Label}",
+                ItemsSource = this.Options,
+                ItemDisplayBinding = new Binding("DisplayName"),
+                IsEnabled = !this.ReadOnly,
+                BorderColor = Color.Transparent
+            };
+            Label icon = new Label
+            {
+                Style = (Style)HelperFunctions.GetResourceValue("PSIconLabel"),
+                GestureRecognizers = { gesture }
+            };
+            this.XControl = new InputGroup(picker, icon) { BgColor = Background };
+        }
+
+        private void InitPowerSelect(TapGestureRecognizer gesture)
+        {
+            SearchBox = new TextBox
+            {
+                IsReadOnly = this.ReadOnly,
+                Placeholder = $"Search {this.Label}...",
+                BorderColor = Color.Transparent
+            };
+            SearchBox.Focused += SearchBox_Focused;
+            Label icon = new Label
+            {
+                Style = (Style)HelperFunctions.GetResourceValue("SSIconLabel"),
+                GestureRecognizers = { gesture }
+            };
+            this.XControl = new InputGroup(SearchBox, icon) { BgColor = Background };
         }
 
         private void SearchBox_Focused(object sender, FocusEventArgs e)
         {
-            var selectView = new PowerSelectView(this);
-            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushModalAsync(selectView);
+            PowerSelectView powerSelect = new PowerSelectView(this);
+            App.RootMaster.Detail.Navigation.PushModalAsync(powerSelect);
         }
 
         public override object GetValue()
@@ -126,24 +163,23 @@ namespace ExpressBase.Mobile
                 return this.selected?.Value;
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
-            if (value == null)
-                return false;
-
-            if (IsSimpleSelect)
-                picker.SelectedItem = this.Options.Find(i => i.Value == value.ToString());
-            else
+            if (value != null)
             {
-                EbDataTable dt = this.GetDisplayFromValue(value.ToString());
-                if (dt != null && dt.Rows.Any())
+                if (IsSimpleSelect)
+                    picker.SelectedItem = this.Options.Find(i => i.Value == value.ToString());
+                else
                 {
-                    var display_membertext = dt.Rows[0][DisplayMember.ColumnName].ToString();
-                    selected = new ComboBoxLabel { Text = display_membertext, Value = value };
-                    SearchBox.Text = display_membertext;
+                    EbDataTable dt = this.GetDisplayFromValue(value.ToString());
+                    if (dt != null && dt.Rows.Any())
+                    {
+                        var display_membertext = dt.Rows[0][DisplayMember.ColumnName].ToString();
+                        selected = new ComboBoxLabel { Text = display_membertext, Value = value };
+                        SearchBox.Text = display_membertext;
+                    }
                 }
             }
-            return true;
         }
 
         public override void Reset()
@@ -157,11 +193,16 @@ namespace ExpressBase.Mobile
             }
         }
 
+        public override bool Validate()
+        {
+            return base.Validate();
+        }
+
         public void SelectionCallback(ComboBoxLabel comboBox)
         {
             this.selected = comboBox;
             this.SearchBox.Text = comboBox.Text;
-            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
+            App.RootMaster.Detail.Navigation.PopModalAsync();
         }
 
         private EbDataTable GetDisplayFromValue(string value)
@@ -171,36 +212,66 @@ namespace ExpressBase.Mobile
             {
                 if (this.NetworkType == NetworkMode.Offline)
                 {
-                    string sql = HelperFunctions.B64ToString(this.OfflineQuery.Code).TrimEnd(';');
-
-                    string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{this.ValueMember.ColumnName} = {value} LIMIT 1";
-
-                    dt = App.DataDB.DoQuery(WrpdQuery);
+                    dt = ResolveFromLocal(value);
                 }
                 else if (this.NetworkType == NetworkMode.Online)
                 {
-                    Param p = new Param
-                    {
-                        Name = this.ValueMember.ColumnName,
-                        Type = ((int)this.ValueMember.Type).ToString(),
-                        Value = value
-                    };
-                    var response = DataService.Instance.GetData(this.DataSourceRefId, new List<Param> { p }, null, 0, 0, false);
-
-                    if (response.Data != null && response.Data.Tables.Count >= 2)
-                        dt = response.Data.Tables[1];
+                    dt = ResolveFromLive(value);
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Error($"*********Exception on geting display value*********");
+                EbLog.Message("Error at GetDisplayFromValue in powerselect");
+                EbLog.Error(ex.Message);
+            }
+            return dt ?? new EbDataTable();
+        }
 
-                EbLog.Error($"DisplayMember:{this.DisplayMember.ColumnName}");
-                EbLog.Error($"ValueMember:{this.ValueMember.ColumnName}" + ex.Message);
-                dt = new EbDataTable();
+        private EbDataTable ResolveFromLocal(string value)
+        {
+            EbDataTable dt = null;
+            try
+            {
+                string sql = HelperFunctions.B64ToString(this.OfflineQuery.Code).TrimEnd(';');
+
+                string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{this.ValueMember.ColumnName} = {value} LIMIT 1";
+
+                dt = App.DataDB.DoQuery(WrpdQuery);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Message("power select failed to resolve display member from local");
+                EbLog.Error(ex.Message);
             }
             return dt;
         }
+
+        private EbDataTable ResolveFromLive(string value)
+        {
+            EbDataTable dt = null;
+            try
+            {
+                Param p = new Param
+                {
+                    Name = this.ValueMember.ColumnName,
+                    Type = ((int)this.ValueMember.Type).ToString(),
+                    Value = value
+                };
+
+                VisualizationLiveData response = DataService.Instance.GetData(this.DataSourceRefId, new List<Param> { p }, null, 0, 0, false);
+
+                if (response.Data != null && response.Data.Tables.HasLength(2))
+                    dt = response.Data.Tables[1];
+            }
+            catch (Exception ex)
+            {
+                EbLog.Message("power select failed to resolve display member from live");
+                EbLog.Error(ex.Message);
+            }
+            return dt;
+        }
+
+        #endregion
     }
 
     public class EbMobileSSOption : EbMobilePageBase

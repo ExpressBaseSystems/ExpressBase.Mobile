@@ -2,6 +2,10 @@
 
 namespace ExpressBase.Mobile.Configuration
 {
+    /// <summary>
+    /// Core settings class
+    /// Contains App Constats like icon,theme,label etc
+    /// </summary>
     public class EbBuildConfig
     {
         public static string VendorName = Expressbase.VendorName;

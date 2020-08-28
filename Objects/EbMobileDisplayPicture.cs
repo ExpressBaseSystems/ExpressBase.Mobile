@@ -33,13 +33,17 @@ namespace ExpressBase.Mobile
             };
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
             if (value != null)
             {
                 XamControl.SetValue(this.NetworkType, value as FUPSetValueMeta, this.Name);
             }
-            return true;
+        }
+
+        public override bool Validate()
+        {
+            return base.Validate();
         }
     }
 }

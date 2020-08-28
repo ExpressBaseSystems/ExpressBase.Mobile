@@ -109,8 +109,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
+        private bool isTapped = false;
+
         private async Task ListItemTapped(object item)
         {
+            if (isTapped) return;
+
             DynamicFrame dyFrame = (DynamicFrame)item;
 
             try
@@ -123,6 +127,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
                 else
                 {
+                    isTapped = true;
+
                     ContentPage renderer = this.GetPageByContainer(dyFrame.DataRow, page);
 
                     if (renderer != null)
@@ -133,6 +139,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 Console.WriteLine(ex.Message);
             }
+            isTapped = false;
         }
 
         private async Task AddButtonClicked()

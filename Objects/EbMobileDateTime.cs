@@ -23,6 +23,8 @@ namespace ExpressBase.Mobile
 
         private CustomTimePicker timePicker;
 
+        private Color Background => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
+
         public override object SQLiteToActual(object value)
         {
             if (this.EbDbType == EbDbTypes.Date)
@@ -36,9 +38,10 @@ namespace ExpressBase.Mobile
         public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
             base.InitXControl(Mode, Network);
-            Color bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
-
             View control;
+
+            TapGestureRecognizer gesture = new TapGestureRecognizer();
+            gesture.Tapped += Icon_Tapped;
 
             if (EbDateType == EbDateType.Time)
             {
@@ -57,23 +60,27 @@ namespace ExpressBase.Mobile
                     Date = DateTime.UtcNow,
                     BorderColor = Color.Transparent
                 };
-
-                if (BlockBackDatedEntry) datePicker.MinimumDate = DateTime.UtcNow;
-                if (BlockFutureDatedEntry) datePicker.MaximumDate = DateTime.UtcNow;
-
+                if (this.BlockBackDatedEntry) datePicker.MinimumDate = DateTime.UtcNow;
+                if (this.BlockFutureDatedEntry) datePicker.MaximumDate = DateTime.UtcNow;
                 control = datePicker;
             }
 
             Label icon = new Label
             {
-                Padding = 10,
-                FontSize = 18,
-                VerticalOptions = LayoutOptions.Center,
+                Style = (Style)HelperFunctions.GetResourceValue("DatePickerIcon"),
                 Text = EbDateType == EbDateType.Time ? "\uf017" : "\uf073",
-                FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome")
+                GestureRecognizers = { gesture }
             };
 
-            this.XControl = new InputGroup(control, icon) { BgColor = bg };
+            this.XControl = new InputGroup(control, icon) { BgColor = Background };
+        }
+
+        private void Icon_Tapped(object sender, EventArgs e)
+        {
+            if (EbDateType == EbDateType.Time)
+                timePicker?.Focus();
+            else
+                datePicker?.Focus();
         }
 
         public override object GetValue()
@@ -97,29 +104,23 @@ namespace ExpressBase.Mobile
             return value;
         }
 
-        public override bool SetValue(object value)
+        public override void SetValue(object value)
         {
-            if (value == null)
-                return false;
-
             try
             {
-                if (this.EbDateType == EbDateType.Time)
+                if (value != null)
                 {
-                    timePicker.Time = TimeSpan.Parse(value.ToString());
-                }
-                else
-                {
-                    datePicker.Date = Convert.ToDateTime(value);
+                    if (this.EbDateType == EbDateType.Time)
+                        timePicker.Time = TimeSpan.Parse(value.ToString());
+                    else
+                        datePicker.Date = Convert.ToDateTime(value);
                 }
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
-                EbLog.Error(ex.StackTrace);
-                return false;
+                EbLog.StackTrace(ex.StackTrace);
             }
-            return true;
         }
 
         public override void Reset()
@@ -128,6 +129,11 @@ namespace ExpressBase.Mobile
                 timePicker.ClearValue(CustomTimePicker.TimeProperty);
             else
                 datePicker.ClearValue(CustomDatePicker.DateProperty);
+        }
+
+        public override bool Validate()
+        {
+            return base.Validate();
         }
     }
 }

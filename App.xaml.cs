@@ -10,19 +10,26 @@ namespace ExpressBase.Mobile
 {
     public partial class App : Application
     {
+        #region properties
+
         public static IDataBase DataDB { get; set; }
 
         public static MasterDetailPage RootMaster { set; get; }
 
         public static SettingsServices Settings { set; get; }
 
+        #endregion
+
         public App()
         {
             InitializeComponent();
 
+            //Creating offline DB sevice class using X-Forms dependency service
             DataDB = DependencyService.Get<IDataBase>();
             Settings = new SettingsServices();
         }
+
+        #region App states
 
         protected override async void OnStart()
         {
@@ -32,10 +39,27 @@ namespace ExpressBase.Mobile
 
             if (Settings.Vendor.AllowNotifications && Settings.CurrentUser != null)
             {
+                //register for notification if token
                 await NotificationService.Instance.UpdateNHRegisratation();
             }
         }
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+        }
+
+        protected override void OnSleep()
+        {
+            base.OnSleep();
+        }
+
+        #endregion 
+
+        /// <summary>
+        /// Navigate to page on app start with respect to application data stored locally
+        /// </summary>
+        /// <returns>void</returns>
         private async Task InitNavigation()
         {
             MainPage = new NavigationPage
@@ -44,6 +68,7 @@ namespace ExpressBase.Mobile
                 BarTextColor = Color.White
             };
 
+            //Initializing Stored data
             await Settings.InitializeSettings();
 
             if (Settings.Sid == null)
