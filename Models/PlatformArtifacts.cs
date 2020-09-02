@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
@@ -112,6 +113,8 @@ namespace ExpressBase.Mobile.Models
         public EbStageInfo()
         {
             StageActions = new List<EbStageActions>();
+
+            Data = new List<Param>();
         }
     }
 
@@ -128,8 +131,6 @@ namespace ExpressBase.Mobile.Models
 
         public DateTime StartDate { set; get; }
 
-        public DateTime EndDate { set; get; }
-
         public int StageId { set; get; }
 
         public string WebFormRefId { set; get; }
@@ -140,7 +141,7 @@ namespace ExpressBase.Mobile.Models
 
         public string Description { set; get; }
 
-        public EbStageInfo StageInfo { set; get; }
+        public MyActionTypes ActionType { set; get; }
 
         public string DaysAgo
         {
@@ -174,6 +175,8 @@ namespace ExpressBase.Mobile.Models
                 }
             }
         }
+
+        public bool IsTagVisible => ActionType == MyActionTypes.Approval;
     }
 
     public class MyActionsResponse

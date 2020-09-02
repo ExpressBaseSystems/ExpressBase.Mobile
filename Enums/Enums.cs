@@ -137,4 +137,10 @@ namespace ExpressBase.Mobile.Enums
         Dynamic,
         Embedded
     }
+
+    public enum MyActionTypes
+    {
+        Approval = 1,
+        Meeting = 2
+    }
 }

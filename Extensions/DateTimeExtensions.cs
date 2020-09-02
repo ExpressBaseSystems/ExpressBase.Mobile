@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ExpressBase.Mobile.Helpers;
+using System;
 
 namespace ExpressBase.Mobile.Extensions
 {
@@ -8,28 +7,39 @@ namespace ExpressBase.Mobile.Extensions
     {
         public static string SubtractByNow(this DateTime date)
         {
-            string subtracted;
             try
             {
                 DateTime now = DateTime.Now;
-                var days = DateTime.DaysInMonth(now.Year, now.Month);
+                int days = DateTime.DaysInMonth(now.Year, now.Month);
 
-                var diff = now.Subtract(date);
+                TimeSpan ts = now.ToUniversalTime().Subtract(date);
 
-                if (date.Date == now.Date)
-                    subtracted = $"{diff.Hours} hours ago";
-                else if (diff.Days == 1)
-                    subtracted = "Yesterday";
-                else if (diff.Days <= days)
-                    subtracted = $"{diff.Days - 1} days ago";
-                else
-                    subtracted = $"{(int)diff.Days / days} months ago";
+                int intDays = ts.Days;
+                int intHours = ts.Hours;
+                int intMinutes = ts.Minutes;
+                int intSeconds = ts.Seconds;
+
+                if (intDays > days)
+                    return $"{intDays / days} months ago";
+
+                if (intDays > 0)
+                    return $"{intDays - 1} days ago";
+
+                if (intHours > 0)
+                    return $"{intHours} hours ago";
+
+                if (intMinutes > 0)
+                    return $"{intMinutes} minutes ago";
+
+                if (intSeconds > 0)
+                    return $"just now";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                subtracted = "... ago";
+                EbLog.Error(ex.Message);
             }
-            return subtracted;
+
+            return $"... ago";
         }
     }
 }

@@ -1,21 +1,14 @@
-﻿using ExpressBase.Mobile.Extensions;
+﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class MyActions : ContentPage
+    public partial class MyActions : ContentPage, IRefreshable
     {
         public bool isRendered;
 
@@ -49,16 +42,35 @@ namespace ExpressBase.Mobile.Views
                     DependencyService.Get<IToast>().Show("Not connected to internet!");
                     return;
                 }
-
                 MyActionsRefresh.IsRefreshing = true;
-                await viewModel.RefreshMyActions();
-                MyActionsRefresh.IsRefreshing = false;
+                await viewModel.InitializeAsync();
             }
             catch (Exception ex)
             {
-                MyActionsRefresh.IsRefreshing = false;
+                EbLog.Message("Failed to refresh myaction data");
                 EbLog.Error(ex.Message);
             }
+            MyActionsRefresh.IsRefreshing = false;
+        }
+
+        private void RefreshButton_Clicked(object sender, EventArgs e)
+        {
+            MyActionsRefresh_Refreshing(sender, e);
+        }
+
+        public void Refreshed()
+        {
+            //not implemented
+        }
+
+        public void UpdateRenderStatus()
+        {
+            isRendered = false;
+        }
+
+        public bool CanRefresh()
+        {
+            return true;
         }
     }
 }

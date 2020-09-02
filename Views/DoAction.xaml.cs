@@ -9,15 +9,27 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DoAction : ContentPage
     {
-        public DoActionViewModel ViewModel { set; get; }
+        public bool isRendered;
+
+        private readonly DoActionViewModel viewModel;
 
         public DoAction(EbMyAction action)
         {
             InitializeComponent();
-            BindingContext = ViewModel = new DoActionViewModel(action);
+            BindingContext = viewModel = new DoActionViewModel(action);
+            Loader.IsVisible = true;
+        }
 
-            if (action != null && action.StageInfo != null)
-                CurrentStage.Text = action.StageInfo.StageName;
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (!isRendered)
+            {
+                await viewModel.InitializeAsync();
+                isRendered = true;
+            }
+            Loader.IsVisible = false;
         }
     }
 }

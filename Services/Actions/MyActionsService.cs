@@ -4,8 +4,6 @@ using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
@@ -18,7 +16,7 @@ namespace ExpressBase.Mobile.Services
             {
                 RestClient client = new RestClient(App.Settings.RootUrl);
 
-                RestRequest request = new RestRequest("api/get_actions", Method.GET);
+                RestRequest request = new RestRequest(ApiConstants.GET_ACTIONS, Method.GET);
 
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
@@ -29,7 +27,8 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Error("GetMyActionsAsync---" + ex.Message);
+                EbLog.Message("Error in get_actions api");
+                EbLog.Error(ex.Message);
             }
             return new MyActionsResponse();
         }
@@ -40,7 +39,7 @@ namespace ExpressBase.Mobile.Services
             {
                 RestClient client = new RestClient(App.Settings.RootUrl);
 
-                RestRequest request = new RestRequest("api/get_action_info", Method.GET);
+                RestRequest request = new RestRequest(ApiConstants.GET_ACTION_INFO, Method.GET);
 
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
@@ -55,7 +54,8 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Error("RestService.GetMyActions---" + ex.Message);
+                EbLog.Error("Error in action info api");
+                EbLog.Error(ex.Message);
             }
             return new EbStageInfo();
         }

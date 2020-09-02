@@ -1,4 +1,4 @@
-﻿using ExpressBase.Mobile.Extensions;
+﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -6,8 +6,7 @@ using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -15,13 +14,15 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class MyActionsViewModel : StaticBaseViewModel
     {
+        #region Properties
+
         private readonly IMyActionsService myActionService;
 
         private bool _showEmptyLabel;
 
         public bool ShowEmptyLabel
         {
-            get { return this._showEmptyLabel; }
+            get => this._showEmptyLabel;
             set
             {
                 this._showEmptyLabel = value;
@@ -29,17 +30,31 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public ObservableCollection<EbMyAction> _actions;
+        public List<EbMyAction> _actions;
 
-        public ObservableCollection<EbMyAction> Actions
+        public List<EbMyAction> Actions
         {
-            get { return _actions; }
+            get => _actions;
             set
             {
                 _actions = value;
                 NotifyPropertyChanged();
             }
         }
+
+        private string actionCount;
+
+        public string ActionsCount
+        {
+            get => actionCount;
+            set
+            {
+                actionCount = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        #endregion
 
         public Command ItemSelectedCommand => new Command(async (obj) => await ItemSelected(obj));
 
@@ -48,33 +63,21 @@ namespace ExpressBase.Mobile.ViewModels
             myActionService = new MyActionsService();
         }
 
+        #region Methods
+
         public override async Task InitializeAsync()
         {
             MyActionsResponse resp = await myActionService.GetMyActionsAsync();
+            
+            Actions = resp.Actions.Where(item => item.ActionType == MyActionTypes.Approval).ToList();
 
-            Actions = new ObservableCollection<EbMyAction>(resp.Actions);
             this.SetPageTitle();
-        }
-
-        public async Task RefreshMyActions()
-        {
-            try
-            {
-                MyActionsResponse actionResp = await myActionService.GetMyActionsAsync();
-                Actions.Update(actionResp.Actions);
-                SetPageTitle();
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error(ex.Message);
-            }
         }
 
         private void SetPageTitle()
         {
-            PageTitle = $"My Actions ({Actions.Count})";
-            if (Actions.Count <= 0)
-                ShowEmptyLabel = true;
+            ActionsCount = $"({Actions.Count})";
+            ShowEmptyLabel = Actions.Count <= 0;
         }
 
         private async Task ItemSelected(object selected)
@@ -85,16 +88,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (Utils.HasInternet)
                 {
-                    IsBusy = true;
-
-                    EbStageInfo stageInfo = await myActionService.GetMyActionInfoAsync(action.StageId, action.WebFormRefId, action.WebFormDataId);
-
-                    if (stageInfo != null)
-                    {
-                        action.StageInfo = stageInfo;
-                        await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new DoAction(action));
-                    }
-                    IsBusy = false;
+                    await App.RootMaster.Detail.Navigation.PushAsync(new DoAction(action));
                 }
                 else
                     Utils.Alert_NoInternet();
@@ -105,9 +99,6 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public async void DoActionPoped(bool isRowInserted)
-        {
-            if (isRowInserted) await RefreshMyActions();
-        }
+        #endregion
     }
 }

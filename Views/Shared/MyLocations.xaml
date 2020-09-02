@@ -136,37 +136,12 @@
                 VerticalOptions="Center"
                 HorizontalOptions="Center">
             </Label>
-
-            <ContentView 
+            
+            <controls:LoaderIconed 
                 Grid.RowSpan="2"
                 x:Name="SearchLoader"
-                IsVisible="False">
-                <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                    <BoxView
-                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                        AbsoluteLayout.LayoutFlags="All"
-                        BackgroundColor="#333333"
-                        Opacity=".5"/>
-                    <StackLayout 
-                        Padding="30"
-                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                        AbsoluteLayout.LayoutFlags="All">
-                        <Frame 
-                            BackgroundColor="Transparent"
-                            VerticalOptions="CenterAndExpand">
-                            <Frame.Content>
-                                <ActivityIndicator
-                                    HorizontalOptions="Center"
-                                    IsRunning="true" 
-                                    Color="White"
-                                    Grid.Column="0"
-                                    WidthRequest="40"
-                                    HeightRequest="40"/>
-                            </Frame.Content>
-                        </Frame>
-                    </StackLayout>
-                </AbsoluteLayout>
-            </ContentView>
+                IsVisible="{Binding IsBusy}">
+            </controls:LoaderIconed>
 
         </Grid>
     </ContentPage.Content>

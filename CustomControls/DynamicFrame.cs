@@ -104,7 +104,7 @@ namespace ExpressBase.Mobile.CustomControls
 
                         if (view != null)
                         {
-                            IMobileAlignment algn = (ctrl as IMobileAlignment);
+                            IMobileAlignment algn = ctrl as IMobileAlignment;
                             SetHorrizontalAlign(algn.HorrizontalAlign, view);
                             SetVerticalAlign(algn.VerticalAlign, view);
 

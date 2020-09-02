@@ -6,7 +6,6 @@ using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -14,59 +13,99 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class DoActionViewModel : StaticBaseViewModel
     {
-        private EbStageActions _status;
+        #region Properties
 
+        private readonly IMyActionsService myActionService;
+
+        private EbStageActions status;
         public EbStageActions Status
         {
-            get { return this._status; }
+            get => this.status;
             set
             {
-                this._status = value;
+                this.status = value;
                 this.NotifyPropertyChanged();
             }
         }
 
-        private string _comments;
-
+        private string comments;
         public string Comments
         {
-            get { return this._comments; }
+            get => this.comments;
             set
             {
-                this._comments = value;
+                this.comments = value;
                 this.NotifyPropertyChanged();
             }
         }
 
-        public List<Param> ActionData { set; get; }
-
-        public EbMyAction Action { set; get; }
-
-        public List<EbStageActions> StageActions { set; get; }
-
-        public Command SubmitCommand => new Command(async () => await SubmitButton_Clicked());
-
-        public DoActionViewModel(EbMyAction myAction)
+        private string stagename;
+        public string StageName
         {
-            PageTitle = myAction.Description;
-            Action = myAction;
-
-            if (Action.StageInfo != null)
+            get => stagename;
+            set
             {
-                StageActions = Action.StageInfo.StageActions ?? new List<EbStageActions>();
-                ActionData = Action.StageInfo.Data ?? new List<Param>();
+                stagename = value;
+                this.NotifyPropertyChanged();
             }
         }
 
-        public async Task SubmitButton_Clicked()
+        private List<Param> actiondata;
+        public List<Param> ActionData
+        {
+            get => actiondata;
+            set
+            {
+                actiondata = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
+        private List<EbStageActions> stageactions;
+
+        public List<EbStageActions> StageActions
+        {
+            get => stageactions;
+            set
+            {
+                stageactions = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
+        private readonly EbMyAction action;
+
+        private EbStageInfo stageInfo;
+
+        #endregion
+
+        public Command SubmitCommand => new Command(async () => await SubmitAction());
+
+        public DoActionViewModel(EbMyAction myAction) : base(myAction.Description)
+        {
+            myActionService = new MyActionsService();
+            action = myAction;
+        }
+
+        #region Methods
+
+        public override async Task InitializeAsync()
+        {
+            this.stageInfo = await myActionService.GetMyActionInfoAsync(action.StageId, action.WebFormRefId, action.WebFormDataId);
+
+            if (this.stageInfo != null)
+            {
+                this.StageName = stageInfo.StageName;
+                this.StageActions = stageInfo.StageActions;
+                this.ActionData = stageInfo.Data;
+            }
+        }
+
+        public async Task SubmitAction()
         {
             try
             {
-                EbStageActions status = this.Status;
-                if (status == null) return;
-
-                string comment = this.Comments;
-                int locid = App.Settings.CurrentLocId;
+                if (this.Status == null) return;
 
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
@@ -74,35 +113,55 @@ namespace ExpressBase.Mobile.ViewModels
 
                 SingleRow row = new SingleRow
                 {
-                    LocId = locid,
+                    RowId = this.action.WebFormDataId,
+                    LocId = App.Settings.CurrentLocId,
                     Columns =
                     {
-                        new SingleColumn{ Name = "stage_unique_id", Type = (int)EbDbTypes.String, Value = this.Action.StageInfo.StageUniqueId },
-                        new SingleColumn{ Name = "action_unique_id", Type = (int)EbDbTypes.String, Value = status.ActionUniqueId },
-                        new SingleColumn{ Name = "eb_my_actions_id", Type = (int)EbDbTypes.Int32, Value = this.Action.Id },
-                        new SingleColumn{ Name = "comments", Type = (int)EbDbTypes.String, Value = comment }
+                        new SingleColumn{ Name = "stage_unique_id", Type = (int)EbDbTypes.String, Value = this.stageInfo.StageUniqueId },
+                        new SingleColumn{ Name = "action_unique_id", Type = (int)EbDbTypes.String, Value = this.Status.ActionUniqueId },
+                        new SingleColumn{ Name = "eb_my_actions_id", Type = (int)EbDbTypes.Int32, Value = this.action.Id },
+                        new SingleColumn{ Name = "comments", Type = (int)EbDbTypes.String, Value = this.Comments }
                     }
                 };
 
                 SingleTable st = new SingleTable { row };
                 webformData.MultipleTables.Add("eb_approval_lines", st);
 
-                PushResponse resp = await FormDataServices.Instance.SendFormDataAsync(webformData, this.Action.WebFormDataId, this.Action.WebFormRefId, locid);
+                await this.SendWebFormData(webformData, this.action.WebFormDataId, this.action.WebFormRefId);
 
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
 
-                IToast helper = DependencyService.Get<IToast>();
-                if (resp.RowAffected > 0)
-                    helper.Show("Action saved successfully :)");
-                else
-                    helper.Show("Unable to save action :( ");
-
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                await App.RootMaster.Detail.Navigation.PopAsync(true);
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }
         }
+
+        private async Task SendWebFormData(WebformData webform,int rowid,string webformrefid)
+        {
+            try
+            {
+                PushResponse resp = await FormDataServices.Instance.SendFormDataAsync(webform, rowid, webformrefid, App.Settings.CurrentLocId);
+
+                IToast helper = DependencyService.Get<IToast>();
+
+                if (resp.RowAffected > 0)
+                {
+                    helper.Show("Action saved successfully :)");
+                    NavigationService.UpdateViewStack();
+                } 
+                else
+                    helper.Show("Unable to save action :( ");
+            }
+            catch (Exception ex)
+            {
+                EbLog.Message("Failed to submit form data in doaction");
+                EbLog.Error(ex.Message);
+            }
+        }
+
+        #endregion
     }
 }

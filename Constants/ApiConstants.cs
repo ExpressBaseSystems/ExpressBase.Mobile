@@ -13,5 +13,8 @@ namespace ExpressBase.Mobile.Constants
         public const string PROTOCOL = "https://";
 
         public const string VALIDATE_SOL = "api/validate_solution";
+
+        public const string GET_ACTIONS = "api/get_actions";
+        public const string GET_ACTION_INFO = "api/get_action_info";
     }
 }

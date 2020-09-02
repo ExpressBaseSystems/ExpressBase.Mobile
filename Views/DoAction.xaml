@@ -34,7 +34,7 @@
                         FontFamily="{StaticResource Roboto-Medium}">
                     </Label>
                     <Label 
-                        Text="Default"
+                        Text="{Binding StageName}"
                         x:Name="CurrentStage" 
                         TextColor="#508bf9"
                         FontFamily="{StaticResource Roboto-Medium}">
