@@ -30,40 +30,19 @@ namespace ExpressBase.Mobile.Services
 
         public AppVendor Vendor { set; get; }
 
-        public string Sid
-        {
-            get => CurrentSolution?.SolutionName;
-        }
+        public string Sid => CurrentSolution?.SolutionName;
 
-        public string RootUrl
-        {
-            get => "https://" + CurrentSolution?.RootUrl;
-        }
+        public string RootUrl => "https://" + CurrentSolution?.RootUrl;
 
-        public string UserName
-        {
-            get => CurrentUser?.Email;
-        }
+        public string UserName => CurrentUser?.Email;
 
-        public string UserDisplayName
-        {
-            get => CurrentUser?.FullName;
-        }
+        public string UserDisplayName => CurrentUser?.FullName;
 
-        public int UserId
-        {
-            get => CurrentUser.UserId;
-        }
+        public int UserId => CurrentUser.UserId;
 
-        public int AppId
-        {
-            get => (CurrentApplication != null) ? CurrentApplication.AppId : 0;
-        }
+        public int AppId => (CurrentApplication != null) ? CurrentApplication.AppId : 0;
 
-        public int CurrentLocId
-        {
-            get => CurrentLocation.LocId;
-        }
+        public int CurrentLocId => CurrentLocation.LocId;
 
         public LoginType LoginType
         {
@@ -163,10 +142,16 @@ namespace ExpressBase.Mobile.Services
 
         private EbLocation GetCurrentLocation() => Store.GetJSON<EbLocation>(AppConst.CURRENT_LOCOBJ);
 
-        public async Task<EbMobileSolutionData> GetSolutionDataAsync(bool export)
+        public async Task<EbMobileSolutionData> GetSolutionDataAsync(bool export, int timeout = 0, Action<ResponseStatus> callback = null)
         {
-            RestClient client = new RestClient(App.Settings.RootUrl);
-            RestRequest request = new RestRequest("api/get_solution_data", Method.GET);
+            int to_calc = export ? ApiConstants.TIMEOUT_IMPORT : ApiConstants.TIMEOUT_STD;
+
+            RestClient client = new RestClient(App.Settings.RootUrl)
+            {
+                Timeout = timeout == 0 ? to_calc : timeout
+            };
+
+            RestRequest request = new RestRequest(ApiConstants.GET_SOLUTION_DATA, Method.GET);
 
             request.AddParameter("export", export);
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
@@ -179,36 +164,44 @@ namespace ExpressBase.Mobile.Services
                 if (response.IsSuccessful)
                 {
                     solData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
+                    await ImportSolutionData(solData, export);
+                }
+                else
+                {
+                    callback?.Invoke(response.ResponseStatus);
+                    EbLog.Message("get_solution_data api failure, callback invoked");
                 }
             }
             catch (Exception ex)
             {
                 EbLog.Error("Error on get_solution_data request" + ex.Message);
             }
-
-            if (solData != null)
-            {
-                if (export)
-                {
-                    EbDataSet offlineDs = solData.GetOfflineData();
-                    solData.ClearOfflineData();
-
-                    await Task.Run(async () =>
-                    {
-                        await CommonServices.Instance.LoadLocalData(offlineDs);
-                    });
-                }
-
-                await Store.SetJSONAsync(AppConst.APP_COLLECTION, solData.Applications);
-                await SetLocationInfo(solData.Locations);
-
-                if (this.CurrentApplication != null)
-                {
-                    this.CurrentApplication = solData.Applications.Find(item => item.AppId == this.CurrentApplication.AppId);
-                    await Store.SetJSONAsync(AppConst.CURRENT_APP, this.CurrentApplication);
-                }
-            }
             return solData;
+        }
+
+        private async Task ImportSolutionData(EbMobileSolutionData solData, bool export)
+        {
+            if (solData == null) return;
+
+            if (export)
+            {
+                EbDataSet offlineDs = solData.GetOfflineData();
+                solData.ClearOfflineData();
+
+                await Task.Run(async () =>
+                {
+                    await CommonServices.Instance.LoadLocalData(offlineDs);
+                });
+            }
+
+            await Store.SetJSONAsync(AppConst.APP_COLLECTION, solData.Applications);
+            await SetLocationInfo(solData.Locations);
+
+            if (this.CurrentApplication != null)
+            {
+                this.CurrentApplication = solData.Applications.Find(item => item.AppId == this.CurrentApplication.AppId);
+                await Store.SetJSONAsync(AppConst.CURRENT_APP, this.CurrentApplication);
+            }
         }
 
         private async Task SetLocationInfo(List<EbLocation> locations)

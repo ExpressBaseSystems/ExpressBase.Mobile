@@ -128,7 +128,10 @@ namespace ExpressBase.Mobile.ViewModels
                 await identityService.UpdateAuthInfo(authResponse, username);
                 await identityService.UpdateLastUser(username, LoginType.CREDENTIALS);
 
-                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true);
+                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true, callback: status =>
+                {
+                    Utils.Alert_SlowNetwork();
+                });
 
                 if (App.Settings.Vendor.AllowNotifications)
                     await NotificationService.Instance.UpdateNHRegisratation();

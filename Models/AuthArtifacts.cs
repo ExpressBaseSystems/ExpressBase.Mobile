@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Extensions;
+using ExpressBase.Mobile.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -122,28 +123,33 @@ namespace ExpressBase.Mobile.Models
             return this.Permissions.Contains(permission);
         }
 
-        public List<MobilePagesWraper> FilterByLocation()
+        public List<MobilePagesWraper> FilterByLocation(List<MobilePagesWraper> pages)
         {
-            var pages = App.Settings.MobilePages;
-
             if (IsAdmin)
             {
                 return new List<MobilePagesWraper>(pages);
             }
-
-            List<int> objids = new List<int>();
-
-            foreach (string perm in Permissions)
+            List<MobilePagesWraper> filtered = null;
+            try
             {
-                int id = Convert.ToInt32(perm.Split(CharConstants.DASH)[2]);
-                int locid = Convert.ToInt32(perm.Split(CharConstants.COLON)[1]);
+                List<int> objids = new List<int>();
 
-                if (locid == App.Settings.CurrentLocId || locid == -1)
-                    objids.Add(id);
+                foreach (string perm in Permissions)
+                {
+                    int id = Convert.ToInt32(perm.Split(CharConstants.DASH)[2]);
+                    int locid = Convert.ToInt32(perm.Split(CharConstants.COLON)[1]);
+
+                    if (locid == App.Settings.CurrentLocId || locid == -1)
+                        objids.Add(id);
+                }
+
+                filtered = pages.Where(item => objids.Contains(item.RefId.ToObjId())).ToList();
             }
-
-            List<MobilePagesWraper> filtered = pages.Where(item => objids.Contains(item.RefId.ToObjId())).ToList();
-
+            catch(Exception ex)
+            {
+                EbLog.Message("Error in filtering pages by location");
+                EbLog.Error(ex.Message);
+            }
             return filtered ?? new List<MobilePagesWraper>();
         }
     }

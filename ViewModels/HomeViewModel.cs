@@ -48,9 +48,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         private bool isTapped;
 
-        public HomeViewModel()
+        public HomeViewModel() : base(App.Settings.CurrentApplication?.AppName)
         {
-            PageTitle = App.Settings.CurrentApplication?.AppName;
             menuServices = new MenuServices();
         }
 
@@ -60,9 +59,10 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 this.ObjectList = await menuServices.GetDataAsync();
                 await menuServices.DeployFormTables(ObjectList);
-                EbLog.Error($"Current Application :'{PageTitle}' with page count of {this.ObjectList.Count}.");
                 SolutionLogo = await menuServices.GetLogo(App.Settings.Sid);
                 await HelperFunctions.CreateDirectory("FILES");
+
+                EbLog.Error($"Current Application :'{PageTitle}' with page count of {this.ObjectList.Count}.");
             }
             catch (Exception ex)
             {
@@ -74,10 +74,17 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                this.ObjectList = await menuServices.UpdateDataAsync();
+                if (!Utils.HasInternet)
+                {
+                    Utils.Alert_NoInternet();
+                }
+                else
+                {
+                    this.ObjectList = await menuServices.UpdateDataAsync();
 
-                await menuServices.DeployFormTables(ObjectList);
-                EbLog.Error($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
+                    await menuServices.DeployFormTables(ObjectList);
+                    EbLog.Error($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
+                }
             }
             catch (Exception ex)
             {

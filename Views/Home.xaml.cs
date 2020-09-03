@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
@@ -21,8 +20,8 @@ namespace ExpressBase.Mobile.Views
         public Home()
         {
             InitializeComponent();
-            IconedLoader.IsVisible = true;
             BindingContext = viewModel = new HomeViewModel();
+            IconedLoader.IsVisible = true;
         }
 
         protected override async void OnAppearing()
@@ -70,7 +69,6 @@ namespace ExpressBase.Mobile.Views
         private async void RefreshView_Refreshing(object sender, System.EventArgs e)
         {
             RootRefreshView.IsRefreshing = false;
-            IToast toast = DependencyService.Get<IToast>();
             try
             {
                 if (!Utils.HasInternet)
@@ -80,24 +78,15 @@ namespace ExpressBase.Mobile.Views
                 }
                 else
                 {
-                    if (NavigationService.IsTokenExpired(App.Settings.RToken))
-                        await NavigationService.LoginWithNS();
-                    else
-                    {
-                        IconedLoader.IsVisible = true;
-                        App.Settings.MobilePages = null;
+                    IconedLoader.IsVisible = true;
+                    await viewModel.UpdateAsync();
+                    this.ToggleStatus();
 
-                        await viewModel.UpdateAsync();
-                        this.ToggleStatus();
-
-                        IconedLoader.IsVisible = false;
-                        toast.Show("Refreshed");
-                    }
+                    IconedLoader.IsVisible = false;
                 }
             }
             catch (Exception ex)
             {
-                toast.Show("Something went wrong. Please try again");
                 EbLog.Error(ex.Message);
                 IconedLoader.IsVisible = false;
             }

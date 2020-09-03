@@ -123,11 +123,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public async Task FormSubmitClicked()
         {
-            IToast toast = DependencyService.Get<IToast>();
-
             if (this.NetworkType == NetworkMode.Online && !Utils.HasInternet)
             {
-                Utils.Alert_NoInternet(toast);
+                Utils.Alert_NoInternet();
             }
 
             if (Form.Validate())
@@ -148,12 +146,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     IsBusy = false;
-                    toast.Show(saveResponse.Message);
+                    Utils.Toast(saveResponse.Message);
                     await App.RootMaster.Detail.Navigation.PopAsync(true);
                 });
             }
             else
-                toast.Show("Fields required");
+                Utils.Toast("Fields required");
         }
 
         public async Task FillValues()

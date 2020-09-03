@@ -1,4 +1,6 @@
 ﻿using ExpressBase.Mobile.Models;
+using RestSharp;
+using System;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
@@ -11,6 +13,6 @@ namespace ExpressBase.Mobile.Services
 
         void Reset();
 
-        Task<EbMobileSolutionData> GetSolutionDataAsync(bool export);
+        Task<EbMobileSolutionData> GetSolutionDataAsync(bool export, int timeout, Action<ResponseStatus> callback);
     }
 }

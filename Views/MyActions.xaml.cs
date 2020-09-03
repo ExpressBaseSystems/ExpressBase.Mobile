@@ -35,15 +35,17 @@ namespace ExpressBase.Mobile.Views
 
         private async void MyActionsRefresh_Refreshing(object sender, EventArgs e)
         {
+            IToast toast = DependencyService.Get<IToast>();
             try
             {
                 if (!Utils.HasInternet)
                 {
-                    DependencyService.Get<IToast>().Show("Not connected to internet!");
+                    toast.Show("Not connected to internet!");
                     return;
                 }
                 MyActionsRefresh.IsRefreshing = true;
                 await viewModel.InitializeAsync();
+                toast.Show("Refreshed");
             }
             catch (Exception ex)
             {

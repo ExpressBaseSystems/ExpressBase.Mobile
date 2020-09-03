@@ -45,12 +45,37 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public static void Alert_NoInternet(IToast toast = null)
+        private static IToast toastservice;
+
+        public static IToast ToastService
         {
-            if (toast == null)
-                DependencyService.Get<IToast>().Show("Not connected to internet!");
-            else
-                toast.Show("Not connected to internet!");
+            get
+            {
+                if (toastservice == null)
+                    toastservice = DependencyService.Get<IToast>();
+
+                return toastservice;
+            }
+        }
+
+        public static void Alert_NoInternet()
+        {
+            ToastService.Show("Not connected to internet!");
+        }
+
+        public static void Alert_SlowNetwork()
+        {
+            ToastService.Show("Slow network detected!");
+        }
+
+        public static void Alert_NetworkError()
+        {
+            ToastService.Show("Network error");
+        }
+
+        public static void Toast(string message)
+        {
+            ToastService.Show(message);
         }
     }
 }

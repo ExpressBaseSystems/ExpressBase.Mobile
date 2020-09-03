@@ -63,7 +63,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 NavigationService.UpdateViewStack();
 
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopAsync(true);
+                await App.RootMaster.Detail.Navigation.PopAsync(true);
             }
         }
 

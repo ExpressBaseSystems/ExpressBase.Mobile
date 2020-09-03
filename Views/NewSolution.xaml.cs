@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile.Views
 
                 BindingContext = viewModel = new NewSolutionViewModel();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 DependencyService.Get<IToast>().Show(ex.Message);
             }
@@ -136,10 +136,9 @@ namespace ExpressBase.Mobile.Views
             {
                 string surl = SolutionName.Text.Trim();
 
-                IToast toast = DependencyService.Get<IToast>();
                 if (!Utils.HasInternet)
                 {
-                    Utils.Alert_NoInternet(toast);
+                    Utils.Alert_NoInternet();
                     return;
                 }
                 if (string.IsNullOrEmpty(surl) || viewModel.IsSolutionExist(surl))
@@ -165,7 +164,7 @@ namespace ExpressBase.Mobile.Views
                 else
                 {
                     Loader.IsVisible = false;
-                    toast.Show("Invalid solution URL");
+                    Utils.Toast("Invalid solution URL");
                 }
             }
             catch (Exception ex)

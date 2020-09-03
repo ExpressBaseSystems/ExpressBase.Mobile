@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Configuration;
-using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
@@ -40,32 +39,42 @@ namespace ExpressBase.Mobile.Services
                         objectList = await GetFromMenuPreload(settings.MenuApi);
                     else
                     {
-                        objectList.Clear();
                         Utils.Alert_NoInternet();
                     }
                 }
             }
-            return objectList;
+            //filter all pages with respect to current location
+            var filter = App.Settings.CurrentUser.FilterByLocation(objectList);
+
+            return filter;
         }
 
         public async Task<List<MobilePagesWraper>> UpdateDataAsync()
         {
-            if (!Utils.HasInternet)
-            {
-                Utils.Alert_NoInternet();
-                return new List<MobilePagesWraper>();
-            }
-
             List<MobilePagesWraper> collection = null;
-
             try
             {
-                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(false);
+                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(false, 6000, async status =>
+                {
+                    collection = await this.GetDataAsync();
+
+                    if (status == ResponseStatus.TimedOut)
+                    {
+                        Utils.Alert_SlowNetwork();
+                        EbLog.Message("solution data api raised timeout in UpdateDataAsync");
+                    }
+                    else
+                    {
+                        Utils.Alert_NetworkError();
+                        EbLog.Message("solution data api raised network error in UpdateDataAsync");
+                    }
+                });
 
                 if (data != null)
                 {
                     App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
                     collection = await this.GetDataAsync();
+                    Utils.Toast("Refreshed");
                 }
             }
             catch (Exception ex)
