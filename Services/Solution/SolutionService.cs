@@ -43,7 +43,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Message("Failed to get solution data");
+                EbLog.Info("Failed to get solution data");
                 EbLog.Error(ex.Message);
             }
             return sln;
@@ -71,7 +71,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception e)
             {
-                EbLog.Message("validate_solution api failure");
+                EbLog.Info("validate_solution api failure");
                 EbLog.Error(e.Message);
             }
             //safe return
@@ -133,7 +133,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Message($"Unable to create logo for solution '{solutionname}'");
+                EbLog.Info($"Unable to create logo for solution '{solutionname}'");
                 EbLog.Error(ex.Message);
             }
         }

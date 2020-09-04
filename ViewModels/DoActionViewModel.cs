@@ -157,7 +157,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Message("Failed to submit form data in doaction");
+                EbLog.Info("Failed to submit form data in doaction");
                 EbLog.Error(ex.Message);
             }
         }

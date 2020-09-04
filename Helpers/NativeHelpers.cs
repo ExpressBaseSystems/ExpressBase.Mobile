@@ -40,13 +40,13 @@ namespace ExpressBase.Mobile.Helpers
     {
         private static INativeHelper _helper;
 
+        public static INativeHelper Helper => _helper ??= DependencyService.Get<INativeHelper>();
+
         public static void Error(string message)
         {
             try
             {
-                _helper ??= DependencyService.Get<INativeHelper>();
-
-                _helper.WriteLogs(message, LogTypes.EXCEPTION);
+                Helper.WriteLogs(message, LogTypes.ERROR);
             }
             catch (Exception ex)
             {
@@ -54,13 +54,11 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public static void Message(string message)
+        public static void Info(string message)
         {
             try
             {
-                _helper ??= DependencyService.Get<INativeHelper>();
-
-                _helper.WriteLogs(message, LogTypes.MESSAGE);
+                Helper.WriteLogs(message, LogTypes.INFO);
             }
             catch (Exception ex)
             {
@@ -68,13 +66,11 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public static void StackTrace(string message)
+        public static void Warning(string message)
         {
             try
             {
-                _helper ??= DependencyService.Get<INativeHelper>();
-
-                _helper.WriteLogs(message, LogTypes.STACKTRACE);
+                Helper.WriteLogs(message, LogTypes.WARN);
             }
             catch (Exception ex)
             {

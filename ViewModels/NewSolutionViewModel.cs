@@ -55,5 +55,20 @@ namespace ExpressBase.Mobile.ViewModels
                 EbLog.Error(ex.Message);
             }
         }
+
+        public async Task<bool> GetCameraAccess()
+        {
+            bool access = false;
+            try
+            {
+                access = await AppPermission.Camera();
+                await Task.Delay(100);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return access;
+        }
     }
 }

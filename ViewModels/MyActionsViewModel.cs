@@ -80,14 +80,20 @@ namespace ExpressBase.Mobile.ViewModels
             ShowEmptyLabel = Actions.Count <= 0;
         }
 
+        private bool IsTapped;
+
         private async Task ItemSelected(object selected)
         {
+            if (IsTapped)
+                return;
+
             try
             {
                 EbMyAction action = (EbMyAction)selected;
 
                 if (Utils.HasInternet)
                 {
+                    IsTapped = true;
                     await App.RootMaster.Detail.Navigation.PushAsync(new DoAction(action));
                 }
                 else
@@ -97,6 +103,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 EbLog.Error("AppSelect_ItemSelected---" + ex.Message);
             }
+            IsTapped = false;
         }
 
         #endregion

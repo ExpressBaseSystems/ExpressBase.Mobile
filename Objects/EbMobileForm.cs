@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,6 @@ namespace ExpressBase.Mobile
 
         public string WebFormRefId { set; get; }
 
-        //mobile prop
         public Dictionary<string, EbMobileControl> ControlDictionary { set; get; }
 
         private bool HasFileSelect
@@ -156,10 +156,15 @@ namespace ExpressBase.Mobile
                     EbLog.Error("Upload file api error");
                 }
             }
+            else if (ctrl is EbMobileFileUpload fup)
+            {
+                List<FileWrapper> files = fup.GetValue() as List<FileWrapper>;
+                table.Files.Add(ctrl.Name, files);
+            }
             else
             {
-                List<FileWrapper> files = (ctrl as EbMobileFileUpload).GetValue() as List<FileWrapper>;
-                table.Files.Add(ctrl.Name, files);
+                EbLog.Warning("Unknown control");
+                EbLog.Warning(ctrl.ToString());
             }
         }
 
@@ -171,7 +176,7 @@ namespace ExpressBase.Mobile
 
                 foreach (MobileTable table in data.Tables)
                 {
-                    if (table.Files != null && table.Files.Any())
+                    if (table.Files.Any())
                     {
                         table.InitFilesToUpload();
                         bool status = await this.SendAndFillFupData(webFormData, table);
@@ -181,7 +186,12 @@ namespace ExpressBase.Mobile
                     }
                 }
 
-                PushResponse pushResponse = await FormDataServices.Instance.SendFormDataAsync(webFormData, rowId, this.WebFormRefId, App.Settings.CurrentLocId);
+                int locid = App.Settings.CurrentLocId;
+                EbLog.Info($"Current location when form submit is {locid}");
+
+                PushResponse pushResponse = await FormDataServices.Instance.SendFormDataAsync(webFormData, rowId, this.WebFormRefId, locid);
+
+                this.LogPushResponse(pushResponse);
 
                 if (pushResponse.RowAffected > 0)
                 {
@@ -195,8 +205,15 @@ namespace ExpressBase.Mobile
             {
                 response.Status = false;
                 response.Message = "Something went wrong :(";
-                EbLog.Error("EbMobileForm.PushToCloud---" + ex.Message);
+                EbLog.Error(ex.Message);
             }
+        }
+
+        private void LogPushResponse(PushResponse resp)
+        {
+            EbLog.Info(resp.Message);
+            EbLog.Info(resp.MessageInt);
+            EbLog.Info(JsonConvert.SerializeObject(resp));
         }
 
         private async Task<bool> SendAndFillFupData(WebformData webformdata, MobileTable table)

@@ -88,9 +88,9 @@ namespace ExpressBase.Mobile.Enums
 
     public enum LogTypes
     {
-        EXCEPTION,
-        STACKTRACE,
-        MESSAGE
+        ERROR,
+        WARN,
+        INFO
     }
 
     public enum EbFileCategory

@@ -27,7 +27,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
         public FormRender(EbMobilePage page, int rowId)
         {
             InitializeComponent();
-            BindingContext = viewModel = new FormRenderViewModel(page, rowId);
+            BindingContext = viewModel = new FormRenderVME(page, rowId);
 
             SaveButton.Text = "Save Changes";
             SaveButton.IsVisible = false;
@@ -38,14 +38,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
         public FormRender(EbMobilePage page, List<EbMobileDataColToControlMap> linkMap, EbDataRow contextRow)
         {
             InitializeComponent();
-            BindingContext = viewModel = new FormRenderViewModel(page, linkMap, contextRow);
+            BindingContext = viewModel = new FormRenderVMPRE(page, linkMap, contextRow);
         }
 
         //reference mode
-        public FormRender(EbMobilePage page, EbMobileVisualization context, EbDataRow contextRow, int unused)
+        public FormRender(EbMobilePage page, EbMobileVisualization context, EbDataRow contextRow)
         {
             InitializeComponent();
-            BindingContext = viewModel = new FormRenderViewModel(page, context, contextRow, unused);
+            BindingContext = viewModel = new FormRenderVMR(page, context, contextRow);
         }
 
         #endregion
@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             LoaderIconed.IsVisible = true;
             if (!isRendered)
             {
-                await viewModel.FillValues();
+                await viewModel.InitializeAsync();
                 isRendered = true;
             }
             LoaderIconed.IsVisible = false;
@@ -68,10 +68,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EditButton.IsVisible = false;
             SaveButton.IsVisible = true;
 
-            foreach (var pair in viewModel.Form.ControlDictionary)
-            {
-                pair.Value.SetAsReadOnly(false);
-            }
+            viewModel.EnableControls();
         }
 
         public void ShowFullScreenImage(Image tapedImage)

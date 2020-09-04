@@ -27,7 +27,7 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Message("Error in get_actions api");
+                EbLog.Info("Error in get_actions api");
                 EbLog.Error(ex.Message);
             }
             return new MyActionsResponse();

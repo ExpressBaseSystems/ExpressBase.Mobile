@@ -38,7 +38,7 @@ namespace ExpressBase.Mobile.Extensions
             }
             catch (Exception ex)
             {
-                EbLog.Message("Failed to resolve form dependencies");
+                EbLog.Info("Failed to resolve form dependencies");
                 EbLog.Error(ex.Message);
             }
             return null;
@@ -78,7 +78,7 @@ namespace ExpressBase.Mobile.Extensions
             }
             catch (Exception ex)
             {
-                EbLog.Message("WebformData to dataset operation failed");
+                EbLog.Info("WebformData to dataset operation failed");
                 EbLog.Error(ex.StackTrace);
             }
             return ds;

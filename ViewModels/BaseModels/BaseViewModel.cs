@@ -70,6 +70,7 @@ namespace ExpressBase.Mobile.ViewModels
             Store.RemoveJSON(AppConst.SOLUTION_OBJ);
             App.Settings.Reset();
 
+            App.RootMaster = null;
             Application.Current.MainPage = new NavigationPage()
             {
                 BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),

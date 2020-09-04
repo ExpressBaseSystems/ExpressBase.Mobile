@@ -43,7 +43,7 @@
       "DefaultLoginType": "SSO",
       "Content": {
         "NewSolution": {
-          "WallLabel": "Add new Hotel",
+          "WallLabel": "Check into a Hotel",
           "TextBoxPlaceHolder": "Enter Hotel Name"
         },
         "MySolutions": {

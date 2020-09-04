@@ -62,7 +62,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
             catch (Exception ex)
             {
-                EbLog.Message("Frame style issue");
+                EbLog.Info("Frame style issue");
                 EbLog.Error(ex.Message);
             }
         }
@@ -114,7 +114,7 @@ namespace ExpressBase.Mobile.CustomControls
                     }
                     catch (Exception ex)
                     {
-                        EbLog.Message("Failed to resolve grid content type in dynamic frame");
+                        EbLog.Info("Failed to resolve grid content type in dynamic frame");
                         EbLog.Error(ex.Message);
                     }
                 }

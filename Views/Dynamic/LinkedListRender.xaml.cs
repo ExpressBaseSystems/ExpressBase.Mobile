@@ -87,10 +87,15 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void ToggleDataLength()
         {
-            bool isEmpty = viewModel.DataCount <= 0;
+            int count = viewModel.DataCount;
+            int length = viewModel.Visualization.PageLength;
 
-            PagingContainer.IsVisible = !isEmpty;
-            EmptyMessage.IsVisible = isEmpty;
+            if (count <= 0 || (count <= length && this.pageCount <= 1))
+                PagingContainer.IsVisible = false;
+            else
+                PagingContainer.IsVisible = true;
+
+            EmptyMessage.IsVisible = count <= 0;
         }
 
         private void FilterButton_Clicked(object sender, EventArgs e)

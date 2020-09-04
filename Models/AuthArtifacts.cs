@@ -147,7 +147,7 @@ namespace ExpressBase.Mobile.Models
             }
             catch(Exception ex)
             {
-                EbLog.Message("Error in filtering pages by location");
+                EbLog.Info("Error in filtering pages by location");
                 EbLog.Error(ex.Message);
             }
             return filtered ?? new List<MobilePagesWraper>();

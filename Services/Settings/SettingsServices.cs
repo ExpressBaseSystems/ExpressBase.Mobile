@@ -169,7 +169,7 @@ namespace ExpressBase.Mobile.Services
                 else
                 {
                     callback?.Invoke(response.ResponseStatus);
-                    EbLog.Message("get_solution_data api failure, callback invoked");
+                    EbLog.Info("get_solution_data api failure, callback invoked");
                 }
             }
             catch (Exception ex)

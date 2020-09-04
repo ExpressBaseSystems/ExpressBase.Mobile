@@ -162,7 +162,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Message($"Failed to get Live data for '{DataSourceRefId}'");
+                EbLog.Info($"Failed to get Live data for '{DataSourceRefId}'");
                 EbLog.Error(ex.Message);
             }
 
@@ -198,7 +198,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Message("Visualization get parameters from local error");
+                EbLog.Info("Visualization get parameters from local error");
                 EbLog.Error(ex.Message);
             }
             return parameters;

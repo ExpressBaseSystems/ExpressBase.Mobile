@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,6 +18,8 @@ namespace ExpressBase.Mobile.ViewModels.BaseModels
         public ColumnColletion ContextColumns { set; get; }
 
         public EbDataRow ContextRow { set; get; }
+
+        public string PageName => this.Page.DisplayName;
 
         public DynamicBaseViewModel() { }
 

@@ -119,7 +119,7 @@ namespace ExpressBase.Mobile
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
-                EbLog.StackTrace(ex.StackTrace);
+                EbLog.Warning(ex.StackTrace);
             }
         }
 

@@ -5,8 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Shared.QrScanner"
-             BackgroundColor="White">
+             x:Class="ExpressBase.Mobile.Views.Shared.QrScanner">
     
     <ContentPage.Content>
         <Grid RowSpacing="0" ColumnSpacing="0">
@@ -23,6 +22,23 @@
                 <ColumnDefinition Width="200"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
+
+            <zxing:ZXingScannerView 
+                Grid.RowSpan="4"
+                Grid.ColumnSpan="3"
+                x:Name="ScannerView"
+                IsAnalyzing="False"
+                IsScanning="False"
+                OnScanResult="ScannerView_OnScanResult"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand">
+            </zxing:ZXingScannerView>
+
+            <BoxView Grid.Row="0" Grid.ColumnSpan="3" BackgroundColor="White" Opacity=".4"></BoxView>
+            <BoxView Grid.Row="1" Grid.ColumnSpan="3" BackgroundColor="White" Opacity=".4"></BoxView>
+            <BoxView Grid.Row="2" Grid.Column="0" BackgroundColor="White" Opacity=".4"></BoxView>
+            <BoxView Grid.Row="2" Grid.Column="2" BackgroundColor="White" Opacity=".4"></BoxView>
+            <BoxView Grid.Row="3" Grid.ColumnSpan="3" BackgroundColor="White" Opacity=".4"></BoxView>
 
             <Button
                 Margin="0,20"
@@ -47,6 +63,7 @@
                 Padding="20,0">
                 <Label 
                     Text="Scan QR code"
+                    TextColor="Black"
                     FontSize="16"
                     FontFamily="{StaticResource Roboto-Medium}"
                     HorizontalTextAlignment="Center">
@@ -54,19 +71,10 @@
                 <Label 
                     FontFamily="{StaticResource Roboto-Light}"
                     Text="Place qr code inside the frame to scan." 
+                    TextColor="#333"
                     HorizontalTextAlignment="Center">
                 </Label>
             </StackLayout>
-
-            <zxing:ZXingScannerView 
-                Grid.Row="2"
-                Grid.Column="1"
-                x:Name="ScannerView"
-                OnScanResult="ScannerView_OnScanResult"
-                IsScanning="True"
-                VerticalOptions="FillAndExpand"
-                HorizontalOptions="FillAndExpand">
-            </zxing:ZXingScannerView>
 
             <BoxView Grid.Row="2" Grid.Column="1" Margin="-5,-5,0,0" 
                      HeightRequest="5" VerticalOptions="Start" HorizontalOptions="Start" 

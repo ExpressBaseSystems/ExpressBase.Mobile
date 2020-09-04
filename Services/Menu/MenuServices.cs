@@ -61,12 +61,12 @@ namespace ExpressBase.Mobile.Services
                     if (status == ResponseStatus.TimedOut)
                     {
                         Utils.Alert_SlowNetwork();
-                        EbLog.Message("solution data api raised timeout in UpdateDataAsync");
+                        EbLog.Info("solution data api raised timeout in UpdateDataAsync");
                     }
                     else
                     {
                         Utils.Alert_NetworkError();
-                        EbLog.Message("solution data api raised network error in UpdateDataAsync");
+                        EbLog.Info("solution data api raised network error in UpdateDataAsync");
                     }
                 });
 

@@ -221,7 +221,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Message("Error at GetDisplayFromValue in powerselect");
+                EbLog.Info("Error at GetDisplayFromValue in powerselect");
                 EbLog.Error(ex.Message);
             }
             return dt ?? new EbDataTable();
@@ -240,7 +240,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Message("power select failed to resolve display member from local");
+                EbLog.Info("power select failed to resolve display member from local");
                 EbLog.Error(ex.Message);
             }
             return dt;
@@ -265,7 +265,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Message("power select failed to resolve display member from live");
+                EbLog.Info("power select failed to resolve display member from live");
                 EbLog.Error(ex.Message);
             }
             return dt;

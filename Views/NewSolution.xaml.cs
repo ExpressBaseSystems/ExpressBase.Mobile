@@ -8,6 +8,7 @@ using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -35,7 +36,6 @@ namespace ExpressBase.Mobile.Views
 
             try
             {
-                //decide show back button
                 isMasterPage = hasBackButton;
                 if (hasBackButton)
                 {
@@ -47,15 +47,16 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                DependencyService.Get<IToast>().Show(ex.Message);
+                Utils.Toast(ex.Message);
             }
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
+            this.SetContentFromConfig();
 
-            SetContentFromConfig();
+            await viewModel.GetCameraAccess();
         }
 
         public void SetContentFromConfig()
@@ -70,17 +71,18 @@ namespace ExpressBase.Mobile.Views
         /// <param name="meta"></param>
         private void QrScannerCallback(SolutionQrMeta meta)
         {
-            if (string.IsNullOrEmpty(meta.Sid) || viewModel.IsSolutionExist(meta.Sid))
-                return;
-
             Device.BeginInvokeOnMainThread(async () =>
             {
                 try
                 {
+                    if (string.IsNullOrEmpty(meta.Sid) || viewModel.IsSolutionExist(meta.Sid))
+                    {
+                        Utils.Toast($"{meta.Sid} exist");
+                        return;
+                    }
                     Loader.IsVisible = true;
-
-                    //api call for validating solution
                     response = await viewModel.Validate(meta.Sid);
+
                     if (response.IsValid)
                     {
                         await viewModel.AddSolution(meta.Sid, response);
@@ -97,14 +99,13 @@ namespace ExpressBase.Mobile.Views
                         await NavigationService.LoginWithCS();
                     }
                     else
-                        throw new Exception("invalid qr code meta");
+                        Utils.Toast("invalid qr code meta");
 
-                    Loader.IsVisible = true;
+                    Loader.IsVisible = false;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    EbLog.Error(ex.Message);
-                    Loader.IsVisible = true;
+                    Loader.IsVisible = false;
                 }
             });
         }
@@ -116,13 +117,20 @@ namespace ExpressBase.Mobile.Views
         /// <param name="e"></param>
         private async void QrButton_Tapped(object sender, EventArgs e)
         {
-            QrScanner scannerPage = new QrScanner(isMasterPage);
-            scannerPage.BindMethod(QrScannerCallback);
+            bool hasCameraAccess = await viewModel.GetCameraAccess();
 
-            if (isMasterPage)
-                await App.RootMaster.Detail.Navigation.PushModalAsync(scannerPage);
+            if (hasCameraAccess)
+            {
+                QrScanner scannerPage = new QrScanner();
+                scannerPage.BindMethod(QrScannerCallback);
+
+                if (App.RootMaster != null)
+                    await App.RootMaster.Detail.Navigation.PushModalAsync(scannerPage);
+                else
+                    await Application.Current.MainPage.Navigation.PushModalAsync(scannerPage);
+            }
             else
-                await Application.Current.MainPage.Navigation.PushModalAsync(scannerPage);
+                Utils.Toast("Allow permission to access camera");
         }
 
         /// <summary>
@@ -203,9 +211,9 @@ namespace ExpressBase.Mobile.Views
                 }
                 await NavigationService.LoginWithCS();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                EbLog.Error(ex.Message);
+               ///
             }
         }
     }

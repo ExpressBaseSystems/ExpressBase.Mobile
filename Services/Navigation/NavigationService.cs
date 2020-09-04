@@ -20,6 +20,7 @@ namespace ExpressBase.Mobile.Services
         //login with new stack
         public static async Task LoginWithNS()
         {
+            App.RootMaster = null;
             Application.Current.MainPage = new NavigationPage()
             {
                 BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
@@ -118,7 +119,7 @@ namespace ExpressBase.Mobile.Services
                         var map = button.FormId;
                         if (map == null)
                         {
-                            EbLog.Message("form id should be set");
+                            EbLog.Info("form id should be set");
                             throw new Exception("Form rendering exited! due to null value for 'FormId'");
                         }
                         else
@@ -126,7 +127,7 @@ namespace ExpressBase.Mobile.Services
                             int id = Convert.ToInt32(row[map.ColumnName]);
                             if (id <= 0)
                             {
-                                EbLog.Message("id has ivalid value" + id);
+                                EbLog.Info("id has ivalid value" + id);
                                 throw new Exception("Form rendering exited! due to invalid id");
                             }
                             renderer = new FormRender(page, id);

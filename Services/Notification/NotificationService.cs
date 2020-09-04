@@ -110,7 +110,7 @@ namespace ExpressBase.Mobile.Services
         {
             string pns_token = Store.GetValue(AppConst.PNS_TOKEN);
 
-            EbLog.Message("DEVICE TOKEN:" + pns_token);
+            EbLog.Info("DEVICE TOKEN:" + pns_token);
 
             DeviceRegistration device = new DeviceRegistration()
             {
@@ -152,7 +152,7 @@ namespace ExpressBase.Mobile.Services
                     }
                 }
 
-                EbLog.Message("NH REG ID:" + azure_regid);
+                EbLog.Info("NH REG ID:" + azure_regid);
             }
             catch (Exception ex)
             {

@@ -1,11 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -76,6 +71,14 @@ namespace ExpressBase.Mobile.Helpers
         public static void Toast(string message)
         {
             ToastService.Show(message);
+        }
+
+        public static bool IsNetworkReady(NetworkMode mode)
+        {
+            if (mode == NetworkMode.Online && !HasInternet)
+                return false;
+
+            return true;
         }
     }
 }

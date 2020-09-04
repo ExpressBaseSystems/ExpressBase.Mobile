@@ -20,5 +20,10 @@ namespace ExpressBase.Mobile.Data
             //if (this.Tables == null) //Hack for deserialization issue Tables nullified by constructor call.. Need neater fix.
                 this.Tables = new TableColletion(this);
         }
+
+        internal EbDataSet ToDataSet()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

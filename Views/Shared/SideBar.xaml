@@ -136,7 +136,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Label Text="&#xf25a;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="My Actions" Style="{StaticResource LinkLabel}"/>
+                                <Label Grid.Column="1" Text="Action Required" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
                         <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasOfflineSupport}">

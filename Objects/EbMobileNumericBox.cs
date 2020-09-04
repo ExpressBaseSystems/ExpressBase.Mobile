@@ -105,7 +105,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Message("Numeric box getvalue error !");
+                EbLog.Info("Numeric box getvalue error !");
                 EbLog.Error(ex.Message + ex.StackTrace);
             }
             return value;

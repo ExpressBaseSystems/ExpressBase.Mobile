@@ -148,8 +148,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             if (page != null && page.Container is EbMobileForm)
             {
-                FormRender Renderer = new FormRender(page, Visualization, sourceRecord, 0);
-                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                FormRender Renderer = new FormRender(page, Visualization, sourceRecord);
+                await App.RootMaster.Detail.Navigation.PushAsync(Renderer);
             }
         }
 
@@ -163,7 +163,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 if (id != 0)
                 {
                     FormRender Renderer = new FormRender(_page, id);
-                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(Renderer);
+                    await App.RootMaster.Detail.Navigation.PushAsync(Renderer);
                 }
             }
         }
@@ -184,7 +184,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                             var map = Visualization.FormId;
                             if (map == null)
                             {
-                                EbLog.Message("form id should be set");
+                                EbLog.Info("form id should be set");
                                 throw new Exception("Form rendering exited! due to null value for 'FormId'");
                             }
                             else
@@ -192,7 +192,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                                 int id = Convert.ToInt32(row[map.ColumnName]);
                                 if (id <= 0)
                                 {
-                                    EbLog.Message("id has ivalid value" + id);
+                                    EbLog.Info("id has ivalid value" + id);
                                     throw new Exception("Form rendering exited! due to invalid id");
                                 }
                                 renderer = new FormRender(page, id);

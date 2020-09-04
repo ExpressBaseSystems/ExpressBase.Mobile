@@ -3,9 +3,6 @@ using ExpressBase.Mobile.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -75,11 +72,30 @@ namespace ExpressBase.Mobile.Views
                 var path = helper.NativeRoot + $"/{App.Settings.AppDirectory}/{sid}/logs.txt";
                 File.WriteAllText(path, string.Empty);
 
-                DependencyService.Get<IToast>().Show("log file cleared :)");
+                Utils.Toast("log file cleared :)");
             }
             catch (Exception ex)
             {
                 EbLog.Error("Failed to clear logs");
+                EbLog.Error(ex.Message);
+            }
+        }
+
+        private async void OpenLog_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                var path = helper.NativeRoot + $"/{App.Settings.AppDirectory}/{App.Settings.Sid}/logs.txt";
+
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(path)
+                });
+            }
+            catch(Exception ex)
+            {
+                EbLog.Error("Failed to open logs file");
                 EbLog.Error(ex.Message);
             }
         }

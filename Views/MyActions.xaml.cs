@@ -49,7 +49,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception ex)
             {
-                EbLog.Message("Failed to refresh myaction data");
+                EbLog.Info("Failed to refresh myaction data");
                 EbLog.Error(ex.Message);
             }
             MyActionsRefresh.IsRefreshing = false;

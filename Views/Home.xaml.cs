@@ -114,7 +114,7 @@ namespace ExpressBase.Mobile.Views
 
         public void Refreshed()
         {
-            EbLog.Message("IRefreshable refresh() not implemented.");
+            EbLog.Info("IRefreshable refresh() not implemented.");
         }
 
         public bool CanRefresh()
