@@ -152,5 +152,34 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             return true;
         }
+
+        private void SearchButton_Clicked(object sender, EventArgs e)
+        {
+            SearchButton.IsVisible = false;
+            LocSearchBox.IsVisible = true;
+            LocSearchBox.Focus();
+        }
+
+        private async void LocSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string search = LocSearchBox.Text;
+
+            if (search != null)
+            {
+                SearchClear.IsVisible = search.Length > 0;
+
+                if (search.Length >= 3)
+                {
+                    Loader.IsVisible = true;
+                    Loader.IsVisible = false;
+                }
+            }
+        }
+
+        private void SearchClear_Clicked(object sender, EventArgs e)
+        {
+            LocSearchBox.ClearValue(TextBox.TextProperty);
+            SearchClear.IsVisible = false;
+        }
     }
 }

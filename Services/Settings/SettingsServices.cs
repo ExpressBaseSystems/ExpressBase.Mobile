@@ -206,8 +206,8 @@ namespace ExpressBase.Mobile.Services
 
         private async Task SetLocationInfo(List<EbLocation> locations)
         {
-            if (locations == null) return;
-
+            if (locations == null) 
+                return;
             try
             {
                 if (CurrentLocation == null)

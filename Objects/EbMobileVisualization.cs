@@ -7,7 +7,9 @@ using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -36,6 +38,8 @@ namespace ExpressBase.Mobile
         public List<EbMobileControl> FilterControls { set; get; }
 
         public List<EbMobileDataColumn> SortColumns { set; get; }
+
+        public List<EbMobileDataColumn> SearchColumns { set; get; }
 
         public List<EbMobileDataColToControlMap> LinkFormParameters { get; set; }
 
@@ -89,6 +93,16 @@ namespace ExpressBase.Mobile
         public bool HasSourceFormLink()
         {
             return !string.IsNullOrEmpty(SourceFormRefId);
+        }
+
+        public SeparatorVisibility XFSeperator()
+        {
+            return ShowRowSeperator ? SeparatorVisibility.Default : SeparatorVisibility.None;
+        }
+
+        public bool IsSearchable()
+        {
+            return SearchColumns != null && SearchColumns.Any();
         }
 
         public async Task<EbDataSet> GetData(NetworkMode networkType, int offset, List<DbParameter> parameters = null, List<SortColumn> sortOrder = null)

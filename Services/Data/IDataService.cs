@@ -7,6 +7,10 @@ namespace ExpressBase.Mobile.Services
 {
     public interface IDataService
     {
+        VisualizationLiveData GetData(MobileVisDataRequest request);
+
+        Task<VisualizationLiveData> GetDataAsync(MobileVisDataRequest request);
+
         VisualizationLiveData GetData(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false);
 
         Task<VisualizationLiveData> GetDataAsync(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false);

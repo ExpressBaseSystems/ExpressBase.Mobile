@@ -381,4 +381,28 @@ namespace ExpressBase.Mobile.Models
 
         public ApiMessage Message { get; set; }
     }
+
+    public class MobileVisDataRequest
+    {
+        public string DataSourceRefId { set; get; }
+
+        public List<Param> Params { get; set; }
+
+        public List<SortColumn> SortOrder { set; get; }
+
+        public List<Param> SearchColumns { set; get; }
+
+        public int Limit { set; get; }
+
+        public int Offset { set; get; }
+
+        public bool IsPowerSelect { set; get; }
+
+        public MobileVisDataRequest()
+        {
+            Params = new List<Param>();
+            SortOrder = new List<SortColumn>();
+            SearchColumns = new List<Param>();
+        }
+    }
 }

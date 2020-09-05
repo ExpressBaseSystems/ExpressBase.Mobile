@@ -37,5 +37,13 @@ namespace ExpressBase.Mobile.Helpers
             }
             return (status == PermissionStatus.Granted);
         }
+
+        public static async Task<bool> HasStoragePermission()
+        {
+            var read = await ReadStorage();
+            var write = await WriteStorage();
+
+            return (read && write);
+        }
     }
 }

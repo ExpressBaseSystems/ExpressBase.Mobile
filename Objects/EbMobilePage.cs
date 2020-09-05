@@ -28,6 +28,8 @@ namespace ExpressBase.Mobile
     {
         public EbMobileContainer Container { set; get; }
 
+        public string Category { get; set; }
+
         public NetworkMode NetworkMode { get; set; }
 
         public bool HideFromMenu { set; get; }

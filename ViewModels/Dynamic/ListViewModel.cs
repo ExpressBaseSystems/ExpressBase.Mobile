@@ -42,9 +42,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<EbMobileControl> FilterControls { set; get; }
 
-        public SeparatorVisibility ShowRowSeperator => Visualization.ShowRowSeperator ? SeparatorVisibility.Default : SeparatorVisibility.None;
+        public SeparatorVisibility ShowRowSeperator => Visualization.XFSeperator();
 
         public bool IsFilterVisible => SortColumns.Any() || FilterControls.Any();
+
+        public bool IsSearchVisible => Visualization.IsSearchable();
 
         #endregion
 
@@ -80,7 +82,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public ListViewModel(EbMobilePage page, EbDataRow row) : base(page)
         {
             this.Visualization = (EbMobileVisualization)this.Page.Container;
-            sourceRecord = row;
+            this.sourceRecord = row;
             this.ListItemIndex = new IntRef();
 
             this.SortColumns = this.Visualization.SortColumns.Select(x => new SortColumn { Name = x.ColumnName }).ToList();
@@ -230,9 +232,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 List<DbParameter> temp = null;
 
                 if (contextParams != null)
-                {
                     temp = filterParams == null ? contextParams : contextParams.Union(filterParams).ToList();
-                }
                 else
                     temp = filterParams;
 

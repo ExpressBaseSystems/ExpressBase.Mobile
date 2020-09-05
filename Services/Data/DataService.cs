@@ -16,7 +16,7 @@ namespace ExpressBase.Mobile.Services
     {
         private static DataService _instance;
 
-        public static DataService Instance => _instance ?? (_instance = new DataService());
+        public static DataService Instance => _instance ??= new DataService();
 
         public VisualizationLiveData GetData(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false)
         {
@@ -51,6 +51,32 @@ namespace ExpressBase.Mobile.Services
             return new VisualizationLiveData();
         }
 
+        public VisualizationLiveData GetData(MobileVisDataRequest req)
+        {
+            try
+            {
+                RestClient client = new RestClient(App.Settings.RootUrl);
+
+                RestRequest request = new RestRequest("api/get_data", Method.POST)
+                {
+                    RequestFormat = DataFormat.Json
+                };
+                request.AddJsonBody(req);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+                IRestResponse iresp = client.Execute(request);
+                return JsonConvert.DeserializeObject<VisualizationLiveData>(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return new VisualizationLiveData();
+        }
+
         public async Task<VisualizationLiveData> GetDataAsync(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false)
         {
             try
@@ -69,6 +95,32 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("limit", limit);
                 request.AddParameter("offset", offset);
                 request.AddParameter("is_powerselect", is_powerselect);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+                IRestResponse iresp = await client.ExecuteAsync(request);
+                return JsonConvert.DeserializeObject<VisualizationLiveData>(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return new VisualizationLiveData();
+        }
+
+        public async Task<VisualizationLiveData> GetDataAsync(MobileVisDataRequest req)
+        {
+            try
+            {
+                RestClient client = new RestClient(App.Settings.RootUrl);
+
+                RestRequest request = new RestRequest("api/get_data", Method.POST)
+                {
+                    RequestFormat = DataFormat.Json
+                };
+                request.AddJsonBody(req);
 
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
