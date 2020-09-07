@@ -20,15 +20,6 @@ namespace ExpressBase.Mobile.CustomControls
         void SetContentFromConfig();
     }
 
-    public interface IRefreshable
-    {
-        void Refreshed();
-
-        void UpdateRenderStatus();
-
-        bool CanRefresh();
-    }
-
     public interface IEbCustomControl
     {
         int BorderThickness { set; get; }
@@ -136,19 +127,6 @@ namespace ExpressBase.Mobile.CustomControls
         public CustomPicker() { }
     }
 
-    public class CustomSearchBar : SearchBar, IEbCustomControl
-    {
-        public int BorderThickness { set; get; } = 1;
-
-        public float BorderRadius { set; get; } = 10.0f;
-
-        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
-
-        public Color BgColor { set; get; }
-
-        public CustomSearchBar() { }
-    }
-
     public class ComboBoxLabel : Label
     {
         public object Value { set; get; }
@@ -241,5 +219,12 @@ namespace ExpressBase.Mobile.CustomControls
     public class LSImageButton : ImageButton
     {
         public double InitialWidth { set; get; }
+    }
+
+    public class ListViewSearchBar : SearchBar
+    {
+        public bool HideIcon { set; get; }
+
+        public ListViewSearchBar() { }
     }
 }

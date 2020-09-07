@@ -1,6 +1,4 @@
-﻿using ExpressBase.Mobile.Configuration;
-using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Models;
@@ -9,32 +7,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
 {
     public class HelperFunctions
     {
-        public static EbMobilePage GetPage(string Refid)
-        {
-            EbMobilePage page = null;
-
-            if (string.IsNullOrEmpty(Refid)) return null;
-
-            try
-            {
-                MobilePagesWraper wrpr = App.Settings.MobilePages?.Find(item => item.RefId == Refid);
-                page = wrpr?.ToPage();
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("Page not found" + ex.Message);
-            }
-
-            return page;
-        }
-
         public static string WrapSelectQuery(string sql, List<DbParameter> Parameters = null)
         {
             string query = string.Empty;
@@ -197,7 +175,6 @@ namespace ExpressBase.Mobile.Helpers
                         ControlName = ControlName
                     });
                 }
-
             }
             catch (Exception ex)
             {
@@ -210,29 +187,6 @@ namespace ExpressBase.Mobile.Helpers
         {
             byte[] b = Convert.FromBase64String(b64);
             return System.Text.Encoding.UTF8.GetString(b);
-        }
-
-        public static List<EbMobileForm> GetOfflineForms()
-        {
-            List<EbMobileForm> ls = new List<EbMobileForm>();
-
-            var pages = App.Settings.MobilePages ?? new List<MobilePagesWraper>();
-
-            foreach (MobilePagesWraper page in pages)
-            {
-                EbMobilePage mpage = page.ToPage();
-
-                if (mpage != null && mpage.Container is EbMobileForm form)
-                {
-                    if (string.IsNullOrEmpty(form.WebFormRefId))
-                        continue;
-                    if (mpage.NetworkMode == NetworkMode.Offline || mpage.NetworkMode == NetworkMode.Mixed)
-                    {
-                        ls.Add(form);
-                    }
-                }
-            }
-            return ls;
         }
 
         public static void WriteFilesLocal(string filename, byte[] fileBytea)

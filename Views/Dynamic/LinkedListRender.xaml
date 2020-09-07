@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<base:ListViewBasePage  
+             xmlns:base="clr-namespace:ExpressBase.Mobile.Views.Base" 
+             xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,6 +13,7 @@
         <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -28,6 +31,25 @@
                 Grid.Column="2"
                 Clicked="FilterButton_Clicked">
             </Button>
+            <Button 
+                IsVisible="{Binding IsSearchVisible}"
+                x:Name="SearchButton"
+                Text="&#xf002;" 
+                Style="{StaticResource ToolBarButtonStyle}" 
+                Grid.Column="3"
+                Margin="0"
+                Clicked="SearchButton_Clicked">
+            </Button>
+            <control:ListViewSearchBar
+                IsVisible="False"
+                x:Name="SearchBox"
+                Style="{StaticResource ListViewSearchBar}"
+                Grid.ColumnSpan="4"
+                HideIcon="True"
+                SearchCommand="{Binding SearchCommand}"
+                SearchCommandParameter="{Binding Text, Source={x:Reference SearchBox}}"
+                TextChanged="SearchBox_TextChanged">
+            </control:ListViewSearchBar>
         </Grid>
     </NavigationPage.TitleView>
 
@@ -196,4 +218,4 @@
 
         </Grid>
     </ContentPage.Content>
-</ContentPage>
+</base:ListViewBasePage>

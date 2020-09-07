@@ -181,12 +181,12 @@ namespace ExpressBase.Mobile.Services
 
         private async Task ImportSolutionData(EbMobileSolutionData solData, bool export)
         {
-            if (solData == null) return;
+            if (solData == null) 
+                return;
 
             if (export)
             {
                 EbDataSet offlineDs = solData.GetOfflineData();
-                solData.ClearOfflineData();
 
                 await Task.Run(async () =>
                 {

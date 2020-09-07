@@ -95,7 +95,7 @@ namespace ExpressBase.Mobile.Views.Shared
                     c++;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Error("Failed to Render select ::" + ex.Message);
             }
@@ -195,7 +195,7 @@ namespace ExpressBase.Mobile.Views.Shared
                     parameters.Add(p);
                 }
 
-                VisualizationLiveData response = await DataService.Instance.GetDataAsync(powerSelect.DataSourceRefId, parameters, null, 100, 0, true);
+                var response = await DataService.Instance.GetDataAsync(powerSelect.DataSourceRefId, 100, 0, parameters, null, null, true);
 
                 if (response.Data != null && response.Data.Tables.HasLength(2))
                     dt = response.Data.Tables[1];
@@ -210,9 +210,9 @@ namespace ExpressBase.Mobile.Views.Shared
             return dt;
         }
 
-        private void BackButton_Clicked(object sender, EventArgs e)
+        private async void BackButton_Clicked(object sender, EventArgs e)
         {
-            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
+            await App.RootMaster.Detail.Navigation.PopModalAsync();
         }
 
         private void ResetSearch_Clicked(object sender, EventArgs e)

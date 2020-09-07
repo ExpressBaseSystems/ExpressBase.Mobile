@@ -71,8 +71,7 @@ namespace ExpressBase.Mobile
 
         #endregion
 
-        //mobile property
-        public string GetQuery { get { return HelperFunctions.B64ToString(this.OfflineQuery.Code); } }
+        public string GetQuery => HelperFunctions.B64ToString(this.OfflineQuery.Code);
 
         public EbMobileVisualization()
         {
@@ -105,16 +104,33 @@ namespace ExpressBase.Mobile
             return SearchColumns != null && SearchColumns.Any();
         }
 
-        public async Task<EbDataSet> GetData(NetworkMode networkType, int offset, List<DbParameter> parameters = null, List<SortColumn> sortOrder = null)
+        public async Task<EbDataSet> GetData(NetworkMode network, int offset, List<DbParameter> dbparam = null, List<SortColumn> sort = null, List<Param> search = null)
         {
-            if (networkType == NetworkMode.Online)
+            EbDataSet ds = null;
+
+            if (network == NetworkMode.Online)
             {
-                return await this.GetLiveData(parameters, sortOrder, offset);
+                try
+                {
+                    dbparam ??= new List<DbParameter>();
+
+                    List<Param> param = dbparam.ToParams();
+
+                    int limit = PageLength == 0 ? 30 : PageLength;
+
+                    ds = await this.GetLiveData(limit, offset, param, sort, search);
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Error("Error at visualization getdata();");
+                    EbLog.Error(ex.Message);
+                }
             }
             else
             {
-                return this.GetLocalData(parameters, sortOrder, offset);
+                ds = this.GetLocalData(dbparam, sort, offset);
             }
+            return ds ?? new EbDataSet();
         }
 
         public EbDataSet GetLocalData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, int offset)
@@ -149,29 +165,22 @@ namespace ExpressBase.Mobile
             return Data;
         }
 
-        public async Task<EbDataSet> GetLiveData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, int offset)
+        public async Task<EbDataSet> GetLiveData(int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search)
         {
             EbDataSet Data = null;
-
-            int len = this.PageLength == 0 ? 30 : this.PageLength;
-
-            dbParameters ??= new List<DbParameter>();
-
-            if (App.Settings.CurrentLocation != null)
-            {
-                dbParameters.Add(new DbParameter
-                {
-                    ParameterName = "eb_loc_id",
-                    DbType = 11,
-                    Value = App.Settings.CurrentLocation.LocId
-                });
-            }
-
-            List<Param> paramsArray = dbParameters.ToParams();
-
             try
             {
-                VisualizationLiveData vd = await DataService.Instance.GetDataAsync(this.DataSourceRefId, paramsArray, sortOrder, len, offset);
+                if (App.Settings.CurrentLocation != null)
+                {
+                    param.Add(new Param
+                    {
+                        Name = "eb_loc_id",
+                        Type = "11",
+                        Value = App.Settings.CurrentLocation.LocId.ToString()
+                    });
+                }
+
+                var vd = await DataService.Instance.GetDataAsync(this.DataSourceRefId, limit, offset, param, sort, search, false);
                 Data = vd?.Data;
             }
             catch (Exception ex)
@@ -179,7 +188,6 @@ namespace ExpressBase.Mobile
                 EbLog.Info($"Failed to get Live data for '{DataSourceRefId}'");
                 EbLog.Error(ex.Message);
             }
-
             return Data;
         }
 
@@ -237,6 +245,21 @@ namespace ExpressBase.Mobile
                 }
             }
             return parameters;
+        }
+
+        public List<Param> GetSearchParams()
+        {
+            var search = new List<Param>();
+
+            foreach (var dc in this.SearchColumns)
+            {
+                search.Add(new Param
+                {
+                    Name = dc.ColumnName,
+                    Type = ((int)dc.Type).ToString(),
+                });
+            }
+            return search;
         }
 
         #endregion

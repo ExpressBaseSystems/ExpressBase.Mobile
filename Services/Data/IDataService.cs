@@ -7,13 +7,9 @@ namespace ExpressBase.Mobile.Services
 {
     public interface IDataService
     {
-        VisualizationLiveData GetData(MobileVisDataRequest request);
+        MobileVisDataRespnse GetData(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect);
 
-        Task<VisualizationLiveData> GetDataAsync(MobileVisDataRequest request);
-
-        VisualizationLiveData GetData(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false);
-
-        Task<VisualizationLiveData> GetDataAsync(string datasorce_ref, List<Param> parameters, List<SortColumn> sortOrder, int limit, int offset, bool is_powerselect = false);
+        Task<MobileVisDataRespnse> GetDataAsync(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect);
 
         Task<ApiFileResponse> GetFile(EbFileCategory category, string filename);
 

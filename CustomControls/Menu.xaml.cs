@@ -1,11 +1,9 @@
 ﻿using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -56,29 +54,57 @@ namespace ExpressBase.Mobile.CustomControls
 
             if (propertyName == ItemSourceProperty.PropertyName)
             {
-                Container.Content = null;
+                Container.Children.Clear();
 
                 if (ItemSource != null && ItemSource.Any())
                 {
-                    lastItem = ItemSource.Last();
-                    Render();
+                    //dynamic rendering of links
+                    this.Render();
                 }
             }
         }
 
         private void Render()
         {
+            try
+            {
+                var category = ItemSource.GroupByCategory();
+
+                foreach (var pair in category)
+                {
+                    if(pair.Key != "All")
+                    {
+                        Container.Children.Add(new Label
+                        {
+                            Text = pair.Key,
+                            Style = (Style)HelperFunctions.GetResourceValue("CategoryHeadLabel")
+                        });
+                    }
+                    if (pair.Value.Any())
+                    {
+                        this.RenderLinks(pair.Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+        }
+
+        private void RenderLinks(List<MobilePagesWraper> collection)
+        {
             rownum = colnum = 0;
 
             Grid grid = this.CreateGrid();
-            Container.Content = grid;
+            Container.Children.Add(grid);
+
+            lastItem = collection.Last();
 
             try
             {
-                foreach (MobilePagesWraper wrpr in this.ItemSource)
+                foreach (MobilePagesWraper wrpr in collection)
                 {
-                    if (wrpr.IsHidden) continue;
-
                     var container = new StackLayout { Orientation = StackOrientation.Vertical };
 
                     CustomShadowFrame iconFrame = new CustomShadowFrame(wrpr)
@@ -91,7 +117,7 @@ namespace ExpressBase.Mobile.CustomControls
                     Label icon = new Label
                     {
                         Text = this.GetIcon(wrpr),
-                        TextColor = wrpr.IconColor,
+                        TextColor = wrpr.GetIconColor(),
                         Style = (Style)HelperFunctions.GetResourceValue("MenuIconLabel")
                     };
                     icon.SizeChanged += IconContainer_SizeChanged;
@@ -130,7 +156,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void IconContainer_SizeChanged(object sender, EventArgs e)
         {
-            Label lay = (sender as Label);
+            Label lay = (Label)sender;
             lay.HeightRequest = lay.Width;
         }
 

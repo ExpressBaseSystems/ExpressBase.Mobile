@@ -2,8 +2,8 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views;
+using ExpressBase.Mobile.Views.Base;
 using ExpressBase.Mobile.Views.Dynamic;
 using ExpressBase.Mobile.Views.Shared;
 using System;
@@ -100,6 +100,16 @@ namespace ExpressBase.Mobile.Services
             {
                 EbLog.Error("Failed to auto refresh listview");
                 EbLog.Error(ex.Message);
+            }
+        }
+
+        public static void RefreshCurrentPage()
+        {
+            Page current = App.RootMaster.Detail.Navigation.NavigationStack.Last();
+
+            if(current !=null && current is IRefreshable iref)
+            {
+                iref.RefreshPage();
             }
         }
 

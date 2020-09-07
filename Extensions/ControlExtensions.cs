@@ -16,7 +16,7 @@ namespace ExpressBase.Mobile.Extensions
         {
             try
             {
-                var autogenvis = HelperFunctions.GetPage(sourceForm.AutoGenMVRefid);
+                var autogenvis = EbPageFinder.GetPage(sourceForm.AutoGenMVRefid);
 
                 if (autogenvis != null)
                 {
@@ -24,11 +24,11 @@ namespace ExpressBase.Mobile.Extensions
 
                     if (!string.IsNullOrEmpty(linkref))
                     {
-                        var linkpage = HelperFunctions.GetPage(linkref);
+                        var linkpage = EbPageFinder.GetPage(linkref);
 
                         if (linkpage != null && linkpage.Container is EbMobileVisualization viz)
                         {
-                            var innerlink = HelperFunctions.GetPage(viz.LinkRefId);
+                            var innerlink = EbPageFinder.GetPage(viz.LinkRefId);
 
                             if (innerlink != null && innerlink.Container is EbMobileForm mf)
                                 return mf;

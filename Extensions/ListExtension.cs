@@ -82,5 +82,30 @@ namespace ExpressBase.Mobile.Extensions
             list.Clear();
             list.AddRange(newlist);
         }
+
+        public static Dictionary<string, List<MobilePagesWraper>> GroupByCategory(this IEnumerable<MobilePagesWraper> source)
+        {
+            var grouped = new Dictionary<string, List<MobilePagesWraper>>
+            {
+                ["All"] = new List<MobilePagesWraper>()
+            };
+            foreach (var wraper in source)
+            {
+                if (wraper.IsHidden) continue;
+
+                string category = wraper.Category;
+
+                if (string.IsNullOrEmpty(category))
+                    grouped["All"].Add(wraper);
+                else
+                {
+                    if (!grouped.ContainsKey(category))
+                        grouped[category] = new List<MobilePagesWraper>() { wraper };
+                    else
+                        grouped[category].Add(wraper);
+                }
+            }
+            return grouped;
+        }
     }
 }

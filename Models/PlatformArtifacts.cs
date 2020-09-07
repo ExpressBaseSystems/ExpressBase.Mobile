@@ -2,13 +2,12 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Xamarin.Forms;
+using System.Runtime.Serialization;
 
 namespace ExpressBase.Mobile.Models
 {
@@ -35,14 +34,6 @@ namespace ExpressBase.Mobile.Models
             });
             return ds;
         }
-
-        public void ClearOfflineData()
-        {
-            Applications?.ForEach(item =>
-            {
-                item.OfflineData = null;
-            });
-        }
     }
 
     public class AppCollection
@@ -68,6 +59,7 @@ namespace ExpressBase.Mobile.Models
 
         public EbDataSet OfflineData { set; get; }
 
+        [JsonIgnore]
         public string AppNotation
         {
             get
@@ -92,11 +84,17 @@ namespace ExpressBase.Mobile.Models
 
         public bool HasMenuApi()
         {
-            if(AppSettings != null)
+            if (AppSettings != null)
             {
                 return AppSettings.HasMenuPreloadApi && !App.Settings.CurrentUser.IsAdmin;
             }
             return false;
+        }
+
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            OfflineData = null;
         }
     }
 
@@ -189,89 +187,6 @@ namespace ExpressBase.Mobile.Models
         }
     }
 
-    public class MobilePagesWraper
-    {
-        private EbMobilePage _page;
-
-        public string DisplayName { set; get; }
-
-        public string Name { set; get; }
-
-        public string Version { set; get; }
-
-        public string Json { set; get; }
-
-        public string RefId { set; get; }
-
-        public string ObjectIcon
-        {
-            get
-            {
-                if (_page == null) ToPage();
-                string icon = _page.Icon;
-                if (string.IsNullOrEmpty(icon))
-                    icon = this.GetDefaultIcon();
-                return icon;
-            }
-        }
-
-        public bool IsHidden
-        {
-            get
-            {
-                if (_page == null) ToPage();
-                return _page.HideFromMenu;
-            }
-        }
-
-        public Color IconColor
-        {
-            get
-            {
-                if (_page == null) ToPage();
-                if (string.IsNullOrEmpty(_page.IconColor))
-                    return Color.FromHex("0046bb");
-                else
-                    return Color.FromHex(_page.IconColor);
-            }
-        }
-
-        public Color IconBackground
-        {
-            get
-            {
-                if (_page == null) ToPage();
-                if (string.IsNullOrEmpty(_page.IconBackground))
-                    return Color.White;
-                else
-                    return Color.FromHex(_page.IconBackground);
-            }
-        }
-
-        public EbMobilePage ToPage()
-        {
-            string regexed = EbSerializers.JsonToNETSTD(this.Json);
-            _page = EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
-            return _page;
-        }
-
-        public string GetDefaultIcon()
-        {
-            if (_page == null) ToPage();
-
-            if (_page.Container is EbMobileForm)
-                return "f298";
-            else if (_page.Container is EbMobileVisualization)
-                return "f03a";//"f022";
-            else if (_page.Container is EbMobileDashBoard)
-                return "f0e4";
-            else if (_page.Container is EbMobilePdf)
-                return "f1c1";
-            else
-                return "f0e4";
-        }
-    }
-
     public class WebObjectsWraper
     {
         public string DisplayName { set; get; }
@@ -296,7 +211,7 @@ namespace ExpressBase.Mobile.Models
         public ValidateSidResponse() { }
     }
 
-    public class VisualizationLiveData
+    public class MobileVisDataRespnse
     {
         public string Message { set; get; }
 
@@ -312,7 +227,7 @@ namespace ExpressBase.Mobile.Models
         public int FileRefId { set; get; }
     }
 
-    public class MobileFormLiveData
+    public class MobileFormDataResponse
     {
         public string Message { set; get; }
 
@@ -380,29 +295,5 @@ namespace ExpressBase.Mobile.Models
         public string Version { set; get; }
 
         public ApiMessage Message { get; set; }
-    }
-
-    public class MobileVisDataRequest
-    {
-        public string DataSourceRefId { set; get; }
-
-        public List<Param> Params { get; set; }
-
-        public List<SortColumn> SortOrder { set; get; }
-
-        public List<Param> SearchColumns { set; get; }
-
-        public int Limit { set; get; }
-
-        public int Offset { set; get; }
-
-        public bool IsPowerSelect { set; get; }
-
-        public MobileVisDataRequest()
-        {
-            Params = new List<Param>();
-            SortOrder = new List<SortColumn>();
-            SearchColumns = new List<Param>();
-        }
     }
 }

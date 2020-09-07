@@ -5,31 +5,24 @@ using Xamarin.Forms.Xaml;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Views.Base;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ListRender : ContentPage, IRefreshable
+    public partial class ListRender : ListViewBasePage
     {
-        private int pageCount = 1;
-
-        private bool isRendered;
-
-        private readonly ListViewModel viewModel;
-
-        private bool HasLink => viewModel.Visualization.HasLink();
-
         public ListRender(EbMobilePage Page)
         {
             InitializeComponent();
-            BindingContext = viewModel = new ListViewModel(Page);
+            BindingContext = ViewModel = new ListViewModel(Page);
             this.Loader.IsVisible = true;
         }
 
         public ListRender(EbMobilePage Page, EbDataRow row)
         {
             InitializeComponent();
-            BindingContext = viewModel = new ListViewModel(Page, row);
+            BindingContext = ViewModel = new ListViewModel(Page, row);
             this.Loader.IsVisible = true;
         }
 
@@ -37,13 +30,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             base.OnAppearing();
 
-            if (!isRendered)
+            if (!IsRendered)
             {
-                await viewModel.InitializeAsync();
+                await ViewModel.InitializeAsync();
                 this.ToggleLinks();
                 this.UpdatePaginationBar();
             }
-            isRendered = true;
+            IsRendered = true;
             this.Loader.IsVisible = false;
         }
 
@@ -63,9 +56,9 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void ToggleLinks()
         {
-            if (this.HasLink && viewModel.Visualization.ShowNewButton)
+            if (this.HasLink && ViewModel.Visualization.ShowNewButton)
             {
-                EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
+                EbMobilePage page = EbPageFinder.GetPage(ViewModel.Visualization.LinkRefId);
 
                 if (page != null && page.Container is EbMobileForm)
                     AddLinkData.IsVisible = true;
@@ -74,12 +67,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
             this.ToggleDataLength();
         }
 
-        private void ToggleDataLength()
+        protected override void ToggleDataLength()
         {
-            int count = viewModel.DataCount;
-            int length = viewModel.Visualization.PageLength;
+            int count = ViewModel.DataCount;
+            int length = ViewModel.Visualization.PageLength;
 
-            if (count <= 0 || (count <= length && this.pageCount <= 1))
+            if (count <= 0 || (count <= length && this.PageCount <= 1))
                 PagingContainer.IsVisible = false;
             else
                 PagingContainer.IsVisible = true;
@@ -92,94 +85,34 @@ namespace ExpressBase.Mobile.Views.Dynamic
             this.FilterView.Show();
         }
 
-        private async void PagingPrevButton_Clicked(object sender, EventArgs e)
+        protected override void UpdatePaginationBar()
         {
-            if (viewModel.Offset <= 0)
-                return;
-            else
+            PagingMeta meta = base.GetPagingMeta();
+
+            if(meta != null)
             {
-                viewModel.Offset -= viewModel.Visualization.PageLength;
-                this.pageCount--;
-                await viewModel.RefreshDataAsync();
+                this.PagingMeta.Text = meta.Meta;
+                this.PagingPageCount.Text = meta.PageCount;
             }
-        }
-
-        private async void PagingNextButton_Clicked(object sender, EventArgs e)
-        {
-            if (viewModel.Offset + viewModel.Visualization.PageLength >= viewModel.DataCount)
-                return;
-            else
-            {
-                viewModel.Offset += viewModel.Visualization.PageLength;
-                this.pageCount++;
-                await viewModel.RefreshDataAsync();
-            }
-        }
-
-        private void UpdatePaginationBar()
-        {
-            try
-            {
-                int pageLength = viewModel.Visualization.PageLength;
-                int totalEntries = viewModel.DataCount;
-                int offset = viewModel.Offset + 1;
-                int length = pageLength + offset - 1;
-
-                if (totalEntries < pageLength || pageLength + offset > totalEntries)
-                    length = totalEntries;
-
-                this.PagingMeta.Text = $"{offset} - {length}/{totalEntries}";
-                this.PagingPageCount.Text = $"{pageCount}/{(int)Math.Ceiling((double)totalEntries / pageLength)}";
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error(ex.Message);
-            }
-        }
-
-        public void Refreshed()
-        {
-            this.UpdatePaginationBar();
-            this.ToggleDataLength();
-        }
-
-        public void UpdateRenderStatus()
-        {
-            isRendered = false;
-        }
-
-        public bool CanRefresh()
-        {
-            return true;
         }
 
         private void SearchButton_Clicked(object sender, EventArgs e)
         {
             SearchButton.IsVisible = false;
-            LocSearchBox.IsVisible = true;
-            LocSearchBox.Focus();
+            SearchBox.IsVisible = true;
+            SearchBox.Focus();
         }
 
-        private async void LocSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string search = LocSearchBox.Text;
+            string search = SearchBox.Text;
 
-            if (search != null)
+            if (search == null || search.Length == 0)
             {
-                SearchClear.IsVisible = search.Length > 0;
-
-                if (search.Length >= 3)
-                {
-                    Loader.IsVisible = true;
-                    Loader.IsVisible = false;
-                }
+                SearchButton.IsVisible = true;
+                SearchBox.IsVisible = false;
+                await ViewModel.RefreshDataAsync();
             }
-        }
-
-        private void SearchClear_Clicked(object sender, EventArgs e)
-        {
-            LocSearchBox.ClearValue(TextBox.TextProperty);
-            SearchClear.IsVisible = false;
         }
     }
 }

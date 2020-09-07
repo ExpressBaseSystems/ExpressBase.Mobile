@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
                 IRestResponse iresp = await client.ExecuteAsync(request);
-                MobileFormLiveData response = JsonConvert.DeserializeObject<MobileFormLiveData>(iresp.Content);
+                MobileFormDataResponse response = JsonConvert.DeserializeObject<MobileFormDataResponse>(iresp.Content);
                 wd = response.Data;
             }
             catch (Exception ex)

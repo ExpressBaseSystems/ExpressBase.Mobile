@@ -13,10 +13,8 @@ namespace ExpressBase.Mobile.CustomControls
 
         public CustomShadowFrame(MobilePagesWraper wrpr)
         {
-            PageWraper = wrpr;
-   
-            this.BackgroundColor = wrpr.IconBackground;
-            this.BorderColor = wrpr.IconBackground == Color.White ? Color.FromHex("fafafa") : wrpr.IconBackground;
+            this.PageWraper = wrpr;
+            this.BackgroundColor = wrpr.GetIconBackground(); 
         }
     }
 }

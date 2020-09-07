@@ -5,13 +5,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.CustomControls.Menu">
-    
-  <ContentView.Content>
-            <Frame
-                x:Name="Container"
-                BackgroundColor="Transparent"
-                Margin="10,0,10,15"
-                Padding="0">
-            </Frame>
-  </ContentView.Content>
+
+    <ContentView.Content>
+        <StackLayout 
+            Margin="10,0,10,15"
+            Padding="0"
+            Spacing="0"
+            x:Name="Container"
+            Orientation="Vertical">
+        </StackLayout>
+    </ContentView.Content>
 </ContentView>

@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -112,7 +113,7 @@ namespace ExpressBase.Mobile.Views
             PushConfirmBox.Show();
         }
 
-        public void Refreshed()
+        public void RefreshPage()
         {
             EbLog.Info("IRefreshable refresh() not implemented.");
         }

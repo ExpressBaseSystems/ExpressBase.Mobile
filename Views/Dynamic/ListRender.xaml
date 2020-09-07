@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
-             x:Class="ExpressBase.Mobile.Views.Dynamic.ListRender">
+<base:ListViewBasePage  
+            xmlns:base="clr-namespace:ExpressBase.Mobile.Views.Base" 
+            xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+            x:Class="ExpressBase.Mobile.Views.Dynamic.ListRender">
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" ColumnSpacing="0" Padding="0" BackgroundColor="Transparent">
@@ -35,30 +37,16 @@
                 Clicked="SearchButton_Clicked">
             </Button>
 
-            <control:TextBox
+            <control:ListViewSearchBar
                 IsVisible="False"
-                x:Name="LocSearchBox"
-                Placeholder="Search"
-                FontSize="14"
-                TextColor="White"
-                PlaceholderColor="#d4d4d4"
+                x:Name="SearchBox"
+                Style="{StaticResource ListViewSearchBar}"
                 Grid.ColumnSpan="3"
-                BorderColor="Transparent"
-                BorderThickness="0"
-                BackgroundColor="{DynamicResource Primary_Color}"
-                TextChanged="LocSearchBox_TextChanged">
-            </control:TextBox>
-
-            <Button 
-                IsVisible="False"
-                x:Name="SearchClear"
-                Text="&#xf057;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                BackgroundColor="{DynamicResource Primary_Color}"
-                Grid.Column="2"
-                Margin="0"
-                Clicked="SearchClear_Clicked">
-            </Button>
+                HideIcon="True"
+                SearchCommand="{Binding SearchCommand}"
+                SearchCommandParameter="{Binding Text, Source={x:Reference SearchBox}}"
+                TextChanged="SearchBox_TextChanged">
+            </control:ListViewSearchBar>
 
         </Grid>
     </NavigationPage.TitleView>
@@ -201,7 +189,7 @@
                 AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
                 AbsoluteLayout.LayoutFlags="All">
             </control:LoaderIconed>
-            
+
         </Grid>
     </ContentPage.Content>
-</ContentPage>
+</base:ListViewBasePage>

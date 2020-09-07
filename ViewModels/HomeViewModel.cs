@@ -130,7 +130,8 @@ namespace ExpressBase.Mobile.ViewModels
 
             try
             {
-                EbMobilePage page = HelperFunctions.GetPage(item.RefId);
+                EbMobilePage page = EbPageFinder.GetPage(item.RefId);
+
                 if (page == null) return;
 
                 isTapped = true;

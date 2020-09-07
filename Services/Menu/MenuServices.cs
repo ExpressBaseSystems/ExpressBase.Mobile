@@ -132,9 +132,9 @@ namespace ExpressBase.Mobile.Services
 
             await Task.Run(() =>
             {
-                foreach (MobilePagesWraper page in objlist)
+                foreach (MobilePagesWraper wraper in objlist)
                 {
-                    EbMobilePage mpage = page.ToPage();
+                    EbMobilePage mpage = wraper.GetPage();
 
                     if (mpage != null && mpage.Container is EbMobileForm form)
                     {
@@ -152,7 +152,7 @@ namespace ExpressBase.Mobile.Services
             SyncResponse response = new SyncResponse();
             try
             {
-                List<EbMobileForm> FormCollection = HelperFunctions.GetOfflineForms();
+                List<EbMobileForm> FormCollection = EbPageFinder.GetOfflineForms();
 
                 WebformData webdata = new WebformData();
 

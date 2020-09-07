@@ -396,7 +396,7 @@ namespace ExpressBase.Mobile.CustomControls
             if (string.IsNullOrEmpty(button.LinkRefId))
                 return;
 
-            EbMobilePage page = HelperFunctions.GetPage(button.LinkRefId);
+            EbMobilePage page = EbPageFinder.GetPage(button.LinkRefId);
             if (page != null)
             {
                 await NavigationService.NavigateButtonLinkPage(button, this.DataRow, page);

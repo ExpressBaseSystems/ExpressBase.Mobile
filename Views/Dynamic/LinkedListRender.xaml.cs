@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -9,22 +10,14 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LinkedListRender : ContentPage, IRefreshable
+    public partial class LinkedListRender : ListViewBasePage
     {
-        private int pageCount = 1;
-
-        private bool isRendered;
-
-        private readonly LinkedListViewModel viewModel;
-
-        private bool HasSourceLink => viewModel.Visualization.HasSourceFormLink();
-
-        private bool HasLink => viewModel.Visualization.HasLink();
+        private bool HasSourceLink => ViewModel.Visualization.HasSourceFormLink();
 
         public LinkedListRender(EbMobilePage page, EbMobileVisualization context, EbDataRow row)
         {
             InitializeComponent();
-            BindingContext = viewModel = new LinkedListViewModel(page, context, row);
+            BindingContext = ViewModel = new LinkedListViewModel(page, context, row);
 
             this.DrawContextHeader(row, context);
             this.Loader.IsVisible = true;
@@ -34,13 +27,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             base.OnAppearing();
 
-            if (!isRendered)
+            if (!IsRendered)
             {
-                await viewModel.InitializeAsync();
+                await ViewModel.InitializeAsync();
                 this.ToggleLinks();
                 this.UpdatePaginationBar();
             }
-            isRendered = true;
+            IsRendered = true;
             this.Loader.IsVisible = false;
         }
 
@@ -66,7 +59,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 Padding = new Thickness(20, 10, 20, 0),
                 Margin = 0
             };
-
             HeaderContainer.Children.Add(header);
         }
 
@@ -74,23 +66,22 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             SourceDataEdit.IsVisible = this.HasSourceLink;
 
-            if (this.HasLink && viewModel.Visualization.ShowNewButton)
+            if (this.HasLink && ViewModel.Visualization.ShowNewButton)
             {
-                EbMobilePage page = HelperFunctions.GetPage(viewModel.Visualization.LinkRefId);
+                EbMobilePage page = EbPageFinder.GetPage(ViewModel.Visualization.LinkRefId);
 
                 if (page != null && page.Container is EbMobileForm)
                     AddLinkData.IsVisible = true;
             }
-
             ToggleDataLength();
         }
 
-        private void ToggleDataLength()
+        protected override void ToggleDataLength()
         {
-            int count = viewModel.DataCount;
-            int length = viewModel.Visualization.PageLength;
+            int count = ViewModel.DataCount;
+            int length = ViewModel.Visualization.PageLength;
 
-            if (count <= 0 || (count <= length && this.pageCount <= 1))
+            if (count <= 0 || (count <= length && this.PageCount <= 1))
                 PagingContainer.IsVisible = false;
             else
                 PagingContainer.IsVisible = true;
@@ -103,42 +94,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
             this.FilterView.Show();
         }
 
-        public async void PagingPrevButton_Clicked(object sender, EventArgs e)
+        protected override void UpdatePaginationBar()
         {
-            if (viewModel.Offset <= 0) return;
+            PagingMeta meta = base.GetPagingMeta();
 
-            viewModel.Offset -= viewModel.Visualization.PageLength;
-            pageCount--;
-            await viewModel.RefreshDataAsync();
-        }
-
-        public async void PagingNextButton_Clicked(object sender, EventArgs e)
-        {
-            if (viewModel.Offset + viewModel.Visualization.PageLength >= viewModel.DataCount) return;
-
-            viewModel.Offset += viewModel.Visualization.PageLength;
-            pageCount++;
-            await viewModel.RefreshDataAsync();
-        }
-
-        private void UpdatePaginationBar()
-        {
-            try
+            if(meta != null)
             {
-                int pageLength = viewModel.Visualization.PageLength;
-                int totalEntries = viewModel.DataCount;
-                int _offset = viewModel.Offset + 1;
-                int length = pageLength + viewModel.Offset - 1;
-
-                if (totalEntries < pageLength || pageLength + _offset > totalEntries)
-                    length = totalEntries;
-
-                this.PagingMeta.Text = $"{_offset} - {length}/{totalEntries}";
-                this.PagingPageCount.Text = $"{pageCount}/{(int)Math.Ceiling((double)totalEntries / pageLength)}";
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error(ex.Message);
+                this.PagingMeta.Text = meta.Meta;
+                this.PagingPageCount.Text = meta.PageCount;
             }
         }
 
@@ -147,20 +110,23 @@ namespace ExpressBase.Mobile.Views.Dynamic
             HeaderView.IsVisible = !HeaderView.IsVisible;
         }
 
-        public void Refreshed()
+        private void SearchButton_Clicked(object sender, EventArgs e)
         {
-            this.UpdatePaginationBar();
-            this.ToggleDataLength();
+            SearchButton.IsVisible = false;
+            SearchBox.IsVisible = true;
+            SearchBox.Focus();
         }
 
-        public void UpdateRenderStatus()
+        private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            isRendered = false;
-        }
+            string search = SearchBox.Text;
 
-        public bool CanRefresh()
-        {
-            return true;
+            if (search == null || search.Length == 0)
+            {
+                SearchButton.IsVisible = true;
+                SearchBox.IsVisible = false;
+                await ViewModel.RefreshDataAsync();
+            }
         }
     }
 }
