@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace ExpressBase.Mobile.Views.Base
 {
     public interface IRefreshable
@@ -11,5 +8,10 @@ namespace ExpressBase.Mobile.Views.Base
         void UpdateRenderStatus();
 
         bool CanRefresh();
+    }
+
+    public interface IToolBarHandler
+    {
+        bool DeviceBackButtonPressed();
     }
 }

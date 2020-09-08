@@ -37,20 +37,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
             this.Loader.IsVisible = false;
         }
 
-        protected override bool OnBackButtonPressed()
-        {
-            if (FilterView.IsVisible)
-            {
-                FilterView.IsVisible = false;
-                return true;
-            }
-            else
-            {
-                base.OnBackButtonPressed();
-                return false;
-            }
-        }
-
         private void DrawContextHeader(EbDataRow row, EbMobileVisualization context)
         {
             var header = new DynamicFrame(row, context, true)
@@ -92,13 +78,19 @@ namespace ExpressBase.Mobile.Views.Dynamic
         private void FilterButton_Clicked(object sender, EventArgs e)
         {
             this.FilterView.Show();
+            this.FilterButton.IsVisible = false;
+        }
+
+        private void FilterView_OnDisAppearing()
+        {
+            this.FilterButton.IsVisible = true;
         }
 
         protected override void UpdatePaginationBar()
         {
             PagingMeta meta = base.GetPagingMeta();
 
-            if(meta != null)
+            if (meta != null)
             {
                 this.PagingMeta.Text = meta.Meta;
                 this.PagingPageCount.Text = meta.PageCount;
@@ -117,16 +109,33 @@ namespace ExpressBase.Mobile.Views.Dynamic
             SearchBox.Focus();
         }
 
-        private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        protected override bool BeforeBackButtonPressed()
         {
-            string search = SearchBox.Text;
-
-            if (search == null || search.Length == 0)
+            if (FilterView.IsVisible)
             {
-                SearchButton.IsVisible = true;
-                SearchBox.IsVisible = false;
-                await ViewModel.RefreshDataAsync();
+                FilterView.Hide();
+                return false;
             }
+
+            if (SearchBox.IsVisible)
+            {
+                SearchBox.Unfocus();
+                SearchBox.IsVisible = false;
+                SearchButton.IsVisible = true;
+
+                return false;
+            }
+            return true;
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (BeforeBackButtonPressed())
+            {
+                base.OnBackButtonPressed();
+                return false;
+            }
+            return true;
         }
     }
 }

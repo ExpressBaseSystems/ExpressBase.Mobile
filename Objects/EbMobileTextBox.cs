@@ -11,7 +11,7 @@ namespace ExpressBase.Mobile
 
         public int MaxLength { get; set; }
 
-        public TextTransform TextTransform { get; set; }
+        public Enums.TextTransform TextTransform { get; set; }
 
         public TextMode TextMode { get; set; }
 

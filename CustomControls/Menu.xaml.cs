@@ -72,9 +72,17 @@ namespace ExpressBase.Mobile.CustomControls
 
                 foreach (var pair in category)
                 {
-                    if(pair.Key != "All")
+                    var catFrame = new Frame
                     {
-                        Container.Children.Add(new Label
+                        Style = (Style)HelperFunctions.GetResourceValue("MenuCategoryFrame")
+                    };
+                    var catFrameCont = new StackLayout();
+                    catFrame.Content = catFrameCont;
+                    Container.Children.Add(catFrame);
+
+                    if (pair.Key != "All")
+                    {
+                        catFrameCont.Children.Add(new Label
                         {
                             Text = pair.Key,
                             Style = (Style)HelperFunctions.GetResourceValue("CategoryHeadLabel")
@@ -82,7 +90,7 @@ namespace ExpressBase.Mobile.CustomControls
                     }
                     if (pair.Value.Any())
                     {
-                        this.RenderLinks(pair.Value);
+                        this.RenderLinks(pair.Value, catFrameCont);
                     }
                 }
             }
@@ -92,45 +100,25 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private void RenderLinks(List<MobilePagesWraper> collection)
+        private void RenderLinks(List<MobilePagesWraper> collection, StackLayout layout)
         {
             rownum = colnum = 0;
-
-            Grid grid = this.CreateGrid();
-            Container.Children.Add(grid);
-
             lastItem = collection.Last();
 
             try
             {
+                Grid grid = this.CreateGrid();
+                layout.Children.Add(grid);
+
                 foreach (MobilePagesWraper wrpr in collection)
                 {
-                    var container = new StackLayout { Orientation = StackOrientation.Vertical };
-
-                    CustomShadowFrame iconFrame = new CustomShadowFrame(wrpr)
+                    EbMenuItem item = new EbMenuItem(wrpr)
                     {
                         Style = (Style)HelperFunctions.GetResourceValue("MenuItemFrame"),
                         GestureRecognizers = { gesture }
                     };
-                    container.Children.Add(iconFrame);
 
-                    Label icon = new Label
-                    {
-                        Text = this.GetIcon(wrpr),
-                        TextColor = wrpr.GetIconColor(),
-                        Style = (Style)HelperFunctions.GetResourceValue("MenuIconLabel")
-                    };
-                    icon.SizeChanged += IconContainer_SizeChanged;
-                    iconFrame.Content = icon;
-
-                    Label name = new Label
-                    {
-                        Text = wrpr.DisplayName,
-                        Style = (Style)HelperFunctions.GetResourceValue("MenuDisplayNameLabel")
-                    };
-                    container.Children.Add(name);
-
-                    SetGrid(grid, container, wrpr);
+                    SetGrid(grid, item, wrpr);
                 }
             }
             catch (Exception ex)
@@ -143,38 +131,14 @@ namespace ExpressBase.Mobile.CustomControls
         {
             return new Grid
             {
-                RowSpacing = 15,
-                ColumnSpacing = 15,
-                RowDefinitions = { new RowDefinition() },
+                Style = (Style)HelperFunctions.GetResourceValue("MenuGrid"),
+                RowDefinitions = { new RowDefinition { Height = GridLength.Auto } },
                 ColumnDefinitions = {
                         new ColumnDefinition(),
                         new ColumnDefinition(),
                         new ColumnDefinition()
                 }
             };
-        }
-
-        private void IconContainer_SizeChanged(object sender, EventArgs e)
-        {
-            Label lay = (Label)sender;
-            lay.HeightRequest = lay.Width;
-        }
-
-        private string GetIcon(MobilePagesWraper wrpr)
-        {
-            string labelIcon;
-            try
-            {
-                if (wrpr.ObjectIcon.Length != 4)
-                    throw new Exception();
-                labelIcon = Regex.Unescape("\\u" + wrpr.ObjectIcon);
-            }
-            catch (Exception ex)
-            {
-                labelIcon = Regex.Unescape("\\u" + wrpr.GetDefaultIcon());
-                EbLog.Error("font icon format is invalid." + ex.Message);
-            }
-            return labelIcon;
         }
 
         private void SetGrid(Grid grid, View item, MobilePagesWraper current)
@@ -185,7 +149,7 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 if (current != lastItem)
                 {
-                    grid.RowDefinitions.Add(new RowDefinition());
+                    grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                     rownum++;
                 }
                 colnum = 0;

@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<base:EbContentPage  
+             xmlns:base="clr-namespace:ExpressBase.Mobile.Views.Base"
+             xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -34,7 +36,7 @@
                     <StackLayout VerticalOptions="FillAndExpand">
                         <Frame
                             Padding="10"
-                            Margin="15,15"
+                            Margin="10,15"
                             CornerRadius="8"
                             BackgroundColor="#e8f0fe"
                             BorderColor="#e8f0fe"
@@ -123,4 +125,4 @@
             </control:ConfirmBox>
         </Grid>
     </ContentPage.Content>
-</ContentPage>
+</base:EbContentPage>

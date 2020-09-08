@@ -126,7 +126,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             if (isTapped) return;
 
-            MobilePagesWraper item = (obj as CustomShadowFrame).PageWraper;
+            MobilePagesWraper item = (obj as EbMenuItem).PageWraper;
 
             try
             {

@@ -23,31 +23,16 @@
                 Clicked="SearchButton_Clicked">
             </Button>
 
-            <controls:TextBox
+            <controls:ListViewSearchBar
                 IsVisible="False"
                 x:Name="LocSearchBox"
-                Placeholder="Search"
-                FontSize="14"
-                TextColor="White"
-                PlaceholderColor="#d4d4d4"
+                HideIcon="True"
+                CancelButtonColor="White"
+                Style="{StaticResource ListViewSearchBar}"
                 Grid.ColumnSpan="2"
-                BorderColor="Transparent"
-                BorderThickness="0"
-                BackgroundColor="{DynamicResource Primary_Color}"
                 TextChanged="LocSearchBox_TextChanged">
-            </controls:TextBox>
-
-            <Button 
-                IsVisible="False"
-                x:Name="SearchClear"
-                Text="&#xf057;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                BackgroundColor="{DynamicResource Primary_Color}"
-                Grid.Column="1"
-                Margin="0,0,10,0"
-                Clicked="SearchClear_Clicked">
-            </Button>
-
+            </controls:ListViewSearchBar>
+            
         </Grid>
     </NavigationPage.TitleView>
     <ContentPage.Content>

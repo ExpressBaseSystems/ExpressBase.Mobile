@@ -1,6 +1,4 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Services;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
 using System;
@@ -10,10 +8,8 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Home : ContentPage, IRefreshable
+    public partial class Home : EbContentPage
     {
-        private bool isRendered;
-
         private int backButtonCount;
 
         private readonly HomeViewModel viewModel;
@@ -33,10 +29,10 @@ namespace ExpressBase.Mobile.Views
                 CurrentLocation.Text = App.Settings.CurrentLocation?.LongName.ToLower();
                 CurrentSolution.Text = App.Settings.Sid.ToUpper();
 
-                if (!isRendered)
+                if (!IsRendered)
                 {
                     await viewModel.InitializeAsync();
-                    isRendered = true;
+                    IsRendered = true;
                 }
                 ToggleStatus();
                 IconedLoader.IsVisible = false;
@@ -113,19 +109,14 @@ namespace ExpressBase.Mobile.Views
             PushConfirmBox.Show();
         }
 
-        public void RefreshPage()
-        {
-            EbLog.Info("IRefreshable refresh() not implemented.");
-        }
-
-        public bool CanRefresh()
+        public override bool CanRefresh()
         {
             return viewModel.RefreshOnAppearing;
         }
 
-        public void UpdateRenderStatus()
+        public override void UpdateRenderStatus()
         {
-            isRendered = false;
+            IsRendered = false;
         }
     }
 }

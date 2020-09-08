@@ -20,6 +20,7 @@
                 Grid.Column="0">
             </Label>
             <Button 
+                x:Name="FilterButton"
                 IsVisible="{Binding IsFilterVisible}"
                 Text="&#xf0b0;" 
                 Style="{StaticResource ToolBarButtonStyle}" 
@@ -43,9 +44,9 @@
                 Style="{StaticResource ListViewSearchBar}"
                 Grid.ColumnSpan="3"
                 HideIcon="True"
+                CancelButtonColor="White"
                 SearchCommand="{Binding SearchCommand}"
-                SearchCommandParameter="{Binding Text, Source={x:Reference SearchBox}}"
-                TextChanged="SearchBox_TextChanged">
+                SearchCommandParameter="{Binding Text, Source={x:Reference SearchBox}}">
             </control:ListViewSearchBar>
 
         </Grid>
@@ -179,7 +180,8 @@
                 NetWorkType="{Binding NetworkType}"
                 SortColumns="{Binding SortColumns}"
                 ConfirmClicked="{Binding ApplyFilterCommand}"
-                FilterControls="{Binding FilterControls}">
+                FilterControls="{Binding FilterControls}"
+                OnDisAppearing="FilterView_OnDisAppearing">
             </control:FilterView>
 
             <control:LoaderIconed 

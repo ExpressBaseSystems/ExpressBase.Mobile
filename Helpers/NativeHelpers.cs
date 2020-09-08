@@ -78,4 +78,9 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
     }
+
+    public interface IKeyboardHelper
+    {
+        void HideKeyboard();
+    }
 }

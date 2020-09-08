@@ -1,8 +1,4 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views.Base
 {
@@ -18,5 +14,7 @@ namespace ExpressBase.Mobile.Views.Base
         public virtual void RefreshPage() { }
 
         public virtual void UpdateRenderStatus() { }
+
+        protected virtual bool BeforeBackButtonPressed() { return true; }
     }
 }

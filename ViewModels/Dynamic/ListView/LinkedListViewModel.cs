@@ -27,6 +27,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             await SetDataAsync();
         }
 
+        protected override async Task NavigateToLinkForm()
+        {
+            EbMobilePage page = EbPageFinder.GetPage(Visualization.LinkRefId);
+
+            if (page != null && page.Container is EbMobileForm)
+            {
+                FormRender Renderer = new FormRender(page, Visualization, ContextRecord);
+                await App.RootMaster.Detail.Navigation.PushAsync(Renderer);
+            }
+        }
+
         private async Task EditButtonClicked()
         {
             EbMobilePage page = EbPageFinder.GetPage(Context.SourceFormRefId);

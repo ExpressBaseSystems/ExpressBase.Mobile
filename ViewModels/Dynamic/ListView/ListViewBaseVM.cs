@@ -5,11 +5,9 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
-using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -193,21 +191,15 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             IsTapped = false;
         }
 
-        protected async Task NavigateToLinkForm()
-        {
-            EbMobilePage page = EbPageFinder.GetPage(Visualization.LinkRefId);
-
-            if (page != null && page.Container is EbMobileForm)
-            {
-                FormRender Renderer = new FormRender(page);
-                await App.RootMaster.Detail.Navigation.PushAsync(Renderer);
-            }
-        }
-
         protected async Task FilterData(List<DbParameter> filters)
         {
             FilterParams = filters;
             await RefreshDataAsync();
+        }
+
+        protected virtual Task NavigateToLinkForm()
+        {
+            return Task.FromResult(false);
         }
 
         protected virtual List<DbParameter> GetFilterParameters()

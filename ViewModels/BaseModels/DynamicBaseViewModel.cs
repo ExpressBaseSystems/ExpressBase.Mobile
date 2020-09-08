@@ -1,9 +1,4 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.BaseModels
 {
@@ -14,10 +9,6 @@ namespace ExpressBase.Mobile.ViewModels.BaseModels
         public EbMobilePage Page { set; get; }
 
         public NetworkMode NetworkType { set; get; }
-
-        public ColumnColletion ContextColumns { set; get; }
-
-        public EbDataRow ContextRow { set; get; }
 
         public string PageName => this.Page.DisplayName;
 

@@ -10,7 +10,7 @@
         <StackLayout 
             Margin="10,0,10,15"
             Padding="0"
-            Spacing="0"
+            Spacing="15"
             x:Name="Container"
             Orientation="Vertical">
         </StackLayout>

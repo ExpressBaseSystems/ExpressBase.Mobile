@@ -1,4 +1,6 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Views.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +23,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 ContextParams = this.Visualization.GetContextParams(ContextRecord, this.NetworkType);
             }
             await this.SetDataAsync();
+        }
+
+        protected override async Task NavigateToLinkForm()
+        {
+            EbMobilePage page = EbPageFinder.GetPage(Visualization.LinkRefId);
+
+            if (page != null && page.Container is EbMobileForm)
+            {
+                FormRender Renderer = new FormRender(page);
+                await App.RootMaster.Detail.Navigation.PushAsync(Renderer);
+            }
         }
 
         protected override List<DbParameter> GetFilterParameters()

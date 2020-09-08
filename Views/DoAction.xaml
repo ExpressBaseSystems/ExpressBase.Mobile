@@ -51,7 +51,7 @@
                                 TextColor="#333"
                                 FontFamily="{StaticResource Roboto-Medium}">
                             </Label>
-                            <control:CustomShadowFrame
+                            <Frame
                                 x:Name="DataFrame"
                                 Padding="1"
                                 Grid.Row="0"
@@ -84,7 +84,7 @@
                                         </DataTemplate>
                                     </BindableLayout.ItemTemplate>
                                 </StackLayout>
-                            </control:CustomShadowFrame>
+                            </Frame>
                         </StackLayout>
 
                         <StackLayout Margin="15,0">

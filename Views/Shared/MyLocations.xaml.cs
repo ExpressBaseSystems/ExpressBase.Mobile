@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Models;
+﻿using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
 using System;
 using Xamarin.Forms;
@@ -60,8 +59,6 @@ namespace ExpressBase.Mobile.Views.Shared
 
             if (search != null)
             {
-                SearchClear.IsVisible = search.Length > 0;
-
                 if (search.Length >= 3)
                 {
                     SearchLoader.IsVisible = true;
@@ -77,14 +74,6 @@ namespace ExpressBase.Mobile.Views.Shared
                     }
                 }
             }
-        }
-
-        private void SearchClear_Clicked(object sender, EventArgs e)
-        {
-            LocSearchBox.ClearValue(TextBox.TextProperty);
-            SearchClear.IsVisible = false;
-            viewModel.UpdateToInitial();
-            EmptyLabel.IsVisible = false;
         }
     }
 }

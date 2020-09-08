@@ -73,7 +73,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             for (int r = 0; r < RowCount; r++)
             {
-                ContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                ContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
             }
             for (int c = 0; c < ColumCount; c++)
             {

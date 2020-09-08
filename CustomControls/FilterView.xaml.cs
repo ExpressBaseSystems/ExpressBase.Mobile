@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,13 +17,19 @@ namespace ExpressBase.Mobile.CustomControls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FilterView : ContentView
     {
-        public static readonly BindableProperty FilterControlsProperty = BindableProperty.Create("FilterControls", typeof(IEnumerable<EbMobileControl>), typeof(FilterView));
+        public static readonly BindableProperty FilterControlsProperty 
+            = BindableProperty.Create("FilterControls", typeof(IEnumerable<EbMobileControl>), typeof(FilterView));
 
-        public static readonly BindableProperty SortColumnsProperty = BindableProperty.Create("SortColumns", typeof(IEnumerable<SortColumn>), typeof(FilterView));
+        public static readonly BindableProperty SortColumnsProperty 
+            = BindableProperty.Create("SortColumns", typeof(IEnumerable<SortColumn>), typeof(FilterView));
 
-        public static readonly BindableProperty NetWorkTypeProperty = BindableProperty.Create("NetWorkType", typeof(NetworkMode), typeof(FilterView));
+        public static readonly BindableProperty NetWorkTypeProperty 
+            = BindableProperty.Create("NetWorkType", typeof(NetworkMode), typeof(FilterView));
 
-        public static readonly BindableProperty ConfirmClickedProperty = BindableProperty.Create(propertyName: "ConfirmClicked", typeof(ICommand), typeof(FilterView));
+        public static readonly BindableProperty ConfirmClickedProperty 
+            = BindableProperty.Create(propertyName: "ConfirmClicked", typeof(ICommand), typeof(FilterView));
+
+        public event ViewOnDisAppearing OnDisAppearing;
 
         public IEnumerable<EbMobileControl> FilterControls
         {
@@ -94,6 +101,7 @@ namespace ExpressBase.Mobile.CustomControls
         public void Hide()
         {
             this.IsVisible = false;
+            OnDisAppearing?.Invoke();
         }
 
         private void FilterButton_Tapped(object sender, EventArgs e)
