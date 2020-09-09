@@ -99,7 +99,7 @@ namespace ExpressBase.Mobile
             };
             addRowBtn.Clicked += AddRowBtn_Clicked;
             grid.Children.Add(addRowBtn, 1, 0);
-            DGDynamicFrame frame = new DGDynamicFrame(this.GetControlValues(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount, true)
+            DGDynamicFrame frame = new DGDynamicFrame(this.GetControlValues(true), DataLayout, true)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = 0
@@ -146,7 +146,7 @@ namespace ExpressBase.Mobile
                 rowOptions.Clicked += RowDelete_Clicked;
                 grid.Children.Add(rowOptions, 1, 0);
 
-                grid.Children.Add(new DGDynamicFrame(row, DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
+                grid.Children.Add(new DGDynamicFrame(row, DataLayout)
                 {
                     ClassId = grid.ClassId,
                     BackgroundColor = Color.Transparent,
@@ -166,7 +166,7 @@ namespace ExpressBase.Mobile
         private void CreateFooter()
         {
             Grid grid = CreateGridLayout();
-            grid.Children.Add(new DGDynamicFrame(this.GetControlValues(true), DataLayout.CellCollection, DataLayout.RowCount, DataLayout.ColumCount)
+            grid.Children.Add(new DGDynamicFrame(this.GetControlValues(true), DataLayout)
             {
                 BackgroundColor = Color.Transparent,
                 Padding = 0

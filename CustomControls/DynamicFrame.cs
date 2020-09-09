@@ -18,7 +18,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         protected bool IsHeader { set; get; }
 
-        protected Grid ContentGrid { set; get; }
+        protected DynamicGrid DynamicGrid { set; get; }
 
         public DynamicFrame() { }
 
@@ -29,15 +29,16 @@ namespace ExpressBase.Mobile.CustomControls
 
             this.SetFrameStyle(viz);
 
-            this.CreateGrid(viz.DataLayout.CellCollection, viz.DataLayout.RowCount, viz.DataLayout.ColumCount);
-            this.SetGridSpacing(viz.RowSpacing, viz.ColumnSpacing);
+            DynamicGrid = new DynamicGrid(viz.DataLayout);
+            DynamicGrid.SetSpacing(viz.RowSpacing, viz.ColumnSpacing);
+
             this.FillData(viz.DataLayout.CellCollection);
 
             if (viz.ShowLinkIcon && !isHeader)
             {
-                this.ShowLinkIcon();
+                DynamicGrid.ShowLinkIcon();
             }
-            this.Content = new StackLayout { Children = { ContentGrid } };
+            this.Content = DynamicGrid;
         }
 
         private void SetFrameStyle(EbMobileVisualization viz)
@@ -67,28 +68,6 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        public void CreateGrid(List<EbMobileTableCell> CellCollection, int RowCount, int ColumCount)
-        {
-            ContentGrid = new Grid { BackgroundColor = Color.Transparent };
-
-            for (int r = 0; r < RowCount; r++)
-            {
-                ContentGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-            }
-            for (int c = 0; c < ColumCount; c++)
-            {
-                EbMobileTableCell current = CellCollection.Find(li => li.ColIndex == c && li.RowIndex == 0);
-
-                ContentGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(current.Width, GridUnitType.Star) });
-            }
-        }
-
-        private void SetGridSpacing(int rowspace, int colspace)
-        {
-            ContentGrid.RowSpacing = rowspace;
-            ContentGrid.ColumnSpacing = colspace;
-        }
-
         private void FillData(List<EbMobileTableCell> CellCollection)
         {
             foreach (EbMobileTableCell cell in CellCollection)
@@ -104,12 +83,14 @@ namespace ExpressBase.Mobile.CustomControls
 
                         if (view != null)
                         {
-                            IMobileAlignment algn = ctrl as IMobileAlignment;
+                            IMobileAlignment algn = (IMobileAlignment)ctrl;
+
                             SetHorrizontalAlign(algn.HorrizontalAlign, view);
                             SetVerticalAlign(algn.VerticalAlign, view);
 
-                            IGridSpan span = (ctrl as IGridSpan);
-                            SetGrid(view, cell.RowIndex, cell.ColIndex, span.RowSpan, span.ColumnSpan);
+                            IGridSpan span = (IGridSpan)ctrl;
+
+                            DynamicGrid.SetPosition(view, cell.RowIndex, cell.ColIndex, span.RowSpan, span.ColumnSpan);
                         }
                     }
                     catch (Exception ex)
@@ -143,15 +124,6 @@ namespace ExpressBase.Mobile.CustomControls
                 view = this.ResolveContentType(dc, data);
             }
             return view;
-        }
-
-        private void SetGrid(View view, int row, int col, int rowspan, int colspan)
-        {
-            ContentGrid.Children.Add(view, col, row);
-
-            if (rowspan > 0) Grid.SetRowSpan(view, rowspan);
-
-            if (colspan > 0) Grid.SetColumnSpan(view, colspan);
         }
 
         private View ResolveContentType(EbMobileDataColumn dc, object value)
@@ -279,25 +251,13 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private void ShowLinkIcon()
-        {
-            Label lbl = new Label
-            {
-                Style = (Style)HelperFunctions.GetResourceValue("ListViewLinkIconStyle")
-            };
-
-            ContentGrid.Children.Add(lbl);
-            Grid.SetRowSpan(lbl, ContentGrid.RowDefinitions.Count);
-            Grid.SetColumnSpan(lbl, ContentGrid.ColumnDefinitions.Count);
-        }
-
         private View DC2Image(object value)
         {
-            LSImageButton image = new LSImageButton
+            LSImage image = new LSImage
             {
                 Style = (Style)HelperFunctions.GetResourceValue("ListViewImage")
             };
-            image.SizeChanged += Image_SizeChanged;
+            //image.SizeChanged += Image_SizeChanged;
 
             this.RenderImage(image, value);
             return image;
@@ -305,18 +265,18 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void Image_SizeChanged(object sender, EventArgs e)
         {
-            LSImageButton item = (LSImageButton)sender;
+            //LSImage item = (LSImage)sender;
 
-            if (item.InitialWidth == 0)
-                item.InitialWidth = item.Width;
+            //if (item.InitialWidth == 0)
+            //    item.InitialWidth = item.Width;
 
-            if (item.Width != item.InitialWidth)
-                item.WidthRequest = item.InitialWidth;
+            //if (item.Width != item.InitialWidth)
+            //    item.WidthRequest = item.InitialWidth;
 
-            item.HeightRequest = item.InitialWidth;
+            //item.HeightRequest = item.InitialWidth;
         }
 
-        public async void RenderImage(LSImageButton image, object filerefs)
+        public async void RenderImage(LSImage image, object filerefs)
         {
             if (filerefs == null) return;
 

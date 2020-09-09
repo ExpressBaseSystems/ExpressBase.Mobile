@@ -9,14 +9,14 @@ namespace ExpressBase.Mobile.CustomControls
     {
         public DGDynamicFrame() { }
 
-        public DGDynamicFrame(MobileTableRow row, List<EbMobileTableCell> cells, int rows, int colums, bool isHeader = false)
+        public DGDynamicFrame(MobileTableRow row, EbMobileTableLayout layout, bool isHeader = false)
         {
             IsHeader = isHeader;
 
-            this.CreateGrid(cells, rows, colums);
-            this.FillTableColums(row, cells);
+            DynamicGrid = new DynamicGrid(layout);
+            this.FillTableColums(row, layout.CellCollection);
 
-            this.Content = ContentGrid;
+            this.Content = DynamicGrid;
         }
 
         private void FillTableColums(MobileTableRow row, List<EbMobileTableCell> CellCollection)
@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile.CustomControls
                     else
                         this.ApplyLabelStyle(label, column);
 
-                    ContentGrid.Children.Add(label, cell.ColIndex, cell.RowIndex);
+                    DynamicGrid.SetPosition(label, cell.RowIndex, cell.ColIndex);
                 }
             }
         }

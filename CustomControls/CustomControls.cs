@@ -216,7 +216,7 @@ namespace ExpressBase.Mobile.CustomControls
 
     }
 
-    public class LSImageButton : ImageButton
+    public class LSImage : Image
     {
         public double InitialWidth { set; get; }
     }

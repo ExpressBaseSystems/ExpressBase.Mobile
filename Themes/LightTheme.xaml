@@ -48,6 +48,8 @@
 
     <Style TargetType="Label" x:Key="MenuIconLabel">
         <Setter Property="FontSize" Value="20"></Setter>
+        <Setter Property="HeightRequest" Value="20"></Setter>
+        <Setter Property="WidthRequest" Value="20"></Setter>
         <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
         <Setter Property="HorizontalTextAlignment" Value="Center"></Setter>
         <Setter Property="FontFamily" Value="{StaticResource FontAwesome}"></Setter>

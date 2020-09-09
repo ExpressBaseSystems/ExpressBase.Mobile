@@ -158,6 +158,8 @@
                 <ListView 
                     x:Name="EbListView"
                     HasUnevenRows="True"
+                    SelectionMode="None"
+                    CachingStrategy="RecycleElement"
                     SeparatorVisibility="{Binding ShowRowSeperator}"
                     ItemsSource="{Binding DataRows}"
                     IsPullToRefreshEnabled="True"

@@ -46,6 +46,7 @@ namespace ExpressBase.Mobile.CustomControls
                     Style = (Style)HelperFunctions.GetResourceValue("MenuIconLabel")
                 }
             };
+
             content.Children.Add(iconFrame);
             Grid.SetRow(iconFrame, 0);
         }

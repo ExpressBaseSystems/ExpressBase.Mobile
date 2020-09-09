@@ -5,9 +5,8 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Style TargetType="control:LSImageButton" x:Key="ListViewImage">
+    <Style TargetType="control:LSImage" x:Key="ListViewImage">
         <Setter Property="Aspect" Value="AspectFill"></Setter>
-        <Setter Property="VerticalOptions" Value="CenterAndExpand"></Setter>
         <Setter Property="Margin" Value="0"></Setter>
         <Setter Property="BackgroundColor" Value="Transparent"></Setter>
         <Setter Property="Source" Value="image_avatar.jpg"></Setter>
