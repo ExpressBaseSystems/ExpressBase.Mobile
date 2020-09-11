@@ -1,9 +1,11 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views.Dynamic;
+using ExpressBase.Mobile.Views.Shared;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
@@ -29,10 +31,14 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             EbMobilePage page = EbPageFinder.GetPage(Visualization.LinkRefId);
 
-            if (page != null && page.Container is EbMobileForm)
+            if (page != null && page.Container is EbMobileForm form)
             {
-                FormRender Renderer = new FormRender(page);
-                await App.RootMaster.Detail.Navigation.PushAsync(Renderer);
+                var validation = await EbPageFinder.ValidateFormRendering(form);
+
+                if (validation)
+                    await App.RootMaster.Detail.Navigation.PushAsync(new FormRender(page));
+                else
+                    await App.RootMaster.Detail.Navigation.PushAsync(new Redirect(form.MessageOnFailed));
             }
         }
 

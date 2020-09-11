@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views.Dynamic;
+using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command SyncButtonCommand => new Command(async () => await SyncButtonEvent());
 
-        public Command MenuItemTappedCommand => new Command<object>(async (o) => await ItemTapedEvent(o));
+        public Command MenuItemTappedCommand => new Command<MobilePagesWraper>(async (o) => await ItemTapedEvent(o));
 
         private bool isTapped;
 
@@ -122,12 +123,9 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private async Task ItemTapedEvent(object obj)
+        private async Task ItemTapedEvent(MobilePagesWraper item)
         {
             if (isTapped) return;
-
-            MobilePagesWraper item = (obj as EbMenuItem).PageWraper;
-
             try
             {
                 EbMobilePage page = EbPageFinder.GetPage(item.RefId);
@@ -136,15 +134,28 @@ namespace ExpressBase.Mobile.ViewModels
 
                 isTapped = true;
 
-                ContentPage renderer = this.GetPageByContainer(page);
-                if (renderer != null)
-                    await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(renderer);
+                bool render = true;
+                string message = string.Empty;
+
+                if (page.Container is EbMobileForm form)
+                {
+                    Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                    render = await EbPageFinder.ValidateFormRendering(form);
+                    message = form.MessageOnFailed;
+                    Device.BeginInvokeOnMainThread(() => IsBusy = false);
+                }
+
+                if (render)
+                    await App.RootMaster.Detail.Navigation.PushAsync(this.GetPageByContainer(page));
+                else
+                    await App.RootMaster.Detail.Navigation.PushAsync(new Redirect(message));
 
                 isTapped = false;
             }
             catch (Exception ex)
             {
                 isTapped = false;
+                Device.BeginInvokeOnMainThread(() => IsBusy = false);
                 EbLog.Error("Failed to open page ::" + ex.Message);
             }
         }

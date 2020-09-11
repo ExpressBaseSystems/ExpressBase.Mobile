@@ -1,11 +1,14 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
+using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -41,10 +44,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             Form.ControlDictionary = Form.ChildControls.ToControlDictionary();
             this.DeployTables();
         }
-
-        public bool IsOnline() => this.Page.NetworkMode == NetworkMode.Online;
-
-        public bool IsOffline() => this.Page.NetworkMode == NetworkMode.Offline;
 
         public bool HasWebFormRef() => !string.IsNullOrEmpty(this.Form.WebFormRefId);
 
@@ -110,7 +109,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     EbLog.Info(response.Message);
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Info($"Submit() raised some error");
                 EbLog.Error(ex.Message);

@@ -216,6 +216,25 @@ namespace ExpressBase.Mobile.Models
         public string Message { set; get; }
 
         public EbDataSet Data { set; get; }
+
+        public bool TryGetValue()
+        {
+            return Data != null && Data.Tables.HasLength(2);
+        }
+
+        public bool TryGetFirstRow(int tableIndex, out EbDataRow row)
+        {
+            EbDataTable dt = Data.Tables[tableIndex];
+            bool status = false;
+            row = null;
+
+            if (dt.Rows.Any())
+            {
+                row = dt.Rows[0];
+                status = true;
+            }
+            return status;
+        }
     }
 
     public class ApiFileData

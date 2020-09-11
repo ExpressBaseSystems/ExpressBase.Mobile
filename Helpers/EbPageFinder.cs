@@ -1,9 +1,11 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
@@ -97,6 +99,41 @@ namespace ExpressBase.Mobile.Helpers
                 }
             }
             return ls;
+        }
+
+        public static async Task<bool> ValidateFormRendering(EbMobileForm form)
+        {
+            string refid = form.BeforeRenderDSRefid;
+            bool status = true;
+
+            if (!string.IsNullOrEmpty(refid))
+            {
+                try
+                {
+                    MobileVisDataRespnse data = await DataService.Instance.GetDataAsync(refid, 0, 0, null, null, null, false);
+
+                    if (data.TryGetValue())
+                    {
+                        if (data.TryGetFirstRow(1, out var row))
+                        {
+                            var render = row[0];
+
+                            if (render != null)
+                                status = Convert.ToBoolean(render);
+                            else
+                                EbLog.Info("Form render validation return true");
+                        }
+                    }
+                    else
+                        EbLog.Info("before render returned null or empty");
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info("Error at form render validation api call");
+                    EbLog.Info(ex.Message);
+                }
+            }
+            return status;
         }
     }
 }

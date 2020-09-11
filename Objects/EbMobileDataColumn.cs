@@ -26,6 +26,10 @@ namespace ExpressBase.Mobile
 
         public MobileVerticalAlign VerticalAlign { set; get; }
 
+        public int Height { set; get; }
+
+        public int Width { set; get; }
+
         public bool HideInContext { set; get; }
 
         public string GetContent(object value)
@@ -34,11 +38,6 @@ namespace ExpressBase.Mobile
                 return TextFormat.Replace("{value}", value?.ToString());
             else
                 return value?.ToString();
-        }
-
-        public override void InitXControl()
-        {
-            base.InitXControl();
         }
     }
 }

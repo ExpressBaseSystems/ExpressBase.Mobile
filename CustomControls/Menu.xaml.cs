@@ -163,9 +163,11 @@ namespace ExpressBase.Mobile.CustomControls
                 return;
             else
             {
-                if (ItemTaped.CanExecute(sender))
+                MobilePagesWraper wraper = (sender as EbMenuItem).PageWraper;
+
+                if (ItemTaped.CanExecute(wraper))
                 {
-                    ItemTaped.Execute(sender);
+                    ItemTaped.Execute(wraper);
                 }
             }
         }

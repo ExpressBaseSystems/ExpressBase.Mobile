@@ -219,6 +219,8 @@ namespace ExpressBase.Mobile.CustomControls
     public class LSImage : Image
     {
         public double InitialWidth { set; get; }
+
+        public bool CalcHeight { set; get; }
     }
 
     public class ListViewSearchBar : SearchBar

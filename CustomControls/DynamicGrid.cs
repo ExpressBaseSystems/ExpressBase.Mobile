@@ -54,13 +54,16 @@ namespace ExpressBase.Mobile.CustomControls
         {
             this.Children.Add(view, colnum, rownum);
 
-            if (rowspan > 0) 
+            if (rowspan > 0)
                 Grid.SetRowSpan(view, rowspan);
 
-            if (colspan > 0) 
+            if (colspan > 0)
                 Grid.SetColumnSpan(view, colspan);
 
-            view.SizeChanged += View_SizeChanged;
+            if (view is LSImage lm && lm.CalcHeight)
+                view.SizeChanged += View_SizeChanged;
+            else
+                view.SizeChanged += View_SizeChanged;
         }
 
         private void View_SizeChanged(object sender, EventArgs e)

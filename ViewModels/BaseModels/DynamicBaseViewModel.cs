@@ -20,5 +20,15 @@ namespace ExpressBase.Mobile.ViewModels.BaseModels
             this.PageTitle = page.DisplayName;
             this.NetworkType = page.NetworkMode;
         }
+
+        public bool IsOnline()
+        {
+            return NetworkType == NetworkMode.Online;
+        }
+
+        public bool IsOffline()
+        {
+            return NetworkType == NetworkMode.Offline;
+        }
     }
 }

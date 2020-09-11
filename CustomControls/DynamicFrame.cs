@@ -133,7 +133,7 @@ namespace ExpressBase.Mobile.CustomControls
             switch (dc.RenderAs)
             {
                 case DataColumnRenderType.Image:
-                    view = this.DC2Image(value);
+                    view = this.DC2Image(dc, value);
                     break;
                 case DataColumnRenderType.MobileNumber:
                     view = this.DC2PhoneNumber(dc, value);
@@ -251,13 +251,20 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private View DC2Image(object value)
+        private View DC2Image(EbMobileDataColumn dc, object value)
         {
             LSImage image = new LSImage
             {
                 Style = (Style)HelperFunctions.GetResourceValue("ListViewImage")
             };
-            //image.SizeChanged += Image_SizeChanged;
+
+            if (dc.VerticalAlign == MobileVerticalAlign.Fill)
+                image.CalcHeight = true;
+            else
+                image.HeightRequest = dc.Height;
+
+            if (dc.HorrizontalAlign != MobileHorrizontalAlign.Fill)
+                image.WidthRequest = dc.Width;
 
             this.RenderImage(image, value);
             return image;
@@ -265,15 +272,15 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void Image_SizeChanged(object sender, EventArgs e)
         {
-            //LSImage item = (LSImage)sender;
+            LSImage item = (LSImage)sender;
 
-            //if (item.InitialWidth == 0)
-            //    item.InitialWidth = item.Width;
+            if (item.InitialWidth == 0)
+                item.InitialWidth = item.Width;
 
-            //if (item.Width != item.InitialWidth)
-            //    item.WidthRequest = item.InitialWidth;
+            if (item.Width != item.InitialWidth)
+                item.WidthRequest = item.InitialWidth;
 
-            //item.HeightRequest = item.InitialWidth;
+            item.HeightRequest = item.InitialWidth;
         }
 
         public async void RenderImage(LSImage image, object filerefs)

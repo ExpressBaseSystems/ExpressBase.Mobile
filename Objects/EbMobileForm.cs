@@ -24,6 +24,15 @@ namespace ExpressBase.Mobile
 
         public string WebFormRefId { set; get; }
 
+        //old remove
+        public string BeforeRenderDSRefid { set; get; }
+
+        public string RenderValidatorRefId { set; get; }
+
+        public List<Param> RenderValidatorParams { get; set; }
+
+        public string MessageOnFailed { set; get; }
+
         public Dictionary<string, EbMobileControl> ControlDictionary { set; get; }
 
         private bool HasFileSelect
@@ -34,6 +43,8 @@ namespace ExpressBase.Mobile
         public EbMobileForm()
         {
             ControlDictionary = new Dictionary<string, EbMobileControl>();
+
+            RenderValidatorParams = new List<Param>();
         }
 
         public string GetQuery()

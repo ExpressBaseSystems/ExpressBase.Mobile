@@ -77,6 +77,28 @@ namespace ExpressBase.Mobile.Services
                 Application.Current.MainPage.Navigation.RemovePage(last);
         }
 
+        public static async Task ReplaceRootTopAsync(Page page)
+        {
+            try
+            {
+                var stack = App.RootMaster.Detail.Navigation.NavigationStack;
+
+                if (stack.Any())
+                {
+                    Page last = App.RootMaster.Detail.Navigation.NavigationStack.LastOrDefault();
+
+                    await App.RootMaster.Detail.Navigation.PushAsync(page);
+                    if (last != null)
+                        App.RootMaster.Detail.Navigation.RemovePage(last);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info("failed to replace rootmaster top page");
+                EbLog.Error(ex.Message);
+            }
+        }
+
         public static async Task LoginAction()
         {
             await App.RootMaster.Detail.Navigation.PushModalAsync(new LoginAction());
@@ -107,7 +129,7 @@ namespace ExpressBase.Mobile.Services
         {
             Page current = App.RootMaster.Detail.Navigation.NavigationStack.Last();
 
-            if(current !=null && current is IRefreshable iref)
+            if (current != null && current is IRefreshable iref)
             {
                 iref.RefreshPage();
             }
@@ -143,13 +165,13 @@ namespace ExpressBase.Mobile.Services
                             renderer = new FormRender(page, id);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         EbLog.Error(ex.Message);
                     }
                 }
             }
-            else if(container is EbMobileVisualization)
+            else if (container is EbMobileVisualization)
             {
                 renderer = new ListRender(page, row);
             }

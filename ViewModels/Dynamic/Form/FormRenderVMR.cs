@@ -1,9 +1,6 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
