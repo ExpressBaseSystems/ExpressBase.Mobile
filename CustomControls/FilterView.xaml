@@ -147,6 +147,7 @@
                 IsVisible="False"
                 Grid.Row="1" 
                 Grid.ColumnSpan="2"
+                SelectionMode="None"
                 ItemsSource="{Binding SortColumns,Source={Reference x_this}}"
                 BackgroundColor="White"
                 HasUnevenRows="true">

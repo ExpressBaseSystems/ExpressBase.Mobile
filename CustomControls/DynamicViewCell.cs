@@ -62,7 +62,7 @@ namespace ExpressBase.Mobile.CustomControls
                     this.SetBackGroundColor(ItemIndex.Value, li);
                     ItemIndex.Increment();
                 }
-                View = li;
+                this.View = li;
             }
         }
 

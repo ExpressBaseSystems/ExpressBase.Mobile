@@ -1,12 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ExpressBase.Mobile.Views.Shared.Redirect">
+             x:Class="ExpressBase.Mobile.Views.Shared.Redirect"
+             BackgroundColor="White">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+        <StackLayout VerticalOptions="Center">
+            <Image
+                Margin="20,0"
+                HorizontalOptions="Center"
+                Source="no_data.png">
+            </Image>
+            <Label 
+                Margin="20,0"
+                Text="{Binding Message}" 
+                FontSize="16"
+                FontFamily="{StaticResource Roboto-Regular}"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center">
+            </Label>
+            <Button
+                Margin="0,20"
+                Padding="0"
+                FontSize="20"
+                HeightRequest="50"
+                WidthRequest="50"
+                CornerRadius="25"
+                BorderColor="#ccc"
+                BorderWidth="1"
+                BackgroundColor="White"
+                FontFamily="{StaticResource FontAwesome}"
+                TextColor="{DynamicResource Primary_Color}"
+                HorizontalOptions="Center"
+                Text="&#xf177;"
+                Clicked="Button_Clicked">
+            </Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

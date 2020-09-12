@@ -12,7 +12,7 @@ namespace ExpressBase.Mobile.Extensions
                 DateTime now = DateTime.Now;
                 int days = DateTime.DaysInMonth(now.Year, now.Month);
 
-                TimeSpan ts = now.ToUniversalTime().Subtract(date);
+                TimeSpan ts = now.Subtract(date);
 
                 int intDays = ts.Days;
                 int intHours = ts.Hours;

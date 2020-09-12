@@ -217,7 +217,7 @@ namespace ExpressBase.Mobile.Models
 
         public EbDataSet Data { set; get; }
 
-        public bool TryGetValue()
+        public bool HasData()
         {
             return Data != null && Data.Tables.HasLength(2);
         }

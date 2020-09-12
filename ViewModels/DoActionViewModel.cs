@@ -107,13 +107,10 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 if (this.Status == null) return;
 
-                Device.BeginInvokeOnMainThread(() => IsBusy = true);
-
                 WebformData webformData = new WebformData("eb_approval_lines");
 
                 SingleRow row = new SingleRow
                 {
-                    RowId = this.action.WebFormDataId,
                     LocId = App.Settings.CurrentLocId,
                     Columns =
                     {
@@ -129,8 +126,6 @@ namespace ExpressBase.Mobile.ViewModels
 
                 await this.SendWebFormData(webformData, this.action.WebFormDataId, this.action.WebFormRefId);
 
-                Device.BeginInvokeOnMainThread(() => IsBusy = false);
-
                 await App.RootMaster.Detail.Navigation.PopAsync(true);
             }
             catch (Exception ex)
@@ -139,26 +134,30 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private async Task SendWebFormData(WebformData webform,int rowid,string webformrefid)
+        private async Task SendWebFormData(WebformData webform, int rowid, string webformrefid)
         {
             try
             {
+                Device.BeginInvokeOnMainThread(() => IsBusy = true);
+
                 PushResponse resp = await FormDataServices.Instance.SendFormDataAsync(webform, rowid, webformrefid, App.Settings.CurrentLocId);
 
-                IToast helper = DependencyService.Get<IToast>();
+                Device.BeginInvokeOnMainThread(() => IsBusy = false);
 
                 if (resp.RowAffected > 0)
                 {
-                    helper.Show("Action saved successfully :)");
+                    Utils.Toast("Action saved successfully :)");
                     NavigationService.UpdateViewStack();
-                } 
+                }
                 else
-                    helper.Show("Unable to save action :( ");
+                    Utils.Toast("Unable to save action :( ");
             }
             catch (Exception ex)
             {
                 EbLog.Info("Failed to submit form data in doaction");
                 EbLog.Error(ex.Message);
+
+                Device.BeginInvokeOnMainThread(() => IsBusy = false);
             }
         }
 

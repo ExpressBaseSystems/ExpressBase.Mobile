@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
@@ -13,6 +13,8 @@ namespace ExpressBase.Mobile.CustomControls
         private readonly EbMobileTableLayout layout;
 
         private Dictionary<int, int> widthMap;
+
+        public double XAllocated { set; get; }
 
         public DynamicGrid(EbMobileTableLayout tableLayout)
         {
@@ -60,10 +62,29 @@ namespace ExpressBase.Mobile.CustomControls
             if (colspan > 0)
                 Grid.SetColumnSpan(view, colspan);
 
-            if (view is LSImage lm && lm.CalcHeight)
-                view.SizeChanged += View_SizeChanged;
-            else
-                view.SizeChanged += View_SizeChanged;
+            TriggerSizeChanged(view, colnum);
+        }
+
+        private void TriggerSizeChanged(View view, int colnum)
+        {
+            if (view is LSImage lm)
+            {
+                if (lm.CalcHeight)
+                {
+                    lm.HeightRequest = this.GetColumnWidth(colnum);
+                    return;
+                }
+            }
+            view.SizeChanged += View_SizeChanged;
+        }
+
+        private double GetColumnWidth(int colnum)
+        {
+            if (this.XAllocated != 0)
+            {
+                return this.XAllocated * widthMap[colnum] / 100;
+            }
+            return 0;
         }
 
         private void View_SizeChanged(object sender, EventArgs e)

@@ -18,6 +18,8 @@ namespace ExpressBase.Mobile
 
         public static SettingsServices Settings { set; get; }
 
+        public static double ScreenX;
+
         #endregion
 
         public App()

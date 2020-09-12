@@ -57,12 +57,13 @@
                                     Padding="0"
                                     WidthRequest="50"
                                     CornerRadius="25"
+                                    HasShadow="False"
                                     IsClippedToBounds="True">
                                     <Image 
                                         Source="{Binding SolutionLogo}" 
                                         VerticalOptions="Center"
                                         HorizontalOptions="Center"
-                                        Aspect="AspectFit">
+                                        Aspect="AspectFill">
                                     </Image>
                                 </Frame>
                                 

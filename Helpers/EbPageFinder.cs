@@ -101,18 +101,27 @@ namespace ExpressBase.Mobile.Helpers
             return ls;
         }
 
-        public static async Task<bool> ValidateFormRendering(EbMobileForm form)
+        public static async Task<bool> ValidateFormRendering(EbMobileForm form, EbDataRow context = null)
         {
-            string refid = form.BeforeRenderDSRefid;
+            string refid = form.RenderValidatorRefId;
             bool status = true;
 
             if (!string.IsNullOrEmpty(refid))
             {
                 try
                 {
-                    MobileVisDataRespnse data = await DataService.Instance.GetDataAsync(refid, 0, 0, null, null, null, false);
+                    var cParams = form.GetRenderValidatorParams(context);
 
-                    if (data.TryGetValue())
+                    cParams.Add(new Param
+                    {
+                        Name = "eb_loc_id",
+                        Type = "11",
+                        Value = App.Settings.CurrentLocation.LocId.ToString()
+                    });
+
+                    MobileVisDataRespnse data = await DataService.Instance.GetDataAsync(refid, 0, 0, cParams, null, null, false);
+
+                    if (data.HasData())
                     {
                         if (data.TryGetFirstRow(1, out var row))
                         {

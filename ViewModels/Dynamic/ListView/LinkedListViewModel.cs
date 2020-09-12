@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views.Dynamic;
+using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,10 +32,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             EbMobilePage page = EbPageFinder.GetPage(Visualization.LinkRefId);
 
-            if (page != null && page.Container is EbMobileForm)
+            if (page != null && page.Container is EbMobileForm form)
             {
-                FormRender Renderer = new FormRender(page, Visualization, ContextRecord);
-                await App.RootMaster.Detail.Navigation.PushAsync(Renderer);
+                IsBusy = true;
+                var validation = await EbPageFinder.ValidateFormRendering(form, this.ContextRecord);
+                IsBusy = false;
+
+                if (validation)
+                    await App.RootMaster.Detail.Navigation.PushAsync(new FormRender(page, Visualization, ContextRecord));
+                else
+                    await App.RootMaster.Detail.Navigation.PushAsync(new Redirect(form.MessageOnFailed));
             }
         }
 

@@ -62,19 +62,24 @@ namespace ExpressBase.Mobile.Services
 
         public static async Task ReplaceTopAsync(Page page)
         {
-            Page last = null;
             try
             {
-                int length = Application.Current.MainPage.Navigation.NavigationStack.Count;
-                last = Application.Current.MainPage.Navigation.NavigationStack[length - 1];
+                var stack = Application.Current.MainPage.Navigation.NavigationStack;
+
+                if (stack.Any())
+                {
+                    Page last = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
+
+                    await Application.Current.MainPage.Navigation.PushAsync(page);
+                    if (last != null)
+                        Application.Current.MainPage.Navigation.RemovePage(last);
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //raise any message if wanted
+                EbLog.Info("failed to replace mainpage top page");
+                EbLog.Error(ex.Message);
             }
-            await Application.Current.MainPage.Navigation.PushAsync(page);
-            if (last != null)
-                Application.Current.MainPage.Navigation.RemovePage(last);
         }
 
         public static async Task ReplaceRootTopAsync(Page page)

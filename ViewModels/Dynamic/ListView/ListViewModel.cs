@@ -33,7 +33,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             if (page != null && page.Container is EbMobileForm form)
             {
-                var validation = await EbPageFinder.ValidateFormRendering(form);
+                IsBusy = true;
+                var validation = await EbPageFinder.ValidateFormRendering(form, this.ContextRecord);
+                IsBusy = false;
 
                 if (validation)
                     await App.RootMaster.Detail.Navigation.PushAsync(new FormRender(page));

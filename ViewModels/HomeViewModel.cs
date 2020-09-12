@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
@@ -63,7 +62,7 @@ namespace ExpressBase.Mobile.ViewModels
                 SolutionLogo = await menuServices.GetLogo(App.Settings.Sid);
                 await HelperFunctions.CreateDirectory("FILES");
 
-                EbLog.Error($"Current Application :'{PageTitle}' with page count of {this.ObjectList.Count}.");
+                EbLog.Info($"Current Application :'{PageTitle}' with page count of {this.ObjectList.Count}.");
             }
             catch (Exception ex)
             {
@@ -84,7 +83,7 @@ namespace ExpressBase.Mobile.ViewModels
                     this.ObjectList = await menuServices.UpdateDataAsync();
 
                     await menuServices.DeployFormTables(ObjectList);
-                    EbLog.Error($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
+                    EbLog.Info($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
                 }
             }
             catch (Exception ex)

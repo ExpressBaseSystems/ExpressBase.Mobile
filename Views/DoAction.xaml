@@ -9,7 +9,10 @@
              BackgroundColor="#ffffff">
     <NavigationPage.TitleView>
         <Grid RowSpacing="0" Padding="0,0,10,0" BackgroundColor="Transparent">
-            <Label Text="{Binding PageTitle}" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}"/>
+            <Label 
+                Text="{Binding PageTitle}" 
+                VerticalOptions="Center" 
+                Style="{StaticResource ToolBarLabelStyle}"/>
         </Grid>
     </NavigationPage.TitleView>
     <ContentPage.Content>

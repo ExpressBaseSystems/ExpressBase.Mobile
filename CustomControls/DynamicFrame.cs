@@ -27,10 +27,10 @@ namespace ExpressBase.Mobile.CustomControls
             this.IsHeader = isHeader;
             this.DataRow = row;
 
-            this.SetFrameStyle(viz);
-
             DynamicGrid = new DynamicGrid(viz.DataLayout);
             DynamicGrid.SetSpacing(viz.RowSpacing, viz.ColumnSpacing);
+
+            this.SetFrameStyle(viz);
 
             this.FillData(viz.DataLayout.CellCollection);
 
@@ -50,6 +50,8 @@ namespace ExpressBase.Mobile.CustomControls
 
                 this.Padding = new Thickness(pd.Left, pd.Top, pd.Right, pd.Bottom);
                 this.Margin = new Thickness(mr.Left, mr.Top, mr.Right, mr.Bottom);
+
+                DynamicGrid.XAllocated = App.ScreenX - (pd.Left + pd.Right + mr.Left + mr.Right);
             }
             try
             {

@@ -24,9 +24,6 @@ namespace ExpressBase.Mobile
 
         public string WebFormRefId { set; get; }
 
-        //old remove
-        public string BeforeRenderDSRefid { set; get; }
-
         public string RenderValidatorRefId { set; get; }
 
         public List<Param> RenderValidatorParams { get; set; }
@@ -444,6 +441,29 @@ namespace ExpressBase.Mobile
                     return false;
             }
             return true;
+        }
+
+        public List<Param> GetRenderValidatorParams(EbDataRow row)
+        {
+            List<Param> param = new List<Param>();
+
+            if (row == null) return param;
+
+            foreach (Param p in RenderValidatorParams)
+            {
+                object val = row[p.Name];
+
+                if (val != null)
+                {
+                    param.Add(new Param
+                    {
+                        Name = p.Name,
+                        Type = p.Type,
+                        Value = val.ToString()
+                    });
+                }
+            }
+            return param;
         }
     }
 }

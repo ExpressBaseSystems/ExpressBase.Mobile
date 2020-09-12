@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
 using System;
@@ -9,10 +8,8 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class MyActions : ContentPage, IRefreshable
+    public partial class MyActions : EbContentPage
     {
-        public bool isRendered;
-
         private readonly MyActionsViewModel viewModel;
 
         public MyActions()
@@ -26,27 +23,25 @@ namespace ExpressBase.Mobile.Views
         {
             base.OnAppearing();
 
-            if (!isRendered)
+            if (!IsRendered)
             {
                 await viewModel.InitializeAsync();
-                isRendered = true;
+                IsRendered = true;
             }
             Loader.IsVisible = false;
         }
 
         private async void MyActionsRefresh_Refreshing(object sender, EventArgs e)
         {
-            IToast toast = DependencyService.Get<IToast>();
             try
             {
                 if (!Utils.HasInternet)
                 {
-                    toast.Show("Not connected to internet!");
+                    Utils.Alert_NoInternet();
                     return;
                 }
-                MyActionsRefresh.IsRefreshing = true;
                 await viewModel.InitializeAsync();
-                toast.Show("Refreshed");
+                Utils.Toast("Refreshed");
             }
             catch (Exception ex)
             {
@@ -61,17 +56,12 @@ namespace ExpressBase.Mobile.Views
             MyActionsRefresh_Refreshing(sender, e);
         }
 
-        public void RefreshPage()
+        public override void UpdateRenderStatus()
         {
-            //not implemented
+            IsRendered = false;
         }
 
-        public void UpdateRenderStatus()
-        {
-            isRendered = false;
-        }
-
-        public bool CanRefresh()
+        public override bool CanRefresh()
         {
             return true;
         }

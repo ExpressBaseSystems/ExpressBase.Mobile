@@ -63,7 +63,7 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        private async void RefreshView_Refreshing(object sender, System.EventArgs e)
+        private async void RefreshView_Refreshing(object sender, EventArgs e)
         {
             RootRefreshView.IsRefreshing = false;
             try
@@ -117,6 +117,12 @@ namespace ExpressBase.Mobile.Views
         public override void UpdateRenderStatus()
         {
             IsRendered = false;
+        }
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+            App.ScreenX = width;
         }
     }
 }
