@@ -24,17 +24,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private ImageSource logourl;
-
-        public ImageSource LogoUrl
-        {
-            get => logourl;
-            set
-            {
-                logourl = value;
-                this.NotifyPropertyChanged();
-            }
-        }
+        public ImageSource LogoUrl { set; get; }
 
         private Action<ApiAuthResponse> toggle2FAW;
 
@@ -55,18 +45,14 @@ namespace ExpressBase.Mobile.ViewModels
         public LoginByOTPViewModel()
         {
             identityService = IdentityService.Instance;
+
+            this.UserName = App.Settings.CurrentSolution?.LastUser;
+            this.LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
         }
 
         public void Bind2FAToggleEvent(Action<ApiAuthResponse> action)
         {
             toggle2FAW = action;
-        }
-
-        public override async Task InitializeAsync()
-        {
-            this.UserName = App.Settings.CurrentSolution?.LastUser;
-
-            LogoUrl = await identityService.GetLogo(App.Settings.Sid);
         }
 
         private async Task SendOTP()

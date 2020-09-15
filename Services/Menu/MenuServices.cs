@@ -313,31 +313,5 @@ namespace ExpressBase.Mobile.Services
                 dr[col.ColumnIndex] = liveId;
             }
         }
-
-        public async Task<ImageSource> GetLogo(string sid)
-        {
-            try
-            {
-                await Task.Delay(1);
-
-                if (App.Settings.Vendor.BuildType == AppBuildType.Embedded)
-                {
-                    return ImageSource.FromFile(App.Settings.Vendor.Logo);
-                }
-                else
-                {
-                    INativeHelper helper = DependencyService.Get<INativeHelper>();
-
-                    var bytes = helper.GetFile($"{App.Settings.AppDirectory}/{sid}/logo.png");
-                    if (bytes != null)
-                        return ImageSource.FromStream(() => new MemoryStream(bytes));
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("GetLogo" + ex.Message);
-            }
-            return null;
-        }
     }
 }

@@ -138,32 +138,6 @@ namespace ExpressBase.Mobile.Services
             return null;
         }
 
-        public async Task<ImageSource> GetLogo(string sid)
-        {
-            try
-            {
-                await Task.Delay(1);
-
-                if (App.Settings.Vendor.BuildType == AppBuildType.Embedded)
-                {
-                    return ImageSource.FromFile(App.Settings.Vendor.Logo);
-                }
-                else
-                {
-                    INativeHelper helper = DependencyService.Get<INativeHelper>();
-
-                    byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{sid}/logo.png");
-                    if (bytes != null)
-                        return ImageSource.FromStream(() => new MemoryStream(bytes));
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("GetLogo" + ex.Message);
-            }
-            return null;
-        }
-
         public async Task UpdateAuthInfo(ApiAuthResponse resp, string username)
         {
             try
@@ -216,20 +190,27 @@ namespace ExpressBase.Mobile.Services
         {
             if (data.Applications != null)
             {
-                if (data.Applications.Count == 1)
+                if (Utils.IsFreshStart)
                 {
-                    AppData appdata = data.Applications[0];
-
-                    await Store.SetJSONAsync(AppConst.CURRENT_APP, appdata);
-                    App.Settings.CurrentApplication = appdata;
-                    App.Settings.MobilePages = appdata.MobilePages;
-
-                    App.RootMaster = new RootMaster(typeof(Home));
-                    Application.Current.MainPage = App.RootMaster;
+                    await Application.Current.MainPage.Navigation.PushAsync(new WelcomPage(data));
                 }
                 else
                 {
-                    await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+                    if (data.Applications.Count == 1)
+                    {
+                        AppData appdata = data.Applications[0];
+
+                        await Store.SetJSONAsync(AppConst.CURRENT_APP, appdata);
+                        App.Settings.CurrentApplication = appdata;
+                        App.Settings.MobilePages = appdata.MobilePages;
+
+                        App.RootMaster = new RootMaster(typeof(Home));
+                        Application.Current.MainPage = App.RootMaster;
+                    }
+                    else
+                    {
+                        await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+                    }
                 }
             }
         }

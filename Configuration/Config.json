@@ -26,6 +26,9 @@
         },
         "About": {
           "VendorName": "EXPRESSbase"
+        },
+        "WelcomePage": {
+          "Description": "explore"
         }
       }
     },
@@ -55,6 +58,9 @@
         },
         "About": {
           "VendorName": "Move On"
+        },
+        "WelcomePage": {
+          "Description": "Wishing you a nice stay. We are at your service always."
         }
       }
     },
@@ -85,6 +91,9 @@
         },
         "About": {
           "VendorName": "Kudumbashree Community Loans"
+        },
+        "WelcomePage": {
+          "Description": ""
         }
       }
     }

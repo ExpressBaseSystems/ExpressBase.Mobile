@@ -29,6 +29,8 @@ namespace ExpressBase.Mobile.Constants
         public const string PNS_TOKEN = "eb_pns_token";
 
         public const string AZURE_REGID = "azure_regid";
+
+        public const string IS_FRESH_START = "is_fresh_start";
     }
 
 

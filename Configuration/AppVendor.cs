@@ -55,5 +55,7 @@ namespace ExpressBase.Mobile.Configuration
         public Dictionary<string, string> Login { set; get; }
 
         public Dictionary<string, string> About { set; get; }
+
+        public Dictionary<string, string> WelcomePage { set; get; }
     }
 }

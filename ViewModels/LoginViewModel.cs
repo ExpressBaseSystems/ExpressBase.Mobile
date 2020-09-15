@@ -35,17 +35,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private ImageSource logourl;
-
-        public ImageSource LogoUrl
-        {
-            get => logourl;
-            set
-            {
-                logourl = value;
-                this.NotifyPropertyChanged();
-            }
-        }
+        public ImageSource LogoUrl { set; get; }
 
         public bool ShowNewSolutionLink => (App.Settings.Vendor.BuildType != AppBuildType.Embedded);
 
@@ -66,18 +56,14 @@ namespace ExpressBase.Mobile.ViewModels
         public LoginViewModel()
         {
             identityService = IdentityService.Instance;
+
+            this.Email = App.Settings.CurrentSolution?.LastUser;
+            this.LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
         }
 
         public void Bind2FAToggleEvent(Action<ApiAuthResponse> action)
         {
             toggle2FAW = action;
-        }
-
-        public override async Task InitializeAsync()
-        {
-            this.Email = App.Settings.CurrentSolution?.LastUser;
-
-            LogoUrl = await identityService.GetLogo(App.Settings.Sid);
         }
 
         private async Task LoginAction()

@@ -13,8 +13,6 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LoginByOTP : ContentPage, IDynamicContent
     {
-        private bool isRendered;
-
         private int backButtonCount;
 
         private readonly LoginByOTPViewModel viewModel;
@@ -35,17 +33,11 @@ namespace ExpressBase.Mobile.Views
             LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
 
             SolutionName.Text = App.Settings.Sid.ToUpper();
-
-            if (!isRendered)
-            {
-                await viewModel.InitializeAsync();
-                isRendered = true;
-            }
         }
 
         public void ShowTwoFAWindow(ApiAuthResponse auth)

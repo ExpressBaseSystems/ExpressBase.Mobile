@@ -16,7 +16,5 @@ namespace ExpressBase.Mobile.Services
         Task DeployFormTables(List<MobilePagesWraper> objlist);
 
         Task<List<MobilePagesWraper>> GetFromMenuPreload(EbApiMeta apimeta);
-
-        Task<ImageSource> GetLogo(string sid);
     }
 }

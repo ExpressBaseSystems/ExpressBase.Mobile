@@ -40,6 +40,14 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
+        public static bool IsFreshStart
+        {
+            get
+            {
+                return !Store.GetValue<bool>(AppConst.IS_FRESH_START);
+            }
+        } 
+
         private static IToast toastservice;
 
         public static IToast ToastService

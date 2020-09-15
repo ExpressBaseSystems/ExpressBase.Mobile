@@ -11,8 +11,6 @@ namespace ExpressBase.Mobile.Services
 
         Task<ApiAuthResponse> AuthenticateSSOAsync(string username, SignInOtpType type);
 
-        Task<ImageSource> GetLogo(string sid);
-
         Task UpdateAuthInfo(ApiAuthResponse resp, string username);
 
         Task UpdateLastUser(string username, LoginType logintype = LoginType.SSO);

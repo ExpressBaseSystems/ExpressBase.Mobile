@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ExpressBase.Mobile.Views.WelcomPage"
+             NavigationPage.HasNavigationBar="False"
+             NavigationPage.HasBackButton="False">
+    <ContentPage.Content>
+        <StackLayout 
+            VerticalOptions="FillAndExpand" 
+            Padding="0"
+            BackgroundColor="White">
+
+            <StackLayout 
+                BackgroundColor="White"
+                VerticalOptions="Start"
+                Margin="0,40">
+                <Image
+                    Scale="0"
+                    x:Name="SolutionImage"
+                    Margin="30"
+                    HeightRequest="100"
+                    Source="{Binding SolutionLogo}">
+                </Image>
+            </StackLayout>
+            
+            <StackLayout 
+                VerticalOptions="FillAndExpand"
+                BackgroundColor="{DynamicResource Primary_Color}">
+
+                <Frame 
+                    BackgroundColor="{DynamicResource Primary_Color}"
+                    HeightRequest="40"
+                    CornerRadius="25"
+                    HasShadow="True"
+                    Margin="0,-20,0,0">
+                </Frame>
+
+                <StackLayout 
+                    VerticalOptions="StartAndExpand"
+                    Padding="30,0">
+                    <Label 
+                        FontFamily="{StaticResource Roboto-Regular}"
+                        FontSize="25"
+                        TextColor="White"
+                        HorizontalTextAlignment="Center"
+                        Text="WELCOME">
+                    </Label>
+                    <Label
+                        FontSize="20"
+                        TextColor="White"
+                        Margin="0,10"
+                        HorizontalTextAlignment="Center">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="&quot; "></Span>
+                                <Span Text="{Binding UserName}"></Span>
+                                <Span Text=" &quot;"></Span>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label 
+                        x:Name="Description"
+                        FontSize="16"
+                        TextColor="#ddd"
+                        FontFamily="{StaticResource Roboto-Light}"
+                        HorizontalTextAlignment="Center">
+                    </Label>
+                </StackLayout>
+
+                <Button 
+                    Margin="0,20"
+                    VerticalOptions="End"
+                    BackgroundColor="White"
+                    TextColor="{DynamicResource Primary_Color}"
+                    FontFamily="{StaticResource Roboto-Regular}"
+                    HorizontalOptions="Center"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    Padding="50,0"
+                    Text="Continue"
+                    Clicked="Button_Clicked">
+                </Button>
+
+            </StackLayout>
+            
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

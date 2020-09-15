@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using ExpressBase.Mobile.Helpers;
 using System.Threading.Tasks;
+using Xamarin.Forms;
+using ExpressBase.Mobile.Enums;
+using System.IO;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -104,7 +107,7 @@ namespace ExpressBase.Mobile.Services
 
                         foreach (EbDataColumn col in dt.Columns)
                             ColSchema.Add(new SQLiteColumSchema { ColumnName = col.ColumnName, ColumnType = SQLiteTableSchema.SQLiteType(col.Type) });
-                       
+
                         await DropTable(dt.TableName);//droping existing table
 
                         this.CreateTable(dt.TableName, ColSchema);
@@ -130,6 +133,30 @@ namespace ExpressBase.Mobile.Services
             {
                 EbLog.Error("CommonServices.DropTable---" + ex.Message);
             }
+        }
+
+        public static ImageSource GetLogo(string sid)
+        {
+            try
+            {
+                if (App.Settings.Vendor.BuildType == AppBuildType.Embedded)
+                {
+                    return ImageSource.FromFile(App.Settings.Vendor.Logo);
+                }
+                else
+                {
+                    INativeHelper helper = DependencyService.Get<INativeHelper>();
+
+                    var bytes = helper.GetFile($"{App.Settings.AppDirectory}/{sid}/logo.png");
+                    if (bytes != null)
+                        return ImageSource.FromStream(() => new MemoryStream(bytes));
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("GetLogo" + ex.Message);
+            }
+            return null;
         }
     }
 }

@@ -59,7 +59,8 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 this.ObjectList = await menuServices.GetDataAsync();
                 await menuServices.DeployFormTables(ObjectList);
-                SolutionLogo = await menuServices.GetLogo(App.Settings.Sid);
+
+                SolutionLogo = CommonServices.GetLogo(App.Settings.Sid);
                 await HelperFunctions.CreateDirectory("FILES");
 
                 EbLog.Info($"Current Application :'{PageTitle}' with page count of {this.ObjectList.Count}.");

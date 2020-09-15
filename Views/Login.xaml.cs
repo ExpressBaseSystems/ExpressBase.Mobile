@@ -13,8 +13,6 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Login : ContentPage, IDynamicContent
     {
-        private bool isRendered;
-
         private int backButtonCount;
 
         private readonly LoginViewModel viewModel;
@@ -36,17 +34,11 @@ namespace ExpressBase.Mobile.Views
             SubmitButton.Text = PageContent["LoginButtonText"];
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
 
             SolutionName.Text = App.Settings.Sid.ToUpper();
-
-            if (!isRendered)
-            {
-                await viewModel.InitializeAsync();
-                isRendered = true;
-            }
         }
 
         private void Email_Completed(object sender, EventArgs e)
