@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Converters;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
@@ -257,65 +258,14 @@ namespace ExpressBase.Mobile.CustomControls
         {
             LSImage image = new LSImage
             {
-                Style = (Style)HelperFunctions.GetResourceValue("ListViewImage")
+                Style = (Style)HelperFunctions.GetResourceValue("ListViewImage"),
+                BindingContext = new EbBindableUnit(value)
             };
+            image.SetExpansion(dc);
+            image.SetBinding(LSImage.SourceProperty, new Binding("Value", converter: new FileRefToImageConverter()));          
 
-            if (dc.VerticalAlign == MobileVerticalAlign.Fill)
-                image.CalcHeight = true;
-            else
-                image.HeightRequest = dc.Height;
-
-            if (dc.HorrizontalAlign != MobileHorrizontalAlign.Fill)
-                image.WidthRequest = dc.Width;
-
-            this.RenderImage(image, value);
             return image;
-        }
-
-        private void Image_SizeChanged(object sender, EventArgs e)
-        {
-            LSImage item = (LSImage)sender;
-
-            if (item.InitialWidth == 0)
-                item.InitialWidth = item.Width;
-
-            if (item.Width != item.InitialWidth)
-                item.WidthRequest = item.InitialWidth;
-
-            item.HeightRequest = item.InitialWidth;
-        }
-
-        public async void RenderImage(LSImage image, object filerefs)
-        {
-            if (filerefs == null) return;
-
-            string refid = filerefs.ToString().Split(CharConstants.COMMA)[0];
-            try
-            {
-                byte[] file = await DataService.Instance.GetLocalFile($"{refid}.jpg");
-
-                if (file == null)
-                {
-                    ApiFileResponse resp = await DataService.Instance.GetFile(EbFileCategory.Images, $"{refid}.jpg");
-                    if (resp.HasContent)
-                    {
-                        image.Source = ImageSource.FromStream(() => { return new MemoryStream(resp.Bytea); });
-                        this.CacheImage(refid, resp.Bytea);
-                    }
-                }
-                else
-                    image.Source = ImageSource.FromStream(() => { return new MemoryStream(file); });
-            }
-            catch (Exception)
-            {
-                EbLog.Error("failed to load image ,getfile api error");
-            }
-        }
-
-        private void CacheImage(string filename, byte[] fileBytea)
-        {
-            HelperFunctions.WriteFilesLocal(filename + ".jpg", fileBytea);
-        }
+        }  
 
         private View DC2PhoneNumber(EbMobileDataColumn dc, object value)
         {

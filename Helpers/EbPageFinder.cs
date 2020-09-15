@@ -132,6 +132,8 @@ namespace ExpressBase.Mobile.Helpers
                             else
                                 EbLog.Info("Form render validation return true");
                         }
+                        else
+                            EbLog.Info("Render validator returned empty row collection");
                     }
                     else
                         EbLog.Info("before render returned null or empty");

@@ -1,7 +1,4 @@
-﻿using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Helpers;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
@@ -216,17 +213,20 @@ namespace ExpressBase.Mobile.CustomControls
 
     }
 
-    public class LSImage : Image
-    {
-        public double InitialWidth { set; get; }
-
-        public bool CalcHeight { set; get; }
-    }
-
     public class ListViewSearchBar : SearchBar
     {
         public bool HideIcon { set; get; }
 
         public ListViewSearchBar() { }
+    }
+
+    public class EbBindableUnit
+    {
+        public object Value { set; get; }
+
+        public EbBindableUnit(object value)
+        {
+            Value = value;
+        }
     }
 }

@@ -71,7 +71,10 @@ namespace ExpressBase.Mobile.CustomControls
 
                 foreach (var pair in category)
                 {
-                    var catFrame = new Frame
+                    if (pair.Value.IsNullOrEmpty())
+                        continue;
+
+                    Frame catFrame = new Frame
                     {
                         Style = (Style)HelperFunctions.GetResourceValue("MenuCategoryFrame")
                     };
@@ -87,10 +90,7 @@ namespace ExpressBase.Mobile.CustomControls
                             Style = (Style)HelperFunctions.GetResourceValue("CategoryHeadLabel")
                         });
                     }
-                    if (pair.Value.Any())
-                    {
-                        this.RenderLinks(pair.Value, catFrameCont);
-                    }
+                    this.RenderLinks(pair.Value, catFrameCont);
                 }
             }
             catch (Exception ex)

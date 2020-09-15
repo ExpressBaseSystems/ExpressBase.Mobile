@@ -3,8 +3,6 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 
 namespace ExpressBase.Mobile.Extensions
 {

@@ -33,7 +33,7 @@ namespace ExpressBase.Mobile.Services
                 if (sort != null)
                     request.AddParameter("sort_order", JsonConvert.SerializeObject(sort));
 
-                if(search !=null)
+                if (search != null)
                     request.AddParameter("search", JsonConvert.SerializeObject(search));
 
                 request.AddParameter("limit", limit);
@@ -90,7 +90,7 @@ namespace ExpressBase.Mobile.Services
             return new MobileVisDataRespnse();
         }
 
-        public async Task<ApiFileResponse> GetFile(EbFileCategory category, string filename)
+        public async Task<ApiFileResponse> GetFileAsync(EbFileCategory category, string filename)
         {
             ApiFileResponse resp = null;
             try
@@ -117,12 +117,37 @@ namespace ExpressBase.Mobile.Services
             return resp;
         }
 
-        public async Task<byte[]> GetLocalFile(string filename)
+        public ApiFileResponse GetFile(EbFileCategory category, string filename)
+        {
+            ApiFileResponse resp = null;
+            try
+            {
+                RestClient client = new RestClient(App.Settings.RootUrl);
+
+                RestRequest request = new RestRequest("api/get_file", Method.GET);
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+                request.AddParameter("category", (int)category);
+                request.AddParameter("filename", filename);
+
+                IRestResponse response = client.Execute(request);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                    resp = JsonConvert.DeserializeObject<ApiFileResponse>(response.Content);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return resp;
+        }
+
+        public byte[] GetLocalFile(string filename)
         {
             try
             {
-                await Task.Delay(1);
-
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
                 byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{App.Settings.Sid}/FILES/{filename}");
