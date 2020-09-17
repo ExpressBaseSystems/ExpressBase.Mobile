@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Configuration;
-using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
@@ -404,34 +403,6 @@ namespace ExpressBase.Mobile.Models
         public bool Selected { set; get; }
 
         public bool IsToggled { set; get; } = false;
-    }
-
-    public class DeviceRegistration
-    {
-        public MobilePlatform Platform { get; set; }
-
-        public string Handle { get; set; }
-
-        public List<string> Tags { get; set; }
-
-        public void SetPlatform()
-        {
-            switch (Device.RuntimePlatform)
-            {
-                case Device.iOS:
-                    Platform = MobilePlatform.apns;
-                    break;
-                case Device.Android:
-                    Platform = MobilePlatform.gcm;
-                    break;
-                case Device.UWP:
-                    Platform = MobilePlatform.wns;
-                    break;
-                default:
-                    Platform = default;
-                    break;
-            }
-        }
     }
 
     public class MenuPreloadResponse : ApiResponse

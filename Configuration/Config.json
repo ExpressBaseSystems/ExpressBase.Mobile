@@ -2,7 +2,7 @@
   "Vendors": {
     "ExpressBase": {
       "BuildType": "Dynamic",
-      "AllowNotifications": false,
+      "AllowNotifications": true,
       "PrimaryColor": "0046bb",
       "HasOfflineFeature": true,
       "HasActions": true,

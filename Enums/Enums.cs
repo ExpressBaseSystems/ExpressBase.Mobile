@@ -106,13 +106,6 @@ namespace ExpressBase.Mobile.Enums
         LocationFile = 5
     }
 
-    public enum MobilePlatform
-    {
-        wns,
-        apns,
-        gcm
-    }
-
     public enum BuildEnvironement
     {
         Dev,

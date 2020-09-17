@@ -10,8 +10,6 @@ namespace ExpressBase.Mobile
 {
     public partial class App : Application
     {
-        #region properties
-
         public static IDataBase DataDB { get; set; }
 
         public static MasterDetailPage RootMaster { set; get; }
@@ -19,8 +17,6 @@ namespace ExpressBase.Mobile
         public static SettingsServices Settings { set; get; }
 
         public static double ScreenX;
-
-        #endregion
 
         public App()
         {
@@ -30,8 +26,6 @@ namespace ExpressBase.Mobile
             DataDB = DependencyService.Get<IDataBase>();
             Settings = new SettingsServices();
         }
-
-        #region App states
 
         protected override async void OnStart()
         {
@@ -45,18 +39,6 @@ namespace ExpressBase.Mobile
                 await NotificationService.Instance.UpdateNHRegisratation();
             }
         }
-
-        protected override void OnResume()
-        {
-            base.OnResume();
-        }
-
-        protected override void OnSleep()
-        {
-            base.OnSleep();
-        }
-
-        #endregion 
 
         /// <summary>
         /// Navigate to page on app start with respect to application data stored locally

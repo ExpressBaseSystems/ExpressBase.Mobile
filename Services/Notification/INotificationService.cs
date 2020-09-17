@@ -7,7 +7,7 @@ namespace ExpressBase.Mobile.Services
     {
         Task<string> GetAzureTokenAsync();
 
-        Task<bool> CreateOrUpdateRegistration(string regId, DeviceRegistration device);
+        Task<EbNFRegisterResponse> CreateOrUpdateRegistration(string regId, DeviceRegistration device);
 
         Task<bool> UnRegisterAsync(string regId);
 

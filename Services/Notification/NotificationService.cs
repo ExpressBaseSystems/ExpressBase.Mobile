@@ -1,12 +1,11 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
@@ -17,29 +16,38 @@ namespace ExpressBase.Mobile.Services
 
         public static NotificationService Instance => instance ??= new NotificationService();
 
+        public EbAppVendors AppVendor { set; get; }
+
+        public NotificationService()
+        {
+            AppVendor = EbBuildConfig.GetVendor();
+        }
+
         public async Task<string> GetAzureTokenAsync()
         {
             string token = string.Empty;
 
             RestClient client = new RestClient(App.Settings.RootUrl);
 
-            RestRequest request = new RestRequest("api/notifications/register", Method.GET);
+            RestRequest request = new RestRequest("api/notifications/get_registration_id", Method.GET);
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
+            request.AddParameter("vendor_type", (int)AppVendor);
+
             IRestResponse response = await client.ExecuteAsync<string>(request);
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.IsSuccessful)
             {
                 token = response.Content.Trim('"');
             }
             return token;
         }
 
-        public async Task<bool> CreateOrUpdateRegistration(string regid, DeviceRegistration device)
+        public async Task<EbNFRegisterResponse> CreateOrUpdateRegistration(string regid, DeviceRegistration device)
         {
 
             RestClient client = new RestClient(App.Settings.RootUrl);
-            RestRequest request = new RestRequest("api/notifications/enable", Method.POST);
+            RestRequest request = new RestRequest("api/notifications/register", Method.POST);
 
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
@@ -50,25 +58,28 @@ namespace ExpressBase.Mobile.Services
             try
             {
                 IRestResponse response = await client.ExecuteAsync(request);
-                if (response.StatusCode == HttpStatusCode.OK)
-                    return true;
+                if (response.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<EbNFRegisterResponse>(response.Content);
+                }
             }
             catch (Exception ex)
             {
                 EbLog.Error("Failed to update or create registration::" + ex.Message);
             }
-            return false;
+            return null;
         }
 
         public async Task<bool> UnRegisterAsync(string regid)
         {
             RestClient client = new RestClient(App.Settings.RootUrl);
 
-            RestRequest request = new RestRequest("api/notifications/unregister", Method.DELETE);
+            RestRequest request = new RestRequest("api/notifications/delete_registration", Method.DELETE);
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
             request.AddParameter("regid", regid);
+            request.AddParameter("vendor_type", (int)AppVendor);
 
             IRestResponse response = await client.ExecuteAsync(request);
             if (response.IsSuccessful)
@@ -80,7 +91,7 @@ namespace ExpressBase.Mobile.Services
 
         private List<string> GetTags()
         {
-            List<string> tags = new List<string> { "global:eb_pns_tag" };
+            List<string> tags = new List<string> { $"global:eb_pns_tag_{AppVendor}" };
 
             if (App.Settings.Sid != null)
             {
@@ -115,9 +126,9 @@ namespace ExpressBase.Mobile.Services
             DeviceRegistration device = new DeviceRegistration()
             {
                 Handle = pns_token,
-                Tags = this.GetTags()
+                Tags = this.GetTags(),
+                Vendor = AppVendor
             };
-            device.SetPlatform();
 
             return device;
         }
@@ -143,13 +154,16 @@ namespace ExpressBase.Mobile.Services
                 }
                 else
                 {
-                    bool status = await this.CreateOrUpdateRegistration(azure_regid, device);
+                    var resp = await this.CreateOrUpdateRegistration(azure_regid, device);
 
-                    if (!status)
+                    if (resp == null || !resp.Status)
                     {
                         azure_regid = await this.GetNewRegistration();
-                        await this.CreateOrUpdateRegistration(azure_regid, device);
+
+                        resp = await this.CreateOrUpdateRegistration(azure_regid, device);
                     }
+
+                    if (resp != null) EbLog.Info(resp.Message);
                 }
 
                 EbLog.Info("NH REG ID:" + azure_regid);
