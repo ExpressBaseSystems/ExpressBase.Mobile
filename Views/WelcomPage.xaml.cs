@@ -42,13 +42,12 @@ namespace ExpressBase.Mobile.Views
 
         public void SetContentFromConfig()
         {
-            Description.Text = PageContent["Description"];
+            string desc = PageContent["Description"];
+            Description.Text = desc.Replace("@solutionname@", App.Settings.Sid);
         }
 
         private async void Button_Clicked(object sender, EventArgs e)
         {
-            this.Opacity = 0.3;
-
             await Store.SetValueAsync(AppConst.IS_FRESH_START, "false");
 
             if (solData.Applications.Count == 1)

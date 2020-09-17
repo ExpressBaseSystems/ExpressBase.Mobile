@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Models;
+using System;
 using System.Collections.Generic;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -44,9 +45,13 @@ namespace ExpressBase.Mobile.Helpers
         {
             get
             {
-                return !Store.GetValue<bool>(AppConst.IS_FRESH_START);
+                string data = Store.GetValue(AppConst.IS_FRESH_START);
+                if (data == null)
+                    return true;
+                else
+                    return Convert.ToBoolean(data);
             }
-        } 
+        }
 
         private static IToast toastservice;
 

@@ -31,12 +31,12 @@
                     BackgroundColor="{DynamicResource Primary_Color}"
                     HeightRequest="40"
                     CornerRadius="25"
-                    HasShadow="True"
+                    HasShadow="False"
                     Margin="0,-20,0,0">
                 </Frame>
 
                 <StackLayout 
-                    VerticalOptions="StartAndExpand"
+                    VerticalOptions="CenterAndExpand"
                     Padding="30,0">
                     <Label 
                         FontFamily="{StaticResource Roboto-Regular}"

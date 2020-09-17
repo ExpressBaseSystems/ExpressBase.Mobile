@@ -2,7 +2,7 @@
   "Vendors": {
     "ExpressBase": {
       "BuildType": "Dynamic",
-      "AllowNotifications": true,
+      "AllowNotifications": false,
       "PrimaryColor": "0046bb",
       "HasOfflineFeature": true,
       "HasActions": true,
@@ -28,7 +28,7 @@
           "VendorName": "EXPRESSbase"
         },
         "WelcomePage": {
-          "Description": "explore"
+          "Description": "Increase the operational efficiency of '@solutionname@' with the power of the EXPRESSbase platform"
         }
       }
     },
@@ -93,7 +93,7 @@
           "VendorName": "Kudumbashree Community Loans"
         },
         "WelcomePage": {
-          "Description": ""
+          "Description": "Have a nice time with the community loans mobile app!"
         }
       }
     }

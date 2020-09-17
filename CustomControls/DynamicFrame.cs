@@ -1,13 +1,9 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Converters;
-using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -258,11 +254,10 @@ namespace ExpressBase.Mobile.CustomControls
         {
             LSImage image = new LSImage
             {
-                Style = (Style)HelperFunctions.GetResourceValue("ListViewImage"),
-                BindingContext = new EbBindableUnit(value)
+                Style = (Style)HelperFunctions.GetResourceValue("ListViewImage")
             };
             image.SetExpansion(dc);
-            image.SetBinding(LSImage.SourceProperty, new Binding("Value", converter: new FileRefToImageConverter()));          
+            image.SetValue(value);
 
             return image;
         }  

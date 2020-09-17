@@ -8,17 +8,17 @@ namespace ExpressBase.Mobile.Configuration
     /// </summary>
     public class EbBuildConfig
     {
-        public static string VendorName = MoveOn.VendorName;
+        public static string VendorName = KudumbaShree.VendorName;
 
-        public const string AppIcon = MoveOn.AppIcon;
+        public const string AppIcon = KudumbaShree.AppIcon;
 
-        public const string AppLabel = MoveOn.AppLabel;
+        public const string AppLabel = KudumbaShree.AppLabel;
 
-        public const string StatusBarColor = MoveOn.StatusBar;
+        public const string StatusBarColor = KudumbaShree.StatusBar;
 
-        public const string SplashTheme = MoveOn.SplashTheme;
+        public const string SplashTheme = KudumbaShree.SplashTheme;
 
-        public static bool NFEnabled = MoveOn.NFEnabled;
+        public static bool NFEnabled = KudumbaShree.NFEnabled;
 
         public Dictionary<string, AppVendor> Vendors { set; get; }
 
