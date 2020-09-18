@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using ExpressBase.Mobile.Helpers;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 
@@ -97,6 +99,35 @@ namespace ExpressBase.Mobile.Models
         public string Message { set; get; }
 
         public EbNFLink Link { set; get; }
+
+        public EbNFData() { }
+
+        public EbNFData(IDictionary<string, string> payload)
+        {
+            Initialize(payload);
+        }
+
+        private void Initialize(IDictionary<string, string> payload)
+        {
+            if (payload.ContainsKey("Title"))
+                this.Title = payload["Title"];
+
+            if (payload.ContainsKey("Message"))
+                this.Message = payload["Message"];
+
+            if (payload.ContainsKey("Link"))
+            {
+                try
+                {
+                    this.Link = JsonConvert.DeserializeObject<EbNFLink>(payload["Link"]);
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Error("error on deserializing EbNFLink");
+                    EbLog.Error(ex.Message);
+                }
+            }
+        }
     }
 
     public class EbNFLink
