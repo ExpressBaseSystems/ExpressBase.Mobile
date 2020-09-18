@@ -59,5 +59,28 @@ namespace ExpressBase.Mobile.Services
             }
             return new EbStageInfo();
         }
+
+        public async Task<ParticularActionResponse> GetParticularActionAsync(int id)
+        {
+            try
+            {
+                RestClient client = new RestClient(App.Settings.RootUrl);
+
+                RestRequest request = new RestRequest(ApiConstants.GET_ACTIONS + $"/{id}", Method.GET);
+
+                // auth Headers for api
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+                IRestResponse iresp = await client.ExecuteAsync(request);
+                return JsonConvert.DeserializeObject<ParticularActionResponse>(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info("Error in get_actions api");
+                EbLog.Error(ex.Message);
+            }
+            return null;
+        }
     }
 }

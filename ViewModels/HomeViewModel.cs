@@ -2,7 +2,6 @@
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
-using ExpressBase.Mobile.Views.Dynamic;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
@@ -146,7 +145,10 @@ namespace ExpressBase.Mobile.ViewModels
                 }
 
                 if (render)
-                    await App.RootMaster.Detail.Navigation.PushAsync(this.GetPageByContainer(page));
+                {
+                    ContentPage renderer = EbPageFinder.GetPageByContainer(page);
+                    await App.RootMaster.Detail.Navigation.PushAsync(renderer);
+                }
                 else
                     await App.RootMaster.Detail.Navigation.PushAsync(new Redirect(message));
 
@@ -158,37 +160,6 @@ namespace ExpressBase.Mobile.ViewModels
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
                 EbLog.Error("Failed to open page ::" + ex.Message);
             }
-        }
-
-        private ContentPage GetPageByContainer(EbMobilePage page)
-        {
-            ContentPage renderer = null;
-            try
-            {
-                switch (page.Container)
-                {
-                    case EbMobileForm f:
-                        renderer = new FormRender(page);
-                        break;
-                    case EbMobileVisualization v:
-                        renderer = new ListRender(page);
-                        break;
-                    case EbMobileDashBoard d:
-                        renderer = new DashBoardRender(page);
-                        break;
-                    case EbMobilePdf p:
-                        renderer = new PdfRender(page);
-                        break;
-                    default:
-                        EbLog.Error("inavlid container type");
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error(ex.Message);
-            }
-            return renderer;
         }
 
         public async Task LocationSwitched()

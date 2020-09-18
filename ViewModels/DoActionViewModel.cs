@@ -73,9 +73,11 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private readonly EbMyAction action;
+        private EbMyAction action;
 
         private EbStageInfo stageInfo;
+
+        private readonly int actionId;
 
         #endregion
 
@@ -87,11 +89,26 @@ namespace ExpressBase.Mobile.ViewModels
             action = myAction;
         }
 
+        public DoActionViewModel(int actionid)
+        {
+            this.actionId = actionid;
+            myActionService = new MyActionsService();
+        }
+
         #region Methods
 
         public override async Task InitializeAsync()
         {
-            this.stageInfo = await myActionService.GetMyActionInfoAsync(action.StageId, action.WebFormRefId, action.WebFormDataId);
+            if (action == null && actionId > 0)
+            {
+                ParticularActionResponse particular = await myActionService.GetParticularActionAsync(this.actionId);
+                this.action = particular.Action;
+                this.stageInfo = particular.ActionInfo;
+
+                this.PageTitle = action.Description;
+            }
+            else
+                this.stageInfo = await myActionService.GetMyActionInfoAsync(this.action.StageId, this.action.WebFormRefId, this.action.WebFormDataId);
 
             if (this.stageInfo != null)
             {

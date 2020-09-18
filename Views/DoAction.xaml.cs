@@ -19,6 +19,13 @@ namespace ExpressBase.Mobile.Views
             Loader.IsVisible = true;
         }
 
+        public DoAction(int actionid)
+        {
+            InitializeComponent();
+            BindingContext = viewModel = new DoActionViewModel(actionid);
+            Loader.IsVisible = true;
+        }
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();

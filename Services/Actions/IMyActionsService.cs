@@ -8,5 +8,7 @@ namespace ExpressBase.Mobile.Services
         Task<MyActionsResponse> GetMyActionsAsync();
 
         Task<EbStageInfo> GetMyActionInfoAsync(int stageid, string refid, int dataid);
+
+        Task<ParticularActionResponse> GetParticularActionAsync(int id);
     }
 }

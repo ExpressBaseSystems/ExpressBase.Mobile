@@ -146,5 +146,36 @@ namespace ExpressBase.Mobile.Helpers
             }
             return status;
         }
+
+        public static ContentPage GetPageByContainer(EbMobilePage page)
+        {
+            ContentPage renderer = null;
+            try
+            {
+                switch (page.Container)
+                {
+                    case EbMobileForm f:
+                        renderer = new FormRender(page);
+                        break;
+                    case EbMobileVisualization v:
+                        renderer = new ListRender(page);
+                        break;
+                    case EbMobileDashBoard d:
+                        renderer = new DashBoardRender(page);
+                        break;
+                    case EbMobilePdf p:
+                        renderer = new PdfRender(page);
+                        break;
+                    default:
+                        EbLog.Error("inavlid container type");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return renderer;
+        }
     }
 }

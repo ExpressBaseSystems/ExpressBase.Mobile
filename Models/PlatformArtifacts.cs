@@ -187,6 +187,13 @@ namespace ExpressBase.Mobile.Models
         }
     }
 
+    public class ParticularActionResponse
+    {
+        public EbMyAction Action { set; get; }
+
+        public EbStageInfo ActionInfo { set; get; }
+    }
+
     public class WebObjectsWraper
     {
         public string DisplayName { set; get; }
