@@ -1,6 +1,4 @@
 ﻿using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
-using Newtonsoft.Json;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -11,7 +9,7 @@ namespace ExpressBase.Mobile.Views.Shared
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class QrScanner : ContentPage
     {
-        private Action<SolutionQrMeta> viewAction;
+        private Action<string> viewAction;
 
         public QrScanner()
         {
@@ -32,14 +30,14 @@ namespace ExpressBase.Mobile.Views.Shared
                 return;
             try
             {
-                SolutionQrMeta meta = JsonConvert.DeserializeObject<SolutionQrMeta>(result.Text);
+                bool hasPayLoad = !string.IsNullOrEmpty(result.Text);
 
-                if (meta != null)
+                if (hasPayLoad)
                 {
                     ScannerView.IsAnalyzing = false;
                     ScannerView.IsScanning = false;
 
-                    viewAction?.Invoke(meta);          
+                    viewAction?.Invoke(result.Text);          
 
                     if (App.RootMaster != null)
                         App.RootMaster.Detail.Navigation.PopModalAsync(true);
@@ -62,7 +60,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
         }
 
-        public void BindMethod(Action<SolutionQrMeta> action)
+        public void BindMethod(Action<string> action)
         {
             viewAction = action;
         }

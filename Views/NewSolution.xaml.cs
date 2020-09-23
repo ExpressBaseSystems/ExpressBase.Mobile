@@ -5,10 +5,10 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Shared;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -34,21 +34,9 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
 
-            try
-            {
-                isMasterPage = hasBackButton;
-                if (hasBackButton)
-                {
-                    NavigationPage.SetHasNavigationBar(this, true);
-                    NavigationPage.SetHasBackButton(this, true);
-                }
-
-                BindingContext = viewModel = new NewSolutionViewModel();
-            }
-            catch (Exception ex)
-            {
-                Utils.Toast(ex.Message);
-            }
+            isMasterPage = hasBackButton;
+            EbLayout.HasToolBar = isMasterPage;
+            BindingContext = viewModel = new NewSolutionViewModel();
         }
 
         protected override async void OnAppearing()
@@ -69,8 +57,23 @@ namespace ExpressBase.Mobile.Views
         /// Callbak method on qr scan
         /// </summary>
         /// <param name="meta"></param>
-        private void QrScannerCallback(SolutionQrMeta meta)
+        private void QrScannerCallback(string payload)
         {
+            SolutionQrMeta meta = null;
+            try
+            {
+                meta = JsonConvert.DeserializeObject<SolutionQrMeta>(payload);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info("failed to parse qr payload in new solution page");
+                EbLog.Error(ex.Message);
+                return;
+            }
+
+            if (meta == null)
+                return;
+
             Device.BeginInvokeOnMainThread(async () =>
             {
                 try
@@ -80,7 +83,7 @@ namespace ExpressBase.Mobile.Views
                         Utils.Toast($"{meta.Sid} exist");
                         return;
                     }
-                    Loader.IsVisible = true;
+                    EbLayout.ShowLoader();
                     response = await viewModel.Validate(meta.Sid);
 
                     if (response.IsValid)
@@ -101,11 +104,11 @@ namespace ExpressBase.Mobile.Views
                     else
                         Utils.Toast("invalid qr code meta");
 
-                    Loader.IsVisible = false;
+                    EbLayout.HideLoader();
                 }
                 catch (Exception)
                 {
-                    Loader.IsVisible = false;
+                    EbLayout.HideLoader();
                 }
             });
         }
@@ -152,7 +155,7 @@ namespace ExpressBase.Mobile.Views
                 if (string.IsNullOrEmpty(surl) || viewModel.IsSolutionExist(surl))
                     return;
 
-                Loader.IsVisible = true;
+                EbLayout.ShowLoader(); ;
 
                 if (surl.Split(CharConstants.DOT).Length == 1)
                 {
@@ -164,14 +167,14 @@ namespace ExpressBase.Mobile.Views
 
                 if (response.IsValid)
                 {
-                    Loader.IsVisible = false;
+                    EbLayout.HideLoader();
                     SolutionLogoPrompt.Source = ImageSource.FromStream(() => new MemoryStream(response.Logo));
                     SolutionLabel.Text = surl.Split(CharConstants.DOT)[0];
                     PopupContainer.IsVisible = true;
                 }
                 else
                 {
-                    Loader.IsVisible = false;
+                    EbLayout.HideLoader();
                     Utils.Toast("Invalid solution URL");
                 }
             }
@@ -197,7 +200,7 @@ namespace ExpressBase.Mobile.Views
             {
                 await viewModel.AddSolution(SolutionName.Text.Trim(), response);
 
-                Loader.IsVisible = true;
+                EbLayout.HideLoader();
                 PopupContainer.IsVisible = false;
 
                 if (isMasterPage)
@@ -213,7 +216,7 @@ namespace ExpressBase.Mobile.Views
             }
             catch (Exception)
             {
-               ///
+                ///
             }
         }
     }

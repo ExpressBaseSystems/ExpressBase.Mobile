@@ -1,133 +1,124 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Shared.MyLocations"
              Style="{StaticResource ContentPageStyle}">
-    <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label Text="Switch Location" x:Name="TitleLabel" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
-            <Button 
-                x:Name="SearchButton"
-                Text="&#xf002;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1"
-                Margin="0,0,10,0"
-                Clicked="SearchButton_Clicked">
-            </Button>
 
-            <controls:ListViewSearchBar
-                IsVisible="False"
-                x:Name="LocSearchBox"
-                HideIcon="True"
-                CancelButtonColor="White"
-                Style="{StaticResource ListViewSearchBar}"
-                Grid.ColumnSpan="2"
-                TextChanged="LocSearchBox_TextChanged">
-            </controls:ListViewSearchBar>
-            
-        </Grid>
-    </NavigationPage.TitleView>
     <ContentPage.Content>
-        <Grid RowSpacing="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-            </Grid.RowDefinitions>
 
-            <ListView 
-                Grid.Row="0"
-                ItemsSource="{Binding Locations,Mode=TwoWay}"
-                HasUnevenRows="true"
-                ItemTapped="ListView_ItemTapped">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid Padding="10">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+        <controls:EbCPLayout x:Name="EbLayout"
+                             Title="Switch Location"
+                             BackButtonPressed="OnBackButtonPressed">
 
-                                <Frame 
-                                    Grid.RowSpan="2"
-                                    VerticalOptions="Center"
-                                    HorizontalOptions="Center"
-                                    HasShadow="False"
-                                    Padding="0"
-                                    Margin="10,0,15,0"
-                                    BorderColor="{Binding Bordercolor}"
-                                    HeightRequest="20"
-                                    WidthRequest="20"
-                                    CornerRadius="10"
-                                    BackgroundColor="{Binding SelectionColor}">
-                                    <BoxView 
-                                        BackgroundColor="White"
-                                        WidthRequest="8"
-                                        HeightRequest="8"
-                                        VerticalOptions="Center"
-                                        HorizontalOptions="Center"
-                                        CornerRadius="4">
-                                    </BoxView>
-                                </Frame>
+            <controls:EbCPLayout.ToolBarItems>
+                <StackLayout Orientation="Horizontal">
+                    <Button x:Name="SearchButton"
+                            Text="&#xf002;"
+                            Style="{StaticResource ToolBarButtonStyle}"
+                            HorizontalOptions="End"
+                            Margin="0,0,10,0"
+                            Clicked="SearchButton_Clicked">
+                    </Button>
+                </StackLayout>
+            </controls:EbCPLayout.ToolBarItems>
 
-                                <Label 
-                                    Grid.Row="0" 
-                                    Grid.Column="1" 
-                                    Text="{Binding LongName}"
-                                    FontFamily="{StaticResource Roboto-Medium}"
-                                    FontSize="14">
-                                </Label>
+            <controls:EbCPLayout.ToolBarLayover>
+                <controls:ListViewSearchBar IsVisible="False"
+                                            x:Name="LocSearchBox"
+                                            HideIcon="True"
+                                            CancelButtonColor="White"
+                                            Style="{StaticResource ListViewSearchBar}"
+                                            Grid.ColumnSpan="2"
+                                            TextChanged="LocSearchBox_TextChanged">
+                </controls:ListViewSearchBar>
+            </controls:EbCPLayout.ToolBarLayover>
 
-                                <Label 
-                                    Grid.Row="1" 
-                                    Grid.Column="1" 
-                                    Text="{Binding ShortName}"
-                                    FontFamily="{StaticResource Roboto-Regular}"
-                                    FontSize="12"
-                                    TextColor="{DynamicResource Gray-700}">
-                                </Label>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <controls:EbCPLayout.Content>
+                <Grid RowSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-            <Button 
-                Grid.Row="1"
-                Text="Apply"
-                BackgroundColor="{DynamicResource Primary_Color}"
-                TextColor="White"
-                CornerRadius="0"
-                Command="{Binding ApplyLocationCommand}">
-            </Button>
+                    <ListView Grid.Row="0"
+                              ItemsSource="{Binding Locations,Mode=TwoWay}"
+                              HasUnevenRows="true"
+                              ItemTapped="ListView_ItemTapped">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Grid Padding="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
-            <Label 
-                x:Name="EmptyLabel"
-                IsVisible="False"
-                Grid.RowSpan="2"
-                Text="Location not found."
-                VerticalOptions="Center"
-                HorizontalOptions="Center">
-            </Label>
-            
-            <controls:LoaderIconed 
-                Grid.RowSpan="2"
-                x:Name="SearchLoader"
-                IsVisible="{Binding IsBusy}">
-            </controls:LoaderIconed>
+                                        <Frame Grid.RowSpan="2"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center"
+                                               HasShadow="False"
+                                               Padding="0"
+                                               Margin="10,0,15,0"
+                                               BorderColor="{Binding Bordercolor}"
+                                               HeightRequest="20"
+                                               WidthRequest="20"
+                                               CornerRadius="10"
+                                               BackgroundColor="{Binding SelectionColor}">
+                                            <BoxView BackgroundColor="White"
+                                                     WidthRequest="8"
+                                                     HeightRequest="8"
+                                                     VerticalOptions="Center"
+                                                     HorizontalOptions="Center"
+                                                     CornerRadius="4">
+                                            </BoxView>
+                                        </Frame>
 
-        </Grid>
+                                        <Label Grid.Row="0"
+                                               Grid.Column="1"
+                                               Text="{Binding LongName}"
+                                               FontFamily="{StaticResource Roboto-Medium}"
+                                               FontSize="14">
+                                        </Label>
+
+                                        <Label Grid.Row="1"
+                                               Grid.Column="1"
+                                               Text="{Binding ShortName}"
+                                               FontFamily="{StaticResource Roboto-Regular}"
+                                               FontSize="12"
+                                               TextColor="{DynamicResource Gray-700}">
+                                        </Label>
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <Button Grid.Row="1"
+                            Text="Apply"
+                            BackgroundColor="{DynamicResource Primary_Color}"
+                            TextColor="White"
+                            CornerRadius="0"
+                            Command="{Binding ApplyLocationCommand}">
+                    </Button>
+
+                    <Label x:Name="EmptyLabel"
+                           IsVisible="False"
+                           Grid.RowSpan="2"
+                           Text="Location not found."
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center">
+                    </Label>
+
+                </Grid>
+            </controls:EbCPLayout.Content>
+        </controls:EbCPLayout>
     </ContentPage.Content>
 </ContentPage>

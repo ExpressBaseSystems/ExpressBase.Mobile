@@ -1,10 +1,5 @@
 ﻿using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Models;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
@@ -83,5 +78,12 @@ namespace ExpressBase.Mobile.Helpers
     public interface IKeyboardHelper
     {
         void HideKeyboard();
+    }
+
+    public interface IHashService
+    {
+        string GenerateHashKey();
+
+        void StartSMSRetrieverReceiver();
     }
 }

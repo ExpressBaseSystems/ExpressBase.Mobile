@@ -69,6 +69,8 @@ namespace ExpressBase.Mobile
 
         public bool BoxShadow { set; get; }
 
+        public bool HideContext { set; get; }
+
         #endregion
 
         public string GetQuery => HelperFunctions.B64ToString(this.OfflineQuery.Code);

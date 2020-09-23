@@ -21,13 +21,13 @@ namespace ExpressBase.Mobile.Views
             isInternal = is_internal;
 
             InitializeComponent();
-            Loader.IsVisible = true;
+            EbLayout.ShowLoader();
             BindingContext = viewModel = new MyApplicationsViewModel();
 
             if (isInternal)
                 ResetButton.IsVisible = false;
             else
-                NavigationPage.SetHasBackButton(this, false);
+                EbLayout.HasBackButton = false;
         }
 
         protected async override void OnAppearing()
@@ -48,14 +48,14 @@ namespace ExpressBase.Mobile.Views
                     }
                     isRendered = true;
                 }
-                
+
                 ToggleStatus();
-                Loader.IsVisible = false;
+                EbLayout.HideLoader();
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
-                Loader.IsVisible = false;
+                EbLayout.HideLoader();
             }
         }
 
@@ -88,14 +88,7 @@ namespace ExpressBase.Mobile.Views
 
         private void ToggleStatus()
         {
-            if (viewModel.IsEmpty())
-            {
-                EmptyMessage.IsVisible = true;
-            }
-            else
-            {
-                EmptyMessage.IsVisible = false;
-            }
+            EmptyMessage.IsVisible = viewModel.IsEmpty();
         }
     }
 }

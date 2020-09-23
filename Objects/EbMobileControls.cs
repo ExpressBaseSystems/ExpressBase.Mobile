@@ -47,6 +47,8 @@ namespace ExpressBase.Mobile
         //mobile prop
         public View XControl { set; get; }
 
+        protected Color XBackground => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
+
         public virtual void InitXControl() { }
 
         public virtual void InitXControl(FormMode mode, NetworkMode network)

@@ -28,6 +28,14 @@ namespace ExpressBase.Mobile.Views
             viewModel.Bind2FAToggleEvent(ShowTwoFAWindow);
         }
 
+        private void StartOTPListner()
+        {
+            MessagingCenter.Subscribe<string>(this, "ReceivedOTP", (message) =>
+            {
+
+            });
+        }
+
         public void SetContentFromConfig()
         {
             LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
@@ -46,19 +54,11 @@ namespace ExpressBase.Mobile.Views
 
             TwoFAWindow.IsVisible = true;
             RestButton.IsVisible = false;
-            BackButton.IsVisible = true;
         }
 
         private async void CredLoginButton_Clicked(object sender, EventArgs e)
         {
             await NavigationService.ReplaceTopAsync(new Login());
-        }
-
-        private void BackButton_Clicked(object sender, EventArgs e)
-        {
-            TwoFAWindow.IsVisible = false;
-            BackButton.IsVisible = false;
-            RestButton.IsVisible = true;
         }
 
         private async void NewSolutionButton_Clicked(object sender, EventArgs e)

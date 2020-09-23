@@ -1,4 +1,6 @@
 ﻿
+using Xamarin.Forms;
+
 namespace ExpressBase.Mobile.Views.Base
 {
     public interface IRefreshable

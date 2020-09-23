@@ -48,11 +48,7 @@ namespace ExpressBase.Mobile
 
         private async Task InitNavigation()
         {
-            MainPage = new NavigationPage
-            {
-                BarBackgroundColor = Settings.Vendor.GetPrimaryColor(),
-                BarTextColor = Color.White
-            };
+            MainPage = new NavigationPage();
 
             //Initializing Stored data
             await Settings.InitializeSettings();

@@ -72,7 +72,10 @@ namespace ExpressBase.Mobile.ViewModels
                 authResponse = await identityService.AuthenticateSSOAsync(username, otpT);
 
                 if (authResponse != null && authResponse.IsValid)
+                {
+                    //DependencyService.Get<IHashService>().StartSMSRetrieverReceiver();
                     toggle2FAW?.Invoke(authResponse);
+                }
                 else
                     toast.Show("username or mobile invalid");
             }

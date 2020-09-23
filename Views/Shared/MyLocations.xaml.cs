@@ -61,19 +61,24 @@ namespace ExpressBase.Mobile.Views.Shared
             {
                 if (search.Length >= 3)
                 {
-                    SearchLoader.IsVisible = true;
+                    EbLayout.ShowLoader();
                     await viewModel.FilterBySearchValue(search);
-                    SearchLoader.IsVisible = false;
+                    EbLayout.HideLoader();
                     EmptyLabel.IsVisible = viewModel.Locations.Count <= 0;
                 }
-                else
-                {
-                    if (!viewModel.IsInitialState)
-                    {
-                        viewModel.UpdateToInitial();
-                    }
-                }
             }
+        }
+
+        private bool OnBackButtonPressed(object sender, EventArgs e)
+        {
+            if (LocSearchBox.IsVisible)
+            {
+                LocSearchBox.IsVisible = false;
+                SearchButton.IsVisible = true;
+                viewModel.UpdateToInitial();
+                return false;
+            }
+            return true;
         }
     }
 }

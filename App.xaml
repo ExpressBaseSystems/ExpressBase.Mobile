@@ -24,8 +24,8 @@
 
             <!--  Common style for content page  -->
             <Style x:Key="ContentPageStyle" TargetType="ContentPage">
-                <Setter Property="NavigationPage.HasNavigationBar" Value="True" />
-                <Setter Property="NavigationPage.HasBackButton" Value="True" />
+                <Setter Property="NavigationPage.HasNavigationBar" Value="False" />
+                <Setter Property="NavigationPage.HasBackButton" Value="False" />
                 <Setter Property="BackgroundColor" Value="White" />
             </Style>
 

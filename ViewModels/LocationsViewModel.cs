@@ -25,13 +25,6 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public int InitialCount { set; get; }
-
-        public bool IsInitialState
-        {
-            get => Locations.Count == InitialCount;
-        }
-
         public EbLocation SelectedLocation { set; get; }
 
         public Command ApplyLocationCommand => new Command(async () => await LocationSubmited());
@@ -41,7 +34,6 @@ namespace ExpressBase.Mobile.ViewModels
             await Task.Delay(1);
 
             Locations = Utils.Locations;
-            InitialCount = Locations.Count;
 
             foreach (EbLocation loc in Locations)
             {
