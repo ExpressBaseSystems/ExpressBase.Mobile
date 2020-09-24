@@ -1,109 +1,95 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ExpressBase.Mobile.Views.SettingsView">
-
-    <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label Text="Options" VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0"/>
-        </Grid>
-    </NavigationPage.TitleView>
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+             x:Class="ExpressBase.Mobile.Views.SettingsView"
+             Style="{StaticResource ContentPageStyle}">
 
     <ContentPage.Content>
-        <Grid>
-            <StackLayout 
-                BackgroundColor="#eee"
-                Padding="15">
+        <control:EbCPLayout Title="Options">
+            <control:EbCPLayout.Content>
+                <StackLayout BackgroundColor="#eee"
+                             Padding="15"
+                             VerticalOptions="FillAndExpand">
 
-                <Frame
-                    Padding="10"
-                    HasShadow="False"
-                    CornerRadius="6">
-                    <Grid RowSpacing="10">
+                    <Frame Padding="10"
+                           HasShadow="False"
+                           CornerRadius="6">
+                        <Grid RowSpacing="10">
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                        </Grid.RowDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
 
-                        <Label
-                            FontSize="16"
-                            FontFamily="{StaticResource Roboto-Medium}"
-                            Text="App Log"
-                            TextColor="#333">
-                        </Label>
+                            <Label FontSize="16"
+                                   FontFamily="{StaticResource Roboto-Medium}"
+                                   Text="App Log"
+                                   TextColor="#333">
+                            </Label>
 
-                        <Label
-                            x:Name="LocalPath"
-                            Grid.Row="1"
-                            Grid.ColumnSpan="2"
-                            FontSize="13"
-                            Text="{Binding LogFilePath}"
-                            TextColor="Gray">
-                        </Label>
+                            <Label x:Name="LocalPath"
+                                   Grid.Row="1"
+                                   Grid.ColumnSpan="2"
+                                   FontSize="13"
+                                   Text="{Binding LogFilePath}"
+                                   TextColor="Gray">
+                            </Label>
 
-                        <Button
-                            x:Name="OpenLog"
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            VerticalOptions="Center"
-                            HeightRequest="40"
-                            Text="&#xf08e;"
-                            FontSize="18"
-                            FontFamily="{StaticResource FontAwesome}"
-                            Margin="0"
-                            Padding="0"
-                            CornerRadius="6"
-                            Clicked="OpenLog_Clicked">
-                        </Button>
+                            <Button x:Name="OpenLog"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    VerticalOptions="Center"
+                                    HeightRequest="40"
+                                    Text="&#xf08e;"
+                                    FontSize="18"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    Margin="0"
+                                    Padding="0"
+                                    CornerRadius="6"
+                                    Clicked="OpenLog_Clicked">
+                            </Button>
 
-                        <Button
-                            x:Name="ShareLog"
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            VerticalOptions="Center"
-                            HeightRequest="40"
-                            Text="&#xf1e0;"
-                            FontSize="18"
-                            FontFamily="{StaticResource FontAwesome}"
-                            Margin="0"
-                            Padding="0"
-                            CornerRadius="6"
-                            Clicked="ShareLog_Clicked">
-                        </Button>
+                            <Button x:Name="ShareLog"
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HeightRequest="40"
+                                    Text="&#xf1e0;"
+                                    FontSize="18"
+                                    FontFamily="{StaticResource FontAwesome}"
+                                    Margin="0"
+                                    Padding="0"
+                                    CornerRadius="6"
+                                    Clicked="ShareLog_Clicked">
+                            </Button>
 
-                        <Button
-                            x:Name="ClearLog"
-                            Grid.Row="2"
-                            Grid.Column="2"
-                            HeightRequest="40"
-                            VerticalOptions="Center"
-                            FontSize="14"
-                            Margin="0"
-                            Padding="0"
-                            Text="Clear Log"
-                            TextColor="White"
-                            CornerRadius="6"
-                            BackgroundColor="#e51e50"
-                            Clicked="ClearLog_Clicked">
-                        </Button>
+                            <Button x:Name="ClearLog"
+                                    Grid.Row="2"
+                                    Grid.Column="2"
+                                    HeightRequest="40"
+                                    VerticalOptions="Center"
+                                    FontSize="14"
+                                    Margin="0"
+                                    Padding="0"
+                                    Text="Clear Log"
+                                    TextColor="White"
+                                    CornerRadius="6"
+                                    BackgroundColor="#e51e50"
+                                    Clicked="ClearLog_Clicked">
+                            </Button>
 
-                    </Grid>
-                </Frame>
-                
-                
-            </StackLayout>
-        </Grid>
+                        </Grid>
+                    </Frame>
+                </StackLayout>
+            </control:EbCPLayout.Content>
+        </control:EbCPLayout>
     </ContentPage.Content>
 </ContentPage>

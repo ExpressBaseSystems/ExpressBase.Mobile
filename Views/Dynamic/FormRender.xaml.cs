@@ -54,13 +54,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             base.OnAppearing();
 
-            LoaderIconed.IsVisible = true;
+            EbLayout.ShowLoader();
             if (!isRendered)
             {
                 await viewModel.InitializeAsync();
                 isRendered = true;
             }
-            LoaderIconed.IsVisible = false;
+            EbLayout.HideLoader();
         }
 
         private void EditButton_Clicked(object sender, EventArgs e)

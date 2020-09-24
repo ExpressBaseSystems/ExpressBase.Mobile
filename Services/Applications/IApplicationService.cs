@@ -1,13 +1,13 @@
 ﻿using ExpressBase.Mobile.Models;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
     public interface IApplicationService
     {
-        Task<ObservableCollection<AppData>> GetDataAsync();
+        List<AppData> GetDataAsync();
 
-        Task UpdateDataAsync(ObservableCollection<AppData> collection);
+        Task<List<AppData>> UpdateDataAsync();
     }
 }

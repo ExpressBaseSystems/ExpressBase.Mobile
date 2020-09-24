@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels;
 using System;
 using Xamarin.Forms;
@@ -19,8 +18,8 @@ namespace ExpressBase.Mobile.Views
         public MyApplications(bool is_internal = false)
         {
             isInternal = is_internal;
-
             InitializeComponent();
+
             EbLayout.ShowLoader();
             BindingContext = viewModel = new MyApplicationsViewModel();
 
@@ -40,16 +39,16 @@ namespace ExpressBase.Mobile.Views
 
                 if (!isRendered)
                 {
-                    await viewModel.InitializeAsync();
+                    viewModel.Initialize();
 
-                    if (!isInternal && viewModel.Applications.Count == 1)
+                    bool flag = !viewModel.IsNullOrEmpty() && viewModel.Applications.Count == 1;
+
+                    if (!isInternal && flag)
                     {
                         await viewModel.AppSelected(viewModel.Applications[0]);
                     }
                     isRendered = true;
                 }
-
-                ToggleStatus();
                 EbLayout.HideLoader();
             }
             catch (Exception ex)
@@ -59,36 +58,9 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        private async void ApplicationsRefresh_Refreshing(object sender, EventArgs e)
-        {
-            if (!Utils.HasInternet)
-            {
-                Utils.Alert_NoInternet();
-                return;
-            }
-
-            try
-            {
-                Store.RemoveJSON(AppConst.APP_COLLECTION);
-                await viewModel.UpdateAsync();
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("Failed to refresh applications" + ex.Message);
-            }
-
-            ToggleStatus();
-            ApplicationsRefresh.IsRefreshing = false;
-        }
-
         private void ResetButton_Clicked(object sender, EventArgs e)
         {
             ConfimReset.Show();
-        }
-
-        private void ToggleStatus()
-        {
-            EmptyMessage.IsVisible = viewModel.IsEmpty();
         }
     }
 }

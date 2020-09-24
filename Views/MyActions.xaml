@@ -1,153 +1,134 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<base:EbContentPage  xmlns:base="clr-namespace:ExpressBase.Mobile.Views.Base" 
+<base:EbContentPage  xmlns:base="clr-namespace:ExpressBase.Mobile.Views.Base"
                      xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
-             mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.MyActions"
-             BackgroundColor="#f3f7f8">
-    <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label VerticalOptions="Center" Style="{StaticResource ToolBarLabelStyle}" Grid.Column="0">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="My Actions "></Span>
-                        <Span Text="{Binding ActionsCount}"></Span>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
-            <Button 
-                x:Name="RefreshButton"
-                Text="&#xf021;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1"
-                Clicked="RefreshButton_Clicked">
-            </Button>
-        </Grid>
-    </NavigationPage.TitleView>
+                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+                     mc:Ignorable="d"
+                     x:Class="ExpressBase.Mobile.Views.MyActions"
+                     Style="{StaticResource ContentPageStyle}">
+    
     <ContentPage.Content>
-        <Grid>
-            <RefreshView 
-                x:Name="MyActionsRefresh"
-                Refreshing="MyActionsRefresh_Refreshing">
-                <ScrollView x:Name="scrollView">
-                    <StackLayout
-                        x:Name="actionList"
-                        BindableLayout.ItemsSource="{Binding Actions}"
-                        Spacing="10"
-                        Padding="10">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Frame
-                                    Margin="0"
-                                    Padding="0"
-                                    BorderColor="White"
-                                    CornerRadius="6"
-                                    HasShadow="True">
-                                    <Frame.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemSelectedCommand, Source={x:Reference actionList}}" CommandParameter="{Binding .}" />
-                                    </Frame.GestureRecognizers>
-                                    <StackLayout Orientation="Vertical">
-                                        <Grid ColumnSpacing="10" RowSpacing="10" Padding="10">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"></RowDefinition>
-                                                <RowDefinition Height="Auto"></RowDefinition>
-                                            </Grid.RowDefinitions>
+        <control:EbCPLayout x:Name="EbLayout"
+                            Title="{Binding PageTitle}"
+                            LoaderVisibilty="{Binding IsBusy}">
 
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                            </Grid.ColumnDefinitions>
-                                            <Frame 
-                                                Grid.Row="0"
-                                                Grid.RowSpan="2"
-                                                Grid.Column="0"
-                                                HeightRequest="50"
-                                                VerticalOptions="Center"
-                                                WidthRequest="50"
-                                                Padding="0"
-                                                HasShadow="True"
-                                                BackgroundColor="#b5b5b5"
-                                                CornerRadius="25">
-                                                <Label 
-                                                    Text="{Binding Notation}"
-                                                    FontSize="15"
-                                                    TextColor="White"
-                                                    VerticalOptions="Center"
-                                                    HorizontalOptions="Center"
-                                                    FontFamily="{StaticResource Roboto-Bold}">
-                                                </Label>
-                                            </Frame>
-                                            <Label 
-                                                Text="{Binding Description}"
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Grid.ColumnSpan="2"
-                                                FontSize="15"
-                                                FontFamily="{StaticResource Roboto-Regular}"
-                                                TextColor="{DynamicResource Gray-900}">
-                                            </Label>
+            <control:EbCPLayout.ToolBarItems>
+                <Button x:Name="RefreshButton"
+                        Text="&#xf021;"
+                        Style="{StaticResource ToolBarButtonStyle}"
+                        HorizontalOptions="End"
+                        Clicked="RefreshButton_Clicked">
+                </Button>
+            </control:EbCPLayout.ToolBarItems>
 
-                                            <StackLayout 
-                                                Orientation="Horizontal"
-                                                Grid.Row="1" 
-                                                Grid.Column="1"
-                                                Grid.ColumnSpan="2">
-                                                <Button 
-                                                    IsVisible="{Binding IsTagVisible}"
-                                                    Margin="0,0,10,0"
-                                                    Padding="10,0"
-                                                    HeightRequest="20"
-                                                    FontSize="10"
-                                                    CornerRadius="4"
-                                                    BackgroundColor="#f0ad4e"
-                                                    TextColor="White"
-                                                    Text="Review Required">
-                                                </Button>
-                                                <Label 
-                                                    VerticalOptions="Center"
-                                                    Text="{Binding DaysAgo}" 
-                                                    FontFamily="{StaticResource Roboto-Regular}">
-                                                </Label>
+            <control:EbCPLayout.Content>
+                <Grid>
+                    <RefreshView x:Name="MyActionsRefresh"
+                                 Refreshing="MyActionsRefresh_Refreshing">
+                        <ScrollView x:Name="scrollView">
+                            <StackLayout x:Name="actionList"
+                                         BindableLayout.ItemsSource="{Binding Actions}"
+                                         Spacing="10"
+                                         Padding="10">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame Margin="0"
+                                               Padding="0"
+                                               BorderColor="White"
+                                               CornerRadius="6"
+                                               HasShadow="True">
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemSelectedCommand, Source={x:Reference actionList}}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Frame.GestureRecognizers>
+                                            <StackLayout Orientation="Vertical">
+                                                <Grid ColumnSpacing="10"
+                                                      RowSpacing="10"
+                                                      Padding="10">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                    </Grid.RowDefinitions>
+
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Frame Grid.Row="0"
+                                                           Grid.RowSpan="2"
+                                                           Grid.Column="0"
+                                                           HeightRequest="50"
+                                                           VerticalOptions="Center"
+                                                           WidthRequest="50"
+                                                           Padding="0"
+                                                           HasShadow="True"
+                                                           BackgroundColor="#b5b5b5"
+                                                           CornerRadius="25">
+                                                        <Label Text="{Binding Notation}"
+                                                               FontSize="15"
+                                                               TextColor="White"
+                                                               VerticalOptions="Center"
+                                                               HorizontalOptions="Center"
+                                                               FontFamily="{StaticResource Roboto-Bold}">
+                                                        </Label>
+                                                    </Frame>
+                                                    <Label Text="{Binding Description}"
+                                                           Grid.Row="0"
+                                                           Grid.Column="1"
+                                                           Grid.ColumnSpan="2"
+                                                           FontSize="15"
+                                                           FontFamily="{StaticResource Roboto-Regular}"
+                                                           TextColor="{DynamicResource Gray-900}">
+                                                    </Label>
+
+                                                    <StackLayout Orientation="Horizontal"
+                                                                 Grid.Row="1"
+                                                                 Grid.Column="1"
+                                                                 Grid.ColumnSpan="2">
+                                                        <Button IsVisible="{Binding IsTagVisible}"
+                                                                Margin="0,0,10,0"
+                                                                Padding="10,0"
+                                                                HeightRequest="20"
+                                                                FontSize="10"
+                                                                CornerRadius="4"
+                                                                BackgroundColor="#f0ad4e"
+                                                                TextColor="White"
+                                                                Text="Review Required">
+                                                        </Button>
+                                                        <Label VerticalOptions="Center"
+                                                               Text="{Binding DaysAgo}"
+                                                               FontFamily="{StaticResource Roboto-Regular}">
+                                                        </Label>
+                                                    </StackLayout>
+
+                                                    <Label Grid.RowSpan="2"
+                                                           Grid.Column="2"
+                                                           VerticalOptions="Center"
+                                                           HorizontalOptions="End"
+                                                           TextColor="DarkGray"
+                                                           FontFamily="{StaticResource FontAwesome}"
+                                                           Text="&#xf054;">
+                                                    </Label>
+
+                                                </Grid>
                                             </StackLayout>
+                                        </Frame>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </StackLayout>
+                        </ScrollView>
+                    </RefreshView>
 
-                                            <Label 
-                                                Grid.RowSpan="2"
-                                                Grid.Column="2"
-                                                VerticalOptions="Center"
-                                                HorizontalOptions="End"
-                                                TextColor="DarkGray"
-                                                FontFamily="{StaticResource FontAwesome}"
-                                                Text="&#xf054;">
-                                            </Label>
-                                            
-                                        </Grid>
-                                    </StackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </StackLayout>
-                </ScrollView>
-            </RefreshView>
-            
-            <Label 
-                IsVisible="{Binding ShowEmptyLabel}"
-                VerticalOptions="Center"
-                Text="You have no pending Actions"
-                HorizontalTextAlignment="Center"/>
-            <!--loader-->
-            <control:LoaderIconed 
-                Grid.Row="0"
-                x:Name="Loader"
-                IsVisible="{Binding IsBusy}">
-            </control:LoaderIconed>
-        </Grid>
+                    <Label IsVisible="{Binding ShowEmptyLabel}"
+                           VerticalOptions="Center"
+                           Text="You have no pending Actions"
+                           HorizontalTextAlignment="Center">
+                    </Label>
+                </Grid>
+            </control:EbCPLayout.Content>
+        </control:EbCPLayout>
     </ContentPage.Content>
 </base:EbContentPage>

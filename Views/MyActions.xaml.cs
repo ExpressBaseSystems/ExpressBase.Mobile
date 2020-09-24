@@ -2,7 +2,6 @@
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
 using System;
-using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.Views
@@ -16,7 +15,7 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
             BindingContext = viewModel = new MyActionsViewModel();
-            Loader.IsVisible = true;
+            EbLayout.ShowLoader();
         }
 
         protected override async void OnAppearing()
@@ -28,7 +27,7 @@ namespace ExpressBase.Mobile.Views
                 await viewModel.InitializeAsync();
                 IsRendered = true;
             }
-            Loader.IsVisible = false;
+            EbLayout.HideLoader();
         }
 
         private async void MyActionsRefresh_Refreshing(object sender, EventArgs e)

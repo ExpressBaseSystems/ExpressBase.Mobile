@@ -6,7 +6,7 @@ using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -15,54 +15,59 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class MyApplicationsViewModel : StaticBaseViewModel
     {
-        private readonly IApplicationService applicationService;
+        private readonly IApplicationService appService;
 
-        private ObservableCollection<AppData> _applications;
+        private List<AppData> applications;
 
-        public ObservableCollection<AppData> Applications
+        public List<AppData> Applications
         {
-            get { return _applications; }
+            get => applications;
             set
             {
-                _applications = value;
+                applications = value;
                 NotifyPropertyChanged();
             }
         }
 
         public bool IsResetVisible => (App.Settings.Vendor.BuildType != AppBuildType.Embedded);
 
-        public Command AppSelectedCommand => new Command(async (obj) => await AppSelected(obj));
+        public Command AppSelectedCommand => new Command<AppData>(async (obj) => await AppSelected(obj));
+
+        public Command RefreshListCommand => new Command(async () => await UpdateAsync());
 
         public MyApplicationsViewModel()
         {
-            applicationService = new ApplicationService();
+            appService = new ApplicationService();
         }
 
-        public override async Task InitializeAsync()
+        public override void Initialize()
         {
-            Applications = await applicationService.GetDataAsync();
+            Applications = appService.GetDataAsync();
+
+            IsEmpty = IsNullOrEmpty();
         }
 
         public override async Task UpdateAsync()
         {
-            await applicationService.UpdateDataAsync(this.Applications);
+            Applications = await appService.UpdateDataAsync();
+
+            IsEmpty = IsNullOrEmpty();
+            IsRefreshing = false;
         }
 
-        public async Task AppSelected(object selected)
+        public async Task AppSelected(AppData app)
         {
             try
             {
-                AppData apData = (AppData)selected;
-
-                if (IsCurrent(apData.AppId))
+                if (IsCurrent(app.AppId))
                 {
                     await App.RootMaster.Detail.Navigation.PopAsync(true);
                 }
                 else
                 {
-                    await Store.SetJSONAsync(AppConst.CURRENT_APP, apData);
-                    App.Settings.CurrentApplication = apData;
-                    App.Settings.MobilePages = apData.MobilePages;
+                    await Store.SetJSONAsync(AppConst.CURRENT_APP, app);
+                    App.Settings.CurrentApplication = app;
+                    App.Settings.MobilePages = app.MobilePages;
 
                     App.RootMaster = new RootMaster(typeof(Home));
                     Application.Current.MainPage = App.RootMaster;
@@ -70,7 +75,8 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Error("Failed to switch application :: " + ex.Message);
+                EbLog.Info("Error at AppSelected in applications view model");
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -79,9 +85,9 @@ namespace ExpressBase.Mobile.ViewModels
             return (App.Settings.AppId == id);
         }
 
-        public bool IsEmpty()
+        public bool IsNullOrEmpty()
         {
-            return !Applications.Any();
+            return this.Applications == null || !this.Applications.Any();
         }
     }
 }

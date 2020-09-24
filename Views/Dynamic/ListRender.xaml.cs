@@ -15,14 +15,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             InitializeComponent();
             BindingContext = ViewModel = new ListViewModel(Page);
-            this.Loader.IsVisible = true;
+            EbLayout.ShowLoader();
         }
 
         public ListRender(EbMobilePage Page, EbDataRow row)
         {
             InitializeComponent();
             BindingContext = ViewModel = new ListViewModel(Page, row);
-            this.Loader.IsVisible = true;
+            EbLayout.ShowLoader();
         }
 
         protected override async void OnAppearing()
@@ -36,7 +36,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 this.UpdatePaginationBar();
             }
             IsRendered = true;
-            this.Loader.IsVisible = false;
+            EbLayout.HideLoader();
         }
 
         private void ToggleLinks()
@@ -123,6 +123,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 return false;
             }
             return true;
+        }
+
+        private bool ToolBarBackButtonPressed(object sender, EventArgs e)
+        {
+            return this.BeforeBackButtonPressed();
         }
     }
 }

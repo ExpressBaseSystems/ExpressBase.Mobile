@@ -42,21 +42,11 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private string actionCount;
-
-        public string ActionsCount
-        {
-            get => actionCount;
-            set
-            {
-                actionCount = value;
-                NotifyPropertyChanged();
-            }
-        }
+        private const string title = "My Actions ";
 
         #endregion
 
-        public Command ItemSelectedCommand => new Command(async (obj) => await ItemSelected(obj));
+        public Command ItemSelectedCommand => new Command<EbMyAction>(async (obj) => await ItemSelected(obj));
 
         public MyActionsViewModel()
         {
@@ -68,7 +58,7 @@ namespace ExpressBase.Mobile.ViewModels
         public override async Task InitializeAsync()
         {
             MyActionsResponse resp = await myActionService.GetMyActionsAsync();
-            
+
             Actions = resp.Actions.Where(item => item.ActionType == MyActionTypes.Approval).ToList();
 
             this.SetPageTitle();
@@ -76,21 +66,19 @@ namespace ExpressBase.Mobile.ViewModels
 
         private void SetPageTitle()
         {
-            ActionsCount = $"({Actions.Count})";
+            PageTitle = $"{title}({Actions.Count})";
             ShowEmptyLabel = Actions.Count <= 0;
         }
 
         private bool IsTapped;
 
-        private async Task ItemSelected(object selected)
+        private async Task ItemSelected(EbMyAction action)
         {
-            if (IsTapped)
+            if (IsTapped || action == null)
                 return;
 
             try
             {
-                EbMyAction action = (EbMyAction)selected;
-
                 if (Utils.HasInternet)
                 {
                     IsTapped = true;
@@ -101,7 +89,8 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                EbLog.Error("AppSelect_ItemSelected---" + ex.Message);
+                EbLog.Info("Error at Item selected in myactions");
+                EbLog.Error(ex.Message);
             }
             IsTapped = false;
         }

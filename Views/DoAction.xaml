@@ -6,140 +6,127 @@
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.DoAction"
-             BackgroundColor="#ffffff">
-    <NavigationPage.TitleView>
-        <Grid RowSpacing="0" Padding="0,0,10,0" BackgroundColor="Transparent">
-            <Label 
-                Text="{Binding PageTitle}" 
-                VerticalOptions="Center" 
-                Style="{StaticResource ToolBarLabelStyle}"/>
-        </Grid>
-    </NavigationPage.TitleView>
+             Style="{StaticResource ContentPageStyle}">
+
     <ContentPage.Content>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
-                <FlexLayout
-                    Padding="15,0"
-                    BackgroundColor="White"
-                    HeightRequest="40"
-                    Grid.Row="0"
-                    Direction="Row"
-                    AlignItems="Center"
-                    JustifyContent="SpaceBetween">
-                    <Label 
-                        HorizontalOptions="FillAndExpand"
-                        Text="Current Stage"
-                        TextColor="#333"
-                        FontFamily="{StaticResource Roboto-Medium}">
-                    </Label>
-                    <Label 
-                        Text="{Binding StageName}"
-                        x:Name="CurrentStage" 
-                        TextColor="#508bf9"
-                        FontFamily="{StaticResource Roboto-Medium}">
-                    </Label>
-                </FlexLayout>
-                <ScrollView Grid.Row="1">
-                    <StackLayout>
-
-                        <StackLayout Margin="15" Spacing="0" BackgroundColor="#ddd">
-                            <Label
-                                Text="Data"
-                                BackgroundColor="#ddd"
-                                Padding="5"
-                                TextColor="#333"
-                                FontFamily="{StaticResource Roboto-Medium}">
-                            </Label>
-                            <Frame
-                                x:Name="DataFrame"
-                                Padding="1"
+        <control:EbCPLayout x:Name="EbLayout"
+                            Title="{Binding PageTitle}"
+                            LoaderVisibilty="{Binding IsBusy}">
+            <control:EbCPLayout.Content>
+                <Grid VerticalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <FlexLayout Padding="15,0"
+                                BackgroundColor="White"
+                                HeightRequest="40"
                                 Grid.Row="0"
-                                HasShadow="true"
-                                BackgroundColor="Transparent">
-                                <StackLayout BindableLayout.ItemsSource="{Binding ActionData}" Spacing="1">
-                                    <BindableLayout.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid ColumnSpacing="1" RowSpacing="1">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="40*" />
-                                                    <ColumnDefinition Width="60*" />
-                                                </Grid.ColumnDefinitions>
-                                                <Label 
-                                                    Grid.Column="0"
-                                                    Padding="8"
-                                                    Text="{Binding Name}"
-                                                    BackgroundColor="White"
-                                                    VerticalOptions="FillAndExpand"
-                                                    FontFamily="{StaticResource Roboto-Medium}">
-                                                </Label>
-                                                <Label 
-                                                    Grid.Column="1"
-                                                    Padding="8"
-                                                    Text="{Binding Value}"
-                                                    BackgroundColor="White"
-                                                    VerticalOptions="FillAndExpand">
-                                                </Label>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </BindableLayout.ItemTemplate>
-                                </StackLayout>
-                            </Frame>
-                        </StackLayout>
+                                Direction="Row"
+                                AlignItems="Center"
+                                JustifyContent="SpaceBetween">
+                        <Label HorizontalOptions="FillAndExpand"
+                               Text="Current Stage"
+                               TextColor="#333"
+                               FontFamily="{StaticResource Roboto-Medium}">
+                        </Label>
+                        <Label Text="{Binding StageName}"
+                               x:Name="CurrentStage"
+                               TextColor="#508bf9"
+                               FontFamily="{StaticResource Roboto-Medium}">
+                        </Label>
+                    </FlexLayout>
+                    <ScrollView Grid.Row="1">
+                        <StackLayout>
 
-                        <StackLayout Margin="15,0">
-                            <Label Text="Status"/>
-                            <AbsoluteLayout>
-                                <control:CustomPicker 
-                                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                                    AbsoluteLayout.LayoutFlags="All"
-                                    BorderColor="#cccccc"
-                                    BorderThickness="1"
-                                    BorderRadius="10.0"
-                                    Title="Select status"
-                                    FontSize="15"
-                                    TitleColor="{StaticResource Gray-900}"
-                                    ItemsSource="{Binding StageActions}"
-                                    ItemDisplayBinding="{Binding ActionName}"
-                                    SelectedItem="{Binding Status}"/>
-                                <Button
-                                    AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
-                                    AbsoluteLayout.LayoutFlags="PositionProportional"
-                                    Text="&#xf078;"
-                                    FontSize="18"
-                                    TextColor="{StaticResource Gray-900}"
-                                    BackgroundColor="Transparent"
-                                    FontFamily="{StaticResource FontAwesome}"
-                                    WidthRequest="50"/>
-                            </AbsoluteLayout>
-                            <Label Text="Comments"/>
-                            <control:TextArea 
-                                BorderColor="#cccccc"
-                                BorderThickness="1"
-                                BorderRadius="10.0"
-                                Text="{Binding Comments}" 
-                                HeightRequest="100"/>
-                        </StackLayout>
-                    </StackLayout>
-                </ScrollView>
-                
-                <Button Grid.Row="2"
-                    Text="Finish Review"
-                    TextColor="White"
-                    CornerRadius="0"
-                    BackgroundColor="{DynamicResource Primary_Color}"
-                    VerticalOptions="EndAndExpand"
-                    Command="{Binding SubmitCommand}">
-                </Button>
+                            <StackLayout Margin="15"
+                                         Spacing="0"
+                                         BackgroundColor="#ddd">
+                                <Label Text="Data"
+                                       BackgroundColor="#ddd"
+                                       Padding="5"
+                                       TextColor="#333"
+                                       FontFamily="{StaticResource Roboto-Medium}">
+                                </Label>
+                                <Frame x:Name="DataFrame"
+                                       Padding="1"
+                                       Grid.Row="0"
+                                       HasShadow="true"
+                                       BackgroundColor="Transparent">
+                                    <StackLayout BindableLayout.ItemsSource="{Binding ActionData}"
+                                                 Spacing="1">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid ColumnSpacing="1"
+                                                      RowSpacing="1">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="40*" />
+                                                        <ColumnDefinition Width="60*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Grid.Column="0"
+                                                           Padding="8"
+                                                           Text="{Binding Name}"
+                                                           BackgroundColor="White"
+                                                           VerticalOptions="FillAndExpand"
+                                                           FontFamily="{StaticResource Roboto-Medium}">
+                                                    </Label>
+                                                    <Label Grid.Column="1"
+                                                           Padding="8"
+                                                           Text="{Binding Value}"
+                                                           BackgroundColor="White"
+                                                           VerticalOptions="FillAndExpand">
+                                                    </Label>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </StackLayout>
+                                </Frame>
+                            </StackLayout>
 
-                <control:LoaderIconed 
-                    Grid.RowSpan="3"
-                    x:Name="Loader"
-                    IsVisible="{Binding IsBusy}">
-                </control:LoaderIconed>
-            </Grid>
+                            <StackLayout Margin="15,0">
+                                <Label Text="Status" />
+                                <AbsoluteLayout>
+                                    <control:CustomPicker AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                                                          AbsoluteLayout.LayoutFlags="All"
+                                                          BorderColor="#cccccc"
+                                                          BorderThickness="1"
+                                                          BorderRadius="10.0"
+                                                          Title="Select status"
+                                                          FontSize="15"
+                                                          TitleColor="{StaticResource Gray-900}"
+                                                          ItemsSource="{Binding StageActions}"
+                                                          ItemDisplayBinding="{Binding ActionName}"
+                                                          SelectedItem="{Binding Status}" />
+                                    <Button AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
+                                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                                            Text="&#xf078;"
+                                            FontSize="18"
+                                            TextColor="{StaticResource Gray-900}"
+                                            BackgroundColor="Transparent"
+                                            FontFamily="{StaticResource FontAwesome}"
+                                            WidthRequest="50" />
+                                </AbsoluteLayout>
+                                <Label Text="Comments" />
+                                <control:TextArea BorderColor="#cccccc"
+                                                  BorderThickness="1"
+                                                  BorderRadius="10.0"
+                                                  Text="{Binding Comments}"
+                                                  HeightRequest="100" />
+                            </StackLayout>
+                        </StackLayout>
+                    </ScrollView>
+
+                    <Button Grid.Row="2"
+                            Text="Finish Review"
+                            TextColor="White"
+                            CornerRadius="0"
+                            BackgroundColor="{DynamicResource Primary_Color}"
+                            VerticalOptions="EndAndExpand"
+                            Command="{Binding SubmitCommand}">
+                    </Button>
+                </Grid>
+            </control:EbCPLayout.Content>
+        </control:EbCPLayout>
     </ContentPage.Content>
 </ContentPage>

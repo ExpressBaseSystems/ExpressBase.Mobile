@@ -20,7 +20,9 @@ namespace ExpressBase.Mobile.Views
         {
             isMasterPage = ismaster;
             InitializeComponent();
+
             BindingContext = viewModel = new MySolutionsViewModel();
+            EbLayout.HasBackButton = isMasterPage;
         }
 
         protected override async void OnAppearing()
@@ -37,7 +39,7 @@ namespace ExpressBase.Mobile.Views
 
         public void SetContentFromConfig()
         {
-            TitleLabel.Text = PageContent["Title"];
+            EbLayout.Title = PageContent["Title"];
         }
 
         private async void NewSolution_Clicked(object sender, System.EventArgs e)

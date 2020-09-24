@@ -16,14 +16,14 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
             BindingContext = viewModel = new DoActionViewModel(action);
-            Loader.IsVisible = true;
+            EbLayout.ShowLoader();
         }
 
         public DoAction(int actionid)
         {
             InitializeComponent();
             BindingContext = viewModel = new DoActionViewModel(actionid);
-            Loader.IsVisible = true;
+            EbLayout.ShowLoader();
         }
 
         protected override async void OnAppearing()
@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.Views
                 await viewModel.InitializeAsync();
                 isRendered = true;
             }
-            Loader.IsVisible = false;
+            EbLayout.HideLoader();
         }
     }
 }

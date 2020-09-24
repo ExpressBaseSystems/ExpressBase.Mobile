@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             BindingContext = ViewModel = new LinkedListViewModel(page, context, row);
 
             this.DrawContextHeader(row, context);
-            this.Loader.IsVisible = true;
+            EbLayout.ShowLoader();
         }
 
         protected override async void OnAppearing()
@@ -34,7 +34,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 this.UpdatePaginationBar();
             }
             IsRendered = true;
-            this.Loader.IsVisible = false;
+            EbLayout.HideLoader();
         }
 
         private void DrawContextHeader(EbDataRow row, EbMobileVisualization context)
@@ -136,6 +136,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 return false;
             }
             return true;
+        }
+
+        private bool ToolBarBackButtonPressed(object sender, EventArgs e)
+        {
+            return this.BeforeBackButtonPressed();
         }
     }
 }

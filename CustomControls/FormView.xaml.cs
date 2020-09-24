@@ -1,12 +1,7 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

@@ -3,7 +3,6 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
-using ExpressBase.Mobile.Views;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;

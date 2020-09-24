@@ -12,26 +12,28 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged, IDisposable
     {
-        private string _pageTitle;
+        #region Bindable properties
+
+        private string pageTitle;
 
         public string PageTitle
         {
-            get { return this._pageTitle; }
+            get => this.pageTitle;
             set
             {
-                this._pageTitle = value;
+                this.pageTitle = value;
                 this.NotifyPropertyChanged();
             }
         }
 
-        private bool _isBusy;
+        private bool isBusy;
 
         public bool IsBusy
         {
-            get { return this._isBusy; }
+            get => this.isBusy;
             set
             {
-                this._isBusy = value;
+                this.isBusy = value;
                 this.NotifyPropertyChanged();
             }
         }
@@ -40,13 +42,27 @@ namespace ExpressBase.Mobile.ViewModels
 
         public bool IsRefreshing
         {
-            get { return isrefreshing; }
+            get => isrefreshing;
             set
             {
                 isrefreshing = value;
                 NotifyPropertyChanged();
             }
         }
+
+        private bool isEmpty;
+
+        public bool IsEmpty
+        {
+            get => isEmpty;
+            set
+            {
+                isEmpty = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        #endregion
 
         public Command ResetConfig => new Command(async () => await Reset());
 
@@ -87,14 +103,10 @@ namespace ExpressBase.Mobile.ViewModels
 
         public virtual void RefreshPage() { }
 
-        public virtual Task InitializeAsync()
-        {
-            return Task.FromResult(false);
-        }
+        public virtual void Initialize() { }
 
-        public virtual Task UpdateAsync()
-        {
-            return Task.FromResult(false);
-        }
+        public virtual Task InitializeAsync() { return Task.FromResult(false); }
+
+        public virtual Task UpdateAsync() { return Task.FromResult(false); }
     }
 }

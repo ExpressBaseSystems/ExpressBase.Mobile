@@ -6,131 +6,120 @@
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Dynamic.FormRender"
-             BackgroundColor="White">
+             Style="{StaticResource ContentPageStyle}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style TargetType="control:TextBox">
-                <Setter Property="FontSize" Value="15"></Setter>
+                <Setter Property="FontSize"
+                        Value="15"></Setter>
             </Style>
             <Style TargetType="control:CustomDatePicker">
-                <Setter Property="FontSize" Value="15"></Setter>
+                <Setter Property="FontSize"
+                        Value="15"></Setter>
             </Style>
             <Style TargetType="control:CustomTimePicker">
-                <Setter Property="FontSize" Value="15"></Setter>
+                <Setter Property="FontSize"
+                        Value="15"></Setter>
             </Style>
             <Style TargetType="control:NumericTextBox">
-                <Setter Property="FontSize" Value="15"></Setter>
+                <Setter Property="FontSize"
+                        Value="15"></Setter>
             </Style>
             <Style TargetType="control:CustomPicker">
-                <Setter Property="FontSize" Value="15"></Setter>
-                <Setter Property="TextColor" Value="#333942"></Setter>
+                <Setter Property="FontSize"
+                        Value="15"></Setter>
+                <Setter Property="TextColor"
+                        Value="#333942"></Setter>
             </Style>
             <Style TargetType="control:TextArea">
-                <Setter Property="FontSize" Value="15"></Setter>
-                <Setter Property="HeightRequest" Value="100"></Setter>
+                <Setter Property="FontSize"
+                        Value="15"></Setter>
+                <Setter Property="HeightRequest"
+                        Value="100"></Setter>
             </Style>
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="0" Padding="0" BackgroundColor="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" 
-                   VerticalOptions="Center" 
-                   Style="{StaticResource ToolBarLabelStyle}" 
-                   Grid.Column="0"/>
-            <Button 
-                IsVisible="False"
-                x:Name="EditButton"
-                Text="&#xf040;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1"
-                Clicked="EditButton_Clicked"/>
-        </Grid>
-    </NavigationPage.TitleView>
-
     <ContentPage.Content>
-        
-        <Grid RowSpacing="0">
-            
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-            </Grid.RowDefinitions>
-            <!--Order of binding should be this, controls should be the last-->
-            <control:FormView
-                x:Name="FormViewComponent"
-                Grid.Row="0"
-                NetWorkType ="{Binding NetworkType}"
-                FormMode="{Binding Mode}"
-                Controls="{Binding Controls}">
-            </control:FormView>
-            
-            <Button 
-                x:Name="SaveButton"
-                Grid.Row="1"
-                Text="Save"
-                CornerRadius="0"
-                HorizontalOptions="FillAndExpand"
-                VerticalOptions="EndAndExpand"
-                BackgroundColor="{DynamicResource Primary_Color}"
-                TextColor="White"
-                Command="{Binding SaveCommand}">
-            </Button>
-
-            <Grid 
-                IsVisible="False"
-                Grid.RowSpan="2"
-                BackgroundColor="Black"
-                x:Name="ImageFullScreen"
-                RowSpacing="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Image 
-                    Grid.Row="0"
-                    VerticalOptions="CenterAndExpand"
-                    x:Name="FullScreenImage" 
-                    Aspect="AspectFill">
-                </Image>
-                <BoxView Grid.Row="1" HeightRequest="1" Color="#333"></BoxView>
-                <Button 
-                    x:Name="FullScreenClose"
-                    CornerRadius="0"
-                    Padding="0"
-                    Grid.Row="2"
-                    Text="Close"
-                    BackgroundColor="Transparent"
-                    TextColor="#0076ff"
-                    HorizontalOptions="FillAndExpand"
-                    Clicked="FullScreenClose_Clicked">
+        <control:EbCPLayout x:Name="EbLayout"
+                            Title="{Binding PageTitle}">
+            <control:EbCPLayout.ToolBarItems>
+                <Button IsVisible="False"
+                        x:Name="EditButton"
+                        Text="&#xf040;"
+                        Style="{StaticResource ToolBarButtonStyle}"
+                        HorizontalOptions="End"
+                        Clicked="EditButton_Clicked">
                 </Button>
-            </Grid>
+            </control:EbCPLayout.ToolBarItems>
 
-            <control:Loader 
-                Grid.RowSpan="2"
-                x:Name="Loader"
-                IsVisible="{Binding IsBusy}" 
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All"
-                Position="EndAndExpand"
-                Message="Saving record...">
-            </control:Loader>
+            <control:EbCPLayout.Content>
+                <Grid RowSpacing="0" VerticalOptions="FillAndExpand">
 
-            <control:LoaderIconed 
-                Grid.RowSpan="2"
-                IsVisible="False"
-                x:Name="LoaderIconed"
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-            </control:LoaderIconed>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <!--Order of binding should be this, controls should be the last-->
+                    <control:FormView x:Name="FormViewComponent"
+                                      Grid.Row="0"
+                                      NetWorkType="{Binding NetworkType}"
+                                      FormMode="{Binding Mode}"
+                                      Controls="{Binding Controls}">
+                    </control:FormView>
 
-        </Grid>
+                    <Button x:Name="SaveButton"
+                            Grid.Row="1"
+                            Text="Save"
+                            CornerRadius="0"
+                            HorizontalOptions="FillAndExpand"
+                            VerticalOptions="EndAndExpand"
+                            BackgroundColor="{DynamicResource Primary_Color}"
+                            TextColor="White"
+                            Command="{Binding SaveCommand}">
+                    </Button>
+
+                    <Grid IsVisible="False"
+                          Grid.RowSpan="2"
+                          BackgroundColor="Black"
+                          x:Name="ImageFullScreen"
+                          RowSpacing="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="50"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Image Grid.Row="0"
+                               VerticalOptions="CenterAndExpand"
+                               x:Name="FullScreenImage"
+                               Aspect="AspectFill">
+                        </Image>
+                        <BoxView Grid.Row="1"
+                                 HeightRequest="1"
+                                 Color="#333"></BoxView>
+                        <Button x:Name="FullScreenClose"
+                                CornerRadius="0"
+                                Padding="0"
+                                Grid.Row="2"
+                                Text="Close"
+                                BackgroundColor="Transparent"
+                                TextColor="#0076ff"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="FullScreenClose_Clicked">
+                        </Button>
+                    </Grid>
+
+                    <control:Loader Grid.RowSpan="2"
+                                    x:Name="Loader"
+                                    IsVisible="{Binding IsBusy}"
+                                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                                    AbsoluteLayout.LayoutFlags="All"
+                                    Position="EndAndExpand"
+                                    Message="Saving record...">
+                    </control:Loader>
+                </Grid>
+            </control:EbCPLayout.Content>
+        </control:EbCPLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -1,198 +1,186 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<base:ListViewBasePage  
-            xmlns:base="clr-namespace:ExpressBase.Mobile.Views.Base" 
-            xmlns="http://xamarin.com/schemas/2014/forms"
-            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-            xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
-            x:Class="ExpressBase.Mobile.Views.Dynamic.ListRender">
-
-    <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="0" Padding="0" BackgroundColor="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label 
-                Text="{Binding PageTitle}" 
-                VerticalOptions="Center" 
-                Style="{StaticResource ToolBarLabelStyle}" 
-                Grid.Column="0">
-            </Label>
-            <Button 
-                x:Name="FilterButton"
-                IsVisible="{Binding IsFilterVisible}"
-                Text="&#xf0b0;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1"
-                Clicked="FilterButton_Clicked">
-            </Button>
-
-            <Button 
-                IsVisible="{Binding IsSearchVisible}"
-                x:Name="SearchButton"
-                Text="&#xf002;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="2"
-                Margin="0"
-                Clicked="SearchButton_Clicked">
-            </Button>
-
-            <control:ListViewSearchBar
-                IsVisible="False"
-                x:Name="SearchBox"
-                Style="{StaticResource ListViewSearchBar}"
-                Grid.ColumnSpan="3"
-                HideIcon="True"
-                CancelButtonColor="White"
-                SearchCommand="{Binding SearchCommand}"
-                SearchCommandParameter="{Binding Text, Source={x:Reference SearchBox}}">
-            </control:ListViewSearchBar>
-
-        </Grid>
-    </NavigationPage.TitleView>
+<base:ListViewBasePage xmlns:base="clr-namespace:ExpressBase.Mobile.Views.Base"
+                       xmlns="http://xamarin.com/schemas/2014/forms"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                       xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+                       x:Class="ExpressBase.Mobile.Views.Dynamic.ListRender"
+                       Style="{StaticResource ContentPageStyle}">
 
     <ContentPage.Content>
-        <Grid RowSpacing="0">
+        <control:EbCPLayout x:Name="EbLayout"
+                            Title="{Binding PageTitle}"
+                            LoaderVisibilty="{Binding IsBusy}"
+                            BackButtonPressed="ToolBarBackButtonPressed">
+            <control:EbCPLayout.ToolBarItems>
+                <StackLayout Orientation="Horizontal">
+                    <Button x:Name="FilterButton"
+                            IsVisible="{Binding IsFilterVisible}"
+                            Text="&#xf0b0;"
+                            Style="{StaticResource ToolBarButtonStyle}"
+                            HorizontalOptions="End"
+                            Clicked="FilterButton_Clicked">
+                    </Button>
+                    <Button IsVisible="{Binding IsSearchVisible}"
+                            x:Name="SearchButton"
+                            Text="&#xf002;"
+                            Style="{StaticResource ToolBarButtonStyle}"
+                            HorizontalOptions="End"
+                            Margin="0"
+                            Clicked="SearchButton_Clicked">
+                    </Button>
+                </StackLayout>
+            </control:EbCPLayout.ToolBarItems>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
+            <control:EbCPLayout.ToolBarLayover>
+                <control:ListViewSearchBar IsVisible="False"
+                                           x:Name="SearchBox"
+                                           Style="{StaticResource ListViewSearchBar}"
+                                           HorizontalOptions="FillAndExpand"
+                                           HideIcon="True"
+                                           CancelButtonColor="White"
+                                           SearchCommand="{Binding SearchCommand}"
+                                           SearchCommandParameter="{Binding Text, Source={x:Reference SearchBox}}">
+                </control:ListViewSearchBar>
+            </control:EbCPLayout.ToolBarLayover>
 
-            <Grid Grid.Row="0" x:Name="PagingContainer" RowSpacing="0" IsVisible="False" ColumnSpacing="0" BackgroundColor="White">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
+            <control:EbCPLayout.Content>
+                <Grid RowSpacing="0"
+                      VerticalOptions="FillAndExpand">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Label 
-                    x:Name="PagingMeta"
-                    Grid.Column="0"
-                    VerticalTextAlignment="Center"
-                    Margin="5,0"
-                    FontSize="15"
-                    TextColor="#333">
-                </Label>
-                <Frame Grid.Column="1" 
-                       Padding="0" 
-                       Margin="5"
-                       BackgroundColor="Transparent"
-                       HasShadow="False">
-                    <Frame.Content>
-                        <StackLayout Orientation="Horizontal" Spacing="0">
-                            <Button 
-                                x:Name="PagingPrevButton"
-                                CornerRadius="17"
-                                Padding="0"
-                                BorderColor="#e1e6e9"
-                                BorderWidth="1"
-                                HeightRequest="35"
-                                WidthRequest="35"
-                                Text="&#xf053;"
-                                FontFamily="{StaticResource FontAwesome}"
-                                BackgroundColor="#e1e6e9"
-                                Clicked="PagingPrevButton_Clicked">
-                            </Button>
-                            <Label 
-                                x:Name="PagingPageCount"
-                                Margin="5,0"
-                                TextColor="#333"
-                                VerticalTextAlignment="Center">
-                            </Label>
-                            <Button 
-                                x:Name="PagingNextButton"
-                                Margin="0,0,0,0"
-                                CornerRadius="17" 
-                                Padding="0"
-                                HeightRequest="35"
-                                WidthRequest="35"
-                                Text="&#xf054;" 
-                                FontFamily="{StaticResource FontAwesome}"
-                                BorderColor="#e1e6e9"
-                                BorderWidth="1"
-                                BackgroundColor="#e1e6e9"
-                                Clicked="PagingNextButton_Clicked">
-                            </Button>
-                        </StackLayout>
-                    </Frame.Content>
-                </Frame>
-                <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#cccccc" HeightRequest="1"></BoxView>
-            </Grid>
+                    <Grid Grid.Row="0"
+                          x:Name="PagingContainer"
+                          RowSpacing="0"
+                          IsVisible="False"
+                          ColumnSpacing="0"
+                          BackgroundColor="White">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
 
-            <StackLayout Grid.Row="1">
-                <ListView 
-                    x:Name="EbListView"
-                    HasUnevenRows="True"
-                    SelectionMode="None"
-                    SeparatorVisibility="{Binding ShowRowSeperator}"
-                    ItemsSource="{Binding DataRows}"
-                    IsPullToRefreshEnabled="True"
-                    IsRefreshing="{Binding IsRefreshing}"
-                    RefreshControlColor="{DynamicResource Primary_Color}"
-                    RefreshCommand="{Binding RefreshListCommand}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <control:DynamicViewCell 
-                                Visualization="{Binding Path=BindingContext.Visualization,Source={x:Reference EbListView}}"
-                                ItemSelected="{Binding Path=BindingContext.ItemTappedCommand,Source={x:Reference EbListView}}"
-                                ItemIndex="{Binding Path=BindingContext.ListItemIndex,Source={x:Reference EbListView}}">
-                            </control:DynamicViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </StackLayout>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label x:Name="PagingMeta"
+                               Grid.Column="0"
+                               VerticalTextAlignment="Center"
+                               Margin="5,0"
+                               FontSize="15"
+                               TextColor="#333">
+                        </Label>
+                        <Frame Grid.Column="1"
+                               Padding="0"
+                               Margin="5"
+                               BackgroundColor="Transparent"
+                               HasShadow="False">
+                            <Frame.Content>
+                                <StackLayout Orientation="Horizontal"
+                                             Spacing="0">
+                                    <Button x:Name="PagingPrevButton"
+                                            CornerRadius="17"
+                                            Padding="0"
+                                            BorderColor="#e1e6e9"
+                                            BorderWidth="1"
+                                            HeightRequest="35"
+                                            WidthRequest="35"
+                                            Text="&#xf053;"
+                                            FontFamily="{StaticResource FontAwesome}"
+                                            BackgroundColor="#e1e6e9"
+                                            Clicked="PagingPrevButton_Clicked">
+                                    </Button>
+                                    <Label x:Name="PagingPageCount"
+                                           Margin="5,0"
+                                           TextColor="#333"
+                                           VerticalTextAlignment="Center">
+                                    </Label>
+                                    <Button x:Name="PagingNextButton"
+                                            Margin="0,0,0,0"
+                                            CornerRadius="17"
+                                            Padding="0"
+                                            HeightRequest="35"
+                                            WidthRequest="35"
+                                            Text="&#xf054;"
+                                            FontFamily="{StaticResource FontAwesome}"
+                                            BorderColor="#e1e6e9"
+                                            BorderWidth="1"
+                                            BackgroundColor="#e1e6e9"
+                                            Clicked="PagingNextButton_Clicked">
+                                    </Button>
+                                </StackLayout>
+                            </Frame.Content>
+                        </Frame>
+                        <BoxView Grid.Row="1"
+                                 Grid.ColumnSpan="2"
+                                 Color="#cccccc"
+                                 HeightRequest="1">
+                        </BoxView>
+                    </Grid>
 
-            <Button
-                x:Name="AddLinkData"
-                IsVisible="False"
-                Grid.Row="1"
-                Text="&#xf067;"
-                Margin="0,0,10,10"
-                VerticalOptions="End"
-                HorizontalOptions="End"
-                TextColor="White"
-                BackgroundColor="{DynamicResource Primary_Color}"
-                BorderColor="{DynamicResource Primary_Color}"
-                BorderWidth="2"
-                HeightRequest="58"
-                WidthRequest="58"
-                CornerRadius="29"
-                FontFamily="{StaticResource FontAwesome}"
-                Command="{Binding AddCommand}">
-            </Button>
+                    <StackLayout Grid.Row="1">
+                        <ListView x:Name="EbListView"
+                                  HasUnevenRows="True"
+                                  SelectionMode="None"
+                                  SeparatorVisibility="{Binding ShowRowSeperator}"
+                                  ItemsSource="{Binding DataRows}"
+                                  IsPullToRefreshEnabled="True"
+                                  IsRefreshing="{Binding IsRefreshing}"
+                                  RefreshControlColor="{DynamicResource Primary_Color}"
+                                  RefreshCommand="{Binding RefreshListCommand}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <control:DynamicViewCell Visualization="{Binding Path=BindingContext.Visualization,Source={x:Reference EbListView}}"
+                                                             ItemSelected="{Binding Path=BindingContext.ItemTappedCommand,Source={x:Reference EbListView}}"
+                                                             ItemIndex="{Binding Path=BindingContext.ListItemIndex,Source={x:Reference EbListView}}">
+                                    </control:DynamicViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>
 
-            <StackLayout 
-                Grid.RowSpan="2"
-                x:Name="EmptyMessage"
-                IsVisible="False"
-                VerticalOptions="Center">
-                <Image Source="mt.png" HeightRequest="70"></Image>
-                <Label Text="Empty list..." HorizontalTextAlignment="Center"></Label>
-            </StackLayout>
+                    <Button x:Name="AddLinkData"
+                            IsVisible="False"
+                            Grid.Row="1"
+                            Text="&#xf067;"
+                            Margin="0,0,10,10"
+                            VerticalOptions="End"
+                            HorizontalOptions="End"
+                            TextColor="White"
+                            BackgroundColor="{DynamicResource Primary_Color}"
+                            BorderColor="{DynamicResource Primary_Color}"
+                            BorderWidth="2"
+                            HeightRequest="58"
+                            WidthRequest="58"
+                            CornerRadius="29"
+                            FontFamily="{StaticResource FontAwesome}"
+                            Command="{Binding AddCommand}">
+                    </Button>
 
-            <control:FilterView 
-                Grid.RowSpan="2"
-                x:Name="FilterView"
-                NetWorkType="{Binding NetworkType}"
-                SortColumns="{Binding SortColumns}"
-                ConfirmClicked="{Binding ApplyFilterCommand}"
-                FilterControls="{Binding FilterControls}"
-                OnDisAppearing="FilterView_OnDisAppearing">
-            </control:FilterView>
+                    <StackLayout Grid.RowSpan="2"
+                                 x:Name="EmptyMessage"
+                                 IsVisible="False"
+                                 VerticalOptions="Center">
+                        <Image Source="mt.png"
+                               HeightRequest="70"></Image>
+                        <Label Text="Empty list..."
+                               HorizontalTextAlignment="Center"></Label>
+                    </StackLayout>
 
-            <control:LoaderIconed 
-                Grid.RowSpan="2"
-                x:Name="Loader"
-                IsVisible="{Binding IsBusy}" 
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-            </control:LoaderIconed>
-
-        </Grid>
+                    <control:FilterView Grid.RowSpan="2"
+                                        x:Name="FilterView"
+                                        NetWorkType="{Binding NetworkType}"
+                                        SortColumns="{Binding SortColumns}"
+                                        ConfirmClicked="{Binding ApplyFilterCommand}"
+                                        FilterControls="{Binding FilterControls}"
+                                        OnDisAppearing="FilterView_OnDisAppearing">
+                    </control:FilterView>
+                    
+                </Grid>
+            </control:EbCPLayout.Content>
+        </control:EbCPLayout>
     </ContentPage.Content>
 </base:ListViewBasePage>

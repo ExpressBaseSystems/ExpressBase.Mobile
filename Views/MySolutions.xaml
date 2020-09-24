@@ -3,123 +3,108 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
+             xmlns:controls="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
-             BackgroundColor="White"
-             x:Class="ExpressBase.Mobile.Views.MySolutions">
-
-    <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label 
-                x:Name="TitleLabel"
-                Grid.Column="0"
-                Style="{StaticResource ToolBarLabelStyle}">
-            </Label>
-        </Grid>
-    </NavigationPage.TitleView>
+             x:Class="ExpressBase.Mobile.Views.MySolutions"
+             Style="{StaticResource ContentPageStyle}">
 
     <ContentPage.Content>
-        <Grid>
-            <ScrollView x:Name="scrollView">
-                <StackLayout
-                    x:Name="SolutionsList"
-                    BindableLayout.ItemsSource="{Binding MySolutions}"
-                    Spacing="0">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <Frame
-                                BackgroundColor="Transparent"
-                                Margin="0"
-                                Padding="10"
-                                BorderColor="{DynamicResource Gray-White}"
-                                CornerRadius="0"
-                                HasShadow="false">
-                                <Frame.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.SolutionTapedCommand, Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}" />
-                                </Frame.GestureRecognizers>
-                                <Grid ColumnSpacing="20">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                        <ColumnDefinition Width="*"></ColumnDefinition>
-                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-                                    <AbsoluteLayout Grid.Column="0">
-                                        <Frame 
-                                            HeightRequest="55"
-                                            WidthRequest="55"
-                                            CornerRadius="30"
-                                            VerticalOptions="Center"
-                                            Padding="0"
-                                            HasShadow="False"
-                                            BorderColor="#cccccc"
-                                            IsClippedToBounds="True">
-                                            <customcontrols:ImageCircle 
-                                                HeightRequest="55"
-                                                WidthRequest="55"
-                                                Source="{Binding Logo}"
-                                                VerticalOptions="Center"
-                                                Aspect="AspectFit">
-                                            </customcontrols:ImageCircle>
-                                        </Frame>
-                                        <Frame
-                                            IsVisible="{Binding IsCurrent}"
-                                            CornerRadius="8"
-                                            BorderColor="White"
-                                            Padding="0"
-                                            HasShadow="False"
-                                            AbsoluteLayout.LayoutFlags="PositionProportional"   
-                                            AbsoluteLayout.LayoutBounds="1,1,15,15"
-                                            BackgroundColor="#26bd26"/>
-                                    </AbsoluteLayout>
-                                    <Label 
-                                        Text="{Binding SolutionName}"
-                                        Grid.Column="1"
-                                        FontSize="18"
-                                        VerticalTextAlignment="Center"
-                                        FontFamily="{StaticResource Roboto-Medium}"
-                                        TextColor="{DynamicResource Gray-900}">
-                                    </Label>
-                                    <Button
-                                        x:Name="DeleteSolution"
-                                        Grid.Column="2"
-                                        Padding="0"
-                                        FontSize="15"
-                                        Margin="0"
-                                        Text="&#xf014;"
-                                        TextColor="Red"
-                                        BackgroundColor="Transparent"
-                                        WidthRequest="50"
-                                        FontFamily="{StaticResource FontAwesome}"
-                                        Command="{Binding BindingContext.SolutionRemoveCommand,Source={x:Reference SolutionsList}}" CommandParameter="{Binding .}">
-                                    </Button>
-                                </Grid>
-                            </Frame>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </StackLayout>
-            </ScrollView>
+        <controls:EbCPLayout x:Name="EbLayout"
+                             HasBackButton="False">
+            <controls:EbCPLayout.Content>
+                <Grid VerticalOptions="FillAndExpand">
+                    <ScrollView x:Name="scrollView">
+                        <StackLayout x:Name="SolutionsList"
+                                     BindableLayout.ItemsSource="{Binding MySolutions}"
+                                     Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame BackgroundColor="Transparent"
+                                           Margin="0"
+                                           Padding="10"
+                                           BorderColor="{DynamicResource Gray-White}"
+                                           CornerRadius="0"
+                                           HasShadow="false">
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.SolutionTapedCommand, Source={x:Reference SolutionsList}}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Frame.GestureRecognizers>
+                                        <Grid ColumnSpacing="20">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <AbsoluteLayout Grid.Column="0">
+                                                <Frame HeightRequest="55"
+                                                       WidthRequest="55"
+                                                       CornerRadius="30"
+                                                       VerticalOptions="Center"
+                                                       Padding="0"
+                                                       HasShadow="False"
+                                                       BorderColor="#cccccc"
+                                                       IsClippedToBounds="True">
+                                                    <controls:ImageCircle HeightRequest="55"
+                                                                                WidthRequest="55"
+                                                                                Source="{Binding Logo}"
+                                                                                VerticalOptions="Center"
+                                                                                Aspect="AspectFit">
+                                                    </controls:ImageCircle>
+                                                </Frame>
+                                                <Frame IsVisible="{Binding IsCurrent}"
+                                                       CornerRadius="8"
+                                                       BorderColor="White"
+                                                       Padding="0"
+                                                       HasShadow="False"
+                                                       AbsoluteLayout.LayoutFlags="PositionProportional"
+                                                       AbsoluteLayout.LayoutBounds="1,1,15,15"
+                                                       BackgroundColor="#26bd26" />
+                                            </AbsoluteLayout>
+                                            <Label Text="{Binding SolutionName}"
+                                                   Grid.Column="1"
+                                                   FontSize="18"
+                                                   VerticalTextAlignment="Center"
+                                                   FontFamily="{StaticResource Roboto-Medium}"
+                                                   TextColor="{DynamicResource Gray-900}">
+                                            </Label>
+                                            <Button x:Name="DeleteSolution"
+                                                    Grid.Column="2"
+                                                    Padding="0"
+                                                    FontSize="15"
+                                                    Margin="0"
+                                                    Text="&#xf014;"
+                                                    TextColor="Red"
+                                                    BackgroundColor="Transparent"
+                                                    WidthRequest="50"
+                                                    FontFamily="{StaticResource FontAwesome}"
+                                                    Command="{Binding BindingContext.SolutionRemoveCommand,Source={x:Reference SolutionsList}}"
+                                                    CommandParameter="{Binding .}">
+                                            </Button>
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </ScrollView>
 
-            <Button
-                Text="&#xf067;"
-                Margin="0,0,10,10"
-                VerticalOptions="End"
-                HorizontalOptions="End"
-                TextColor="White"
-                BackgroundColor="{DynamicResource Primary_Color}"
-                BorderColor="{DynamicResource Primary_Color}"
-                BorderWidth="1"
-                HeightRequest="60"
-                WidthRequest="60"
-                CornerRadius="30"
-                FontFamily="{StaticResource FontAwesome}"
-                FontSize="16"
-                Clicked="NewSolution_Clicked">
-            </Button>
-            
-        </Grid>
+                    <Button Text="&#xf067;"
+                            Margin="0,0,10,10"
+                            VerticalOptions="End"
+                            HorizontalOptions="End"
+                            TextColor="White"
+                            BackgroundColor="{DynamicResource Primary_Color}"
+                            BorderColor="{DynamicResource Primary_Color}"
+                            BorderWidth="1"
+                            HeightRequest="60"
+                            WidthRequest="60"
+                            CornerRadius="30"
+                            FontFamily="{StaticResource FontAwesome}"
+                            FontSize="16"
+                            Clicked="NewSolution_Clicked">
+                    </Button>
+
+                </Grid>
+            </controls:EbCPLayout.Content>
+        </controls:EbCPLayout>
     </ContentPage.Content>
 </ContentPage> 
