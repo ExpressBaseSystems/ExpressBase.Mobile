@@ -15,14 +15,14 @@ namespace ExpressBase.Mobile.ViewModels
     {
         private readonly IMenuServices menuServices;
 
-        private List<MobilePagesWraper> _objectList;
+        private List<MobilePagesWraper> objectList;
 
         public List<MobilePagesWraper> ObjectList
         {
-            get => _objectList;
+            get => objectList;
             set
             {
-                _objectList = value;
+                objectList = value;
                 NotifyPropertyChanged();
             }
         }
@@ -168,7 +168,7 @@ namespace ExpressBase.Mobile.ViewModels
             await menuServices.DeployFormTables(ObjectList);
         }
 
-        public bool IsEmpty()
+        public bool IsObjectsEmpty()
         {
             return !ObjectList.Any();
         }

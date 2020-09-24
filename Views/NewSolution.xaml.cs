@@ -93,11 +93,7 @@ namespace ExpressBase.Mobile.Views
                         if (isMasterPage)
                         {
                             App.RootMaster = null;
-                            Application.Current.MainPage = new NavigationPage
-                            {
-                                BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
-                                BarTextColor = Color.White
-                            };
+                            Application.Current.MainPage = new NavigationPage();
                         }
                         await NavigationService.LoginWithCS();
                     }
@@ -206,11 +202,7 @@ namespace ExpressBase.Mobile.Views
                 if (isMasterPage)
                 {
                     App.RootMaster = null;
-                    Application.Current.MainPage = new NavigationPage
-                    {
-                        BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
-                        BarTextColor = Color.White
-                    };
+                    Application.Current.MainPage = new NavigationPage();
                 }
                 await NavigationService.LoginWithCS();
             }

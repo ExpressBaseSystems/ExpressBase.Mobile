@@ -1,7 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.ViewModels;
+﻿using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
-using System;
 using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.Views
@@ -28,31 +26,6 @@ namespace ExpressBase.Mobile.Views
                 IsRendered = true;
             }
             EbLayout.HideLoader();
-        }
-
-        private async void MyActionsRefresh_Refreshing(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!Utils.HasInternet)
-                {
-                    Utils.Alert_NoInternet();
-                    return;
-                }
-                await viewModel.InitializeAsync();
-                Utils.Toast("Refreshed");
-            }
-            catch (Exception ex)
-            {
-                EbLog.Info("Failed to refresh myaction data");
-                EbLog.Error(ex.Message);
-            }
-            MyActionsRefresh.IsRefreshing = false;
-        }
-
-        private void RefreshButton_Clicked(object sender, EventArgs e)
-        {
-            MyActionsRefresh_Refreshing(sender, e);
         }
 
         public override void UpdateRenderStatus()

@@ -4,6 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+             xmlns:markupExtension="clr-namespace:ExpressBase.Mobile.Extensions"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.MyApplications"
              Style="{StaticResource ContentPageStyle}">
@@ -100,7 +101,7 @@
                                                    VerticalOptions="Center"
                                                    WidthRequest="45"
                                                    Padding="0"
-                                                   BackgroundColor="#b5b5b5"
+                                                   BackgroundColor="{markupExtension:RandomBGColorExtension}"
                                                    HasShadow="True"
                                                    CornerRadius="25">
                                                 <Label Text="{Binding AppNotation}"

@@ -6,6 +6,7 @@
              xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
              IsVisible="False"
+             BackgroundColor="White"
              x:Class="ExpressBase.Mobile.CustomControls.TwoFAView">
 
     <ContentView.Resources>
@@ -26,11 +27,27 @@
     </ContentView.Resources>
 
     <ContentView.Content>
-        <Grid BackgroundColor="White">
-            <ScrollView>
-                <StackLayout
-                    Padding="30,0"
-                    VerticalOptions="Center">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Button Text="&#xf053;"
+                    WidthRequest="34"
+                    BackgroundColor="Transparent"
+                    Margin="5"
+                    Grid.Row="0"
+                    TextColor="#222"
+                    FontSize="16"
+                    HorizontalOptions="Start"
+                    FontFamily="{StaticResource FontAwesome}"
+                    Clicked="BackButton_Clicked">
+            </Button>
+
+            <ScrollView Grid.Row="1">
+                <StackLayout Padding="20,0"
+                             VerticalOptions="Center">
                     <Label 
                         Text="OTP Verification"
                         HorizontalTextAlignment="Center"

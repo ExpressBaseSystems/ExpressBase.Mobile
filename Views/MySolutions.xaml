@@ -13,17 +13,16 @@
                              HasBackButton="False">
             <controls:EbCPLayout.Content>
                 <Grid VerticalOptions="FillAndExpand">
-                    <ScrollView x:Name="scrollView">
-                        <StackLayout x:Name="SolutionsList"
-                                     BindableLayout.ItemsSource="{Binding MySolutions}"
-                                     Spacing="0">
-                            <BindableLayout.ItemTemplate>
-                                <DataTemplate>
+                    <ListView x:Name="SolutionsList"
+                              HasUnevenRows="True"
+                              SelectionMode="None"
+                              ItemsSource="{Binding MySolutions}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
                                     <Frame BackgroundColor="Transparent"
                                            Margin="0"
                                            Padding="10"
-                                           BorderColor="{DynamicResource Gray-White}"
-                                           CornerRadius="0"
                                            HasShadow="false">
                                         <Frame.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding Path=BindingContext.SolutionTapedCommand, Source={x:Reference SolutionsList}}"
@@ -45,10 +44,10 @@
                                                        BorderColor="#cccccc"
                                                        IsClippedToBounds="True">
                                                     <controls:ImageCircle HeightRequest="55"
-                                                                                WidthRequest="55"
-                                                                                Source="{Binding Logo}"
-                                                                                VerticalOptions="Center"
-                                                                                Aspect="AspectFit">
+                                                                          WidthRequest="55"
+                                                                          Source="{Binding Logo}"
+                                                                          VerticalOptions="Center"
+                                                                          Aspect="AspectFit">
                                                     </controls:ImageCircle>
                                                 </Frame>
                                                 <Frame IsVisible="{Binding IsCurrent}"
@@ -82,10 +81,10 @@
                                             </Button>
                                         </Grid>
                                     </Frame>
-                                </DataTemplate>
-                            </BindableLayout.ItemTemplate>
-                        </StackLayout>
-                    </ScrollView>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
 
                     <Button Text="&#xf067;"
                             Margin="0,0,10,10"

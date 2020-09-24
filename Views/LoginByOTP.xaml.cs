@@ -52,7 +52,7 @@ namespace ExpressBase.Mobile.Views
         {
             TwoFAWindow.SetAddress(auth.TwoFAToAddress);
 
-            TwoFAWindow.IsVisible = true;
+            TwoFAWindow.Show();
             RestButton.IsVisible = false;
         }
 
@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile.Views
         {
             if (TwoFAWindow.IsVisible)
             {
-                TwoFAWindow.IsVisible = false;
+                TwoFAWindow.Hide();
                 return true;
             }
 

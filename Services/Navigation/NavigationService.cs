@@ -21,11 +21,7 @@ namespace ExpressBase.Mobile.Services
         public static async Task LoginWithNS()
         {
             App.RootMaster = null;
-            Application.Current.MainPage = new NavigationPage()
-            {
-                BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
-                BarTextColor = Color.White
-            };
+            Application.Current.MainPage = new NavigationPage();
 
             if (App.Settings.LoginType == LoginType.SSO)
                 await Application.Current.MainPage.Navigation.PushAsync(new LoginByOTP());

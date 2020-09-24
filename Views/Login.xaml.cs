@@ -67,7 +67,7 @@ namespace ExpressBase.Mobile.Views
         public void ShowTwoFAWindow(ApiAuthResponse auth)
         {
             TwoFAWindow.SetAddress(auth.TwoFAToAddress);
-            TwoFAWindow.IsVisible = true;
+            TwoFAWindow.Show();
         }
 
         private async void NewSolutionButton_Clicked(object sender, EventArgs e)
@@ -84,7 +84,7 @@ namespace ExpressBase.Mobile.Views
         {
             if (TwoFAWindow.IsVisible)
             {
-                TwoFAWindow.IsVisible = false;
+                TwoFAWindow.Hide();
                 return true;
             }
 

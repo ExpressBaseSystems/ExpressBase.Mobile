@@ -16,28 +16,16 @@ namespace ExpressBase.Mobile.ViewModels
     {
         #region Properties
 
-        private readonly IMyActionsService myActionService;
+        private readonly IMyActionsService actionService;     
 
-        private bool _showEmptyLabel;
-
-        public bool ShowEmptyLabel
-        {
-            get => this._showEmptyLabel;
-            set
-            {
-                this._showEmptyLabel = value;
-                this.NotifyPropertyChanged();
-            }
-        }
-
-        public List<EbMyAction> _actions;
+        public List<EbMyAction> actions;
 
         public List<EbMyAction> Actions
         {
-            get => _actions;
+            get => actions;
             set
             {
-                _actions = value;
+                actions = value;
                 NotifyPropertyChanged();
             }
         }
@@ -46,28 +34,38 @@ namespace ExpressBase.Mobile.ViewModels
 
         #endregion
 
+        public Command RefreshListCommand => new Command(async () => await UpdateAsync());
+
         public Command ItemSelectedCommand => new Command<EbMyAction>(async (obj) => await ItemSelected(obj));
 
         public MyActionsViewModel()
         {
-            myActionService = new MyActionsService();
+            actionService = new MyActionsService();
         }
 
         #region Methods
 
         public override async Task InitializeAsync()
         {
-            MyActionsResponse resp = await myActionService.GetMyActionsAsync();
+            MyActionsResponse resp = await actionService.GetMyActionsAsync();
 
             Actions = resp.Actions.Where(item => item.ActionType == MyActionTypes.Approval).ToList();
 
             this.SetPageTitle();
         }
 
+        public override async Task UpdateAsync()
+        {
+            IsRefreshing = true;
+            await InitializeAsync();
+            IsRefreshing = false;
+            Utils.Toast("Refreshed");
+        }
+
         private void SetPageTitle()
         {
             PageTitle = $"{title}({Actions.Count})";
-            ShowEmptyLabel = Actions.Count <= 0;
+            IsEmpty = Actions.Count <= 0;
         }
 
         private bool IsTapped;

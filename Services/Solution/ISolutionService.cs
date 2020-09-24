@@ -1,12 +1,12 @@
 ﻿using ExpressBase.Mobile.Models;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
     public interface ISolutionService
     {
-        Task<ObservableCollection<SolutionInfo>> GetDataAsync();
+        Task<List<SolutionInfo>> GetDataAsync();
 
         Task<ValidateSidResponse> ValidateSid(string url);
 

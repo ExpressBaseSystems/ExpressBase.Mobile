@@ -78,7 +78,6 @@ namespace ExpressBase.Mobile.Views
                     IconedLoader.IsVisible = true;
                     await viewModel.UpdateAsync();
                     this.ToggleStatus();
-
                     IconedLoader.IsVisible = false;
                 }
             }
@@ -91,7 +90,7 @@ namespace ExpressBase.Mobile.Views
 
         private void ToggleStatus()
         {
-            EmptyMessage.IsVisible = viewModel.IsEmpty();
+            EmptyMessage.IsVisible = viewModel.IsObjectsEmpty();
         }
 
         public void ShowLogoutConfirmBox()

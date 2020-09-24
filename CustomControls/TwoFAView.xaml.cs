@@ -97,5 +97,20 @@ namespace ExpressBase.Mobile.CustomControls
                 ResendClicked.Execute(null);
             }
         }
+
+        private void BackButton_Clicked(object sender, EventArgs e)
+        {
+            this.Hide();
+        }
+
+        public void Show()
+        {
+            this.IsVisible = true;
+        }
+
+        public void Hide()
+        {
+            this.IsVisible = false;
+        }
     }
 }

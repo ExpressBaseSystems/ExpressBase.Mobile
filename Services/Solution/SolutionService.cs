@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,9 +22,9 @@ namespace ExpressBase.Mobile.Services
         /// Method for list all the configured solutions
         /// </summary>
         /// <returns> List of Solutions meta</returns>
-        public async Task<ObservableCollection<SolutionInfo>> GetDataAsync()
+        public async Task<List<SolutionInfo>> GetDataAsync()
         {
-            ObservableCollection<SolutionInfo> sln = new ObservableCollection<SolutionInfo>();
+            List<SolutionInfo> sln = new List<SolutionInfo>();
             try
             {
                 await Task.Delay(1);

@@ -87,11 +87,7 @@ namespace ExpressBase.Mobile.ViewModels
             App.Settings.Reset();
 
             App.RootMaster = null;
-            Application.Current.MainPage = new NavigationPage()
-            {
-                BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
-                BarTextColor = Color.White
-            };
+            Application.Current.MainPage = new NavigationPage();
             await Application.Current.MainPage.Navigation.PushAsync(new MySolutions());
         }
 

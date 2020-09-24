@@ -4,7 +4,7 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -18,16 +18,16 @@ namespace ExpressBase.Mobile.ViewModels
 
         private SolutionInfo current;
 
-        private ObservableCollection<SolutionInfo> _mysolution;
+        private List<SolutionInfo> mySolutions;
 
-        public ObservableCollection<SolutionInfo> MySolutions
+        public List<SolutionInfo> MySolutions
         {
             set
             {
-                _mysolution = value;
+                mySolutions = value;
                 NotifyPropertyChanged();
             }
-            get => _mysolution;
+            get => mySolutions;
         }
 
         public Command SolutionTapedCommand => new Command<object>(async (o) => await SolutionTapedEvent(o));
@@ -65,11 +65,7 @@ namespace ExpressBase.Mobile.ViewModels
                 await solutionService.CreateDB(copy.SolutionName);
                 await solutionService.CreateDirectory();
 
-                Application.Current.MainPage = new NavigationPage()
-                {
-                    BarBackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
-                    BarTextColor = Color.White
-                };
+                Application.Current.MainPage = new NavigationPage();
                 await NavigationService.LoginWithCS();
                 App.RootMaster = null;
             }

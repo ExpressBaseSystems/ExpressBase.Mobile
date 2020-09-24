@@ -10,32 +10,27 @@
     <ContentPage.Content>
         <control:EbCPLayout x:Name="EbLayout"
                             LoaderVisibilty="{Binding IsBusy}"
-                            HasBackButton="False">
-
-            <control:EbCPLayout.ToolBarItems>
-                <StackLayout Orientation="Horizontal">
-                    <Button IsVisible="{Binding IsResetVisible}"
-                            x:Name="RestButton"
-                            Text="&#xf013;"
-                            Style="{StaticResource ToolBarButtonStyle}"
-                            HorizontalOptions="End"
-                            Command="{Binding ResetConfig}">
-                    </Button>
-                </StackLayout>
-            </control:EbCPLayout.ToolBarItems>
-            
+                            HasToolBar="False">
             <control:EbCPLayout.Content>
-                <Grid BackgroundColor="White">
+                <Grid BackgroundColor="White" VerticalOptions="FillAndExpand">
                     <ScrollView x:Name="scrollView">
-                        <ScrollView.VerticalOptions>
-                            <OnIdiom x:TypeArguments="LayoutOptions"
-                                     Default="CenterAndExpand"
-                                     Phone="FillAndExpand">
-                            </OnIdiom>
-                        </ScrollView.VerticalOptions>
-                        <StackLayout Margin="20"
-                                     VerticalOptions="FillAndExpand">
+                        <StackLayout VerticalOptions="FillAndExpand">
+
+                            <StackLayout Orientation="Horizontal"
+                                         Padding="5,0"
+                                         VerticalOptions="Start">
+                                <Button IsVisible="{Binding IsResetVisible}"
+                                        x:Name="RestButton"
+                                        Text="&#xf013;"
+                                        Style="{StaticResource ToolBarButtonStyle}"
+                                        TextColor="#222"
+                                        HorizontalOptions="EndAndExpand"
+                                        Command="{Binding ResetConfig}">
+                                </Button>
+                            </StackLayout>
+
                             <Grid RowSpacing="0"
+                                  Padding="20,0,20,20"
                                   VerticalOptions="CenterAndExpand">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -125,6 +120,7 @@
                     </ScrollView>
 
                     <control:TwoFAView x:Name="TwoFAWindow"
+                                       VerticalOptions="FillAndExpand"
                                        ResendClicked="{Binding ResendOTPCommand}"
                                        SubmitClicked="{Binding SubmitOTPCommand}">
                     </control:TwoFAView>
