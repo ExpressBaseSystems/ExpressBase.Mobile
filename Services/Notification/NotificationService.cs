@@ -33,8 +33,6 @@ namespace ExpressBase.Mobile.Services
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-            request.AddParameter("vendor_type", (int)AppVendor);
-
             IRestResponse response = await client.ExecuteAsync<string>(request);
             if (response.IsSuccessful)
             {
@@ -79,7 +77,6 @@ namespace ExpressBase.Mobile.Services
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
             request.AddParameter("regid", regid);
-            request.AddParameter("vendor_type", (int)AppVendor);
 
             IRestResponse response = await client.ExecuteAsync(request);
             if (response.IsSuccessful)
