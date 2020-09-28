@@ -166,7 +166,7 @@ namespace ExpressBase.Mobile.Views
                     EbLayout.HideLoader();
                     SolutionLogoPrompt.Source = ImageSource.FromStream(() => new MemoryStream(response.Logo));
                     SolutionLabel.Text = surl.Split(CharConstants.DOT)[0];
-                    PopupContainer.IsVisible = true;
+                    ShowSIDConfirmBox();
                 }
                 else
                 {
@@ -180,9 +180,29 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
+        private void ShowSIDConfirmBox()
+        {
+            PopupContainer.IsVisible = true;
+            MainContent.FadeTo(1);
+            MainContent.TranslateTo(MainContent.TranslationX, 0);
+            ShadowView.IsVisible = true;
+        }
+
+        private void HideSIDConfirmBox()
+        {
+            ShadowView.IsVisible = false;
+            var fade = new Animation(v => MainContent.Opacity = v, 1, 0);
+            var translation = new Animation(v => MainContent.TranslationY = v, 0, MainContent.Height, null, () =>
+            {
+                PopupContainer.IsVisible = false;
+            });
+            var parent = new Animation { { 0.5, 1, fade },{ 0, 1, translation } };
+            parent.Commit(this, "HidePopupContainer");
+        }
+
         private void PopupCancel_Clicked(object sender, EventArgs e)
         {
-            PopupContainer.IsVisible = false;
+            this.HideSIDConfirmBox();
         }
 
         /// <summary>
@@ -197,7 +217,7 @@ namespace ExpressBase.Mobile.Views
                 await viewModel.AddSolution(SolutionName.Text.Trim(), response);
 
                 EbLayout.HideLoader();
-                PopupContainer.IsVisible = false;
+                this.HideSIDConfirmBox();
 
                 if (isMasterPage)
                 {

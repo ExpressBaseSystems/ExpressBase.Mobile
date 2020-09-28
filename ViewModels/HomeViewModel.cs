@@ -45,6 +45,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command MenuItemTappedCommand => new Command<MobilePagesWraper>(async (o) => await ItemTapedEvent(o));
 
+        public Command RefreshDataCommand => new Command(async () => await UpdateAsync());
+
         private bool isTapped;
 
         public HomeViewModel() : base(App.Settings.CurrentApplication?.AppName)
@@ -58,6 +60,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 this.ObjectList = await menuServices.GetDataAsync();
                 await menuServices.DeployFormTables(ObjectList);
+                this.IsEmpty = IsObjectsEmpty();
 
                 SolutionLogo = CommonServices.GetLogo(App.Settings.Sid);
                 await HelperFunctions.CreateDirectory("FILES");
@@ -81,6 +84,7 @@ namespace ExpressBase.Mobile.ViewModels
                 else
                 {
                     this.ObjectList = await menuServices.UpdateDataAsync();
+                    this.IsEmpty = IsObjectsEmpty();
 
                     await menuServices.DeployFormTables(ObjectList);
                     EbLog.Info($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
@@ -90,6 +94,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 EbLog.Error("Home page update data request failed ::" + ex.Message);
             }
+            IsRefreshing = false;
         }
 
         private async Task SyncButtonEvent()

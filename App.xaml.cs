@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using ExpressBase.Mobile.Models;
 using System;
+using ExpressBase.Mobile.Services.Notification;
 
 namespace ExpressBase.Mobile
 {
@@ -20,13 +21,13 @@ namespace ExpressBase.Mobile
 
         public static double ScreenX;
 
-        readonly EbNFData notification;
+        private EbNFData nfPayLoad;
 
         public App(EbNFData nfdata = null)
         {
             InitializeComponent();
 
-            notification = nfdata;
+            nfPayLoad = nfdata;
 
             DataDB = DependencyService.Get<IDataBase>();
             Settings = new SettingsServices();
@@ -38,7 +39,7 @@ namespace ExpressBase.Mobile
 
             await InitNavigation();
 
-            if (notification != null) await NewIntentAction(notification);
+            if (nfPayLoad != null) await NewIntentAction(nfPayLoad);
 
             if (Settings.Vendor.AllowNotifications && Settings.CurrentUser != null)
             {
@@ -82,43 +83,17 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public async Task NewIntentAction(EbNFData data)
+        public async Task NewIntentAction(EbNFData payload)
         {
-            if (data.Link == null && RootMaster == null)
-            {
-                EbLog.Info("Intentaction aborted, link and rootmaster null");
-                return;
-            }
-
-            EbNFLink link = data.Link;
-
             try
             {
-                if (link.LinkType == EbNFLinkTypes.Action)
+                if (payload.Link == null && RootMaster == null)
                 {
-                    await RootMaster.Detail.Navigation.PushAsync(new DoAction(link.ActionId));
-                    EbLog.Info("Navigated to action submit : actionid =" + link.ActionId);
+                    EbLog.Info("Intentaction aborted, link and rootmaster null");
+                    return;
                 }
-                else if (link.LinkType == EbNFLinkTypes.Page)
-                {
-                    if (string.IsNullOrEmpty(link.LinkRefId))
-                    {
-                        EbLog.Info("Intentaction link type is page but linkrefid null");
-                        return;
-                    }
-
-                    EbMobilePage page = EbPageFinder.GetPage(link.LinkRefId);
-
-                    if (page != null)
-                    {
-                        EbLog.Info("Intentaction page rendering :" + page.DisplayName);
-
-                        ContentPage renderer = EbPageFinder.GetPageByContainer(page);
-                        await App.RootMaster.Detail.Navigation.PushAsync(renderer);
-                    }
-                    else
-                        EbLog.Info("Intentaction page not found for linkrefid:" + link.LinkRefId);
-                }
+                await NFIntentService.Resolve(payload);
+                nfPayLoad = null;
             }
             catch (Exception ex)
             {

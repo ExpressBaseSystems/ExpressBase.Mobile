@@ -34,7 +34,6 @@ namespace ExpressBase.Mobile.Views
                     await viewModel.InitializeAsync();
                     IsRendered = true;
                 }
-                ToggleStatus();
                 IconedLoader.IsVisible = false;
             }
             catch (Exception ex)
@@ -61,36 +60,6 @@ namespace ExpressBase.Mobile.Views
                 });
                 return true;
             }
-        }
-
-        private async void RefreshView_Refreshing(object sender, EventArgs e)
-        {
-            RootRefreshView.IsRefreshing = false;
-            try
-            {
-                if (!Utils.HasInternet)
-                {
-                    Utils.Alert_NoInternet();
-                    return;
-                }
-                else
-                {
-                    IconedLoader.IsVisible = true;
-                    await viewModel.UpdateAsync();
-                    this.ToggleStatus();
-                    IconedLoader.IsVisible = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error(ex.Message);
-                IconedLoader.IsVisible = false;
-            }
-        }
-
-        private void ToggleStatus()
-        {
-            EmptyMessage.IsVisible = viewModel.IsObjectsEmpty();
         }
 
         public void ShowLogoutConfirmBox()

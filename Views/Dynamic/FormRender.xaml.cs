@@ -77,12 +77,17 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 FullScreenImage.Source = tapedImage.Source;
                 ImageFullScreen.IsVisible = true;
+                FSWindowFrame.ScaleTo(1, 200);
             }
         }
 
         private void FullScreenClose_Clicked(object sender, EventArgs e)
         {
-            ImageFullScreen.IsVisible = false;
+            var scale = new Animation(v => FSWindowFrame.Scale = v, 1, 0);
+            scale.Commit(this, "HideImageFS", 2000, easing: Easing.Linear, finished: (v, c) =>
+            {
+                ImageFullScreen.IsVisible = false;
+            });
         }
     }
 }

@@ -14,6 +14,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
     {
         public EbMobileVisualization Context { set; get; }
 
+        public bool ContextVisibilty => !this.Visualization.HideContext;
+
         public Command EditCommand => new Command(async () => await EditButtonClicked());
 
         public LinkedListViewModel(EbMobilePage page, EbMobileVisualization context, EbDataRow row) : base(page)

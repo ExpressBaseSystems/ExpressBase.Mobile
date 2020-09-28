@@ -82,32 +82,45 @@
 
                     <Grid IsVisible="False"
                           Grid.RowSpan="2"
-                          BackgroundColor="Black"
-                          x:Name="ImageFullScreen"
-                          RowSpacing="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"></RowDefinition>
-                            <RowDefinition Height="Auto"></RowDefinition>
-                            <RowDefinition Height="50"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Image Grid.Row="0"
-                               VerticalOptions="CenterAndExpand"
-                               x:Name="FullScreenImage"
-                               Aspect="AspectFill">
-                        </Image>
-                        <BoxView Grid.Row="1"
-                                 HeightRequest="1"
-                                 Color="#333"></BoxView>
-                        <Button x:Name="FullScreenClose"
-                                CornerRadius="0"
-                                Padding="0"
-                                Grid.Row="2"
-                                Text="Close"
-                                BackgroundColor="Transparent"
-                                TextColor="#0076ff"
-                                HorizontalOptions="FillAndExpand"
-                                Clicked="FullScreenClose_Clicked">
-                        </Button>
+                          VerticalOptions="FillAndExpand"
+                          x:Name="ImageFullScreen">
+
+                        <BoxView  x:Name="ShadowView"
+                                  BackgroundColor="Black"
+                                  Opacity=".7">
+                        </BoxView>
+
+                        <Frame VerticalOptions="Center"
+                               x:Name="FSWindowFrame"
+                               Margin="15"
+                               Padding="0"
+                               Scale="0"
+                               BackgroundColor="White"
+                               CornerRadius="10">
+                            <StackLayout Padding="0" Spacing="0">
+                                <Label Text="Full Screen"
+                                       FontSize="15"
+                                       Padding="10"
+                                       TextColor="#222"
+                                       FontFamily="{StaticResource Roboto-Regular}">
+                                </Label>
+                                <Image VerticalOptions="Center"
+                                       x:Name="FullScreenImage"
+                                       Aspect="AspectFill"
+                                       Source="image_avatar.jpg">
+                                </Image>
+                                <Button x:Name="FullScreenClose"
+                                        CornerRadius="0"
+                                        Padding="0"
+                                        Text="Close"
+                                        BackgroundColor="Transparent"
+                                        TextColor="#0076ff"
+                                        HorizontalOptions="FillAndExpand"
+                                        HeightRequest="50"
+                                        Clicked="FullScreenClose_Clicked">
+                                </Button>
+                            </StackLayout>
+                        </Frame>
                     </Grid>
 
                     <control:Loader Grid.RowSpan="2"

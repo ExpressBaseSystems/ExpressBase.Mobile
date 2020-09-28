@@ -1,88 +1,85 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<base:EbContentPage  
-             xmlns:base="clr-namespace:ExpressBase.Mobile.Views.Base"
-             xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
-             mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.Home"
-             BackgroundColor="#f3f7f8">
+<base:EbContentPage xmlns:base="clr-namespace:ExpressBase.Mobile.Views.Base"
+                    xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+                    mc:Ignorable="d"
+                    x:Class="ExpressBase.Mobile.Views.Home"
+                    BackgroundColor="#f3f7f8">
 
     <NavigationPage.TitleView>
-        <Grid RowSpacing="0" ColumnSpacing="2" Padding="0" BackgroundColor="Transparent">
+        <Grid RowSpacing="0"
+              ColumnSpacing="2"
+              Padding="0"
+              BackgroundColor="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}" Style="{StaticResource ToolBarLabelStyle}"/>
-            <Button 
-                IsVisible="False"
-                Text="&#xf002;" 
-                Style="{StaticResource ToolBarButtonStyle}" 
-                Grid.Column="1">
+            <Label Text="{Binding PageTitle}"
+                   Style="{StaticResource ToolBarLabelStyle}" />
+            <Button IsVisible="False"
+                    Text="&#xf002;"
+                    Style="{StaticResource ToolBarButtonStyle}"
+                    Grid.Column="1">
             </Button>
         </Grid>
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
         <Grid>
-            <RefreshView 
-                x:Name="RootRefreshView" 
-                RefreshColor="{DynamicResource Primary_Color}"
-                Refreshing="RefreshView_Refreshing">
+            <RefreshView x:Name="RootRefreshView"
+                         IsRefreshing="{Binding IsRefreshing}"
+                         RefreshColor="{DynamicResource Primary_Color}"
+                         Command="{Binding RefreshDataCommand}">
                 <ScrollView>
                     <StackLayout VerticalOptions="FillAndExpand">
-                        <Frame
-                            Padding="10"
-                            Margin="10,15"
-                            CornerRadius="8"
-                            BackgroundColor="#e8f0fe"
-                            BorderColor="#e8f0fe"
-                            HasShadow="True">
+                        <Frame Padding="10"
+                               Margin="10,15"
+                               CornerRadius="8"
+                               BackgroundColor="#e8f0fe"
+                               BorderColor="#e8f0fe"
+                               HasShadow="True">
                             <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
-                                <BoxView 
-                                    HeightRequest="50"
-                                    WidthRequest="50"
-                                    CornerRadius="28"
-                                    BackgroundColor="White">
+                                <BoxView HeightRequest="50"
+                                         WidthRequest="50"
+                                         CornerRadius="28"
+                                         BackgroundColor="White">
                                 </BoxView>
-                                <Frame 
-                                    HeightRequest="50"
-                                    Padding="0"
-                                    WidthRequest="50"
-                                    CornerRadius="25"
-                                    HasShadow="False"
-                                    IsClippedToBounds="True">
-                                    <Image 
-                                        Source="{Binding SolutionLogo}" 
-                                        VerticalOptions="Center"
-                                        HorizontalOptions="Center"
-                                        Aspect="AspectFill">
+                                <Frame HeightRequest="50"
+                                       Padding="0"
+                                       WidthRequest="50"
+                                       CornerRadius="25"
+                                       HasShadow="False"
+                                       IsClippedToBounds="True">
+                                    <Image Source="{Binding SolutionLogo}"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           Aspect="AspectFill">
                                     </Image>
                                 </Frame>
-                                
+
                                 <StackLayout Grid.Column="1">
-                                    <Label 
-                                        x:Name="CurrentSolution"
-                                        FontSize="15"
-                                        FontFamily="{StaticResource Roboto-Medium}">
+                                    <Label x:Name="CurrentSolution"
+                                           FontSize="15"
+                                           FontFamily="{StaticResource Roboto-Medium}">
                                     </Label>
                                     <Label LineBreakMode="TailTruncation">
                                         <Label.FormattedText>
                                             <FormattedString>
-                                                <Span Text="&#xf041;" FontFamily="{StaticResource FontAwesome}"></Span>
+                                                <Span Text="&#xf041;"
+                                                      FontFamily="{StaticResource FontAwesome}"></Span>
                                                 <Span Text=" "></Span>
-                                                <Span 
-                                                    Text="Default" 
-                                                    FontSize="13"
-                                                    x:Name="CurrentLocation" 
-                                                    FontFamily="{StaticResource Roboto-Medium}">
+                                                <Span Text="Default"
+                                                      FontSize="13"
+                                                      x:Name="CurrentLocation"
+                                                      FontFamily="{StaticResource Roboto-Medium}">
                                                 </Span>
                                             </FormattedString>
                                         </Label.FormattedText>
@@ -90,39 +87,35 @@
                                 </StackLayout>
                             </Grid>
                         </Frame>
-                        <control:Menu
-                            x:Name="MenuView"
-                            ItemSource="{Binding ObjectList}"
-                            ItemTaped="{Binding MenuItemTappedCommand}">
+                        
+                        <control:Menu x:Name="MenuView"
+                                      ItemSource="{Binding ObjectList}"
+                                      ItemTaped="{Binding MenuItemTappedCommand}">
                         </control:Menu>
-                        <StackLayout 
-                            VerticalOptions="CenterAndExpand"
-                            x:Name="EmptyMessage"
-                            IsVisible="False">
-                            <Image Source="mt.png" HeightRequest="50"></Image>
-                            <Label Text="Empty..." HorizontalTextAlignment="Center"></Label>
-                        </StackLayout>
+
+                        <control:EmptyBox VerticalOptions="CenterAndExpand"
+                                          Message="Empty..."
+                                          IsVisible="{Binding IsEmpty}">
+                        </control:EmptyBox>
+
                     </StackLayout>
                 </ScrollView>
             </RefreshView>
             <!--loader-->
-            <control:LoaderIconed 
-                x:Name="IconedLoader"
-                IsVisible="{Binding IsBusy}"
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                AbsoluteLayout.LayoutFlags="All">
+            <control:LoaderIconed x:Name="IconedLoader"
+                                  IsVisible="{Binding IsBusy}"
+                                  AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                                  AbsoluteLayout.LayoutFlags="All">
             </control:LoaderIconed>
-            <control:ConfirmBox
-                x:Name="PushConfirmBox"
-                Title="Confirm"
-                Message="Do you really want to push your local data to cloud?"
-                ConfirmClicked="{Binding SyncButtonCommand}">
+            <control:ConfirmBox x:Name="PushConfirmBox"
+                                Title="Confirm"
+                                Message="Do you really want to push your local data to cloud?"
+                                ConfirmClicked="{Binding SyncButtonCommand}">
             </control:ConfirmBox>
-            <control:ConfirmBox
-                x:Name="LogoutDialog"
-                Title="Confirm"
-                Message="Do you want to logout?"
-                ConfirmClicked="{Binding LogoutCommand}">
+            <control:ConfirmBox x:Name="LogoutDialog"
+                                Title="Confirm"
+                                Message="Do you want to logout?"
+                                ConfirmClicked="{Binding LogoutCommand}">
             </control:ConfirmBox>
         </Grid>
     </ContentPage.Content>

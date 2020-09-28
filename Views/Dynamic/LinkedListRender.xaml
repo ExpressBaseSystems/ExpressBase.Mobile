@@ -64,6 +64,7 @@
 
                     <Grid x:Name="HeaderView"
                           Grid.Row="0"
+                          IsVisible="{Binding ContextVisibilty}"
                           BackgroundColor="{DynamicResource Primary_Color}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />

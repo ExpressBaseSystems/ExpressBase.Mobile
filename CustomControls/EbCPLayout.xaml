@@ -36,28 +36,26 @@
         BackgroundColor="{DynamicResource Primary_Color}">
     </BoxView>
 
-    <Button
+    <ImageButton
         x:Name="BackButton"
         Grid.Row="0"
         Grid.Column="0"
-        Text="&#xf053;"
-        TextColor="White"
         Padding="0"
-        FontSize="16"
+        Source="back_btn.png"
         BackgroundColor="Transparent"
         VerticalOptions="Center"
         HorizontalOptions="Center"
         HeightRequest="34"
         WidthRequest="34"
         Margin="8,0"
-        FontFamily="{StaticResource FontAwesome}"
         Clicked="BackButton_Clicked">
-    </Button>
+    </ImageButton>
 
     <Label
         x:Name="TitleLabel"
         Style="{StaticResource TitleLabelStyle}"
         Grid.Row="0"
+        Margin="5,0,0,0"
         Grid.Column="1">
     </Label>
 
