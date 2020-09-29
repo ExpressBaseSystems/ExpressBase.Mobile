@@ -22,6 +22,10 @@ namespace ExpressBase.Mobile.Configuration
         public const string SplashTheme = "@style/Theme.Splash";
 
         public const bool NFEnabled = true;
+
+        public const string GMapAndroidKey = "AIzaSyDDgTEIxUMxT71PPeZzazJAV6caQ205mds";
+
+        public const string GMapiOSKey = "";
     }
 
     public static class MoveOn
@@ -36,7 +40,11 @@ namespace ExpressBase.Mobile.Configuration
 
         public const string SplashTheme = "@style/Theme.SplashMO";
 
-        public const bool NFEnabled = false;
+        public const bool NFEnabled = true;
+
+        public const string GMapAndroidKey = "";
+
+        public const string GMapiOSKey = "";
     }
 
     public static class KudumbaShree
@@ -52,5 +60,9 @@ namespace ExpressBase.Mobile.Configuration
         public const string SplashTheme = "@style/Theme.SplashKS";
 
         public const bool NFEnabled = false;
+
+        public const string GMapAndroidKey = "";
+
+        public const string GMapiOSKey = "";
     }
 }

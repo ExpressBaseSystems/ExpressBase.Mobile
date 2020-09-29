@@ -34,7 +34,7 @@
     },
     "MoveOn": {
       "BuildType": "Dynamic",
-      "AllowNotifications": false,
+      "AllowNotifications": true,
       "PrimaryColor": "283b97",
       "HasOfflineFeature": false,
       "HasActions": true,

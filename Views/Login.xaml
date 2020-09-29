@@ -59,6 +59,10 @@
                                                FontFamily="{StaticResource Roboto-Regular}"
                                                Style="{StaticResource LabelStyle}" />
                                         <control:TextBox x:Name="Email"
+                                                         HeightRequest="55"
+                                                         BackgroundColor="#f1f6fb"
+                                                         EnableFocus="True"
+                                                         BorderOnFocus="{DynamicResource Primary_Color}"
                                                          Completed="Email_Completed"
                                                          Text="{Binding Email}">
                                         </control:TextBox>
@@ -71,9 +75,10 @@
                                         <AbsoluteLayout>
                                             <control:TextBox AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
                                                              AbsoluteLayout.LayoutFlags="All"
-                                                             BorderColor="#cccccc"
-                                                             BorderThickness="1"
-                                                             BorderRadius="10.0"
+                                                             HeightRequest="55"
+                                                             BackgroundColor="#f1f6fb"
+                                                             EnableFocus="True"
+                                                             BorderOnFocus="{DynamicResource Primary_Color}"
                                                              x:Name="PassWord"
                                                              IsPassword="True"
                                                              Text="{Binding PassWord}" />
@@ -109,7 +114,9 @@
                                         HorizontalOptions="FillAndExpand"
                                         BackgroundColor="{DynamicResource Primary_Color}"
                                         TextColor="White"
-                                        Command="{Binding LoginCommand}"></Button>
+                                        FontFamily="{StaticResource Roboto-Regular}"
+                                        Command="{Binding LoginCommand}">
+                                </Button>
                                 <Label Margin="0,10"
                                        Grid.Row="4"
                                        Text="OR"
@@ -122,6 +129,10 @@
                                         CornerRadius="6"
                                         VerticalOptions="EndAndExpand"
                                         HorizontalOptions="FillAndExpand"
+                                        BackgroundColor="White"
+                                        BorderColor="#ccc"
+                                        FontFamily="{StaticResource Roboto-Regular}"
+                                        BorderWidth="1"
                                         Clicked="SSOLoginButton_Clicked">
                                 </Button>
                                 <Label IsVisible="{Binding ShowNewSolutionLink}"

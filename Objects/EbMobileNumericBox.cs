@@ -71,7 +71,9 @@ namespace ExpressBase.Mobile
                     IsReadOnly = this.ReadOnly,
                     BgColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White,
                     Keyboard = Keyboard.Numeric,
-                    Behaviors = { new NumericBoxBehavior() }
+                    Behaviors = { new NumericBoxBehavior() },
+                    EnableFocus = true,
+                    BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
                 };
             }
         }

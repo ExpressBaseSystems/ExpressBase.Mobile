@@ -170,5 +170,30 @@ namespace ExpressBase.Mobile.Services
                 EbLog.Error("Failed to update NHub registration" + ex.Message);
             }
         }
+
+        public async Task UnRegisterCurrent()
+        {
+            string registration = Store.GetValue(AppConst.AZURE_REGID);
+
+            if (!string.IsNullOrEmpty(registration))
+            {
+                try
+                {
+                    Store.Remove(AppConst.AZURE_REGID);
+
+                    bool status = await UnRegisterAsync(registration);
+                    EbLog.Info($"AZURE_REGID delete api status: '{status}'");
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info("Error at unregister AZURE_REGID api");
+                    EbLog.Error(ex.Message);
+                }
+            }
+            else
+            {
+                EbLog.Error("AZURE_REGID empty");
+            }
+        }
     }
 }

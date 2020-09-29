@@ -107,6 +107,7 @@
                                 <Image VerticalOptions="Center"
                                        x:Name="FullScreenImage"
                                        Aspect="AspectFill"
+                                       HeightRequest="300"
                                        Source="image_avatar.jpg">
                                 </Image>
                                 <Button x:Name="FullScreenClose"

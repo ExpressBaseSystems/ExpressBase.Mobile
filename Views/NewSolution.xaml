@@ -178,6 +178,7 @@
                                     <Frame CornerRadius="10"
                                            Padding="0"
                                            HeightRequest="30"
+                                           HasShadow="False"
                                            BackgroundColor="White"
                                            Margin="0,-14,0,0">
                                     </Frame>

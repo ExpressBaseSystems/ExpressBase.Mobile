@@ -102,7 +102,7 @@
                                                    WidthRequest="45"
                                                    Padding="0"
                                                    BackgroundColor="{markupExtension:RandomBGColorExtension}"
-                                                   HasShadow="True"
+                                                   HasShadow="False"
                                                    CornerRadius="25">
                                                 <Label Text="{Binding AppNotation}"
                                                        TextColor="White"

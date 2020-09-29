@@ -51,7 +51,6 @@ namespace ExpressBase.Mobile
         {
             MainPage = new NavigationPage();
 
-            //Initializing Stored data
             await Settings.InitializeSettings();
 
             if (Settings.Sid == null)

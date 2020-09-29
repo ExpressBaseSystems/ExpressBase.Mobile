@@ -58,13 +58,17 @@
                                 </Image>
 
                                 <StackLayout Grid.Row="2"
-                                             Margin="0,5,0,15">
+                                             Margin="0,5,0,40">
                                     <Label Text="Email or Mobile Number"
                                            VerticalOptions="Center"
                                            FontFamily="{StaticResource Roboto-Regular}"
                                            Style="{StaticResource LabelStyle}">
                                     </Label>
                                     <control:TextBox x:Name="UserName"
+                                                     HeightRequest="55"
+                                                     BackgroundColor="#f1f6fb"
+                                                     EnableFocus="True"
+                                                     BorderOnFocus="{DynamicResource Primary_Color}"
                                                      Text="{Binding UserName}">
                                     </control:TextBox>
                                 </StackLayout>
@@ -77,6 +81,7 @@
                                         VerticalOptions="EndAndExpand"
                                         HorizontalOptions="FillAndExpand"
                                         BackgroundColor="{DynamicResource Primary_Color}"
+                                        FontFamily="{StaticResource Roboto-Regular}"
                                         TextColor="White"
                                         Command="{Binding SendOTPCommand}">
                                 </Button>
@@ -95,6 +100,10 @@
                                         CornerRadius="6"
                                         VerticalOptions="EndAndExpand"
                                         HorizontalOptions="FillAndExpand"
+                                        BackgroundColor="White"
+                                        BorderColor="#ccc"
+                                        FontFamily="{StaticResource Roboto-Regular}"
+                                        BorderWidth="1"
                                         Clicked="CredLoginButton_Clicked">
                                 </Button>
 

@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using Xamarin.Forms;
 
@@ -33,11 +34,15 @@ namespace ExpressBase.Mobile
                 };
             }
             else
+            {
                 XControl = new TextBox
                 {
                     IsReadOnly = this.ReadOnly,
-                    BgColor = bg
+                    BgColor = bg,
+                    EnableFocus = true,
+                    BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
                 };
+            }
         }
 
         public override object GetValue()

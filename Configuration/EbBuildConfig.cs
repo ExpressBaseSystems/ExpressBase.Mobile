@@ -9,17 +9,21 @@ namespace ExpressBase.Mobile.Configuration
     /// </summary>
     public class EbBuildConfig
     {
-        public static string VendorName = Expressbase.VendorName;
+        public static string VendorName = MoveOn.VendorName;
 
-        public const string AppIcon = Expressbase.AppIcon;
+        public const string AppIcon = MoveOn.AppIcon;
 
-        public const string AppLabel = Expressbase.AppLabel;
+        public const string AppLabel = MoveOn.AppLabel;
 
-        public const string StatusBarColor = Expressbase.StatusBar;
+        public const string StatusBarColor = MoveOn.StatusBar;
 
-        public const string SplashTheme = Expressbase.SplashTheme;
+        public const string SplashTheme = MoveOn.SplashTheme;
 
-        public static bool NFEnabled = Expressbase.NFEnabled;
+        public static bool NFEnabled = MoveOn.NFEnabled;
+
+        public const string GMapAndroidKey = MoveOn.GMapAndroidKey;
+
+        public const string GMapiOSKey = MoveOn.GMapiOSKey;
 
         public Dictionary<string, AppVendor> Vendors { set; get; }
 

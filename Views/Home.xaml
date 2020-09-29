@@ -11,7 +11,7 @@
 
     <NavigationPage.TitleView>
         <Grid RowSpacing="0"
-              ColumnSpacing="2"
+              ColumnSpacing="0"
               Padding="0"
               BackgroundColor="Transparent">
             <Grid.ColumnDefinitions>

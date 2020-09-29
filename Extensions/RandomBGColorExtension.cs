@@ -14,13 +14,19 @@ namespace ExpressBase.Mobile.Extensions
             {
             Color.SkyBlue,
             Color.Salmon,
-            Color.SandyBrown,
+            Color.Orange,
+            Color.Gray,
             Color.SeaGreen,
             Color.Turquoise,
-            Color.DarkGray
+            Color.DarkGray,
+            Color.Green,
+            Color.Blue,
+            Color.Indigo,
+            Color.Violet,
+            Color.BurlyWood
             };
 
-            return colors[new Random().Next(0, 5)];
+            return colors[new Random().Next(0, 11)];
         }
     }
 }

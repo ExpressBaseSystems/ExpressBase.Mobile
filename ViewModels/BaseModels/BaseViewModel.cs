@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class BaseViewModel : INotifyPropertyChanged, IDisposable
+    public class BaseViewModel : INotifyPropertyChanged
     {
         #region Bindable properties
 
@@ -70,11 +70,6 @@ namespace ExpressBase.Mobile.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -95,6 +90,11 @@ namespace ExpressBase.Mobile.ViewModels
         {
             Store.ResetCashedSolutionData();
             await NavigationService.LoginWithNS();
+
+            if (Utils.HasInternet && App.Settings.Vendor.AllowNotifications)
+            {
+                await NotificationService.Instance.UnRegisterCurrent();
+            }
         }
 
         public virtual void RefreshPage() { }
