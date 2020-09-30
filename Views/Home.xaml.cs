@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
+using ExpressBase.Mobile.Views.Shared;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -91,6 +92,11 @@ namespace ExpressBase.Mobile.Views
         {
             base.OnSizeAllocated(width, height);
             App.ScreenX = width;
+        }
+
+        private async void LocationSwitch_Clicked(object sender, EventArgs e)
+        {
+            await App.RootMaster.Detail.Navigation.PushAsync(new MyLocations());
         }
     }
 }

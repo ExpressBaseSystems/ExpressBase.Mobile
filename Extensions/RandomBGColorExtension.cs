@@ -8,25 +8,37 @@ namespace ExpressBase.Mobile.Extensions
     [ContentProperty("BackgroundColor")]
     public class RandomBGColorExtension : IMarkupExtension
     {
+        static int random;
+
         public object ProvideValue(IServiceProvider serviceProvider)
         {
             var colors = new List<Color>
             {
-            Color.SkyBlue,
-            Color.Salmon,
-            Color.Orange,
-            Color.Gray,
-            Color.SeaGreen,
-            Color.Turquoise,
-            Color.DarkGray,
-            Color.Green,
-            Color.Blue,
-            Color.Indigo,
-            Color.Violet,
-            Color.BurlyWood
+                Color.Bisque,
+                Color.Brown,
+                Color.BurlyWood,
+                Color.Chocolate,
+                Color.DarkKhaki,
+                Color.DarkOliveGreen,
+                Color.SkyBlue,
+                Color.Salmon,
+                Color.Gray,
+                Color.SeaGreen,
+                Color.Turquoise,
+                Color.Green
             };
 
-            return colors[new Random().Next(0, 11)];
+            int randomNum;
+
+            do
+            {
+                randomNum = new Random().Next(0, 11);
+            }
+            while (randomNum == random);
+
+            random = randomNum;
+
+            return colors[randomNum];
         }
     }
 }

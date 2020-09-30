@@ -193,6 +193,7 @@
                                     <Image x:Name="SolutionLogoPrompt"
                                            Grid.Row="1"
                                            HeightRequest="100"
+                                           Margin="0,0,0,15"
                                            Source="icon_eb.png"
                                            HorizontalOptions="Center">
                                     </Image>
@@ -204,7 +205,7 @@
                                             TextColor="White"
                                             Padding="0"
                                             CornerRadius="6"
-                                            Margin="10,0"
+                                            Margin="15,0"
                                             FontFamily="{StaticResource Roboto-Light}"
                                             Clicked="ConfirmButton_Clicked">
                                     </Button>
@@ -213,7 +214,7 @@
                                             Text="CANCEL"
                                             Padding="0"
                                             CornerRadius="6"
-                                            Margin="10,0"
+                                            Margin="15,0"
                                             BorderWidth="1"
                                             BorderColor="#ccc"
                                             BackgroundColor="White"

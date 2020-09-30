@@ -60,7 +60,7 @@
                                                Style="{StaticResource LabelStyle}" />
                                         <control:TextBox x:Name="Email"
                                                          HeightRequest="55"
-                                                         BackgroundColor="#f1f6fb"
+                                                         BgColor="#f1f6fb"
                                                          EnableFocus="True"
                                                          BorderOnFocus="{DynamicResource Primary_Color}"
                                                          Completed="Email_Completed"
@@ -76,7 +76,7 @@
                                             <control:TextBox AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
                                                              AbsoluteLayout.LayoutFlags="All"
                                                              HeightRequest="55"
-                                                             BackgroundColor="#f1f6fb"
+                                                             BgColor="#f1f6fb"
                                                              EnableFocus="True"
                                                              BorderOnFocus="{DynamicResource Primary_Color}"
                                                              x:Name="PassWord"

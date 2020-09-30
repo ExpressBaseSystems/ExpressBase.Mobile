@@ -46,6 +46,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                 <BoxView HeightRequest="50"
                                          WidthRequest="50"
@@ -85,6 +86,22 @@
                                         </Label.FormattedText>
                                     </Label>
                                 </StackLayout>
+
+                                <Button Grid.Column="2"
+                                        IsVisible="{Binding HasLocationSwitcher}"
+                                        Text="Change"
+                                        BackgroundColor="Green"
+                                        TextColor="White"
+                                        HeightRequest="20"
+                                        WidthRequest="50"
+                                        CornerRadius="4"
+                                        Padding="0"
+                                        FontSize="10"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="End"
+                                        Clicked="LocationSwitch_Clicked">
+                                </Button>
+                                
                             </Grid>
                         </Frame>
                         

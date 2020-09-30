@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Configuration;
-using ExpressBase.Mobile.CustomControls;
+﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -8,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile

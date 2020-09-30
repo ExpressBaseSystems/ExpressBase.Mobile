@@ -30,7 +30,9 @@ namespace ExpressBase.Mobile
                 XControl = new TextArea()
                 {
                     IsReadOnly = this.ReadOnly,
-                    BgColor = bg
+                    BgColor = bg,
+                    EnableFocus = true,
+                    BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
                 };
             }
             else

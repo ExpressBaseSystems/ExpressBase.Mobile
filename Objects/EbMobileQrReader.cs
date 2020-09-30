@@ -20,8 +20,8 @@ namespace ExpressBase.Mobile
 
             dataHolder = new TextBox
             {
-                BorderColor = Color.Transparent,
-                IsReadOnly = true
+                IsReadOnly = true,
+                BgColor = Color.FromHex("#fafafa")
             };
             Button link = new Button
             {
@@ -29,7 +29,39 @@ namespace ExpressBase.Mobile
             };
             link.Clicked += OpenQrScanner;
 
-            this.XControl = new InputGroup(dataHolder, link) { BgColor = XBackground };
+            Button clear = new Button
+            {
+                Style = (Style)HelperFunctions.GetResourceValue("QRReaderClearButton")
+            };
+            clear.Clicked += Clear_Clicked; ;
+
+            var grid = new Grid
+            {
+                Style = (Style)HelperFunctions.GetResourceValue("QRReaderContainerGrid"),
+                RowDefinitions =
+                {
+                    new RowDefinition{Height = GridLength.Auto },
+                    new RowDefinition{Height = 40 },
+                },
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition{Width = GridLength.Star},
+                    new ColumnDefinition{Width = GridLength.Auto},
+                }
+            };
+
+            grid.Children.Add(dataHolder, 0, 0);
+            Grid.SetColumnSpan(dataHolder, 2);
+
+            grid.Children.Add(link, 0, 1);
+            grid.Children.Add(clear, 1, 1);
+
+            this.XControl = grid;
+        }
+
+        private void Clear_Clicked(object sender, EventArgs e)
+        {
+            dataHolder?.ClearValue(TextBox.TextProperty);
         }
 
         public override object GetValue()
