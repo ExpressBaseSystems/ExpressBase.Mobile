@@ -107,12 +107,16 @@
                                             FontFamily="{StaticResource FontAwesome}"
                                             WidthRequest="50" />
                                 </AbsoluteLayout>
-                                <Label Text="Comments" />
+                                <Label Text="Comments">
+                                </Label>
                                 <control:TextArea BorderColor="#cccccc"
                                                   BorderThickness="1"
                                                   BorderRadius="10.0"
                                                   Text="{Binding Comments}"
-                                                  HeightRequest="100" />
+                                                  EnableFocus="True"
+                                                  BorderOnFocus="{DynamicResource Primary_Color}"
+                                                  HeightRequest="100">
+                                </control:TextArea>
                             </StackLayout>
                         </StackLayout>
                     </ScrollView>

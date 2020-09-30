@@ -1,5 +1,5 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.ViewModels;
+﻿using ExpressBase.Mobile.ViewModels;
+using ExpressBase.Mobile.Views.Base;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;

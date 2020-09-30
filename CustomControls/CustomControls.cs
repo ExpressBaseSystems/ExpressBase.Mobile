@@ -3,20 +3,6 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
-
-    /// <summary>
-    /// Dynamic content I
-    /// </summary>
-    public interface IDynamicContent
-    {
-        /// <summary>
-        /// Page content dictionary from vendor JSON
-        /// </summary>
-        Dictionary<string, string> PageContent { get; }
-
-        void SetContentFromConfig();
-    }
-
     public interface IEbCustomControl
     {
         int BorderThickness { set; get; }
@@ -59,6 +45,9 @@ namespace ExpressBase.Mobile.CustomControls
 
     public class TextArea : Editor, IEbCustomControl
     {
+        public static readonly BindableProperty BorderOnFocusProperty =
+            BindableProperty.Create(nameof(BorderOnFocus), typeof(Color), typeof(NumericTextBox));
+
         public int BorderThickness { set; get; } = 1;
 
         public float BorderRadius { set; get; } = 10.0f;
@@ -66,6 +55,14 @@ namespace ExpressBase.Mobile.CustomControls
         public Color BorderColor { set; get; } = Color.FromHex("cccccc");
 
         public Color BgColor { set; get; }
+
+        public bool EnableFocus { set; get; }
+
+        public Color BorderOnFocus
+        {
+            get { return (Color)GetValue(BorderOnFocusProperty); }
+            set { SetValue(BorderOnFocusProperty, value); }
+        }
 
         public TextArea() { }
     }

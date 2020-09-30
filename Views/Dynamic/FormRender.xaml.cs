@@ -83,11 +83,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void FullScreenClose_Clicked(object sender, EventArgs e)
         {
-            var scale = new Animation(v => FSWindowFrame.Scale = v, 1, 0);
-            scale.Commit(this, "HideImageFS", 2000, easing: Easing.Linear, finished: (v, c) =>
-            {
-                ImageFullScreen.IsVisible = false;
-            });
+            ImageFullScreen.IsVisible = false;
+            FSWindowFrame.Scale = 0;
         }
     }
 }

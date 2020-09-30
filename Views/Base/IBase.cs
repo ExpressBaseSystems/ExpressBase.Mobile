@@ -1,5 +1,4 @@
-﻿
-using Xamarin.Forms;
+﻿using System.Collections.Generic;
 
 namespace ExpressBase.Mobile.Views.Base
 {
@@ -15,5 +14,12 @@ namespace ExpressBase.Mobile.Views.Base
     public interface IToolBarHandler
     {
         bool DeviceBackButtonPressed();
+    }
+
+    public interface IDynamicContent
+    {
+        Dictionary<string, string> PageContent { get; }
+
+        void SetContentFromConfig();
     }
 }

@@ -1,9 +1,9 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
+using ExpressBase.Mobile.Views.Base;
 using ExpressBase.Mobile.Views.Shared;
 using Newtonsoft.Json;
 using System;
