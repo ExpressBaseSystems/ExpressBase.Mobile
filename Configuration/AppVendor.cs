@@ -18,6 +18,8 @@ namespace ExpressBase.Mobile.Configuration
 
         public string PrimaryColor { set; get; }
 
+        public string PrimaryLowerColor { set; get; }
+
         public bool HasOfflineFeature { set; get; }
 
         public bool HasActions { set; get; }
@@ -39,6 +41,11 @@ namespace ExpressBase.Mobile.Configuration
         public Color GetPrimaryColor()
         {
             return Color.FromHex(PrimaryColor);
+        }
+
+        public Color GetPrimaryLowerColor()
+        {
+            return Color.FromHex(PrimaryLowerColor);
         }
     }
 

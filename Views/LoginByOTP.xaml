@@ -52,8 +52,9 @@
                                 <Image x:Name="LogoUrl"
                                        Grid.Row="1"
                                        Source="{Binding LogoUrl}"
-                                       Margin="20"
+                                       Margin="20,20,20,30"
                                        HeightRequest="100"
+                                       WidthRequest="200"
                                        HorizontalOptions="Center">
                                 </Image>
 

@@ -142,7 +142,43 @@
                         </ListView>
                     </StackLayout>
 
-                    <Button x:Name="AddLinkData"
+                    <Frame x:Name="FormLinkWText"
+                           IsVisible="False"
+                           VerticalOptions="End"
+                           HorizontalOptions="Center"
+                           Grid.Row="1"
+                           Margin="0,0,0,15"
+                           BackgroundColor="{DynamicResource Primary_Color}"
+                           HeightRequest="50"
+                           CornerRadius="25"
+                           HasShadow="True"
+                           BorderColor="{DynamicResource Primary_Color}"
+                           Padding="10,0">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding AddCommand}"></TapGestureRecognizer>
+                        </Frame.GestureRecognizers>
+                        <Frame.Content>
+                            <StackLayout Orientation="Horizontal"
+                                         Spacing="10">
+                                <Label TextColor="White"
+                                       x:Name="FormLinkTextLabel"
+                                       Text="Add"
+                                       FontSize="15"
+                                       LineBreakMode="TailTruncation"
+                                       VerticalTextAlignment="Center">
+                                </Label>
+                                <Label TextColor="White"
+                                       Text="&#xf067;"
+                                       FontSize="16"
+                                       HorizontalOptions="Center"
+                                       FontFamily="{StaticResource FontAwesome}"
+                                       VerticalTextAlignment="Center">
+                                </Label>
+                            </StackLayout>
+                        </Frame.Content>
+                    </Frame>
+
+                    <Button x:Name="FormLinkWOText"
                             IsVisible="False"
                             Grid.Row="1"
                             Text="&#xf067;"
@@ -153,9 +189,10 @@
                             BackgroundColor="{DynamicResource Primary_Color}"
                             BorderColor="{DynamicResource Primary_Color}"
                             BorderWidth="2"
-                            HeightRequest="58"
-                            WidthRequest="58"
-                            CornerRadius="29"
+                            HeightRequest="50"
+                            WidthRequest="50"
+                            CornerRadius="25"
+                            FontSize="18"
                             FontFamily="{StaticResource FontAwesome}"
                             Command="{Binding AddCommand}">
                     </Button>
@@ -178,7 +215,7 @@
                                         FilterControls="{Binding FilterControls}"
                                         OnDisAppearing="FilterView_OnDisAppearing">
                     </control:FilterView>
-                    
+
                 </Grid>
             </control:EbCPLayout.Content>
         </control:EbCPLayout>

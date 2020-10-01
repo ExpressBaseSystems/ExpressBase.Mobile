@@ -19,6 +19,8 @@ namespace ExpressBase.Mobile.Views.Base
 
         protected bool HasLink => ViewModel.Visualization.HasLink();
 
+        protected bool HasLinkText => !string.IsNullOrEmpty(ViewModel.Visualization.NewButtonText);
+
         public async void PagingPrevButton_Clicked(object sender, EventArgs e)
         {
             if (ViewModel.Offset <= 0) return;

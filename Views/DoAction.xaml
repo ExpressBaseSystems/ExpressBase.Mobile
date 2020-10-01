@@ -122,6 +122,7 @@
                     </ScrollView>
 
                     <Button Grid.Row="2"
+                            x:Name="ReviewSubmit"
                             Text="Finish Review"
                             TextColor="White"
                             CornerRadius="0"

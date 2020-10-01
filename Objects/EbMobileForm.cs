@@ -30,6 +30,8 @@ namespace ExpressBase.Mobile
 
         public string MessageOnFailed { set; get; }
 
+        public string SubmitButtonText { set; get; }
+
         public Dictionary<string, EbMobileControl> ControlDictionary { set; get; }
 
         private bool HasFileSelect
@@ -464,6 +466,11 @@ namespace ExpressBase.Mobile
                 }
             }
             return param;
+        }
+
+        public string GetSubmitButtonText()
+        {
+            return string.IsNullOrEmpty(this.SubmitButtonText) ? "Save" : this.SubmitButtonText;
         }
     }
 }

@@ -71,7 +71,7 @@
 
                     <Button x:Name="SaveButton"
                             Grid.Row="1"
-                            Text="Save"
+                            Text="{Binding SubmitButtonText}"
                             CornerRadius="0"
                             HorizontalOptions="FillAndExpand"
                             VerticalOptions="EndAndExpand"

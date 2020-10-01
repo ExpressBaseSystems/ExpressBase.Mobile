@@ -29,7 +29,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             BindingContext = viewModel = new FormRenderVME(page, rowId);
 
-            SaveButton.Text = "Save Changes";
             SaveButton.IsVisible = false;
             EditButton.IsVisible = true;
         }

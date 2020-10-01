@@ -5,6 +5,7 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Views.Base;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
@@ -46,7 +47,17 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 EbMobilePage page = EbPageFinder.GetPage(ViewModel.Visualization.LinkRefId);
 
                 if (page != null && page.Container is EbMobileForm)
-                    AddLinkData.IsVisible = true;
+                {
+                    if (this.HasLinkText)
+                    {
+                        FormLinkTextLabel.Text = ViewModel.Visualization.NewButtonText;
+                        FormLinkWText.IsVisible = true;
+                    }
+                    else
+                    {
+                        FormLinkWOText.IsVisible = true;
+                    }
+                }
             }
 
             this.ToggleDataLength();

@@ -1,14 +1,11 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
-using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -26,12 +23,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected int RowId { set; get; }
 
+        public string SubmitButtonText { set; get; }
+
         public Command SaveCommand => new Command(async () => await FormSubmitClicked());
 
         public FormRenderViewModel(EbMobilePage page) : base(page)
         {
             this.Mode = FormMode.NEW;
             this.Form = (EbMobileForm)this.Page.Container;
+
+            SubmitButtonText = this.Form.GetSubmitButtonText();
 
             InitializeService();
         }

@@ -20,6 +20,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             this.Mode = FormMode.EDIT;
             this.RowId = rowid;
+
+            SubmitButtonText = "Save Changes";
         }
 
         public override async Task InitializeAsync()

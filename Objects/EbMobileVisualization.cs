@@ -47,6 +47,8 @@ namespace ExpressBase.Mobile
 
         public bool ShowNewButton { set; get; }
 
+        public string NewButtonText { set; get; }
+
         public bool ShowLinkIcon { set; get; }
 
         public bool EnableAlternateRowColoring { set; get; }

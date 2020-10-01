@@ -57,9 +57,20 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 EbMobilePage page = EbPageFinder.GetPage(ViewModel.Visualization.LinkRefId);
 
                 if (page != null && page.Container is EbMobileForm)
-                    AddLinkData.IsVisible = true;
+                {
+                    if (this.HasLinkText)
+                    {
+                        FormLinkTextLabel.Text = ViewModel.Visualization.NewButtonText;
+                        FormLinkWText.IsVisible = true;
+                    }
+                    else
+                    {
+                        FormLinkWOText.IsVisible = true;
+                    }
+                }
+
             }
-            ToggleDataLength();
+            this.ToggleDataLength();
         }
 
         protected override void ToggleDataLength()

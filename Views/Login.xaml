@@ -51,6 +51,7 @@
                                        Source="{Binding LogoUrl}"
                                        Margin="20"
                                        HeightRequest="100"
+                                       WidthRequest="200"
                                        HorizontalOptions="Center" />
                                 <StackLayout Grid.Row="2">
                                     <StackLayout Margin="0,5,0,5">

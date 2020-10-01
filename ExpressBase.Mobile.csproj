@@ -56,22 +56,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="CustomControls\EbCPLayout.xaml">
+    <EmbeddedResource Update="CustomControls\Layout\EbCPLayout.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CustomControls\FileUploader.xaml">
+    <EmbeddedResource Update="CustomControls\Views\FileUploader.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CustomControls\FormView.xaml">
+    <EmbeddedResource Update="CustomControls\Views\FormView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CustomControls\LoaderIconed.xaml">
+    <EmbeddedResource Update="CustomControls\Views\LoaderIconed.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CustomControls\Menu.xaml">
+    <EmbeddedResource Update="CustomControls\Views\Menu.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CustomControls\TwoFAView.xaml">
+    <EmbeddedResource Update="CustomControls\Views\TwoFAView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Themes\LightTheme.xaml">
@@ -104,7 +104,7 @@
     <EmbeddedResource Update="Views\MyActions.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CustomControls\ConfirmBox.xaml">
+    <EmbeddedResource Update="CustomControls\Views\ConfirmBox.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\NewSolution.xaml">
@@ -122,10 +122,10 @@
     <EmbeddedResource Update="Views\Shared\DataGridView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CustomControls\Loader.xaml">
+    <EmbeddedResource Update="CustomControls\Views\Loader.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="CustomControls\FilterView.xaml">
+    <EmbeddedResource Update="CustomControls\Views\FilterView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\Shared\MyLocations.xaml">
