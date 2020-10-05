@@ -169,7 +169,7 @@
                                 </Label>
                                 <Label TextColor="White"
                                        Text="&#xf067;"
-                                       FontSize="16"
+                                       FontSize="15"
                                        HorizontalOptions="Center"
                                        FontFamily="{StaticResource FontAwesome}"
                                        VerticalTextAlignment="Center">

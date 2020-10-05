@@ -2,6 +2,7 @@
   "Vendors": {
     "ExpressBase": {
       "BuildType": "Dynamic",
+      "SolutionURL": "*.expressbase.com",
       "AllowNotifications": true,
       "PrimaryColor": "0046bb",
       "PrimaryLowerColor": "56b1cd",
@@ -35,9 +36,10 @@
     },
     "MoveOn": {
       "BuildType": "Dynamic",
+      "SolutionURL": "*.moveontech.com",
       "AllowNotifications": true,
       "PrimaryColor": "283b97",
-      "PrimaryLowerColor": "283b97",
+      "PrimaryLowerColor": "7184e3",
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": true,

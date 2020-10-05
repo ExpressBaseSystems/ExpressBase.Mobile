@@ -151,11 +151,13 @@ namespace ExpressBase.Mobile.Views
                 if (string.IsNullOrEmpty(surl) || viewModel.IsSolutionExist(surl))
                     return;
 
-                EbLayout.ShowLoader(); ;
+                EbLayout.ShowLoader();
+
+                string domain = App.Settings.Vendor.GetDomain();
 
                 if (surl.Split(CharConstants.DOT).Length == 1)
                 {
-                    surl += ".expressbase.com";
+                    surl += $".{domain}";
                     SolutionName.Text = surl;
                 }
                 //api call for validating solution
@@ -196,7 +198,7 @@ namespace ExpressBase.Mobile.Views
             {
                 PopupContainer.IsVisible = false;
             });
-            var parent = new Animation { { 0.5, 1, fade },{ 0, 1, translation } };
+            var parent = new Animation { { 0.5, 1, fade }, { 0, 1, translation } };
             parent.Commit(this, "HidePopupContainer");
         }
 

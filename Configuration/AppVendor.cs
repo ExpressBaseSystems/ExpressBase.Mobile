@@ -1,5 +1,7 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Configuration
@@ -46,6 +48,18 @@ namespace ExpressBase.Mobile.Configuration
         public Color GetPrimaryLowerColor()
         {
             return Color.FromHex(PrimaryLowerColor);
+        }
+
+        public string GetDomain()
+        {
+            string d = "expressbase.com";
+
+            if (!string.IsNullOrEmpty(this.SolutionURL))
+            {
+                string[] split = this.SolutionURL.Split(CharConstants.DOT);
+                d = string.Join(CharConstants.DOT.ToString(), split, 1, 2);
+            }
+            return d;
         }
     }
 
