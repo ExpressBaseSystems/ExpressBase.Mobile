@@ -51,6 +51,8 @@ namespace ExpressBase.Mobile
                 grid.Children.Add(minus, 0, 0);
 
                 valueBox = new TextBox { Text = valueBoxNumber.ToString(), IsReadOnly = true };
+                valueBox.TextChanged += (sender, arg) => this.ValueChanged();
+
                 grid.Children.Add(valueBox, 1, 0);
 
                 var plus = new Button
@@ -66,7 +68,7 @@ namespace ExpressBase.Mobile
             }
             else
             {
-                this.XControl = new NumericTextBox
+                var numeric = new NumericTextBox
                 {
                     IsReadOnly = this.ReadOnly,
                     BgColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White,
@@ -75,6 +77,9 @@ namespace ExpressBase.Mobile
                     EnableFocus = true,
                     BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
                 };
+
+                numeric.Unfocused += (sender, arg) => this.ValueChanged();
+                this.XControl = numeric;
             }
         }
 

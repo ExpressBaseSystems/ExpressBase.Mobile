@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
 using System;
@@ -51,6 +52,16 @@ namespace ExpressBase.Mobile
         public string Code { get; set; }
 
         public ScriptingLanguage Lang { get; set; }
+
+        public string GetCode()
+        {
+            return HelperFunctions.B64ToString(this.Code);
+        }
+
+        public bool IsEmpty()
+        {
+            return string.IsNullOrEmpty(Code);
+        }
     }
 
     public class EbFont

@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System.Collections.Generic;
+using System.Reflection;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -22,6 +24,8 @@ namespace ExpressBase.Mobile
 
         public virtual bool Required { get; set; }
 
+        public virtual EbScript ValueExpr { get; set; }
+
         public string SQLiteType
         {
             get
@@ -41,10 +45,8 @@ namespace ExpressBase.Mobile
             }
         }
 
-        //mobile prop
         public virtual object SQLiteToActual(object value) { return value; }
 
-        //mobile prop
         public View XControl { set; get; }
 
         protected Color XBackground => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
@@ -105,11 +107,16 @@ namespace ExpressBase.Mobile
             return true;
         }
 
+        public virtual void ValueChanged()
+        {
+            EbFormHelper.ControlValueChanged(this.Name);
+        }
+
         public virtual MobileTableColumn GetMobileTableColumn()
         {
             object value = this.GetValue();
-            if (value == null)
-                return null;
+
+            if (value == null) return null;
 
             return new MobileTableColumn
             {
@@ -117,6 +124,12 @@ namespace ExpressBase.Mobile
                 Type = this.EbDbType,
                 Value = value
             };
+        }
+
+        public object InvokeDynamically(string method, object[] parameters = null)
+        {
+            MethodInfo info = this.GetType().GetMethod(method);
+            return info.Invoke(this, parameters);
         }
     }
 

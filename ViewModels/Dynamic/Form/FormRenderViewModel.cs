@@ -43,6 +43,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             Controls = Form.ChildControls;
             Form.ControlDictionary = Form.ChildControls.ToControlDictionary();
+
+            EbFormHelper.Initialize(Form.ControlDictionary);
+
             this.DeployTables();
         }
 

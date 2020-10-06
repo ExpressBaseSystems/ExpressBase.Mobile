@@ -1,7 +1,7 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
+using System;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -24,27 +24,35 @@ namespace ExpressBase.Mobile
         {
             base.InitXControl(Mode, Network);
 
-            Color bg = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White;
             if (TextMode == TextMode.MultiLine)
             {
-                XControl = new TextArea()
+                var textarea = new TextArea()
                 {
                     IsReadOnly = this.ReadOnly,
-                    BgColor = bg,
+                    BgColor = this.XBackground,
                     EnableFocus = true,
                     BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
                 };
+                textarea.Unfocused += TextChanged;
+                this.XControl = textarea;
             }
             else
             {
-                XControl = new TextBox
+                var textbox = new TextBox
                 {
                     IsReadOnly = this.ReadOnly,
-                    BgColor = bg,
+                    BgColor = this.XBackground,
                     EnableFocus = true,
-                    BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
+                    BorderOnFocus = App.Settings.Vendor.GetPrimaryColor(),
                 };
+                textbox.Unfocused += TextChanged;
+                this.XControl = textbox;
             }
+        }
+
+        private void TextChanged(object sender, FocusEventArgs e)
+        {
+            this.ValueChanged();
         }
 
         public override object GetValue()

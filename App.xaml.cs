@@ -13,7 +13,9 @@ namespace ExpressBase.Mobile
 {
     public partial class App : Application
     {
-        public static IDataBase DataDB { get; set; }
+        private static IDataBase _dataDb;
+
+        public static IDataBase DataDB => _dataDb ??= DependencyService.Get<IDataBase>();
 
         public static MasterDetailPage RootMaster { set; get; }
 
@@ -28,8 +30,6 @@ namespace ExpressBase.Mobile
             InitializeComponent();
 
             nfPayLoad = nfdata;
-
-            DataDB = DependencyService.Get<IDataBase>();
             Settings = new SettingsServices();
         }
 
