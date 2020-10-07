@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,10 @@ namespace ExpressBase.Mobile
     public class EbMobileDashBoardControls : EbMobilePageBase
     {
         public virtual View XView { set; get; }
+
+        public EbThickness Margin { set; get; }
+
+        public EbThickness Padding { set; get; }
 
         public virtual void InitXControl() { }
 

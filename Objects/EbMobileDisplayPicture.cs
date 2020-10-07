@@ -1,8 +1,6 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ExpressBase.Mobile
 {

@@ -1,8 +1,4 @@
-﻿using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Structures;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ExpressBase.Mobile.Structures;
 
 namespace ExpressBase.Mobile
 {
@@ -53,5 +49,16 @@ namespace ExpressBase.Mobile
             Right = right;
             Bottom = bottom;
         }
+    }
+
+    public class EbMobileValidator : EbMobilePageBase
+    {
+        public bool IsDisabled { get; set; }
+
+        public bool IsWarningOnly { get; set; }
+
+        public EbScript Script { get; set; }
+
+        public string FailureMSG { get; set; }
     }
 }

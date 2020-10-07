@@ -3,6 +3,7 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using System;
+using System.ComponentModel;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -22,8 +23,6 @@ namespace ExpressBase.Mobile
         private CustomDatePicker datePicker;
 
         private CustomTimePicker timePicker;
-
-        private Color Background => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
 
         public override object SQLiteToActual(object value)
         {
@@ -50,6 +49,7 @@ namespace ExpressBase.Mobile
                     IsEnabled = !this.ReadOnly,
                     BorderColor = Color.Transparent
                 };
+                timePicker.PropertyChanged += PropertyChanged;
                 control = timePicker;
             }
             else
@@ -62,6 +62,8 @@ namespace ExpressBase.Mobile
                 };
                 if (this.BlockBackDatedEntry) datePicker.MinimumDate = DateTime.UtcNow;
                 if (this.BlockFutureDatedEntry) datePicker.MaximumDate = DateTime.UtcNow;
+
+                datePicker.PropertyChanged += PropertyChanged;
                 control = datePicker;
             }
 
@@ -72,7 +74,21 @@ namespace ExpressBase.Mobile
                 GestureRecognizers = { gesture }
             };
 
-            this.XControl = new InputGroup(control, icon) { BgColor = Background };
+            this.XControl = new InputGroup(control, icon) { BgColor = XBackground };
+        }
+
+        private void PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is CustomTimePicker)
+            {
+                if (e.PropertyName == CustomTimePicker.TimeProperty.PropertyName)
+                    this.ValueChanged();
+            }
+            else if (sender is CustomDatePicker)
+            {
+                if (e.PropertyName == CustomDatePicker.DateProperty.PropertyName)
+                    this.ValueChanged();
+            }
         }
 
         private void Icon_Tapped(object sender, EventArgs e)

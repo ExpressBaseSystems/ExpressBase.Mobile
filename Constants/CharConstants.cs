@@ -18,5 +18,7 @@ namespace ExpressBase.Mobile.Constants
         public const char COMMA = ',';
 
         public const char SEMICOLON = ';';
+
+        public const char NEWLINE = '\n';
     }
 }

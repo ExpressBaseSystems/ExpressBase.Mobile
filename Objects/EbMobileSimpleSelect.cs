@@ -119,6 +119,8 @@ namespace ExpressBase.Mobile
                 IsEnabled = !this.ReadOnly,
                 BorderColor = Color.Transparent
             };
+            picker.SelectedIndexChanged += (sender, e) => this.ValueChanged();
+
             Label icon = new Label
             {
                 Style = (Style)HelperFunctions.GetResourceValue("PSIconLabel"),
@@ -202,6 +204,7 @@ namespace ExpressBase.Mobile
         {
             this.selected = comboBox;
             this.SearchBox.Text = comboBox.Text;
+            this.ValueChanged();
             App.RootMaster.Detail.Navigation.PopModalAsync();
         }
 

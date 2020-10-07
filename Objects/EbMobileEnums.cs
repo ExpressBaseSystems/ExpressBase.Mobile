@@ -47,4 +47,10 @@ namespace ExpressBase.Mobile
         Bottom,
         Fill
     }
+
+    public enum StackOrientation
+    {
+        Horizontal,
+        Vertical,
+    }
 }

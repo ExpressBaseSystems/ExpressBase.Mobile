@@ -26,5 +26,10 @@ namespace ExpressBase.Mobile.Extensions
         {
             return Convert.ToInt32(refid.Split(CharConstants.DASH)[3]);
         }
+
+        public static string RemoveSubstring(this string current,string word)
+        {
+            return current.Replace(word, string.Empty);
+        }
     }
 }

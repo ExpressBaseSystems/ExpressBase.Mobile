@@ -17,7 +17,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public List<EbMobileControl> Controls { set; get; }
 
-        protected FormMode Mode { set; get; }
+        public FormMode Mode { set; get; }
 
         protected IFormDataService FormDataService;
 

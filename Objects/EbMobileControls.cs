@@ -2,13 +2,14 @@
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileControl : EbMobilePageBase
+    public abstract class EbMobileControl : EbMobilePageBase
     {
         public virtual string Label { set; get; }
 
@@ -16,15 +17,23 @@ namespace ExpressBase.Mobile
 
         public virtual bool Hidden { set; get; }
 
+        public virtual EbScript HiddenExpr { get; set; }
+
         public virtual bool Unique { get; set; }
 
         public virtual bool ReadOnly { get; set; }
+
+        public virtual EbScript DisableExpr { get; set; }
 
         public virtual bool DoNotPersist { get; set; }
 
         public virtual bool Required { get; set; }
 
         public virtual EbScript ValueExpr { get; set; }
+
+        public virtual EbScript DefaultValueExpression { get; set; }
+
+        public virtual List<EbMobileValidator> Validators { get; set; }
 
         public string SQLiteType
         {
@@ -47,7 +56,7 @@ namespace ExpressBase.Mobile
 
         public virtual object SQLiteToActual(object value) { return value; }
 
-        public View XControl { set; get; }
+        protected View XControl { set; get; }
 
         protected Color XBackground => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
 
@@ -126,49 +135,29 @@ namespace ExpressBase.Mobile
             };
         }
 
+        protected Dictionary<string, string> ScriptMethodMap = new Dictionary<string, string>
+        {
+            { "getValue","GetValue"}
+        };
+
         public object InvokeDynamically(string method, object[] parameters = null)
         {
-            MethodInfo info = this.GetType().GetMethod(method);
-            return info.Invoke(this, parameters);
-        }
-    }
+            try
+            {
+                if (!ScriptMethodMap.TryGetValue(method, out string member))
+                {
+                    throw new Exception($"Invalid method found : '{method}()'");
+                }
 
-    public class EbMobileTableLayout : EbMobileControl, ILayoutControl
-    {
-        public int RowCount { set; get; }
-
-        public int ColumCount { set; get; }
-
-        public List<EbMobileTableCell> CellCollection { set; get; }
-
-        public override bool Hidden { set; get; }
-
-        public override bool Unique { get; set; }
-
-        public EbMobileTableLayout()
-        {
-            this.CellCollection = new List<EbMobileTableCell>();
-        }
-    }
-
-    public class EbMobileTableCell : EbMobilePageBase
-    {
-        public int RowIndex { set; get; }
-
-        public int ColIndex { set; get; }
-
-        public int Width { set; get; }
-
-        public List<EbMobileControl> ControlCollection { set; get; }
-
-        public EbMobileTableCell()
-        {
-            this.ControlCollection = new List<EbMobileControl>();
-        }
-
-        public bool IsEmpty()
-        {
-            return this.ControlCollection.Count <= 0;
+                MethodInfo info = this.GetType().GetMethod(member);
+                return info.Invoke(this, parameters);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info("Dynamic invokation failed in eb control : " + this.Name);
+                EbLog.Info(ex.Message);
+            }
+            return null;
         }
     }
 }

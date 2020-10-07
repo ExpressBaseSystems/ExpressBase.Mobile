@@ -12,19 +12,13 @@ namespace ExpressBase.Mobile
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.Decimal; } set { } }
 
-        public int MaxLength { get; set; }
-
         public int DecimalPlaces { get; set; }
 
         public int MaxLimit { get; set; }
 
         public int MinLimit { get; set; }
 
-        public bool IsCurrency { get; set; }
-
         public NumericBoxTypes RenderType { get; set; }
-
-        public bool IsAggragate { get; set; }
 
         private TextBox valueBox;
 
@@ -71,7 +65,7 @@ namespace ExpressBase.Mobile
                 var numeric = new NumericTextBox
                 {
                     IsReadOnly = this.ReadOnly,
-                    BgColor = this.ReadOnly ? Color.FromHex("eeeeee") : Color.White,
+                    BgColor = this.XBackground,
                     Keyboard = Keyboard.Numeric,
                     Behaviors = { new NumericBoxBehavior() },
                     EnableFocus = true,
