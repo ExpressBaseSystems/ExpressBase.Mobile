@@ -422,19 +422,9 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public override void SetAsReadOnly(bool enable)
+        public override void SetAsReadOnly(bool disable)
         {
-            try
-            {
-                if (enable)
-                    container.IsEnabled = false;
-                else
-                    container.IsEnabled = true;
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error(ex.Message);
-            }
+            container.IsEnabled = !disable;
         }
     }
 }

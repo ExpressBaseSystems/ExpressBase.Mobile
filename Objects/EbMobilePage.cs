@@ -44,11 +44,6 @@ namespace ExpressBase.Mobile
 
     public class EbScript
     {
-        public EbScript()
-        {
-            Code ??= string.Empty;
-        }
-
         public string Code { get; set; }
 
         public ScriptingLanguage Lang { get; set; }

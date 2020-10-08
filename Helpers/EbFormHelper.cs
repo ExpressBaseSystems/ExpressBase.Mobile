@@ -12,11 +12,9 @@ namespace ExpressBase.Mobile.Helpers
 
         public static EbFormHelper Instance => instance ??= new EbFormHelper();
 
-        private static readonly Regex scriptRegex = new Regex(@"(?:form)\S+\w+");
-
         private Dictionary<string, EbMobileControl> controls;
 
-        private Dictionary<string, List<string>> dependencyMap;
+        private ControlDependencyMap dependencyMap;
 
         private readonly EbSciptEvaluator evaluator;
 
@@ -29,80 +27,110 @@ namespace ExpressBase.Mobile.Helpers
         {
             Instance.controls = controls;
 
-            Instance.InitializeDependency();
-        }
-
-        public void InitializeDependency()
-        {
-            dependencyMap = new Dictionary<string, List<string>>();
-
-            foreach (var ctrl in controls.Values)
-            {
-                if (ctrl.ValueExpr == null || ctrl.ValueExpr.IsEmpty())
-                    continue;
-
-                try
-                {
-                    foreach (Match match in scriptRegex.Matches(ctrl.ValueExpr.GetCode()))
-                    {
-                        string matchUnit = match.Value;
-
-                        EbScriptExpression ebExpr = this.GetExpression(matchUnit);
-
-                        if (!dependencyMap.ContainsKey(ebExpr.Name))
-                        {
-                            dependencyMap.Add(ebExpr.Name, new List<string>());
-                        }
-
-                        if (!dependencyMap[ebExpr.Name].Contains(ctrl.Name))
-                        {
-                            dependencyMap[ebExpr.Name].Add(ctrl.Name);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Info("Failed to resolve control dependency :" + ctrl.Name);
-                    EbLog.Info(ex.Message);
-                }
-            }
+            Instance.dependencyMap = new ControlDependencyMap();
+            Instance.dependencyMap.Init(controls);
         }
 
         public static void ControlValueChanged(string controlName)
         {
-            if (!Instance.dependencyMap.ContainsKey(controlName))
+            if (!Instance.dependencyMap.HasDependency(controlName))
                 return;
 
-            List<string> dep = Instance.dependencyMap[controlName] ?? new List<string>();
+            ExprDependency exprDep = Instance.dependencyMap.GetDependency(controlName);
 
-            foreach (var name in dep)
+            if (exprDep.HasValueDependency)
             {
-                EbMobileControl ctrl = Instance.controls[name];
+                foreach (var name in exprDep.ValueExpr)
+                {
+                    EbMobileControl ctrl = Instance.controls[name];
+                    Instance.EvaluateValueExpr(ctrl);
+                }
+            }
 
-                Instance.EvaluateValueExpr(ctrl);
+            if (exprDep.HasHideDependency)
+            {
+                foreach (var name in exprDep.HideExpr)
+                {
+                    EbMobileControl ctrl = Instance.controls[name];
+                    Instance.EvaluateHideExpr(ctrl);
+                }
+            }
+
+            if (exprDep.HasDisableDependency)
+            {
+                foreach (var name in exprDep.DisableExpr)
+                {
+                    EbMobileControl ctrl = Instance.controls[name];
+                    Instance.EvaluateDisableExpr(ctrl);
+                }
             }
         }
 
         public void EvaluateValueExpr(EbMobileControl ctrl)
         {
-            try
+            string expr = ctrl.ValueExpr.GetCode();
+
+            if (this.GetComputedExpr(expr, out string computed))
             {
-                string expr = ctrl.ValueExpr.GetCode();
-
-                MatchCollection collection = scriptRegex.Matches(expr);
-
-                if (collection == null) 
-                    return;
-
-                if (this.GetComputedExpr(collection, expr, out string computed))
+                try
                 {
-                    this.ComputeAndSetValue(computed, ctrl);
+                    object value = evaluator.ScriptEvaluate(computed);
+                    ctrl.SetValue(value);
+                    ctrl.ValueChanged();
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info($"Value script evaluation error in control '{ctrl.Name}'");
+                    EbLog.Error(ex.Message);
                 }
             }
-            catch (Exception ex)
+        }
+
+        public void EvaluateHideExpr(EbMobileControl ctrl)
+        {
+            string expr = ctrl.HiddenExpr.GetCode();
+
+            if (this.GetComputedExpr(expr, out string computed))
             {
-                EbLog.Info("Failed to evaluate expression for :" + ctrl.Name);
-                EbLog.Error(ex.Message);
+                try
+                {
+                    bool value = evaluator.ScriptEvaluate<bool>(computed);
+                    if (value)
+                        ctrl.SetVisibilty(false);
+                    else
+                        ctrl.SetVisibilty(true);
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info($"hide script evaluation error in control '{ctrl.Name}', considering as false");
+                    EbLog.Error(ex.Message);
+
+                    ctrl.SetVisibilty(true);
+                }
+            }
+        }
+
+        public void EvaluateDisableExpr(EbMobileControl ctrl)
+        {
+            string expr = ctrl.DisableExpr.GetCode();
+
+            if (this.GetComputedExpr(expr, out string computed))
+            {
+                try
+                {
+                    bool value = evaluator.ScriptEvaluate<bool>(computed);
+                    if (value)
+                        ctrl.SetAsReadOnly(true);
+                    else
+                        ctrl.SetAsReadOnly(false);
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info($"Disable script evaluation error in control '{ctrl.Name}', considering as false");
+                    EbLog.Error(ex.Message);
+
+                    ctrl.SetAsReadOnly(false);
+                }
             }
         }
 
@@ -120,13 +148,18 @@ namespace ExpressBase.Mobile.Helpers
             };
         }
 
-        private bool GetComputedExpr(MatchCollection matches, string expr, out string computedResult)
+        private bool GetComputedExpr(string expr, out string computedResult)
         {
             computedResult = string.Empty;
 
             try
             {
-                foreach (Match match in matches)
+                MatchCollection collection = ControlDependencyMap.EbScriptRegex.Matches(expr);
+
+                if (collection == null || collection.Count <= 0)
+                    return false;
+
+                foreach (Match match in collection)
                 {
                     string matchUnit = match.Value;
 
@@ -137,10 +170,7 @@ namespace ExpressBase.Mobile.Helpers
 
                     object value = this.controls[ebExpr.Name].InvokeDynamically(ebExpr.Method);
 
-                    if (value == null)
-                        throw new Exception("expression member value is null, operation terminated");
-
-                    expr = expr.Replace(matchUnit + "()", value.ToString());
+                    expr = expr.Replace(matchUnit + "()", Convert(value));
                 }
 
                 computedResult = expr;
@@ -155,26 +185,14 @@ namespace ExpressBase.Mobile.Helpers
             return false;
         }
 
-        private void ComputeAndSetValue(string expression, EbMobileControl ctrl)
+        private string Convert(object value)
         {
-            //int numLines = expression.Split(CharConstants.NEWLINE).Length;
-
-            //if (numLines == 1 && expression.Contains(returnKeyWord))
-            //{
-            //    expression = expression.RemoveSubstring(returnKeyWord).TrimEnd(CharConstants.SEMICOLON);
-            //}
-
-            try
-            {
-                object value = evaluator.ScriptEvaluate(expression);
-                ctrl.SetValue(value);
-                ctrl.ValueChanged();
-            }
-            catch (Exception ex)
-            {
-                EbLog.Info("Failed to calaculate expression");
-                EbLog.Error(ex.Message);
-            }
+            if (value == null)
+                return "null";
+            else if (value is bool)
+                return value.ToString().ToLower();
+            else
+                return value.ToString();
         }
     }
 }

@@ -56,7 +56,7 @@ namespace ExpressBase.Mobile
 
         public virtual object SQLiteToActual(object value) { return value; }
 
-        protected View XControl { set; get; }
+        public View XControl { set; get; }
 
         protected Color XBackground => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
 
@@ -98,12 +98,14 @@ namespace ExpressBase.Mobile
 
         public virtual void SetValue(object value) { }
 
-        public virtual void SetAsReadOnly(bool Enable)
+        public virtual void SetAsReadOnly(bool disable)
         {
-            if (Enable == true)
-                this.XControl.IsEnabled = false;
-            else
-                this.XControl.IsEnabled = true;
+            this.XControl.IsEnabled = !disable;
+        }
+
+        public virtual void SetVisibilty(bool visible)
+        {
+            this.XView.IsVisible = visible;
         }
 
         public virtual void Reset() { }
