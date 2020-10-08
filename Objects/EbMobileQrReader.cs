@@ -12,13 +12,13 @@ namespace ExpressBase.Mobile
     {
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
 
-        private TextBox dataHolder;
+        private EbXTextBox dataHolder;
 
         public override void InitXControl(FormMode mode, NetworkMode network)
         {
             base.InitXControl(mode, network);
 
-            dataHolder = new TextBox
+            dataHolder = new EbXTextBox
             {
                 IsReadOnly = true,
                 XBackgroundColor = Color.FromHex("#fafafa")
@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile
 
         private void Clear_Clicked(object sender, EventArgs e)
         {
-            dataHolder?.ClearValue(TextBox.TextProperty);
+            dataHolder?.ClearValue(EbXTextBox.TextProperty);
         }
 
         public override object GetValue()
@@ -76,7 +76,7 @@ namespace ExpressBase.Mobile
 
         public override void Reset()
         {
-            dataHolder.ClearValue(TextBox.TextProperty);
+            dataHolder.ClearValue(EbXTextBox.TextProperty);
         }
 
         public override bool Validate()

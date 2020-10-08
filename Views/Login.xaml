@@ -59,14 +59,14 @@
                                                VerticalOptions="Center"
                                                FontFamily="{StaticResource Roboto-Regular}"
                                                Style="{StaticResource LabelStyle}" />
-                                        <control:TextBox x:Name="Email"
+                                        <control:EbXTextBox x:Name="Email"
                                                          HeightRequest="55"
                                                          XBackgroundColor="#f1f6fb"
                                                          EnableFocus="True"
                                                          BorderOnFocus="{DynamicResource Primary_Color}"
                                                          Completed="Email_Completed"
                                                          Text="{Binding Email}">
-                                        </control:TextBox>
+                                        </control:EbXTextBox>
                                     </StackLayout>
                                     <StackLayout Margin="0,5,0,20">
                                         <Label Text="Password"
@@ -74,15 +74,16 @@
                                                FontFamily="{StaticResource Roboto-Regular}"
                                                Style="{StaticResource LabelStyle}"></Label>
                                         <AbsoluteLayout>
-                                            <control:TextBox AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                                                             AbsoluteLayout.LayoutFlags="All"
-                                                             HeightRequest="55"
-                                                             XBackgroundColor="#f1f6fb"
-                                                             EnableFocus="True"
-                                                             BorderOnFocus="{DynamicResource Primary_Color}"
-                                                             x:Name="PassWord"
-                                                             IsPassword="True"
-                                                             Text="{Binding PassWord}" />
+                                            <control:EbXTextBox AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                                                                AbsoluteLayout.LayoutFlags="All"
+                                                                HeightRequest="55"
+                                                                XBackgroundColor="#f1f6fb"
+                                                                EnableFocus="True"
+                                                                BorderOnFocus="{DynamicResource Primary_Color}"
+                                                                x:Name="PassWord"
+                                                                IsPassword="True"
+                                                                Text="{Binding PassWord}">
+                                            </control:EbXTextBox>
                                             <Button x:Name="ShowPassword"
                                                     AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
                                                     AbsoluteLayout.LayoutFlags="PositionProportional"

@@ -87,17 +87,18 @@
                             <StackLayout Margin="15,0">
                                 <Label Text="Status" />
                                 <AbsoluteLayout>
-                                    <control:CustomPicker AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                                                          AbsoluteLayout.LayoutFlags="All"
-                                                          BorderColor="#cccccc"
-                                                          BorderThickness="1"
-                                                          BorderRadius="10.0"
-                                                          Title="Select status"
-                                                          FontSize="15"
-                                                          TitleColor="{StaticResource Gray-900}"
-                                                          ItemsSource="{Binding StageActions}"
-                                                          ItemDisplayBinding="{Binding ActionName}"
-                                                          SelectedItem="{Binding Status}" />
+                                    <control:EbXPicker AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                                                       AbsoluteLayout.LayoutFlags="All"
+                                                       BorderColor="#cccccc"
+                                                       BorderThickness="1"
+                                                       BorderRadius="10.0"
+                                                       Title="Select status"
+                                                       FontSize="15"
+                                                       TitleColor="{StaticResource Gray-900}"
+                                                       ItemsSource="{Binding StageActions}"
+                                                       ItemDisplayBinding="{Binding ActionName}"
+                                                       SelectedItem="{Binding Status}">
+                                    </control:EbXPicker>
                                     <Button AbsoluteLayout.LayoutBounds="1, .5, AutoSize, AutoSize"
                                             AbsoluteLayout.LayoutFlags="PositionProportional"
                                             Text="&#xf078;"
@@ -109,14 +110,14 @@
                                 </AbsoluteLayout>
                                 <Label Text="Comments">
                                 </Label>
-                                <control:TextArea BorderColor="#cccccc"
+                                <control:EbXTextArea BorderColor="#cccccc"
                                                   BorderThickness="1"
                                                   BorderRadius="10.0"
                                                   Text="{Binding Comments}"
                                                   EnableFocus="True"
                                                   BorderOnFocus="{DynamicResource Primary_Color}"
                                                   HeightRequest="100">
-                                </control:TextArea>
+                                </control:EbXTextArea>
                             </StackLayout>
                         </StackLayout>
                     </ScrollView>

@@ -35,13 +35,13 @@
                             Text="&#xf177;"
                             Clicked="BackButton_Clicked">
                         </Button>
-                        <control:TextBox 
+                        <control:EbXTextBox 
                             Grid.Column="1"
                             x:Name="SelectSearchBox"
                             FontSize="14"
                             BorderColor="Transparent"
                             TextChanged="SelectSearchBox_TextChanged">
-                        </control:TextBox>
+                        </control:EbXTextBox>
                         <Button
                             x:Name="ResetSearch"
                             IsVisible="False"

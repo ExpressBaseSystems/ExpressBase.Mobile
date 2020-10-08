@@ -65,13 +65,13 @@
                                            FontFamily="{StaticResource Roboto-Regular}"
                                            Style="{StaticResource LabelStyle}">
                                     </Label>
-                                    <control:TextBox x:Name="UserName"
+                                    <control:EbXTextBox x:Name="UserName"
                                                      HeightRequest="55"
                                                      XBackgroundColor="#f1f6fb"
                                                      EnableFocus="True"
                                                      BorderOnFocus="{DynamicResource Primary_Color}"
                                                      Text="{Binding UserName}">
-                                    </control:TextBox>
+                                    </control:EbXTextBox>
                                 </StackLayout>
                                 <!--  next button  -->
                                 <Button x:Name="SendOTPButton"

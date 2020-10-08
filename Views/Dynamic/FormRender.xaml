@@ -10,29 +10,29 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <Style TargetType="control:TextBox">
+            <Style TargetType="control:EbXTextBox">
                 <Setter Property="FontSize"
                         Value="15"></Setter>
             </Style>
-            <Style TargetType="control:CustomDatePicker">
+            <Style TargetType="control:EbXDatePicker">
                 <Setter Property="FontSize"
                         Value="15"></Setter>
             </Style>
-            <Style TargetType="control:CustomTimePicker">
+            <Style TargetType="control:EbXTimePicker">
                 <Setter Property="FontSize"
                         Value="15"></Setter>
             </Style>
-            <Style TargetType="control:NumericTextBox">
+            <Style TargetType="control:EbXNumericTextBox">
                 <Setter Property="FontSize"
                         Value="15"></Setter>
             </Style>
-            <Style TargetType="control:CustomPicker">
+            <Style TargetType="control:EbXPicker">
                 <Setter Property="FontSize"
                         Value="15"></Setter>
                 <Setter Property="TextColor"
                         Value="#333942"></Setter>
             </Style>
-            <Style TargetType="control:TextArea">
+            <Style TargetType="control:EbXTextArea">
                 <Setter Property="FontSize"
                         Value="15"></Setter>
                 <Setter Property="HeightRequest"

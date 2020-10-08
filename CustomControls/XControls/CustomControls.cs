@@ -13,89 +13,9 @@ namespace ExpressBase.Mobile.CustomControls
         Color XBackgroundColor { set; get; }
     }
 
-    public class HiddenEntry : Entry
+    public class EbXHiddenEntry : Entry
     {
 
-    }
-
-    public class CustomDatePicker : DatePicker, IEbCustomControl
-    {
-        public static readonly BindableProperty XBackgroundColorProperty =
-           BindableProperty.Create(nameof(XBackgroundColor), typeof(Color), typeof(CustomDatePicker));
-
-        public int BorderThickness { set; get; } = 1;
-
-        public float BorderRadius { set; get; } = 10.0f;
-
-        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
-
-        public Color XBackgroundColor
-        {
-            get { return (Color)GetValue(XBackgroundColorProperty); }
-            set { SetValue(XBackgroundColorProperty, value); }
-        }
-
-        public CustomDatePicker() { }
-    }
-
-    public class CustomTimePicker : TimePicker, IEbCustomControl
-    {
-        public static readonly BindableProperty XBackgroundColorProperty =
-          BindableProperty.Create(nameof(XBackgroundColor), typeof(Color), typeof(CustomTimePicker));
-
-        public int BorderThickness { set; get; } = 1;
-
-        public float BorderRadius { set; get; } = 10.0f;
-
-        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
-
-        public Color XBackgroundColor
-        {
-            get { return (Color)GetValue(XBackgroundColorProperty); }
-            set { SetValue(XBackgroundColorProperty, value); }
-        }
-
-        public CustomTimePicker() { }
-    }
-
-    public class CustomCheckBox : CheckBox, IEbCustomControl
-    {
-        public static readonly BindableProperty XBackgroundColorProperty =
-          BindableProperty.Create(nameof(XBackgroundColor), typeof(Color), typeof(CustomCheckBox));
-
-        public int BorderThickness { set; get; }
-
-        public float BorderRadius { set; get; }
-
-        public Color BorderColor { set; get; }
-
-        public Color XBackgroundColor
-        {
-            get { return (Color)GetValue(XBackgroundColorProperty); }
-            set { SetValue(XBackgroundColorProperty, value); }
-        }
-
-        public CustomCheckBox() { }
-    }
-
-    public class CustomPicker : Picker, IEbCustomControl
-    {
-        public static readonly BindableProperty XBackgroundColorProperty =
-          BindableProperty.Create(nameof(XBackgroundColor), typeof(Color), typeof(CustomPicker));
-
-        public int BorderThickness { set; get; } = 1;
-
-        public float BorderRadius { set; get; } = 10.0f;
-
-        public Color BorderColor { set; get; } = Color.FromHex("cccccc");
-
-        public Color XBackgroundColor
-        {
-            get { return (Color)GetValue(XBackgroundColorProperty); }
-            set { SetValue(XBackgroundColorProperty, value); }
-        }
-
-        public CustomPicker() { }
     }
 
     public class ComboBoxLabel : Label

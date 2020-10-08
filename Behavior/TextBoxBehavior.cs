@@ -8,15 +8,15 @@ namespace ExpressBase.Mobile.Behavior
     /// NewSolution page textbox behavior
     /// Contains solutionurl validation
     /// </summary>
-    public class SolutioUrlBehavior : Behavior<TextBox>
+    public class SolutioUrlBehavior : Behavior<EbXTextBox>
     {
-        protected override void OnAttachedTo(TextBox numeric)
+        protected override void OnAttachedTo(EbXTextBox numeric)
         {
             numeric.TextChanged += OnEntryTextChanged;
             base.OnAttachedTo(numeric);
         }
 
-        protected override void OnDetachingFrom(TextBox numeric)
+        protected override void OnDetachingFrom(EbXTextBox numeric)
         {
             numeric.TextChanged -= OnEntryTextChanged;
             base.OnDetachingFrom(numeric);
@@ -40,7 +40,7 @@ namespace ExpressBase.Mobile.Behavior
                 else
                     isValid = true;
 
-                ((TextBox)sender).Text = isValid ? args.NewTextValue : args.NewTextValue.Remove(args.NewTextValue.Length - 1);
+                ((EbXTextBox)sender).Text = isValid ? args.NewTextValue : args.NewTextValue.Remove(args.NewTextValue.Length - 1);
             }
         }
     }

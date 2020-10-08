@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile
         {
             base.InitXControl(Mode, Network);
 
-            this.XControl = new TextBox
+            this.XControl = new EbXTextBox
             {
                 IsReadOnly = true,
                 XBackgroundColor = Color.FromHex("eeeeee")
@@ -24,12 +24,12 @@ namespace ExpressBase.Mobile
 
         public override void SetValue(object value)
         {
-            (this.XControl as TextBox).Text = value?.ToString();
+            (this.XControl as EbXTextBox).Text = value?.ToString();
         }
 
         public override bool Validate()
         {
-            bool isNull = string.IsNullOrEmpty((this.XControl as TextBox).Text);
+            bool isNull = string.IsNullOrEmpty((this.XControl as EbXTextBox).Text);
             if (this.Required && isNull)
                 return false;
 

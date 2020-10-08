@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void TriggerSizeChanged(View view, int colnum)
         {
-            if (view is LSImage lm)
+            if (view is EbListViewImage lm)
             {
                 if (lm.CalcHeight)
                 {

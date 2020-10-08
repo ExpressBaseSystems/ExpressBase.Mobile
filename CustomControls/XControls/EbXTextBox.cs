@@ -2,13 +2,13 @@
 
 namespace ExpressBase.Mobile.CustomControls
 {
-    public class TextArea : Editor, IEbCustomControl
+    public class EbXTextBox : Entry, IEbCustomControl
     {
         public static readonly BindableProperty BorderOnFocusProperty =
-            BindableProperty.Create(nameof(BorderOnFocus), typeof(Color), typeof(TextArea));
+            BindableProperty.Create(nameof(BorderOnFocus), typeof(Color), typeof(EbXTextBox));
 
         public static readonly BindableProperty XBackgroundColorProperty =
-          BindableProperty.Create(nameof(XBackgroundColor), typeof(Color), typeof(TextArea));
+           BindableProperty.Create(nameof(XBackgroundColor), typeof(Color), typeof(EbXTextBox));
 
         public int BorderThickness { set; get; } = 1;
 
@@ -30,6 +30,6 @@ namespace ExpressBase.Mobile.CustomControls
             set { SetValue(BorderOnFocusProperty, value); }
         }
 
-        public TextArea() { }
+        public EbXTextBox() { }
     }
 }

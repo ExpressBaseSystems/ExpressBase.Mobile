@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void OtpTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            HiddenEntry entry = (HiddenEntry)sender;
+            EbXHiddenEntry entry = (EbXHiddenEntry)sender;
             string otp = entry.Text;
 
             if (otp.Length > 6)

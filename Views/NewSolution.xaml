@@ -101,16 +101,16 @@
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                             <ColumnDefinition Width="Auto"></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
-                                        <control:TextBox x:Name="SolutionName"
+                                        <control:EbXTextBox x:Name="SolutionName"
                                                          BorderColor="Transparent"
                                                          FontSize="16"
                                                          VerticalTextAlignment="Center"
                                                          Grid.Column="0"
                                                          Placeholder="Enter solution URL">
-                                            <control:TextBox.Behaviors>
+                                            <control:EbXTextBox.Behaviors>
                                                 <behavior:SolutioUrlBehavior></behavior:SolutioUrlBehavior>
-                                            </control:TextBox.Behaviors>
-                                        </control:TextBox>
+                                            </control:EbXTextBox.Behaviors>
+                                        </control:EbXTextBox>
                                         <BoxView Grid.Column="1"
                                                  BackgroundColor="{DynamicResource Primary_Color}"
                                                  HeightRequest="45"

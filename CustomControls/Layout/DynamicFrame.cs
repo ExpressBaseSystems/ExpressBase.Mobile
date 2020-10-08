@@ -252,7 +252,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private View DC2Image(EbMobileDataColumn dc, object value)
         {
-            LSImage image = new LSImage
+            EbListViewImage image = new EbListViewImage
             {
                 Style = (Style)HelperFunctions.GetResourceValue("ListViewImage")
             };

@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile
 
         public NumericBoxTypes RenderType { get; set; }
 
-        private TextBox valueBox;
+        private EbXTextBox valueBox;
 
         private int valueBoxNumber = 0;
 
@@ -44,7 +44,7 @@ namespace ExpressBase.Mobile
                 minus.Clicked += Minus_Clicked;
                 grid.Children.Add(minus, 0, 0);
 
-                valueBox = new TextBox { Text = valueBoxNumber.ToString(), IsReadOnly = true };
+                valueBox = new EbXTextBox { Text = valueBoxNumber.ToString(), IsReadOnly = true };
                 valueBox.TextChanged += (sender, arg) => this.ValueChanged();
 
                 grid.Children.Add(valueBox, 1, 0);
@@ -62,7 +62,7 @@ namespace ExpressBase.Mobile
             }
             else
             {
-                var numeric = new NumericTextBox
+                var numeric = new EbXNumericTextBox
                 {
                     IsReadOnly = this.ReadOnly,
                     XBackgroundColor = this.XBackground,
@@ -100,7 +100,7 @@ namespace ExpressBase.Mobile
                     value = valueBoxNumber;
                 else
                 {
-                    var text = (this.XControl as NumericTextBox).Text;
+                    var text = (this.XControl as EbXNumericTextBox).Text;
                     value = Convert.ToInt32(text);
                 }
             }
@@ -122,7 +122,7 @@ namespace ExpressBase.Mobile
                     valueBox.Text = valueBoxNumber.ToString();
                 }
                 else
-                    (this.XControl as NumericTextBox).Text = value.ToString();
+                    (this.XControl as EbXNumericTextBox).Text = value.ToString();
             }
         }
 
@@ -133,7 +133,7 @@ namespace ExpressBase.Mobile
             Color bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
 
             if (RenderType == NumericBoxTypes.TextType)
-                (this.XControl as NumericTextBox).XBackgroundColor = bg;
+                (this.XControl as EbXNumericTextBox).XBackgroundColor = bg;
             else
                 valueBox.XBackgroundColor = bg;
         }
@@ -142,11 +142,11 @@ namespace ExpressBase.Mobile
         {
             if (RenderType == NumericBoxTypes.ButtonType)
             {
-                valueBox.ClearValue(TextBox.TextProperty);
+                valueBox.ClearValue(EbXTextBox.TextProperty);
                 valueBoxNumber = 0;
             }
             else
-                (this.XControl as NumericTextBox).ClearValue(NumericTextBox.TextProperty);
+                (this.XControl as EbXNumericTextBox).ClearValue(EbXNumericTextBox.TextProperty);
         }
 
         public override bool Validate()

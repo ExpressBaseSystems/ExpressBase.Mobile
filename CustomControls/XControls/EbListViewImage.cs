@@ -13,7 +13,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
-    public class LSImage : Image
+    public class EbListViewImage : Image
     {
         public double InitialWidth { set; get; }
 

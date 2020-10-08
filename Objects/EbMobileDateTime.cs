@@ -20,9 +20,9 @@ namespace ExpressBase.Mobile
 
         public bool BlockFutureDatedEntry { set; get; }
 
-        private CustomDatePicker datePicker;
+        private EbXDatePicker datePicker;
 
-        private CustomTimePicker timePicker;
+        private EbXTimePicker timePicker;
 
         public override object SQLiteToActual(object value)
         {
@@ -44,7 +44,7 @@ namespace ExpressBase.Mobile
 
             if (EbDateType == EbDateType.Time)
             {
-                timePicker = new CustomTimePicker
+                timePicker = new EbXTimePicker
                 {
                     IsEnabled = !this.ReadOnly,
                     BorderColor = Color.Transparent
@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile
             }
             else
             {
-                datePicker = new CustomDatePicker
+                datePicker = new EbXDatePicker
                 {
                     IsEnabled = !this.ReadOnly,
                     Date = DateTime.UtcNow,
@@ -79,14 +79,14 @@ namespace ExpressBase.Mobile
 
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (sender is CustomTimePicker)
+            if (sender is EbXTimePicker)
             {
-                if (e.PropertyName == CustomTimePicker.TimeProperty.PropertyName)
+                if (e.PropertyName == EbXTimePicker.TimeProperty.PropertyName)
                     this.ValueChanged();
             }
-            else if (sender is CustomDatePicker)
+            else if (sender is EbXDatePicker)
             {
-                if (e.PropertyName == CustomDatePicker.DateProperty.PropertyName)
+                if (e.PropertyName == EbXDatePicker.DateProperty.PropertyName)
                     this.ValueChanged();
             }
         }
@@ -142,9 +142,9 @@ namespace ExpressBase.Mobile
         public override void Reset()
         {
             if (this.EbDateType == EbDateType.Time)
-                timePicker.ClearValue(CustomTimePicker.TimeProperty);
+                timePicker.ClearValue(EbXTimePicker.TimeProperty);
             else
-                datePicker.ClearValue(CustomDatePicker.DateProperty);
+                datePicker.ClearValue(EbXDatePicker.DateProperty);
         }
 
         public override bool Validate()
@@ -156,12 +156,9 @@ namespace ExpressBase.Mobile
         {
             base.SetAsReadOnly(disable);
 
-            var bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
+            Color bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
 
-            if (this.EbDateType == EbDateType.Time)
-                timePicker.XBackgroundColor = bg;
-            else
-                datePicker.XBackgroundColor = bg;
+            (this.XControl as InputGroup).XBackgroundColor = bg;
         }
     }
 }

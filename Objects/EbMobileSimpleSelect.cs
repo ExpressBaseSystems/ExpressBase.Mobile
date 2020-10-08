@@ -59,7 +59,7 @@ namespace ExpressBase.Mobile
         public List<Param> Parameters { set; get; }
 
         //mobile props
-        public TextBox SearchBox { set; get; }
+        public EbXTextBox SearchBox { set; get; }
 
         /// <summary>
         /// Check simple select or power select
@@ -80,7 +80,7 @@ namespace ExpressBase.Mobile
 
         private ComboBoxLabel selected;
 
-        private CustomPicker picker;
+        private EbXPicker picker;
 
         private Color Background => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
 
@@ -111,7 +111,7 @@ namespace ExpressBase.Mobile
 
         private void InitSimpleSelect(TapGestureRecognizer gesture)
         {
-            picker = new CustomPicker
+            picker = new EbXPicker
             {
                 Title = $"Select {this.Label}",
                 ItemsSource = this.Options,
@@ -131,7 +131,7 @@ namespace ExpressBase.Mobile
 
         private void InitPowerSelect(TapGestureRecognizer gesture)
         {
-            SearchBox = new TextBox
+            SearchBox = new EbXTextBox
             {
                 IsReadOnly = this.ReadOnly,
                 Placeholder = $"Search {this.Label}...",
@@ -187,11 +187,11 @@ namespace ExpressBase.Mobile
         public override void Reset()
         {
             if (IsSimpleSelect)
-                picker.ClearValue(CustomPicker.SelectedItemProperty);
+                picker.ClearValue(EbXPicker.SelectedItemProperty);
             else
             {
                 this.selected = null;
-                SearchBox.ClearValue(TextBox.TextProperty);
+                SearchBox.ClearValue(EbXTextBox.TextProperty);
             }
         }
 

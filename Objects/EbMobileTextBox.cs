@@ -26,7 +26,7 @@ namespace ExpressBase.Mobile
 
             if (TextMode == TextMode.MultiLine)
             {
-                var textarea = new TextArea()
+                var textarea = new EbXTextArea()
                 {
                     IsReadOnly = this.ReadOnly,
                     XBackgroundColor = this.XBackground,
@@ -38,7 +38,7 @@ namespace ExpressBase.Mobile
             }
             else
             {
-                var textbox = new TextBox
+                var textbox = new EbXTextBox
                 {
                     IsReadOnly = this.ReadOnly,
                     XBackgroundColor = this.XBackground,
@@ -58,9 +58,9 @@ namespace ExpressBase.Mobile
         public override object GetValue()
         {
             if (TextMode == TextMode.MultiLine)
-                return (this.XControl as TextArea).Text;
+                return (this.XControl as EbXTextArea).Text;
             else
-                return (this.XControl as TextBox).Text;
+                return (this.XControl as EbXTextBox).Text;
         }
 
         public override void SetValue(object value)
@@ -68,18 +68,18 @@ namespace ExpressBase.Mobile
             if (value != null)
             {
                 if (TextMode == TextMode.MultiLine)
-                    (this.XControl as TextArea).Text = value.ToString();
+                    (this.XControl as EbXTextArea).Text = value.ToString();
                 else
-                    (this.XControl as TextBox).Text = value.ToString();
+                    (this.XControl as EbXTextBox).Text = value.ToString();
             }
         }
 
         public override void Reset()
         {
             if (TextMode == TextMode.MultiLine)
-                (this.XControl as TextArea).ClearValue(TextBox.TextProperty);
+                (this.XControl as EbXTextArea).ClearValue(EbXTextBox.TextProperty);
             else
-                (this.XControl as TextBox).ClearValue(TextBox.TextProperty);
+                (this.XControl as EbXTextBox).ClearValue(EbXTextBox.TextProperty);
         }
 
         public override bool Validate()
@@ -99,9 +99,9 @@ namespace ExpressBase.Mobile
             var bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
 
             if (TextMode == TextMode.MultiLine)
-                (this.XControl as TextArea).XBackgroundColor = bg;
+                (this.XControl as EbXTextArea).XBackgroundColor = bg;
             else
-                (this.XControl as TextBox).XBackgroundColor = bg;
+                (this.XControl as EbXTextBox).XBackgroundColor = bg;
         }
     }
 }

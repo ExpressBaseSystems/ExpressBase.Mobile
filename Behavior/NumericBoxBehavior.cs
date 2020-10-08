@@ -11,15 +11,15 @@ namespace ExpressBase.Mobile.Behavior
     /// MobileForm Numeric control validation
     /// Allow numbers only
     /// </summary>
-    public class NumericBoxBehavior : Behavior<NumericTextBox>
+    public class NumericBoxBehavior : Behavior<EbXNumericTextBox>
     {
-        protected override void OnAttachedTo(NumericTextBox numeric)
+        protected override void OnAttachedTo(EbXNumericTextBox numeric)
         {
             numeric.TextChanged += OnEntryTextChanged;
             base.OnAttachedTo(numeric);
         }
 
-        protected override void OnDetachingFrom(NumericTextBox numeric)
+        protected override void OnDetachingFrom(EbXNumericTextBox numeric)
         {
             numeric.TextChanged -= OnEntryTextChanged;
             base.OnDetachingFrom(numeric);
@@ -43,7 +43,7 @@ namespace ExpressBase.Mobile.Behavior
                 else
                     isValid = false;
 
-                ((NumericTextBox)sender).Text = isValid ? args.NewTextValue : args.NewTextValue.Remove(args.NewTextValue.Length - 1);
+                ((EbXNumericTextBox)sender).Text = isValid ? args.NewTextValue : args.NewTextValue.Remove(args.NewTextValue.Length - 1);
             }
         }
     }

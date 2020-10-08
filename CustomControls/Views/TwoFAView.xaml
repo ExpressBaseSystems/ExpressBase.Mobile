@@ -95,14 +95,14 @@
                         <BoxView Grid.Column="5" Style="{StaticResource DigitBG}" SizeChanged="DigitBV_SizeChanged"></BoxView>
                         <Label Grid.Column="5" x:Name="L6" Style="{StaticResource DigitLabel}"></Label>
 
-                        <customcontrols:HiddenEntry
+                        <customcontrols:EbXHiddenEntry
                             x:Name="OtpTextBox"
                             Keyboard="Numeric"
                             Grid.ColumnSpan="6"
                             TextColor="Transparent"
                             BackgroundColor="Transparent"
                             TextChanged="OtpTextBox_TextChanged">
-                        </customcontrols:HiddenEntry>
+                        </customcontrols:EbXHiddenEntry>
                     </Grid>
 
                     <Grid>
