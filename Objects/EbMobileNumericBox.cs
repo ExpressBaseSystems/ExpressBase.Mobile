@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile
                 var numeric = new NumericTextBox
                 {
                     IsReadOnly = this.ReadOnly,
-                    BgColor = this.XBackground,
+                    XBackgroundColor = this.XBackground,
                     Keyboard = Keyboard.Numeric,
                     Behaviors = { new NumericBoxBehavior() },
                     EnableFocus = true,
@@ -124,6 +124,18 @@ namespace ExpressBase.Mobile
                 else
                     (this.XControl as NumericTextBox).Text = value.ToString();
             }
+        }
+
+        public override void SetAsReadOnly(bool disable)
+        {
+            base.SetAsReadOnly(disable);
+
+            Color bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
+
+            if (RenderType == NumericBoxTypes.TextType)
+                (this.XControl as NumericTextBox).XBackgroundColor = bg;
+            else
+                valueBox.XBackgroundColor = bg;
         }
 
         public override void Reset()

@@ -21,7 +21,7 @@ namespace ExpressBase.Mobile
             dataHolder = new TextBox
             {
                 IsReadOnly = true,
-                BgColor = Color.FromHex("#fafafa")
+                XBackgroundColor = Color.FromHex("#fafafa")
             };
             Button link = new Button
             {

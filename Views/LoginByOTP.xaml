@@ -67,7 +67,7 @@
                                     </Label>
                                     <control:TextBox x:Name="UserName"
                                                      HeightRequest="55"
-                                                     BgColor="#f1f6fb"
+                                                     XBackgroundColor="#f1f6fb"
                                                      EnableFocus="True"
                                                      BorderOnFocus="{DynamicResource Primary_Color}"
                                                      Text="{Binding UserName}">

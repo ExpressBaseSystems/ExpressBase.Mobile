@@ -7,13 +7,20 @@ namespace ExpressBase.Mobile.CustomControls
         public static readonly BindableProperty BorderOnFocusProperty =
             BindableProperty.Create(nameof(BorderOnFocus), typeof(Color), typeof(TextBox));
 
+        public static readonly BindableProperty XBackgroundColorProperty =
+           BindableProperty.Create(nameof(XBackgroundColor), typeof(Color), typeof(TextBox));
+
         public int BorderThickness { set; get; } = 1;
 
         public float BorderRadius { set; get; } = 10.0f;
 
         public Color BorderColor { set; get; } = Color.FromHex("cccccc");
 
-        public Color BgColor { set; get; }
+        public Color XBackgroundColor
+        {
+            get { return (Color)GetValue(XBackgroundColorProperty); }
+            set { SetValue(XBackgroundColorProperty, value); }
+        }
 
         public bool EnableFocus { set; get; }
 

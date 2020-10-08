@@ -74,7 +74,7 @@ namespace ExpressBase.Mobile
                 GestureRecognizers = { gesture }
             };
 
-            this.XControl = new InputGroup(control, icon) { BgColor = XBackground };
+            this.XControl = new InputGroup(control, icon) { XBackgroundColor = XBackground };
         }
 
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -150,6 +150,18 @@ namespace ExpressBase.Mobile
         public override bool Validate()
         {
             return base.Validate();
+        }
+
+        public override void SetAsReadOnly(bool disable)
+        {
+            base.SetAsReadOnly(disable);
+
+            var bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
+
+            if (this.EbDateType == EbDateType.Time)
+                timePicker.XBackgroundColor = bg;
+            else
+                datePicker.XBackgroundColor = bg;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace ExpressBase.Mobile
                 var textarea = new TextArea()
                 {
                     IsReadOnly = this.ReadOnly,
-                    BgColor = this.XBackground,
+                    XBackgroundColor = this.XBackground,
                     EnableFocus = true,
                     BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
                 };
@@ -41,7 +41,7 @@ namespace ExpressBase.Mobile
                 var textbox = new TextBox
                 {
                     IsReadOnly = this.ReadOnly,
-                    BgColor = this.XBackground,
+                    XBackgroundColor = this.XBackground,
                     EnableFocus = true,
                     BorderOnFocus = App.Settings.Vendor.GetPrimaryColor(),
                 };
@@ -90,6 +90,18 @@ namespace ExpressBase.Mobile
                 return false;
 
             return true;
+        }
+
+        public override void SetAsReadOnly(bool disable)
+        {
+            base.SetAsReadOnly(disable);
+
+            var bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
+
+            if (TextMode == TextMode.MultiLine)
+                (this.XControl as TextArea).XBackgroundColor = bg;
+            else
+                (this.XControl as TextBox).XBackgroundColor = bg;
         }
     }
 }

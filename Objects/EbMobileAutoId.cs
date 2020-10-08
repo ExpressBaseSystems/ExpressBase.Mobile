@@ -18,7 +18,7 @@ namespace ExpressBase.Mobile
             this.XControl = new TextBox
             {
                 IsReadOnly = true,
-                BgColor = Color.FromHex("eeeeee")
+                XBackgroundColor = Color.FromHex("eeeeee")
             };
         }
 

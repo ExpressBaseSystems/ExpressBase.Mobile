@@ -10,7 +10,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         public new Color BorderColor { set; get; } = Color.FromHex("cccccc");
 
-        public Color BgColor { set; get; }
+        public Color XBackgroundColor { set; get; }
 
         public View Input { set; get; }
 

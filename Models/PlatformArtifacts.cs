@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -27,6 +28,7 @@ namespace ExpressBase.Mobile.Models
         public EbDataSet GetOfflineData()
         {
             EbDataSet ds = new EbDataSet();
+
             Applications?.ForEach(item =>
             {
                 if (item.OfflineData != null)
@@ -159,7 +161,7 @@ namespace ExpressBase.Mobile.Models
                 try
                 {
                     string notation = string.Empty;
-                    foreach (var item in Description.Split(' ').Take(2))
+                    foreach (var item in Description.Split(CharConstants.SPACE).Take(2))
                     {
                         if (string.IsNullOrEmpty(item)) continue;
                         notation += item[0];
@@ -215,7 +217,9 @@ namespace ExpressBase.Mobile.Models
 
         public byte[] Logo { set; get; }
 
-        public ValidateSidResponse() { }
+        public Eb_Solution SolutionObj { get; set; }
+
+        public string Message { set; get; }
     }
 
     public class MobileVisDataRespnse

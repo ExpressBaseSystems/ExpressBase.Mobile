@@ -126,7 +126,7 @@ namespace ExpressBase.Mobile
                 Style = (Style)HelperFunctions.GetResourceValue("PSIconLabel"),
                 GestureRecognizers = { gesture }
             };
-            this.XControl = new InputGroup(picker, icon) { BgColor = Background };
+            this.XControl = new InputGroup(picker, icon) { XBackgroundColor = Background };
         }
 
         private void InitPowerSelect(TapGestureRecognizer gesture)
@@ -143,7 +143,7 @@ namespace ExpressBase.Mobile
                 Style = (Style)HelperFunctions.GetResourceValue("SSIconLabel"),
                 GestureRecognizers = { gesture }
             };
-            this.XControl = new InputGroup(SearchBox, icon) { BgColor = Background };
+            this.XControl = new InputGroup(SearchBox, icon) { XBackgroundColor = Background };
         }
 
         private void SearchBox_Focused(object sender, FocusEventArgs e)
