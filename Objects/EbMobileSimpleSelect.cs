@@ -274,6 +274,15 @@ namespace ExpressBase.Mobile
             return dt;
         }
 
+        public override void SetAsReadOnly(bool disable)
+        {
+            base.SetAsReadOnly(disable);
+
+            Color bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
+
+            (this.XControl as InputGroup).XBackgroundColor = bg;
+        }
+
         #endregion
     }
 
