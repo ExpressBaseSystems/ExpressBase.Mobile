@@ -41,9 +41,12 @@ namespace ExpressBase.Mobile
 
         public EbMobileForm()
         {
-            ControlDictionary = new Dictionary<string, EbMobileControl>();
-
             RenderValidatorParams = new List<Param>();
+        }
+
+        public void InitializeControlDict()
+        {
+            this.ControlDictionary = this.ChildControls.ToControlDictionary();
         }
 
         public string GetQuery()

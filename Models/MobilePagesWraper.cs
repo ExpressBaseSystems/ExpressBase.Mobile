@@ -71,7 +71,7 @@ namespace ExpressBase.Mobile.Models
 
         public EbMobilePage GetPage()
         {
-            return page ?? DeserializeJsonPage();
+            return DeserializeJsonPage();
         }
 
         [OnDeserialized()]

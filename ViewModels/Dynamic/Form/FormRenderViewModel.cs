@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -25,38 +24,49 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public string SubmitButtonText { set; get; }
 
-        public Command SaveCommand => new Command(async () => await FormSubmitClicked());
+        public bool HasWebFormRef => !string.IsNullOrEmpty(this.Form.WebFormRefId);
+
+        public Command SaveCommand => new Command(async () => await this.FormSubmitClicked());
 
         public FormRenderViewModel(EbMobilePage page) : base(page)
         {
             this.Mode = FormMode.NEW;
             this.Form = (EbMobileForm)this.Page.Container;
+            this.Controls = this.Form.ChildControls;
 
-            SubmitButtonText = this.Form.GetSubmitButtonText();
-
-            InitializeService();
+            this.FormDataService = new FormDataServices();
+            this.SubmitButtonText = this.Form.GetSubmitButtonText();
         }
 
-        private void InitializeService()
+        public override async Task InitializeAsync()
         {
-            FormDataService = new FormDataServices();
+            this.Form.InitializeControlDict();
+            EbFormHelper.Initialize(this.Form.ControlDictionary);
 
-            Controls = Form.ChildControls;
-            Form.ControlDictionary = Form.ChildControls.ToControlDictionary();
-
-            EbFormHelper.Initialize(Form.ControlDictionary);
-
-            this.DeployTables();
-        }
-
-        public bool HasWebFormRef() => !string.IsNullOrEmpty(this.Form.WebFormRefId);
-
-        private void DeployTables()
-        {
-            Task.Run(() =>
+            if (!this.IsOnline())
             {
-                if (!IsOnline()) this.Form.CreateTableSchema();
-            });
+                //creating offline tables if not exist
+                await Task.Run(() => this.Form.CreateTableSchema());
+            }
+
+            if (this.Mode == FormMode.NEW)
+                this.SetValues();
+        }
+
+        protected virtual void SetValues()
+        {
+            foreach (EbMobileControl ctrl in this.Form.ControlDictionary.Values)
+            {
+                if (!ctrl.DefaultExprEvaluated)
+                {
+                    EbScript defExp = ctrl.DefaultValueExpression;
+
+                    if (defExp != null && !defExp.IsEmpty())
+                    {
+                        EbFormHelper.SetDefaultValue(ctrl.Name);
+                    }
+                }
+            }
         }
 
         public async Task FormSubmitClicked()
@@ -64,14 +74,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             if (!Utils.IsNetworkReady(this.NetworkType))
             {
                 Utils.Alert_NoInternet();
-                return;
-            }
-
-            if (IsOnline() && !HasWebFormRef())
-            {
-                EbLog.Warning($"Webform ref not configured in page '{this.PageName}'");
-
-                Utils.Toast("Missing configuration contact developer");
                 return;
             }
 

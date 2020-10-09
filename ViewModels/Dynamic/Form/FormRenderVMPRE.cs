@@ -22,17 +22,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public override async Task InitializeAsync()
         {
-            if (!HasWebFormRef())
-            {
-                EbLog.Info("Web form refid is empty");
-                return;
-            }
-            this.SetValues();
+            await base.InitializeAsync();
 
-            await Task.Delay(1);
+            this.SetValues();
         }
 
-        private void SetValues()
+        protected override void SetValues()
         {
             if (this.linkFormParameters == null)
             {

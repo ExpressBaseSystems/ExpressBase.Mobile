@@ -68,31 +68,35 @@ namespace ExpressBase.Mobile
             this.NetworkType = network;
         }
 
+        private StackLayout xview;
+
         public virtual StackLayout XView
         {
             get
             {
-                var formatted = new FormattedString { Spans = { new Span { Text = this.Label } } };
-
-                if (this.Required)
-                    formatted.Spans.Add(new Span { Text = " *", FontSize = 16, TextColor = Color.Red });
-
-                return new StackLayout
+                if (xview == null)
                 {
-                    Padding = new Thickness(15, 10, 15, 10),
-                    IsVisible = !(this.Hidden),
-                    Children =
+                    var formatted = new FormattedString { Spans = { new Span { Text = this.Label } } };
+
+                    if (this.Required)
+                        formatted.Spans.Add(new Span { Text = " *", FontSize = 16, TextColor = Color.Red });
+
+                    xview = new StackLayout
                     {
-                        new Label { FormattedText =  formatted },
-                        XControl
-                    }
-                };
+                        Padding = new Thickness(15, 10, 15, 10),
+                        IsVisible = !(this.Hidden),
+                        Children = { new Label { FormattedText = formatted }, XControl }
+                    };
+                }
+                return xview;
             }
         }
 
         public FormMode FormRenderMode { set; get; }
 
         public NetworkMode NetworkType { set; get; }
+
+        public bool DefaultExprEvaluated { set; get; }
 
         public virtual object GetValue() { return null; }
 

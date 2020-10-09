@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
 using System.Collections.Generic;
@@ -57,6 +58,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
             if (!isRendered)
             {
                 await viewModel.InitializeAsync();
+
+                if (!viewModel.HasWebFormRef && viewModel.IsOnline())
+                {
+                    EbLog.Info($"Webform refid not configued for form '{viewModel.Page.Name}'");
+                    SaveButton.IsEnabled = false;
+                }
                 isRendered = true;
             }
             EbLayout.HideLoader();

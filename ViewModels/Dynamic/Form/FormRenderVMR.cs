@@ -21,16 +21,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public override async Task InitializeAsync()
         {
-            if (!HasWebFormRef())
-            {
-                EbLog.Info("Web form refid is empty");
-                return;
-            }
+            await base.InitializeAsync();
+
             this.SetValues();
-            await Task.Delay(1);
         }
 
-        private void SetValues()
+        protected override void SetValues()
         {
             if (context.ContextToControlMap == null)
             {

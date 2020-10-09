@@ -26,11 +26,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public override async Task InitializeAsync()
         {
-            if (!HasWebFormRef())
-            {
-                EbLog.Info("Web form refid is empty");
-                return;
-            }
+            await base.InitializeAsync();
+
             await this.InitializeFormData();
             this.SetValues();
         }
@@ -58,7 +55,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private void SetValues()
+        protected override void SetValues()
         {
             EbDataTable masterData = formData.Tables.Find(table => table.TableName == this.Form.TableName);
 

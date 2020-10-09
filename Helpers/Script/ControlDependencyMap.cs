@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ExpressBase.Mobile.Helpers.Script
@@ -19,53 +20,79 @@ namespace ExpressBase.Mobile.Helpers.Script
 
         public virtual void Init(Dictionary<string, EbMobileControl> controls)
         {
+            string[] allKeys = controls.Keys.ToArray();
+
             foreach (EbMobileControl ctrl in controls.Values)
             {
                 bool hasValueExpr = ctrl.ValueExpr != null && !ctrl.ValueExpr.IsEmpty();
                 bool hasHideExpr = ctrl.HiddenExpr != null && !ctrl.HiddenExpr.IsEmpty();
                 bool hasDisableExpr = ctrl.DisableExpr != null && !ctrl.DisableExpr.IsEmpty();
+                bool hasDefaultExpr = ctrl.DefaultValueExpression != null && !ctrl.DefaultValueExpression.IsEmpty();
 
-                if (!hasValueExpr && !hasHideExpr && !hasDisableExpr) continue;
+                if (!hasValueExpr && !hasHideExpr && !hasDisableExpr && !hasDefaultExpr) continue;
 
                 try
                 {
                     if (hasValueExpr)
                     {
-                        foreach (string name in GetDependentNames(ctrl.ValueExpr.GetCode()))
-                        {
-                            if (!controls.ContainsKey(name))
-                                throw new Exception($"Unknown Control name '{name}' in value expression of '{ctrl.Name}'");
-                            this.CreateKeyPair(name);
-                            this.DependencyMap[name].AddValueDependent(ctrl.Name);
-                        }
+                        this.InitializeDependency(ctrl.Name, ctrl.ValueExpr.GetCode(), ExprType.ValueExpr, allKeys);
                     }
 
                     if (hasHideExpr)
                     {
-                        foreach (string name in GetDependentNames(ctrl.HiddenExpr.GetCode()))
-                        {
-                            if (!controls.ContainsKey(name))
-                                throw new Exception($"Unknown Control name '{name}' in hide expression of '{ctrl.Name}'");
-                            this.CreateKeyPair(name);
-                            this.DependencyMap[name].AddHideDependent(ctrl.Name);
-                        }
+                        this.InitializeDependency(ctrl.Name, ctrl.HiddenExpr.GetCode(), ExprType.HideExpr, allKeys);
                     }
 
                     if (hasDisableExpr)
                     {
-                        foreach (string name in GetDependentNames(ctrl.DisableExpr.GetCode()))
+                        this.InitializeDependency(ctrl.Name, ctrl.DisableExpr.GetCode(), ExprType.DisableExpr, allKeys);
+                    }
+
+                    if (hasDefaultExpr)
+                    {
+                        foreach (string dependent in GetDependentNames(ctrl.DefaultValueExpression.GetCode()))
                         {
-                            if (!controls.ContainsKey(name))
-                                throw new Exception($"Unknown Control name '{name}' in disable expression of '{ctrl.Name}'");
-                            this.CreateKeyPair(name);
-                            this.DependencyMap[name].AddDisableDependent(ctrl.Name);
+                            if (!controls.ContainsKey(dependent))
+                                throw new Exception($"Unknown Control name '{dependent}' in default expression of '{ctrl.Name}'");
+
+                            this.CreateKeyPair(ctrl.Name);
+                            this.ThrowDefaltExprCircularRef(dependent, ctrl.Name);
+
+                            this.DependencyMap[ctrl.Name].AddDefaultDependent(dependent);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
                     EbLog.Error(ex.Message);
+                    Utils.Toast(ex.Message);
                     break;
+                }
+            }
+        }
+
+        private void InitializeDependency(string controlName, string script, ExprType type, string[] allKeys)
+        {
+            foreach (string dependent in GetDependentNames(script))
+            {
+                if (!allKeys.Contains(dependent))
+                    throw new Exception($"Unknown Control name '{dependent}' in expression type '{type}' of control '{controlName}'");
+
+                this.CreateKeyPair(dependent);
+
+                this.DependencyMap[dependent].Add(type, controlName);
+            }
+        }
+
+        private void ThrowDefaltExprCircularRef(string source, string dependentControl)
+        {
+            if (DependencyMap.ContainsKey(source))
+            {
+                ExprDependency depExpr = this.GetDependency(source);
+
+                if (depExpr.DefaultValueExpr.Contains(dependentControl))
+                {
+                    throw new Exception($"Circular reference detected in default expression of '{dependentControl}'");
                 }
             }
         }

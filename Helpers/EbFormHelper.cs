@@ -23,8 +23,16 @@ namespace ExpressBase.Mobile.Helpers
             evaluator = new EbSciptEvaluator();
         }
 
+        private void Dispose()
+        {
+            controls = null;
+            dependencyMap = null;
+        }
+
         public static void Initialize(Dictionary<string, EbMobileControl> controls)
         {
+            Instance.Dispose();
+
             Instance.controls = controls;
 
             Instance.dependencyMap = new ControlDependencyMap();
@@ -63,6 +71,33 @@ namespace ExpressBase.Mobile.Helpers
                     EbMobileControl ctrl = Instance.controls[name];
                     Instance.EvaluateDisableExpr(ctrl);
                 }
+            }
+        }
+
+        public static void SetDefaultValue(string controlName)
+        {
+            Instance.SetDefaultValueInternal(controlName);
+        }
+
+        private void SetDefaultValueInternal(string controlName)
+        {
+            if (this.dependencyMap.HasDependency(controlName))
+            {
+                ExprDependency exprDep = this.dependencyMap.GetDependency(controlName);
+
+                if (exprDep.HasDefaultDependency)
+                {
+                    foreach (string name in exprDep.DefaultValueExpr)
+                        this.SetDefaultValueInternal(name);
+
+                    EbMobileControl ctrl = this.controls[controlName];
+                    this.EvaluateDefaultValueExpr(ctrl);
+                }
+            }
+            else
+            {
+                EbMobileControl ctrl = this.controls[controlName];
+                this.EvaluateDefaultValueExpr(ctrl);
             }
         }
 
@@ -134,6 +169,26 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
+        public void EvaluateDefaultValueExpr(EbMobileControl ctrl)
+        {
+            string expr = ctrl.DefaultValueExpression.GetCode();
+
+            if (this.GetComputedExpr(expr, out string computed))
+            {
+                try
+                {
+                    object value = evaluator.ScriptEvaluate(computed);
+                    ctrl.SetValue(value);
+                    ctrl.DefaultExprEvaluated = true;
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info($"Default script evaluation error in control '{ctrl.Name}'");
+                    EbLog.Error(ex.Message);
+                }
+            }
+        }
+
         private EbScriptExpression GetExpression(string expr)
         {
             string[] parts = expr.Split(CharConstants.DOT);
@@ -157,7 +212,10 @@ namespace ExpressBase.Mobile.Helpers
                 MatchCollection collection = ControlDependencyMap.EbScriptRegex.Matches(expr);
 
                 if (collection == null || collection.Count <= 0)
-                    return false;
+                {
+                    computedResult = expr;
+                    return true;
+                }  
 
                 foreach (Match match in collection)
                 {
@@ -192,7 +250,7 @@ namespace ExpressBase.Mobile.Helpers
             else if (value is bool)
                 return value.ToString().ToLower();
             else
-                return value.ToString();
+                return $"\"{value}\"";
         }
     }
 }
