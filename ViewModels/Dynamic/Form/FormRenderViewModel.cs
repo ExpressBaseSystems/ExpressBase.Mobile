@@ -55,18 +55,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected virtual void SetValues()
         {
-            foreach (EbMobileControl ctrl in this.Form.ControlDictionary.Values)
-            {
-                if (!ctrl.DefaultExprEvaluated)
-                {
-                    EbScript defExp = ctrl.DefaultValueExpression;
-
-                    if (defExp != null && !defExp.IsEmpty())
-                    {
-                        EbFormHelper.SetDefaultValue(ctrl.Name);
-                    }
-                }
-            }
+            this.InitDefaultValueExpressions();
+            this.InitConcurrentExpressions();
         }
 
         public async Task FormSubmitClicked()
@@ -80,9 +70,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             if (this.Form.Validate())
             {
                 EbLog.Info($"Form '{this.PageName}' validation success ready to submit");
-
                 this.Form.NetworkType = this.NetworkType;
-
                 await this.Submit();
             }
             else
@@ -129,6 +117,30 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             foreach (var ctrl in this.Form.ControlDictionary.Values)
             {
                 ctrl.SetAsReadOnly(false);
+            }
+        }
+
+        protected void InitDefaultValueExpressions()
+        {
+            foreach (EbMobileControl ctrl in this.Form.ControlDictionary.Values)
+            {
+                if (!ctrl.DefaultExprEvaluated)
+                {
+                    EbScript defExp = ctrl.DefaultValueExpression;
+
+                    if (defExp != null && !defExp.IsEmpty())
+                    {
+                        EbFormHelper.SetDefaultValue(ctrl.Name);
+                    }
+                }
+            }
+        }
+
+        protected void InitConcurrentExpressions()
+        {
+            foreach (EbMobileControl ctrl in this.Form.ControlDictionary.Values)
+            {
+                EbFormHelper.EvaluateExprOnLoad(ctrl, this.Mode);
             }
         }
     }

@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers.Script;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ExpressBase.Mobile.Helpers
@@ -41,42 +43,89 @@ namespace ExpressBase.Mobile.Helpers
 
         public static void ControlValueChanged(string controlName)
         {
-            if (!Instance.dependencyMap.HasDependency(controlName))
-                return;
-
-            ExprDependency exprDep = Instance.dependencyMap.GetDependency(controlName);
-
-            if (exprDep.HasValueDependency)
+            if (Instance.dependencyMap.HasDependency(controlName))
             {
-                foreach (var name in exprDep.ValueExpr)
+                ExprDependency exprDep = Instance.dependencyMap.GetDependency(controlName);
+
+                Instance.InitValueExpr(exprDep, controlName);
+                Instance.InitHideExpr(exprDep);
+                Instance.InitDisableExpr(exprDep);
+            }
+
+            Instance.InitValidators(controlName);
+        }
+
+        public static void EvaluateExprOnLoad(EbMobileControl ctrl, FormMode mode)
+        {
+            if (Instance.dependencyMap.HasDependency(ctrl.Name))
+            {
+                ExprDependency exprDep = Instance.dependencyMap.GetDependency(ctrl.Name);
+
+                if (mode == FormMode.NEW || mode == FormMode.EDIT)
                 {
-                    EbMobileControl ctrl = Instance.controls[name];
-                    Instance.EvaluateValueExpr(ctrl);
+                    Instance.InitHideExpr(exprDep);
+                    Instance.InitDisableExpr(exprDep);
+
+                    if (mode == FormMode.EDIT && ctrl.DoNotPersist)
+                    {
+                        Instance.InitValueExpr(exprDep, ctrl.Name);
+                    }
                 }
             }
 
-            if (exprDep.HasHideDependency)
-            {
-                foreach (var name in exprDep.HideExpr)
-                {
-                    EbMobileControl ctrl = Instance.controls[name];
-                    Instance.EvaluateHideExpr(ctrl);
-                }
-            }
-
-            if (exprDep.HasDisableDependency)
-            {
-                foreach (var name in exprDep.DisableExpr)
-                {
-                    EbMobileControl ctrl = Instance.controls[name];
-                    Instance.EvaluateDisableExpr(ctrl);
-                }
-            }
+            if (mode == FormMode.EDIT && ctrl.DoNotPersist)
+                Instance.InitValidators(ctrl.Name);
         }
 
         public static void SetDefaultValue(string controlName)
         {
             Instance.SetDefaultValueInternal(controlName);
+        }
+
+        public static bool ContainsInValExpr(string dependencySource, string dependency)
+        {
+            if (!Instance.dependencyMap.HasDependency(dependencySource))
+                return false;
+
+            ExprDependency map = Instance.dependencyMap.GetDependency(dependencySource);
+
+            return map.ValueExpr.Contains(dependency);
+        }
+
+        private void InitValueExpr(ExprDependency exprDep, string trigger_control)
+        {
+            if (exprDep.HasValueDependency)
+            {
+                foreach (string name in exprDep.ValueExpr)
+                {
+                    EbMobileControl ctrl = this.controls[name];
+                    this.EvaluateValueExpr(ctrl, trigger_control);
+                }
+            }
+        }
+
+        private void InitHideExpr(ExprDependency exprDep)
+        {
+            if (exprDep.HasHideDependency)
+            {
+                foreach (var name in exprDep.HideExpr)
+                {
+                    EbMobileControl ctrl = this.controls[name];
+                    this.EvaluateHideExpr(ctrl);
+                }
+            }
+        }
+
+        private void InitDisableExpr(ExprDependency exprDep)
+        {
+            if (exprDep.HasDisableDependency)
+            {
+                foreach (var name in exprDep.DisableExpr)
+                {
+                    EbMobileControl ctrl = this.controls[name];
+                    this.EvaluateDisableExpr(ctrl);
+                }
+            }
         }
 
         private void SetDefaultValueInternal(string controlName)
@@ -89,21 +138,41 @@ namespace ExpressBase.Mobile.Helpers
                 {
                     foreach (string name in exprDep.DefaultValueExpr)
                         this.SetDefaultValueInternal(name);
-
-                    EbMobileControl ctrl = this.controls[controlName];
-                    this.EvaluateDefaultValueExpr(ctrl);
                 }
             }
-            else
+
+            EbMobileControl ctrl = this.controls[controlName];
+
+            if (ctrl.DefaultValueExpression != null && !ctrl.DefaultValueExpression.IsEmpty())
             {
-                EbMobileControl ctrl = this.controls[controlName];
                 this.EvaluateDefaultValueExpr(ctrl);
             }
         }
 
-        public void EvaluateValueExpr(EbMobileControl ctrl)
+        private void InitValidators(string controlName)
+        {
+            EbMobileControl ctrl = controls[controlName];
+
+            if (ctrl.Validators == null || !ctrl.Validators.Any() || ctrl is INonPersistControl)
+                return;
+
+            foreach (EbMobileValidator validator in ctrl.Validators)
+            {
+                if (validator.IsDisabled || validator.IsEmpty())
+                    continue;
+
+                bool flag = this.EvaluateValidatorExpr(validator, controlName);
+                ctrl.SetValidation(flag, validator.FailureMSG);
+                if (!flag)
+                    break;
+            }
+        }
+
+        private void EvaluateValueExpr(EbMobileControl ctrl, string trigger_control)
         {
             string expr = ctrl.ValueExpr.GetCode();
+
+            expr = this.FormatThisReference(expr, ctrl.Name);
 
             if (this.GetComputedExpr(expr, out string computed))
             {
@@ -111,7 +180,7 @@ namespace ExpressBase.Mobile.Helpers
                 {
                     object value = evaluator.ScriptEvaluate(computed);
                     ctrl.SetValue(value);
-                    ctrl.ValueChanged();
+                    ctrl.ValueChanged(trigger_control);
                 }
                 catch (Exception ex)
                 {
@@ -121,19 +190,18 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public void EvaluateHideExpr(EbMobileControl ctrl)
+        private void EvaluateHideExpr(EbMobileControl ctrl)
         {
             string expr = ctrl.HiddenExpr.GetCode();
+
+            expr = this.FormatThisReference(expr, ctrl.Name);
 
             if (this.GetComputedExpr(expr, out string computed))
             {
                 try
                 {
                     bool value = evaluator.ScriptEvaluate<bool>(computed);
-                    if (value)
-                        ctrl.SetVisibilty(false);
-                    else
-                        ctrl.SetVisibilty(true);
+                    ctrl.SetVisibilty(!value);
                 }
                 catch (Exception ex)
                 {
@@ -145,19 +213,18 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public void EvaluateDisableExpr(EbMobileControl ctrl)
+        private void EvaluateDisableExpr(EbMobileControl ctrl)
         {
             string expr = ctrl.DisableExpr.GetCode();
+
+            expr = this.FormatThisReference(expr, ctrl.Name);
 
             if (this.GetComputedExpr(expr, out string computed))
             {
                 try
                 {
                     bool value = evaluator.ScriptEvaluate<bool>(computed);
-                    if (value)
-                        ctrl.SetAsReadOnly(true);
-                    else
-                        ctrl.SetAsReadOnly(false);
+                    ctrl.SetAsReadOnly(value);
                 }
                 catch (Exception ex)
                 {
@@ -169,7 +236,7 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public void EvaluateDefaultValueExpr(EbMobileControl ctrl)
+        private void EvaluateDefaultValueExpr(EbMobileControl ctrl)
         {
             string expr = ctrl.DefaultValueExpression.GetCode();
 
@@ -187,6 +254,27 @@ namespace ExpressBase.Mobile.Helpers
                     EbLog.Error(ex.Message);
                 }
             }
+        }
+
+        private bool EvaluateValidatorExpr(EbMobileValidator validator, string controlName)
+        {
+            string expr = validator.Script.GetCode();
+
+            expr = this.FormatThisReference(expr, controlName);
+
+            if (this.GetComputedExpr(expr, out string computed))
+            {
+                try
+                {
+                    return evaluator.ScriptEvaluate<bool>(computed);
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info($"validator script evaluation error in control '{controlName}'");
+                    EbLog.Error(ex.Message);
+                }
+            }
+            return false;
         }
 
         private EbScriptExpression GetExpression(string expr)
@@ -215,7 +303,7 @@ namespace ExpressBase.Mobile.Helpers
                 {
                     computedResult = expr;
                     return true;
-                }  
+                }
 
                 foreach (Match match in collection)
                 {
@@ -249,8 +337,25 @@ namespace ExpressBase.Mobile.Helpers
                 return "null";
             else if (value is bool)
                 return value.ToString().ToLower();
+            else if (IsNumeric(value))
+                return value.ToString();
             else
                 return $"\"{value}\"";
+        }
+
+        private bool IsNumeric(object value)
+        {
+            if (value is int || value is double || value is float || value is decimal)
+                return true;
+            return false;
+        }
+
+        private string FormatThisReference(string script, string controlName)
+        {
+            if (script.Contains("this"))
+                return script.Replace("this", $"form.{controlName}");
+
+            return script;
         }
     }
 }

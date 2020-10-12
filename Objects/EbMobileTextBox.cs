@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Structures;
-using System;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -96,12 +95,24 @@ namespace ExpressBase.Mobile
         {
             base.SetAsReadOnly(disable);
 
-            var bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
+            Color bg = disable ? EbMobileControl.ReadOnlyBackground : Color.Transparent;
 
             if (TextMode == TextMode.MultiLine)
                 (this.XControl as EbXTextArea).XBackgroundColor = bg;
             else
                 (this.XControl as EbXTextBox).XBackgroundColor = bg;
+        }
+
+        public override void SetValidation(bool status, string message)
+        {
+            base.SetValidation(status, message);
+
+            Color border = status ? EbMobileControl.DefaultBorder : EbMobileControl.ValidationError;
+
+            if (TextMode == TextMode.MultiLine)
+                (this.XControl as EbXTextArea).BorderColor = border;
+            else
+                (this.XControl as EbXTextBox).BorderColor = border;
         }
     }
 }

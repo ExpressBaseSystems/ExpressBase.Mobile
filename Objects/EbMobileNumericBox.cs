@@ -158,5 +158,17 @@ namespace ExpressBase.Mobile
 
             return true;
         }
+
+        public override void SetValidation(bool status, string message)
+        {
+            base.SetValidation(status, message);
+
+            Color border = status ? EbMobileControl.DefaultBorder : EbMobileControl.ValidationError;
+
+            if (RenderType == NumericBoxTypes.TextType)
+                (this.XControl as EbXNumericTextBox).BorderColor = border;
+            else
+                valueBox.BorderColor = border;
+        }
     }
 }

@@ -158,4 +158,18 @@
         <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
     </Style>
 
+    <Style TargetType="Label"
+           x:Key="ControlValidationLable">
+        <Setter Property="Padding"
+                Value="0"></Setter>
+        <Setter Property="FontSize"
+                Value="14"></Setter>
+        <Setter Property="TextColor"
+                Value="Red"></Setter>
+        <Setter Property="Margin"
+                Value="2,0,0,0"></Setter>
+        <Setter Property="IsVisible"
+                Value="False"></Setter>
+    </Style>
+
 </ResourceDictionary>

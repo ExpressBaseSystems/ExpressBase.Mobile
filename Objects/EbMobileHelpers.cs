@@ -60,5 +60,10 @@ namespace ExpressBase.Mobile
         public EbScript Script { get; set; }
 
         public string FailureMSG { get; set; }
+
+        public bool IsEmpty()
+        {
+            return Script == null || string.IsNullOrEmpty(Script.Code);
+        }
     }
 }

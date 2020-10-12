@@ -1,24 +1,23 @@
 ﻿using ExpressBase.Mobile.Constants;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ExpressBase.Mobile.Helpers.Script
 {
-    public class ControlDependencyMap : DynamicObject
+    public sealed class ControlDependencyMap
     {
         public static readonly Regex EbScriptRegex = new Regex(@"(?:form)\S+\w+");
 
-        protected Dictionary<string, ExprDependency> DependencyMap { set; get; }
+        public Dictionary<string, ExprDependency> DependencyMap { set; get; }
 
         public ControlDependencyMap()
         {
             DependencyMap = new Dictionary<string, ExprDependency>();
         }
 
-        public virtual void Init(Dictionary<string, EbMobileControl> controls)
+        public void Init(Dictionary<string, EbMobileControl> controls)
         {
             string[] allKeys = controls.Keys.ToArray();
 

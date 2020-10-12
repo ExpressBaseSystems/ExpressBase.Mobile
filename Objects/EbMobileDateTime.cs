@@ -160,5 +160,14 @@ namespace ExpressBase.Mobile
 
             (this.XControl as InputGroup).XBackgroundColor = bg;
         }
+
+        public override void SetValidation(bool status, string message)
+        {
+            base.SetValidation(status, message);
+
+            Color border = status ? EbMobileControl.DefaultBorder : EbMobileControl.ValidationError;
+
+            (this.XControl as InputGroup).BorderColor = border;
+        }
     }
 }

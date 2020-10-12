@@ -29,7 +29,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             await base.InitializeAsync();
 
             await this.InitializeFormData();
+
             this.SetValues();
+            this.InitConcurrentExpressions();
         }
 
         private async Task InitializeFormData()

@@ -5,13 +5,20 @@ namespace ExpressBase.Mobile.CustomControls
     public class InputGroup : Frame, IEbCustomControl
     {
         public static readonly BindableProperty XBackgroundColorProperty =
-           BindableProperty.Create(nameof(XBackgroundColor), typeof(Color), typeof(EbXTextBox));
+           BindableProperty.Create(nameof(XBackgroundColor), typeof(Color), typeof(InputGroup));
+
+        public static readonly new BindableProperty BorderColorProperty =
+           BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(InputGroup), defaultValue: Color.FromHex("cccccc"));
 
         public int BorderThickness { set; get; } = 1;
 
         public float BorderRadius { set; get; } = 10.0f;
 
-        public new Color BorderColor { set; get; } = Color.FromHex("cccccc");
+        public new Color BorderColor
+        {
+            get { return (Color)GetValue(BorderColorProperty); }
+            set { SetValue(BorderColorProperty, value); }
+        }
 
         public Color XBackgroundColor
         {

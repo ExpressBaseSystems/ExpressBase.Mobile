@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
@@ -11,6 +12,13 @@ namespace ExpressBase.Mobile
 {
     public abstract class EbMobileControl : EbMobilePageBase
     {
+        public static readonly Color DefaultBorder = Color.FromHex("cccccc");
+
+        public static readonly Color ValidationError = Color.Red;
+
+        public static readonly Color ReadOnlyBackground = Color.FromHex("eeeeee");
+
+
         public virtual string Label { set; get; }
 
         public virtual EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
@@ -58,7 +66,7 @@ namespace ExpressBase.Mobile
 
         public View XControl { set; get; }
 
-        protected Color XBackground => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
+        protected Color XBackground => this.ReadOnly ? ReadOnlyBackground : Color.Transparent;
 
         public virtual void InitXControl() { }
 
@@ -67,6 +75,8 @@ namespace ExpressBase.Mobile
             this.FormRenderMode = mode;
             this.NetworkType = network;
         }
+
+        private Label validationLabel;
 
         private StackLayout xview;
 
@@ -81,11 +91,13 @@ namespace ExpressBase.Mobile
                     if (this.Required)
                         formatted.Spans.Add(new Span { Text = " *", FontSize = 16, TextColor = Color.Red });
 
+                    validationLabel = new Label { Style = (Style)HelperFunctions.GetResourceValue("ControlValidationLable") };
+
                     xview = new StackLayout
                     {
                         Padding = new Thickness(15, 10, 15, 10),
                         IsVisible = !(this.Hidden),
-                        Children = { new Label { FormattedText = formatted }, XControl }
+                        Children = { new Label { FormattedText = formatted }, XControl, validationLabel }
                     };
                 }
                 return xview;
@@ -122,8 +134,11 @@ namespace ExpressBase.Mobile
             return true;
         }
 
-        public virtual void ValueChanged()
+        public virtual void ValueChanged(string source = null)
         {
+            if (source != null && EbFormHelper.ContainsInValExpr(this.Name, source))
+                return;
+
             EbFormHelper.ControlValueChanged(this.Name);
         }
 
@@ -164,6 +179,14 @@ namespace ExpressBase.Mobile
                 EbLog.Info(ex.Message);
             }
             return null;
+        }
+
+        public virtual void SetValidation(bool status, string message)
+        {
+            if (validationLabel == null) return;
+
+            validationLabel.Text = message;
+            validationLabel.IsVisible = !status;
         }
     }
 }
