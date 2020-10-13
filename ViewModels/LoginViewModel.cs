@@ -9,7 +9,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class LoginViewModel : StaticBaseViewModel
+    public class LoginViewModel : LoginBaseViewModel
     {
         private string email;
 
@@ -35,35 +35,12 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public ImageSource LogoUrl { set; get; }
-
-        public bool ShowNewSolutionLink => (App.Settings.Vendor.BuildType != AppBuildType.Embedded);
-
-        public bool IsResetVisible => App.Settings.Vendor.HasSolutionSwitcher;
-
-        private readonly IIdentityService identityService;
-
-        private Action<ApiAuthResponse> toggle2FAW;
-
-        private ApiAuthResponse authResponse;
-
         public Command LoginCommand => new Command(async () => await LoginAction());
 
-        public Command SubmitOtpCommand => new Command(async (o) => await SubmitOtp(o));
-
-        public Command ResendOtpCommand => new Command(async () => await ResendOtp());
-
-        public LoginViewModel()
+        public LoginViewModel() : base()
         {
-            identityService = IdentityService.Instance;
-
             this.Email = App.Settings.CurrentSolution?.LastUser;
             this.LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
-        }
-
-        public void Bind2FAToggleEvent(Action<ApiAuthResponse> action)
-        {
-            toggle2FAW = action;
         }
 
         private async Task LoginAction()
@@ -83,18 +60,18 @@ namespace ExpressBase.Mobile.ViewModels
                 IsBusy = true;
                 try
                 {
-                    authResponse = await identityService.AuthenticateAsync(_username, _password);
+                    AuthResponse = await Service.AuthenticateAsync(_username, _password);
                 }
                 catch (Exception ex)
                 {
-                    authResponse = null;
+                    AuthResponse = null;
                     EbLog.Error("Authentication failed :: " + ex.Message);
                 }
 
-                if (authResponse != null && authResponse.IsValid)
+                if (AuthResponse != null && AuthResponse.IsValid)
                 {
-                    if (authResponse.Is2FEnabled)
-                        toggle2FAW?.Invoke(authResponse);
+                    if (AuthResponse.Is2FEnabled)
+                        Toggle2FAW?.Invoke(AuthResponse);
                     else
                         await AfterLoginSuccess(_username);
                 }
@@ -111,8 +88,8 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                await identityService.UpdateAuthInfo(authResponse, username);
-                await identityService.UpdateLastUser(username, LoginType.CREDENTIALS);
+                await Service.UpdateAuthInfo(AuthResponse, username);
+                await Service.UpdateLastUser(username, LoginType.CREDENTIALS);
 
                 EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true, callback: status =>
                 {
@@ -123,7 +100,7 @@ namespace ExpressBase.Mobile.ViewModels
                     await NotificationService.Instance.UpdateNHRegisratation();
 
                 if (data != null)
-                    await identityService.Navigate(data);
+                    await Service.Navigate(data);
             }
             catch (Exception ex)
             {
@@ -131,7 +108,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private async Task SubmitOtp(object o)
+        protected override async Task SubmitOTP(object o)
         {
             string otp = o.ToString();
             ApiAuthResponse resp = null;
@@ -139,7 +116,7 @@ namespace ExpressBase.Mobile.ViewModels
 
             try
             {
-                resp = await identityService.VerifyOTP(authResponse, otp);
+                resp = await Service.VerifyOTP(AuthResponse, otp);
             }
             catch (Exception ex)
             {
@@ -153,12 +130,12 @@ namespace ExpressBase.Mobile.ViewModels
                 DependencyService.Get<IToast>().Show("The OTP is Invalid or Expired");
         }
 
-        private async Task ResendOtp()
+        protected override async Task ResendOTP()
         {
             ApiGenerateOTPResponse resp = null;
             try
             {
-                resp = await identityService.GenerateOTP(authResponse);
+                resp = await Service.GenerateOTP(AuthResponse);
             }
             catch (Exception ex)
             {

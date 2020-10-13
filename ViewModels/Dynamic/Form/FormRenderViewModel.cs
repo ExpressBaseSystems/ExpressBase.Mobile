@@ -45,18 +45,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             if (!this.IsOnline())
             {
-                //creating offline tables if not exist
-                await Task.Run(() => this.Form.CreateTableSchema());
+                await Task.Run(() =>
+                {
+                    this.Form.CreateTableSchema();
+                });
             }
-
-            if (this.Mode == FormMode.NEW)
-                this.SetValues();
         }
 
         protected virtual void SetValues()
         {
-            this.InitDefaultValueExpressions();
-            this.InitConcurrentExpressions();
+           
         }
 
         public async Task FormSubmitClicked()
@@ -136,7 +134,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        protected void InitConcurrentExpressions()
+        protected void InitOnLoadExpressions()
         {
             foreach (EbMobileControl ctrl in this.Form.ControlDictionary.Values)
             {

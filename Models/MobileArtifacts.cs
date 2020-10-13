@@ -260,7 +260,7 @@ namespace ExpressBase.Mobile.Models
                 string appversion = string.Format("{0}({1} {2}:{3})-{4}", DeviceInfo.Manufacturer, DeviceInfo.Model, DeviceInfo.Platform, DeviceInfo.VersionString, helper.AppVersion);
                 this.Columns.Add(new MobileTableColumn { Name = "eb_appversion", Type = EbDbTypes.String, Value = appversion });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }
@@ -338,6 +338,8 @@ namespace ExpressBase.Mobile.Models
 
         public LoginType LoginType { set; get; }
 
+        public Eb_Solution SolutionObject { set; get; }
+
         public void SetLogo()
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
@@ -352,6 +354,25 @@ namespace ExpressBase.Mobile.Models
             {
                 EbLog.Error("Login_SetLogo" + ex.Message);
             }
+        }
+
+        public bool SignupEnabled()
+        {
+            if (SolutionObject != null && SolutionObject.SolutionSettings != null)
+            {
+                SolutionSettings settings = SolutionObject.SolutionSettings;
+
+                if (settings.MobileAppSettings != null)
+                {
+                    MobileAppSettings mobs = settings.MobileAppSettings;
+
+                    if (mobs.MobileSignUpSettings != null && mobs.MobileSignUpSettings.SignUp)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 

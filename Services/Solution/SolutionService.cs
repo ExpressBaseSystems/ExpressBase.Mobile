@@ -170,6 +170,7 @@ namespace ExpressBase.Mobile.Services
                 SolutionName = info.SolutionName,
                 RootUrl = info.RootUrl,
                 LastUser = info.LastUser,
+                SolutionObject = info.SolutionObject
             };
         }
 

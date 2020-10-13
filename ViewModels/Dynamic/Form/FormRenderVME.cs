@@ -27,11 +27,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public override async Task InitializeAsync()
         {
             await base.InitializeAsync();
-
             await this.InitializeFormData();
-
             this.SetValues();
-            this.InitConcurrentExpressions();
         }
 
         private async Task InitializeFormData()
@@ -73,6 +70,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 this.SetControlValues(masterRow);
             else
                 EbLog.Info($"master row not found in table:'{this.Form.TableName}'");
+
+            base.SetValues();
         }
 
         private void SetControlValues(EbDataRow masterRow)
@@ -80,15 +79,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             foreach (var pair in this.Form.ControlDictionary)
             {
                 EbMobileControl ctrl = pair.Value;
-
                 object data = masterRow[ctrl.Name];
-
                 try
                 {
                     if (ctrl is EbMobileFileUpload)
-                    {
                         this.SetFileData(ctrl as EbMobileFileUpload, data);
-                    }
                     else if (ctrl is ILinesEnabled line)
                     {
                         EbDataTable lines = this.formData.Tables.Find(table => table.TableName == line.TableName);
@@ -126,9 +121,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             else
             {
                 if (this.filesData != null && this.filesData.ContainsKey(ctrl.Name))
-                {
                     fup.Files.AddRange(this.filesData[ctrl.Name]);
-                }
             }
             ctrl.SetValue(fup);
         }

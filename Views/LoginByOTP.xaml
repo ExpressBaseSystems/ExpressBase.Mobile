@@ -125,6 +125,24 @@
                                         Clicked="NewSolutionButton_Clicked">
                                 </Button>
 
+                                <Label IsVisible="{Binding IsSignUpVisible}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="End"
+                                       Margin="0,0,0,15"
+                                       FontFamily="{StaticResource Roboto-Medium}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Not yet a member? "></Span>
+                                            <Span Text="Sign up"
+                                                  TextColor="{DynamicResource Primary_Color}"></Span>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding SignUpCommand}"></TapGestureRecognizer>
+                                    </Label.GestureRecognizers>
+                                </Label>
+
                             </Grid>
                         </StackLayout>
                     </ScrollView>

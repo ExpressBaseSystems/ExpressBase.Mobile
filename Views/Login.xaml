@@ -28,8 +28,9 @@
                                         Command="{Binding ResetConfig}">
                                 </Button>
                             </StackLayout>
-                            
-                            <Grid RowSpacing="0" Padding="20,0,20,20"
+
+                            <Grid RowSpacing="0"
+                                  Padding="20,0,20,20"
                                   VerticalOptions="CenterAndExpand">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -60,12 +61,12 @@
                                                FontFamily="{StaticResource Roboto-Regular}"
                                                Style="{StaticResource LabelStyle}" />
                                         <control:EbXTextBox x:Name="Email"
-                                                         HeightRequest="55"
-                                                         XBackgroundColor="#f1f6fb"
-                                                         EnableFocus="True"
-                                                         BorderOnFocus="{DynamicResource Primary_Color}"
-                                                         Completed="Email_Completed"
-                                                         Text="{Binding Email}">
+                                                            HeightRequest="55"
+                                                            XBackgroundColor="#f1f6fb"
+                                                            EnableFocus="True"
+                                                            BorderOnFocus="{DynamicResource Primary_Color}"
+                                                            Completed="Email_Completed"
+                                                            Text="{Binding Email}">
                                         </control:EbXTextBox>
                                     </StackLayout>
                                     <StackLayout Margin="0,5,0,20">
@@ -147,6 +148,7 @@
                                        FontSize="15"
                                        TextColor="{DynamicResource Primary_Color}">
                                 </Label>
+
                                 <Button IsVisible="{Binding ShowNewSolutionLink}"
                                         Grid.Row="6"
                                         Margin="0,10"
@@ -156,12 +158,31 @@
                                         Clicked="NewSolutionButton_Clicked">
                                 </Button>
                             </Grid>
+
+                            <Label IsVisible="{Binding IsSignUpVisible}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="End"
+                                   Margin="0,0,0,15"
+                                   FontFamily="{StaticResource Roboto-Medium}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Not yet a member? "></Span>
+                                        <Span Text="Sign up"
+                                              TextColor="{DynamicResource Primary_Color}"></Span>
+                                    </FormattedString>
+                                </Label.FormattedText>
+
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SignUpCommand}"></TapGestureRecognizer>
+                                </Label.GestureRecognizers>
+                            </Label>
+
                         </StackLayout>
                     </ScrollView>
 
                     <control:TwoFAView x:Name="TwoFAWindow"
-                                       ResendClicked="{Binding ResendOtpCommand}"
-                                       SubmitClicked="{Binding SubmitOtpCommand}">
+                                       ResendClicked="{Binding ResendOTPCommand}"
+                                       SubmitClicked="{Binding SubmitOTPCommand}">
                     </control:TwoFAView>
 
                 </Grid>

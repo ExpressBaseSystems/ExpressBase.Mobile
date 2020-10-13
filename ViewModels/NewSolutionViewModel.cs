@@ -38,7 +38,8 @@ namespace ExpressBase.Mobile.ViewModels
                 SolutionInfo info = new SolutionInfo
                 {
                     SolutionName = sid,
-                    RootUrl = solutionUrl
+                    RootUrl = solutionUrl,
+                    SolutionObject = response.SolutionObj
                 };
 
                 await solutionService.SetDataAsync(info);

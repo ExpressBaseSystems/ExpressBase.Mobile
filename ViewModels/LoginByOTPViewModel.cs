@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels
 {
-    public class LoginByOTPViewModel : StaticBaseViewModel
+    public class LoginByOTPViewModel : LoginBaseViewModel
     {
         private string username;
 
@@ -24,35 +24,12 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public ImageSource LogoUrl { set; get; }
-
-        private Action<ApiAuthResponse> toggle2FAW;
-
-        private ApiAuthResponse authResponse;
-
-        private readonly IIdentityService identityService;
-
-        public bool ShowNewSolutionLink => (App.Settings.Vendor.BuildType != AppBuildType.Embedded);
-
-        public bool IsResetVisible => App.Settings.Vendor.HasSolutionSwitcher;
-
         public Command SendOTPCommand => new Command(async (o) => await SendOTP());
 
-        public Command SubmitOTPCommand => new Command(async (o) => await SubmitOTP(o));
-
-        public Command ResendOTPCommand => new Command(async () => await ResendOTP());
-
-        public LoginByOTPViewModel()
+        public LoginByOTPViewModel() : base()
         {
-            identityService = IdentityService.Instance;
-
             this.UserName = App.Settings.CurrentSolution?.LastUser;
             this.LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
-        }
-
-        public void Bind2FAToggleEvent(Action<ApiAuthResponse> action)
-        {
-            toggle2FAW = action;
         }
 
         private async Task SendOTP()
@@ -63,18 +40,16 @@ namespace ExpressBase.Mobile.ViewModels
                 return;
 
             IToast toast = DependencyService.Get<IToast>();
-
             SignInOtpType otpT = OtpType(username);
 
             IsBusy = true;
             try
             {
-                authResponse = await identityService.AuthenticateSSOAsync(username, otpT);
+                AuthResponse = await Service.AuthenticateSSOAsync(username, otpT);
 
-                if (authResponse != null && authResponse.IsValid)
+                if (AuthResponse != null && AuthResponse.IsValid)
                 {
-                    //DependencyService.Get<IHashService>().StartSMSRetrieverReceiver();
-                    toggle2FAW?.Invoke(authResponse);
+                    Toggle2FAW?.Invoke(AuthResponse);
                 }
                 else
                     toast.Show("username or mobile invalid");
@@ -83,20 +58,19 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 EbLog.Error("Failed to send otp :: " + ex.Message);
             }
-
             IsBusy = false;
         }
 
-        private async Task SubmitOTP(object o)
+        protected override async Task SubmitOTP(object o)
         {
             string otp = o.ToString();
 
-            if (!identityService.IsValidOTP(otp)) return;
+            if (!Service.IsValidOTP(otp)) return;
 
             IsBusy = true;
             try
             {
-                ApiAuthResponse resp = await identityService.VerifyOTP(authResponse, otp);
+                ApiAuthResponse resp = await Service.VerifyOTP(AuthResponse, otp);
 
                 if (resp != null && resp.IsValid)
                     await AfterLoginSuccess(resp, this.UserName);
@@ -115,8 +89,8 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                await identityService.UpdateAuthInfo(resp, username);
-                await identityService.UpdateLastUser(username);
+                await Service.UpdateAuthInfo(resp, username);
+                await Service.UpdateLastUser(username);
 
                 EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true, callback: status =>
                 {
@@ -127,7 +101,7 @@ namespace ExpressBase.Mobile.ViewModels
                     await NotificationService.Instance.UpdateNHRegisratation();
 
                 if (data != null)
-                    await identityService.Navigate(data);
+                    await Service.Navigate(data);
             }
             catch (Exception ex)
             {
@@ -135,12 +109,12 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private async Task ResendOTP()
+        protected override async Task ResendOTP()
         {
             ApiGenerateOTPResponse resp = null;
             try
             {
-                resp = await identityService.GenerateOTP(authResponse);
+                resp = await Service.GenerateOTP(AuthResponse);
             }
             catch (Exception ex)
             {

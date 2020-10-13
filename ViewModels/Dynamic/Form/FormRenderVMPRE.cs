@@ -23,7 +23,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public override async Task InitializeAsync()
         {
             await base.InitializeAsync();
-
             this.SetValues();
         }
 
@@ -50,6 +49,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     ctrl.SetValue(value);
                 }
             }
+            base.SetValues();
         }
     }
 }
