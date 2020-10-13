@@ -2,13 +2,12 @@
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
-using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.ViewModels
+namespace ExpressBase.Mobile.ViewModels.Login
 {
     public class LoginByOTPViewModel : LoginBaseViewModel
     {

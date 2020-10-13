@@ -50,11 +50,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     this.Form.CreateTableSchema();
                 });
             }
+            if (this.Mode == FormMode.NEW)
+                this.SetValues();
         }
 
         protected virtual void SetValues()
         {
-           
+            if (this.Mode == FormMode.NEW || this.Mode == FormMode.PREFILL || this.Mode == FormMode.REF)
+                this.InitDefaultValueExpressions();
+
+            this.InitOnLoadExpressions();
         }
 
         public async Task FormSubmitClicked()
@@ -65,7 +70,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 return;
             }
 
-            if (this.Form.Validate())
+            if (EbFormHelper.Validate())
             {
                 EbLog.Info($"Form '{this.PageName}' validation success ready to submit");
                 this.Form.NetworkType = this.NetworkType;
@@ -107,14 +112,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 EbLog.Error(ex.Message);
 
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
-            }
-        }
-
-        public void EnableControls()
-        {
-            foreach (var ctrl in this.Form.ControlDictionary.Values)
-            {
-                ctrl.SetAsReadOnly(false);
             }
         }
 

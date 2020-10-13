@@ -32,25 +32,28 @@
     </Style>
 
     <Style TargetType="Button" x:Key="FupCameraButton">
-        <Setter Property="BackgroundColor" Value="#eeeeee"></Setter>
+        <Setter Property="BackgroundColor" Value="White"></Setter>
         <Setter Property="FontSize" Value="18"></Setter>
         <Setter Property="CornerRadius" Value="4"></Setter>
-        <Setter Property="BorderColor" Value="#cccccc"></Setter>
+        <Setter Property="BorderColor" Value="#dadce0"></Setter>
         <Setter Property="BorderWidth" Value="1"></Setter>
         <Setter Property="Margin" Value="0"></Setter>
         <Setter Property="Text" Value="&#xf030;"></Setter>
+        <Setter Property="FontAttributes" Value="Bold"></Setter>
+        <Setter Property="TextColor" Value="#696969"></Setter>
         <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
     </Style>
 
     <Style TargetType="Button" x:Key="FupFileButton">
-        <Setter Property="BackgroundColor" Value="#ffc059"></Setter>
+        <Setter Property="BackgroundColor" Value="White"></Setter>
         <Setter Property="FontSize" Value="18"></Setter>
         <Setter Property="CornerRadius" Value="4"></Setter>
-        <Setter Property="BorderColor" Value="#cccccc"></Setter>
+        <Setter Property="BorderColor" Value="#dadce0"></Setter>
         <Setter Property="BorderWidth" Value="1"></Setter>
         <Setter Property="Margin" Value="0"></Setter>
         <Setter Property="Text" Value="&#xf115;"></Setter>
-        <Setter Property="TextColor" Value="White"></Setter>
+        <Setter Property="TextColor" Value="#f7ab30"></Setter>
+        <Setter Property="FontAttributes" Value="Bold"></Setter>
         <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
     </Style>
 

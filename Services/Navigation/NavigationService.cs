@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views;
 using ExpressBase.Mobile.Views.Base;
 using ExpressBase.Mobile.Views.Dynamic;
+using ExpressBase.Mobile.Views.Login;
 using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace ExpressBase.Mobile.Services
             if (App.Settings.LoginType == LoginType.SSO)
                 await Application.Current.MainPage.Navigation.PushAsync(new LoginByOTP());
             else
-                await Application.Current.MainPage.Navigation.PushAsync(new Login());
+                await Application.Current.MainPage.Navigation.PushAsync(new LoginByPassword());
         }
 
         //login with current stack
@@ -34,7 +35,7 @@ namespace ExpressBase.Mobile.Services
             if (App.Settings.LoginType == LoginType.SSO)
                 await Application.Current.MainPage.Navigation.PushAsync(new LoginByOTP());
             else
-                await Application.Current.MainPage.Navigation.PushAsync(new Login());
+                await Application.Current.MainPage.Navigation.PushAsync(new LoginByPassword());
         }
 
         public static bool IsTokenExpired(string rtoken)

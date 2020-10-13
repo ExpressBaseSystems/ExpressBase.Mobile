@@ -438,16 +438,6 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public bool Validate()
-        {
-            foreach (EbMobileControl ctrl in this.ControlDictionary.Values)
-            {
-                if (!ctrl.Validate())
-                    return false;
-            }
-            return true;
-        }
-
         public List<Param> GetRenderValidatorParams(EbDataRow row)
         {
             List<Param> param = new List<Param>();

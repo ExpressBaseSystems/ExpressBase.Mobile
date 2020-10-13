@@ -156,7 +156,7 @@ namespace ExpressBase.Mobile
         {
             base.SetAsReadOnly(disable);
 
-            Color bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
+            Color bg = disable ? EbMobileControl.ReadOnlyBackground : Color.Transparent;
 
             (this.XControl as InputGroup).XBackgroundColor = bg;
         }

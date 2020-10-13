@@ -1,37 +1,44 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
-using ExpressBase.Mobile.ViewModels;
+using ExpressBase.Mobile.ViewModels.Login;
 using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace ExpressBase.Mobile.Views
+namespace ExpressBase.Mobile.Views.Login
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Login : ContentPage, IDynamicContent
+    public partial class LoginByOTP : ContentPage, IDynamicContent
     {
         private int backButtonCount;
 
-        private readonly LoginViewModel viewModel;
+        private readonly LoginByOTPViewModel viewModel;
 
         public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.Login;
 
-        public Login()
+        public LoginByOTP()
         {
             InitializeComponent();
-            BindingContext = viewModel = new LoginViewModel();
+            BindingContext = viewModel = new LoginByOTPViewModel();
 
             SetContentFromConfig();
             viewModel.Bind2FAToggleEvent(ShowTwoFAWindow);
         }
 
+        private void StartOTPListner()
+        {
+            MessagingCenter.Subscribe<string>(this, "ReceivedOTP", (message) =>
+            {
+
+            });
+        }
+
         public void SetContentFromConfig()
         {
             LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
-            SubmitButton.Text = PageContent["LoginButtonText"];
         }
 
         protected override void OnAppearing()
@@ -41,43 +48,22 @@ namespace ExpressBase.Mobile.Views
             SolutionName.Text = App.Settings.Sid.ToUpper();
         }
 
-        private void Email_Completed(object sender, EventArgs e)
-        {
-            PassWord.Focus();
-        }
-
-        private void ShowPassword_Clicked(object sender, EventArgs e)
-        {
-            PassWord.IsPassword = false;
-            ShowPassword.IsVisible = false;
-            HidePassword.IsVisible = true;
-            if (PassWord.Text != null)
-                PassWord.CursorPosition = PassWord.Text.Length;
-        }
-
-        private void HidePassword_Clicked(object sender, EventArgs e)
-        {
-            PassWord.IsPassword = true;
-            ShowPassword.IsVisible = true;
-            HidePassword.IsVisible = false;
-            if (PassWord.Text != null)
-                PassWord.CursorPosition = PassWord.Text.Length;
-        }
-
         public void ShowTwoFAWindow(ApiAuthResponse auth)
         {
             TwoFAWindow.SetAddress(auth.TwoFAToAddress);
+
             TwoFAWindow.Show();
+            RestButton.IsVisible = false;
+        }
+
+        private async void CredLoginButton_Clicked(object sender, EventArgs e)
+        {
+            await NavigationService.ReplaceTopAsync(new LoginByPassword());
         }
 
         private async void NewSolutionButton_Clicked(object sender, EventArgs e)
         {
             await Application.Current.MainPage.Navigation.PushAsync(new NewSolution(true));
-        }
-
-        private async void SSOLoginButton_Clicked(object sender, EventArgs e)
-        {
-            await NavigationService.ReplaceTopAsync(new LoginByOTP());
         }
 
         protected override bool OnBackButtonPressed()

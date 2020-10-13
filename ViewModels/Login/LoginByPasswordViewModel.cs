@@ -2,14 +2,13 @@
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
-using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.ViewModels
+namespace ExpressBase.Mobile.ViewModels.Login
 {
-    public class LoginViewModel : LoginBaseViewModel
+    public class LoginByPasswordViewModel : LoginBaseViewModel
     {
         private string email;
 
@@ -37,7 +36,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command LoginCommand => new Command(async () => await LoginAction());
 
-        public LoginViewModel() : base()
+        public LoginByPasswordViewModel() : base()
         {
             this.Email = App.Settings.CurrentSolution?.LastUser;
             this.LogoUrl = CommonServices.GetLogo(App.Settings.Sid);

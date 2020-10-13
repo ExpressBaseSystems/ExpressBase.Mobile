@@ -34,6 +34,9 @@
     <Compile Update="Themes\FormStyles.xaml.cs">
       <DependentUpon>FormStyles.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Login\LoginByPassword.xaml.cs">
+      <DependentUpon>LoginByPassword.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\MyApplications.xaml.cs">
       <DependentUpon>MyApplications.xaml</DependentUpon>
     </Compile>
@@ -100,7 +103,7 @@
     <EmbeddedResource Update="Views\Dynamic\PdfRender.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\LoginByOTP.xaml">
+    <EmbeddedResource Update="Views\Login\LoginByOTP.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\MyActions.xaml">

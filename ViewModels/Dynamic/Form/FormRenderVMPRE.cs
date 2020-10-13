@@ -49,6 +49,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     ctrl.SetValue(value);
                 }
             }
+
             base.SetValues();
         }
     }

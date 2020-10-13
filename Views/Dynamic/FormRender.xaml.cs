@@ -74,7 +74,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EditButton.IsVisible = false;
             SaveButton.IsVisible = true;
 
-            viewModel.EnableControls();
+            EbFormHelper.SwitchViewToEdit();
         }
 
         public void ShowFullScreenImage(Image tapedImage)

@@ -22,7 +22,10 @@ namespace ExpressBase.Mobile.Helpers
 
         private EbFormHelper()
         {
-            evaluator = new EbSciptEvaluator();
+            evaluator = new EbSciptEvaluator
+            {
+                OptionScriptNeedSemicolonAtTheEndOfLastExpression = false
+            };
         }
 
         private void Dispose()
@@ -51,7 +54,6 @@ namespace ExpressBase.Mobile.Helpers
                 Instance.InitHideExpr(exprDep);
                 Instance.InitDisableExpr(exprDep);
             }
-
             Instance.InitValidators(controlName);
         }
 
@@ -61,20 +63,22 @@ namespace ExpressBase.Mobile.Helpers
             {
                 ExprDependency exprDep = Instance.dependencyMap.GetDependency(ctrl.Name);
 
-                if (mode == FormMode.NEW || mode == FormMode.EDIT)
+                if (mode == FormMode.NEW || mode == FormMode.EDIT || mode == FormMode.PREFILL)
                 {
-                    Instance.InitHideExpr(exprDep);
-                    Instance.InitDisableExpr(exprDep);
-
-                    if (mode == FormMode.EDIT && ctrl.DoNotPersist)
+                    if (mode == FormMode.NEW || mode == FormMode.PREFILL)
                     {
-                        Instance.InitValueExpr(exprDep, ctrl.Name);
+                        Instance.InitHideExpr(exprDep);
+                        Instance.InitDisableExpr(exprDep);
+                    }
+                    else if (mode == FormMode.EDIT)
+                    {
+                        if (ctrl.DoNotPersist)
+                            Instance.InitValueExpr(exprDep, ctrl.Name);
+
+                        Instance.InitHideExpr(exprDep);
                     }
                 }
             }
-
-            if (mode == FormMode.EDIT && ctrl.DoNotPersist)
-                Instance.InitValidators(ctrl.Name);
         }
 
         public static void SetDefaultValue(string controlName)
@@ -90,6 +94,36 @@ namespace ExpressBase.Mobile.Helpers
             ExprDependency map = Instance.dependencyMap.GetDependency(dependencySource);
 
             return map.ValueExpr.Contains(dependency);
+        }
+
+        public static void SwitchViewToEdit()
+        {
+            foreach (EbMobileControl ctrl in Instance.controls.Values)
+            {
+                if (!ctrl.ReadOnly) ctrl.SetAsReadOnly(false);
+
+                if (Instance.dependencyMap.HasDependency(ctrl.Name))
+                {
+                    ExprDependency exprDep = Instance.dependencyMap.GetDependency(ctrl.Name);
+
+                    if (ctrl.DoNotPersist)
+                        Instance.InitValueExpr(exprDep, ctrl.Name);
+
+                    Instance.InitDisableExpr(exprDep);
+                }
+            }
+        }
+
+        public static bool Validate()
+        {
+            foreach (EbMobileControl ctrl in Instance.controls.Values)
+            {
+                bool valid = Instance.InitValidators(ctrl.Name);
+
+                if (!ctrl.Validate() || !valid)
+                    return false;
+            }
+            return true;
         }
 
         private void InitValueExpr(ExprDependency exprDep, string trigger_control)
@@ -149,23 +183,25 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        private void InitValidators(string controlName)
+        private bool InitValidators(string controlName)
         {
             EbMobileControl ctrl = controls[controlName];
 
             if (ctrl.Validators == null || !ctrl.Validators.Any() || ctrl is INonPersistControl)
-                return;
+                return true;
+
+            bool flag = true;
 
             foreach (EbMobileValidator validator in ctrl.Validators)
             {
                 if (validator.IsDisabled || validator.IsEmpty())
                     continue;
 
-                bool flag = this.EvaluateValidatorExpr(validator, controlName);
+                flag = this.EvaluateValidatorExpr(validator, controlName);
                 ctrl.SetValidation(flag, validator.FailureMSG);
-                if (!flag)
-                    break;
+                if (!flag) break;
             }
+            return flag;
         }
 
         private void EvaluateValueExpr(EbMobileControl ctrl, string trigger_control)
@@ -178,7 +214,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 try
                 {
-                    object value = evaluator.ScriptEvaluate(computed);
+                    object value = evaluator.Execute(computed);
                     ctrl.SetValue(value);
                     ctrl.ValueChanged(trigger_control);
                 }
@@ -200,7 +236,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 try
                 {
-                    bool value = evaluator.ScriptEvaluate<bool>(computed);
+                    bool value = evaluator.Execute<bool>(computed);
                     ctrl.SetVisibilty(!value);
                 }
                 catch (Exception ex)
@@ -223,7 +259,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 try
                 {
-                    bool value = evaluator.ScriptEvaluate<bool>(computed);
+                    bool value = evaluator.Execute<bool>(computed);
                     ctrl.SetAsReadOnly(value);
                 }
                 catch (Exception ex)
@@ -244,7 +280,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 try
                 {
-                    object value = evaluator.ScriptEvaluate(computed);
+                    object value = evaluator.Execute(computed);
                     ctrl.SetValue(value);
                     ctrl.DefaultExprEvaluated = true;
                 }
@@ -266,7 +302,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 try
                 {
-                    return evaluator.ScriptEvaluate<bool>(computed);
+                    return evaluator.Execute<bool>(computed);
                 }
                 catch (Exception ex)
                 {

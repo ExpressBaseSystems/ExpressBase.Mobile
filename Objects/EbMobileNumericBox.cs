@@ -130,7 +130,7 @@ namespace ExpressBase.Mobile
         {
             base.SetAsReadOnly(disable);
 
-            Color bg = disable ? Color.FromHex("eeeeee") : Color.Transparent;
+            Color bg = disable ? EbMobileControl.ReadOnlyBackground : Color.Transparent;
 
             if (RenderType == NumericBoxTypes.TextType)
                 (this.XControl as EbXNumericTextBox).XBackgroundColor = bg;

@@ -1,12 +1,13 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.ViewModels.BaseModels;
 using ExpressBase.Mobile.Views;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.ViewModels.BaseModels
+namespace ExpressBase.Mobile.ViewModels.Login
 {
     public class LoginBaseViewModel : StaticBaseViewModel
     {

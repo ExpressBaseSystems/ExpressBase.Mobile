@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Structures;
-using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -18,7 +17,7 @@ namespace ExpressBase.Mobile
             this.XControl = new EbXTextBox
             {
                 IsReadOnly = true,
-                XBackgroundColor = Color.FromHex("eeeeee")
+                XBackgroundColor = EbMobileControl.ReadOnlyBackground
             };
         }
 

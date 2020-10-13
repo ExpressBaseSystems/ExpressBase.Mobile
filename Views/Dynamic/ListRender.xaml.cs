@@ -5,7 +5,6 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Views.Base;
-using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {

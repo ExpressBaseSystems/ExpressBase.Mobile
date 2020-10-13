@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
              mc:Ignorable="d"
-             x:Class="ExpressBase.Mobile.Views.LoginByOTP"
+             x:Class="ExpressBase.Mobile.Views.Login.LoginByOTP"
              Style="{StaticResource ContentPageStyle}">
     <ContentPage.Content>
         <control:EbCPLayout x:Name="EbLayout"
@@ -124,26 +124,26 @@
                                         HorizontalOptions="FillAndExpand"
                                         Clicked="NewSolutionButton_Clicked">
                                 </Button>
-
-                                <Label IsVisible="{Binding IsSignUpVisible}"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="End"
-                                       Margin="0,0,0,15"
-                                       FontFamily="{StaticResource Roboto-Medium}">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="Not yet a member? "></Span>
-                                            <Span Text="Sign up"
-                                                  TextColor="{DynamicResource Primary_Color}"></Span>
-                                        </FormattedString>
-                                    </Label.FormattedText>
-
-                                    <Label.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding SignUpCommand}"></TapGestureRecognizer>
-                                    </Label.GestureRecognizers>
-                                </Label>
-
                             </Grid>
+
+                            <Label IsVisible="{Binding IsSignUpVisible}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="End"
+                                   Margin="0,0,0,15"
+                                   FontFamily="{StaticResource Roboto-Medium}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Not yet a member ? "></Span>
+                                        <Span Text="Sign up"
+                                              TextColor="{DynamicResource Primary_Color}"></Span>
+                                    </FormattedString>
+                                </Label.FormattedText>
+
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SignUpCommand}"></TapGestureRecognizer>
+                                </Label.GestureRecognizers>
+                            </Label>
+
                         </StackLayout>
                     </ScrollView>
 
