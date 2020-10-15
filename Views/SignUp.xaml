@@ -7,9 +7,7 @@
     <ContentPage.Content>
         <controls:EbCPLayout>
             <controls:EbCPLayout.Content>
-                <Grid VerticalOptions="FillAndExpand">
-                    <Label Text="SignUp" VerticalOptions="Center" HorizontalOptions="Center"></Label>
-                </Grid>
+                <Label Text="Sample"></Label>
             </controls:EbCPLayout.Content>
         </controls:EbCPLayout>
     </ContentPage.Content>

@@ -10,7 +10,40 @@ namespace ExpressBase.Mobile.Helpers
     {
         private static GeoLocation instance;
 
-        public static GeoLocation Instance => instance ?? (instance = new GeoLocation());
+        public static GeoLocation Instance => instance ??= new GeoLocation();
+
+        public static async Task<Location> GetCurrentLocationAsync()
+        {
+            Location location = null;
+            try
+            {
+                location = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
+
+                if (location != null)
+                {
+                    location = await GetLastKnownLocationAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                AlertExeptionMessage(ex);
+            }
+            return location;
+        }
+
+        public static async Task<Location> GetLastKnownLocationAsync()
+        {
+            Location _loc = null;
+            try
+            {
+                return await Geolocation.GetLastKnownLocationAsync();
+            }
+            catch (Exception ex)
+            {
+                AlertExeptionMessage(ex);
+            }
+            return _loc;
+        }
 
         public async Task<Location> GetCurrentGeoLocation()
         {
@@ -61,7 +94,7 @@ namespace ExpressBase.Mobile.Helpers
             return placemark;
         }
 
-        private void AlertExeptionMessage(Exception _Exception)
+        private static void AlertExeptionMessage(Exception _Exception)
         {
             IToast toast = DependencyService.Get<IToast>();
 

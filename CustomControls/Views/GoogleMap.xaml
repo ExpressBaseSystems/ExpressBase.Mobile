@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
+             xmlns:controls="clr-namespace:ExpressBase.Mobile.CustomControls"
+             x:Class="ExpressBase.Mobile.CustomControls.Views.GoogleMap"
+             x:Name="x_this">
+    <ContentView.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="SearchBoxRow"
+                               Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <maps:Map Grid.RowSpan="2"
+                      x:Name="MapView"
+                      MapType="Street"
+                      TrafficEnabled="{Binding EnableTraffic}">
+            </maps:Map>
+
+            <Frame Grid.Row="1"
+                   IsVisible="{Binding LocationPickerEnabled}"
+                   VerticalOptions="End"
+                   Padding="10"
+                   HasShadow="True"
+                   BorderColor="White"
+                   CornerRadius="4"
+                   Margin="15">
+                <StackLayout Orientation="Horizontal">
+                    <Label x:Name="PickerTextLable"
+                           HorizontalOptions="FillAndExpand"></Label>
+                    <Button Text="&#xf178;"
+                            x:Name="SaveLocationButton"
+                            TextColor="White"
+                            WidthRequest="50"
+                            HeightRequest="50"
+                            CornerRadius="25"
+                            BorderWidth="2"
+                            BorderColor="{DynamicResource Primary_Color}"
+                            FontSize="18"
+                            FontFamily="{DynamicResource FontAwesome}"
+                            VerticalOptions="End"
+                            BackgroundColor="{DynamicResource Primary_Color}"
+                            Clicked="SaveLocationButton_Clicked">
+                    </Button>
+                </StackLayout>
+            </Frame>
+
+            <BoxView x:Name="SearchFade"
+                     IsVisible="False"
+                     Grid.RowSpan="2"
+                     Opacity="0"
+                     BackgroundColor="White">
+
+            </BoxView>
+
+            <Frame Grid.Row="0"
+                   IsVisible="{Binding SearchEnabled}"
+                   Margin="10,20,10,10"
+                   Padding="0"
+                   HasShadow="True"
+                   CornerRadius="4"
+                   BorderColor="White"
+                   x:Name="SearchBox">
+                <StackLayout Orientation="Horizontal" 
+                             Spacing="0">
+                    <Button Text="&#xf041;"
+                            x:Name="SearchBarIcon"
+                            FontSize="18"
+                            Padding="0"
+                            TextColor="#1a73e8"
+                            WidthRequest="40"
+                            BackgroundColor="Transparent"
+                            FontFamily="{DynamicResource FontAwesome}">
+                    </Button>
+                    <Button Text="&#xf053;"
+                            x:Name="SearchBarBackButton"
+                            FontSize="18"
+                            Padding="0"
+                            IsVisible="False"
+                            WidthRequest="40"
+                            BackgroundColor="Transparent"
+                            FontFamily="{DynamicResource FontAwesome}"
+                            Clicked="SearchBarBackButton_Clicked">
+                    </Button>
+                    <controls:EbXTextBox Placeholder="Search Place..."
+                                         x:Name="SearchBarTextBox"
+                                         BorderColor="Transparent"
+                                         HeightRequest="45"
+                                         FontSize="14"
+                                         XBackgroundColor="White"
+                                         ClearButtonVisibility="WhileEditing"
+                                         Focused="SearchBox_Focused"
+                                         HorizontalOptions="FillAndExpand"
+                                         TextChanged="SearchBox_TextChanged">
+                    </controls:EbXTextBox>
+                </StackLayout>
+            </Frame>
+
+            <Frame Grid.Row="1"
+                   IsVisible="{Binding ChangeLocationEnabled}"
+                   x:Name="LocationChangeButton"
+                   HorizontalOptions="Start"
+                   VerticalOptions="End"
+                   HasShadow="True"
+                   Margin="15"
+                   CornerRadius="25"
+                   BorderColor="White"
+                   Padding="0">
+                <Button HeightRequest="50"
+                        WidthRequest="50"
+                        CornerRadius="25"
+                        BackgroundColor="White"
+                        Text="&#xf040;"
+                        FontSize="18"
+                        FontFamily="{DynamicResource FontAwesome}"
+                        Clicked="LocationChangeButton_Clicked">
+                </Button>
+            </Frame>
+
+            <ListView HasUnevenRows="true"
+                      IsVisible="False"
+                      Grid.Row="1"
+                      x:Name="PlacesList"
+                      SeparatorVisibility="None"
+                      ItemTapped="PlacesList_ItemTapped">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="10,10,0,0"
+                                  RowSpacing="0"
+                                  ColumnSpacing="15">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="10" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Frame Grid.Column="0"
+                                       Grid.RowSpan="2"
+                                       WidthRequest="30"
+                                       HeightRequest="30"
+                                       Padding="0"
+                                       CornerRadius="15"
+                                       VerticalOptions="Center"
+                                       BackgroundColor="#eee">
+                                    <Label Text="&#xf041;"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           FontSize="18"
+                                           FontFamily="{DynamicResource FontAwesome}">
+                                    </Label>
+                                </Frame>
+
+                                <Label LineBreakMode="MiddleTruncation"
+                                       Text="{Binding StructuredFormatting.MainText}"
+                                       FontFamily="{StaticResource Roboto-Medium}"
+                                       Grid.Row="0"
+                                       Grid.Column="1" />
+
+                                <Label LineBreakMode="MiddleTruncation"
+                                       Text="{Binding StructuredFormatting.SecondaryText}"
+                                       TextColor="Gray"
+                                       FontFamily="{StaticResource Roboto-Regular}"
+                                       Grid.Row="1"
+                                       Grid.Column="1" />
+
+                                <BoxView Grid.Row="2"
+                                         HeightRequest="1"
+                                         VerticalOptions="End"
+                                         Grid.Column="1"
+                                         BackgroundColor="#eee">
+
+                                </BoxView>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </Grid>
+    </ContentView.Content>
+</ContentView>

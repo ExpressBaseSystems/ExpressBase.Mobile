@@ -8,5 +8,5 @@ namespace ExpressBase.Mobile.Views.Base
 
     public delegate bool OnBackButtonPressed(object sender, EventArgs e);
 
-    public delegate void EbEventHandler<TEventArgs>(object sender, TEventArgs e);
+    public delegate void EbEventHandler(object sender, EventArgs e);
 }
