@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Xamarin.Essentials;
 
 namespace ExpressBase.Mobile.Helpers
@@ -44,6 +41,17 @@ namespace ExpressBase.Mobile.Helpers
             var write = await WriteStorage();
 
             return (read && write);
+        }
+
+        public static async Task<bool> GPSLocation()
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            }
+            return status == PermissionStatus.Granted;
         }
     }
 }

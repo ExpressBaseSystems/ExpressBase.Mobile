@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Models
 {
@@ -68,7 +71,7 @@ namespace ExpressBase.Mobile.Models
         [JsonProperty("status")]
         public string Status { set; get; }
 
-        public GoogleLocation GetCordinates()
+        public EbGeoLocation GetCordinates()
         {
             return Result?.Geometry?.Location;
         }
@@ -83,10 +86,10 @@ namespace ExpressBase.Mobile.Models
     public class GooglePlaceGeometry
     {
         [JsonProperty("location")]
-        public GoogleLocation Location { set; get; }
+        public EbGeoLocation Location { set; get; }
     }
 
-    public class GoogleLocation
+    public class EbGeoLocation
     {
         [JsonProperty("lat")]
         public double Latitude { set; get; }
@@ -96,13 +99,20 @@ namespace ExpressBase.Mobile.Models
 
         public string Address { set; get; }
 
-        public GoogleLocation() { }
+        public EbGeoLocation() { }
 
-        public GoogleLocation(double lat, double lng)
+        public EbGeoLocation(double lat, double lng)
         {
             Latitude = lat;
             Longitude = lng;
         }
+    }
+
+    public class EbMapBinding
+    {
+        public EbGeoLocation Location { set; get; }
+
+        public Command ResultCommand { set; get; }
     }
 
 }

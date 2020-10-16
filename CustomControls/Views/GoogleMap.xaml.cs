@@ -3,6 +3,8 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services.GoogleMap;
 using ExpressBase.Mobile.Views.Base;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
@@ -13,19 +15,22 @@ namespace ExpressBase.Mobile.CustomControls.Views
     public partial class GoogleMap : ContentView
     {
         public static readonly BindableProperty SearchEnabledProperty =
-            BindableProperty.Create(nameof(SearchEnabled), typeof(bool), typeof(GoogleMap), defaultValue: true);
+            BindableProperty.Create(nameof(SearchEnabled), typeof(bool), typeof(GoogleMap));
 
         public static readonly BindableProperty EnableTrafficProperty =
-            BindableProperty.Create(nameof(EnableTraffic), typeof(bool), typeof(GoogleMap), defaultValue: false);
+            BindableProperty.Create(nameof(EnableTraffic), typeof(bool), typeof(GoogleMap));
 
         public static readonly BindableProperty ChangeLocationEnabledProperty =
-            BindableProperty.Create(nameof(ChangeLocationEnabled), typeof(bool), typeof(GoogleMap), defaultValue: false);
+            BindableProperty.Create(nameof(ChangeLocationEnabled), typeof(bool), typeof(GoogleMap));
 
         public static readonly BindableProperty LocationPickerEnabledProperty =
-            BindableProperty.Create(nameof(LocationPickerEnabled), typeof(bool), typeof(GoogleMap), defaultValue: false);
+            BindableProperty.Create(nameof(LocationPickerEnabled), typeof(bool), typeof(GoogleMap));
 
         public static readonly BindableProperty GetResultCommandProperty =
-            BindableProperty.Create(nameof(GetResultCommand), typeof(Command<GoogleLocation>), typeof(GoogleMap));
+            BindableProperty.Create(nameof(GetResultCommand), typeof(Command<EbGeoLocation>), typeof(GoogleMap));
+
+        public static readonly BindableProperty ZoomEnabledProperty =
+            BindableProperty.Create(nameof(ZoomEnabled), typeof(bool), typeof(GoogleMap));
 
         public event EbEventHandler ChangeLocationClicked;
 
@@ -53,58 +58,96 @@ namespace ExpressBase.Mobile.CustomControls.Views
             set { SetValue(LocationPickerEnabledProperty, value); }
         }
 
-        public Command<GoogleLocation> GetResultCommand
+        public Command<EbGeoLocation> GetResultCommand
         {
-            get { return (Command<GoogleLocation>)GetValue(GetResultCommandProperty); }
+            get { return (Command<EbGeoLocation>)GetValue(GetResultCommandProperty); }
             set { SetValue(GetResultCommandProperty, value); }
         }
 
-        readonly double zoomLevel = 15;
+        public bool ZoomEnabled
+        {
+            get { return (bool)GetValue(ZoomEnabledProperty); }
+            set { SetValue(ZoomEnabledProperty, value); }
+        }
 
-        private GoogleLocation selectedLocation;
+        private EbGeoLocation selectedLocation;
 
         readonly GoogleMapApiService service;
 
         public GoogleMap()
         {
             InitializeComponent();
-            BindingContext = this;
-
             service = new GoogleMapApiService();
         }
 
         protected override void OnPropertyChanged(string propertyName = null)
         {
             base.OnPropertyChanged(propertyName);
+
+            if(propertyName == EnableTrafficProperty.PropertyName)
+            {
+                MapView.TrafficEnabled = EnableTraffic;
+            } 
+            else if(propertyName == SearchEnabledProperty.PropertyName)
+            {
+                SearchBox.IsVisible = SearchEnabled;
+            }
+            else if (propertyName == ChangeLocationEnabledProperty.PropertyName)
+            {
+                LocationChangeButton.IsVisible = ChangeLocationEnabled;
+            }
+            else if (propertyName == LocationPickerEnabledProperty.PropertyName)
+            {
+                LocationPickerContainer.IsVisible = LocationPickerEnabled;
+            }
+            else if (propertyName == ZoomEnabledProperty.PropertyName)
+            {
+                MapView.HasZoomEnabled = ZoomEnabled;
+            }
         }
 
-        private void SetLocationInternal(double lat, double lng)
+        private void SetSingleLocation(double lat, double lng)
         {
             Position pos = new Position(lat, lng);
             MapSpan span = MapSpan.FromCenterAndRadius(pos, Distance.FromMiles(10));
             MapView.MoveToRegion(span);
-            MapView.Pins.Add(new Pin
+
+            Pin pin = new Pin
             {
                 Label = "you are here",
                 Type = PinType.Place,
                 Position = pos
-            });
+            };
 
-            SetzoomLevel(zoomLevel);
+            if (MapView.Pins.Count == 0)
+                MapView.Pins.Add(pin);
+            else
+                MapView.Pins[0] = pin;
         }
 
         public void SetLocation(double lat, double lng)
         {
-            SetLocationInternal(lat, lng);
-            selectedLocation = new GoogleLocation(lat, lng);
+            this.SetSingleLocation(lat, lng);
+            selectedLocation = new EbGeoLocation(lat, lng);
+
+            this.SetAddress(lat, lng);
         }
 
-        private void SetzoomLevel(double zoom)
+        public async void SetAddress(double lat, double lng)
         {
-            double latlongDegrees = 360 / (Math.Pow(2, zoom));
-            if (MapView.VisibleRegion != null)
+            try
             {
-                MapView.MoveToRegion(new MapSpan(MapView.VisibleRegion.Center, latlongDegrees, latlongDegrees));
+                Geocoder geoCoder = new Geocoder();
+                Position pos = new Position(lat, lng);
+
+                IEnumerable<string> possibleAddresses = await geoCoder.GetAddressesForPositionAsync(pos);
+                string address = possibleAddresses.FirstOrDefault();
+                PickerTextLable.Text = address;
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info("Error at [SetAddress] in googlemap view [GeoCoder]");
+                EbLog.Info(ex.Message);
             }
         }
 
@@ -138,6 +181,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
             PlacesList.IsVisible = true;
             SearchBarIcon.IsVisible = false;
             SearchBarBackButton.IsVisible = true;
+            SearchBox.BackgroundColor = Color.FromHex("#f2f2f2");
         }
 
         private void SearchBarBackButton_Clicked(object sender, EventArgs e)
@@ -145,9 +189,10 @@ namespace ExpressBase.Mobile.CustomControls.Views
             this.HideSearch();
         }
 
-        void HideSearch()
+        private void HideSearch()
         {
             PlacesList.IsVisible = false;
+            SearchBox.BackgroundColor = Color.White;
             SearchFade.FadeTo(0);
             SearchFade.IsVisible = false;
             SearchBarBackButton.IsVisible = false;
@@ -157,8 +202,8 @@ namespace ExpressBase.Mobile.CustomControls.Views
         private async void PlacesList_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             if (e.Item == null) return;
-
-            if (sender is ListView lv) lv.SelectedItem = null;
+            if (sender is ListView lv)
+                lv.SelectedItem = null;
 
             GooglePlaceInfo place = (GooglePlaceInfo)e.Item;
 
@@ -170,13 +215,13 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
                     GooglePlace placeDetails = await service.GetPlaceDetails(place.PlaceId);
 
-                    GoogleLocation cords = placeDetails?.GetCordinates();
+                    EbGeoLocation cords = placeDetails?.GetCordinates();
 
                     if (cords != null)
                     {
                         cords.Address = place.Description;
                         selectedLocation = cords;
-                        SetLocationInternal(cords.Latitude, cords.Longitude);
+                        this.SetSingleLocation(cords.Latitude, cords.Longitude);
                     }
                 }
                 catch (Exception ex)
@@ -185,7 +230,6 @@ namespace ExpressBase.Mobile.CustomControls.Views
                     EbLog.Error(ex.Message);
                 }
             }
-
             this.HideSearch();
         }
 

@@ -3,14 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:ExpressBase.Mobile.CustomControls"
              xmlns:views="clr-namespace:ExpressBase.Mobile.CustomControls.Views"
-             x:Class="ExpressBase.Mobile.Views.Shared.GoogleMapView">
+             x:Class="ExpressBase.Mobile.Views.Shared.GeoMapView">
     <ContentPage.Content>
         <controls:EbCPLayout HasToolBar="False">
             <controls:EbCPLayout.Content>
-                <views:GoogleMap VerticalOptions="FillAndExpand"
+                <views:GoogleMap x:Name="GMapControl"
+                    VerticalOptions="FillAndExpand"
                                  SearchEnabled="True"
                                  ChangeLocationEnabled="False"
-                                 LocationPickerEnabled="True">
+                                 LocationPickerEnabled="True"
+                                 ZoomEnabled="True"
+                                 GetResultCommand="{Binding ResultCommand}">
                 </views:GoogleMap>
             </controls:EbCPLayout.Content>
         </controls:EbCPLayout>

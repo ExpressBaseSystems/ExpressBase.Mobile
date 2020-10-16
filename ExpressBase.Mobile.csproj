@@ -55,6 +55,9 @@
     <Compile Update="Views\Dynamic\ListRender.xaml.cs">
       <DependentUpon>ListRender.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Shared\GeoMapView.xaml.cs">
+      <DependentUpon>GeoMapView.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Shared\MyLocations.xaml.cs">
       <DependentUpon>MyLocations.xaml</DependentUpon>
     </Compile>
@@ -119,6 +122,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\SettingsView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Shared\GeoMapView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\Shared\LoginAction.xaml">

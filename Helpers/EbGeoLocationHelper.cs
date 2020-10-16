@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -6,34 +7,23 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
 {
-    public class GeoLocation
+    public class EbGeoLocationHelper
     {
-        private static GeoLocation instance;
-
-        public static GeoLocation Instance => instance ??= new GeoLocation();
-
         public static async Task<Location> GetCurrentLocationAsync()
         {
-            Location location = null;
             try
             {
-                location = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
-
-                if (location != null)
-                {
-                    location = await GetLastKnownLocationAsync();
-                }
+                return await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
             }
             catch (Exception ex)
             {
                 AlertExeptionMessage(ex);
             }
-            return location;
+            return null;
         }
 
         public static async Task<Location> GetLastKnownLocationAsync()
         {
-            Location _loc = null;
             try
             {
                 return await Geolocation.GetLastKnownLocationAsync();
@@ -42,48 +32,15 @@ namespace ExpressBase.Mobile.Helpers
             {
                 AlertExeptionMessage(ex);
             }
-            return _loc;
+            return null;
         }
 
-        public async Task<Location> GetCurrentGeoLocation()
-        {
-            Location _loc = null;
-            try
-            {
-                _loc = await Geolocation.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
-
-                if (_loc != null)
-                {
-                    _loc = await GetLastKnownGeoLocation();
-                }
-            }
-            catch (Exception ex)
-            {
-                AlertExeptionMessage(ex);
-            }
-            return _loc;
-        }
-
-        public async Task<Location> GetLastKnownGeoLocation()
-        {
-            Location _loc = null;
-            try
-            {
-                return await Geolocation.GetLastKnownLocationAsync();
-            }
-            catch (Exception ex)
-            {
-                AlertExeptionMessage(ex);
-            }
-            return _loc;
-        }
-
-        public async Task<Placemark> GetAddressByCordinates(double lat, double lng)
+        public static async Task<Placemark> GetAddressByCordinates(double lat, double lng)
         {
             Placemark placemark = null;
             try
             {
-                var placemarks = await Geocoding.GetPlacemarksAsync(lat, lng);
+                IEnumerable<Placemark> placemarks = await Geocoding.GetPlacemarksAsync(lat, lng);
 
                 placemark = placemarks?.FirstOrDefault();
             }

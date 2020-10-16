@@ -16,11 +16,14 @@
             <maps:Map Grid.RowSpan="2"
                       x:Name="MapView"
                       MapType="Street"
-                      TrafficEnabled="{Binding EnableTraffic}">
+                      HasZoomEnabled="False"
+                      TrafficEnabled="False"
+                      IsShowingUser="True">
             </maps:Map>
 
             <Frame Grid.Row="1"
-                   IsVisible="{Binding LocationPickerEnabled}"
+                   IsVisible="False"
+                   x:Name="LocationPickerContainer"
                    VerticalOptions="End"
                    Padding="10"
                    HasShadow="True"
@@ -52,16 +55,16 @@
                      Grid.RowSpan="2"
                      Opacity="0"
                      BackgroundColor="White">
-
             </BoxView>
 
             <Frame Grid.Row="0"
-                   IsVisible="{Binding SearchEnabled}"
+                   IsVisible="False"
                    Margin="10,20,10,10"
                    Padding="0"
                    HasShadow="True"
                    CornerRadius="4"
                    BorderColor="White"
+                   BackgroundColor="White"
                    x:Name="SearchBox">
                 <StackLayout Orientation="Horizontal" 
                              Spacing="0">
@@ -89,7 +92,7 @@
                                          BorderColor="Transparent"
                                          HeightRequest="45"
                                          FontSize="14"
-                                         XBackgroundColor="White"
+                                         XBackgroundColor="Transparent"
                                          ClearButtonVisibility="WhileEditing"
                                          Focused="SearchBox_Focused"
                                          HorizontalOptions="FillAndExpand"
@@ -99,7 +102,7 @@
             </Frame>
 
             <Frame Grid.Row="1"
-                   IsVisible="{Binding ChangeLocationEnabled}"
+                   IsVisible="False"
                    x:Name="LocationChangeButton"
                    HorizontalOptions="Start"
                    VerticalOptions="End"

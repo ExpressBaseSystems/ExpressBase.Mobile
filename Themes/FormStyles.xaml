@@ -16,19 +16,12 @@
         <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
     </Style>
 
-    <Style TargetType="ActivityIndicator" x:Key="GeoLocLoader">
-        <Setter Property="WidthRequest" Value="25"></Setter>
-        <Setter Property="HeightRequest" Value="25"></Setter>
-        <Setter Property="Color" Value="#315eff"></Setter>
-        <Setter Property="IsRunning" Value="True"></Setter>
-        <Setter Property="HorizontalOptions" Value="Center"></Setter>
-    </Style>
-
     <Style TargetType="Frame" x:Key="GeoLocFrame">
         <Setter Property="BackgroundColor" Value="#eeeeee"></Setter>
         <Setter Property="HasShadow" Value="False"></Setter>
-        <Setter Property="Padding" Value="0,0,0,10"></Setter>
+        <Setter Property="Padding" Value="0"></Setter>
         <Setter Property="CornerRadius" Value="10"></Setter>
+        <Setter Property="HeightRequest" Value="250"></Setter>
     </Style>
 
     <Style TargetType="Button" x:Key="FupCameraButton">
