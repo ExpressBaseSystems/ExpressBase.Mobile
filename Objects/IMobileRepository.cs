@@ -40,9 +40,9 @@ namespace ExpressBase.Mobile
     /// </summary>
     public interface IMobileAlignment
     {
-        public MobileHorrizontalAlign HorrizontalAlign { set; get; }
+        MobileHorrizontalAlign HorrizontalAlign { set; get; }
 
-        public MobileVerticalAlign VerticalAlign { set; get; }
+        MobileVerticalAlign VerticalAlign { set; get; }
     }
 
     /// <summary>

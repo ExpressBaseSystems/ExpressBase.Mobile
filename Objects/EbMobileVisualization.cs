@@ -17,6 +17,10 @@ namespace ExpressBase.Mobile
     {
         #region Properties
 
+        public MobileVisualizationType Type { set; get; }
+
+        public List<EbMobileStaticListItem> Items { set; get; }
+
         public string DataSourceRefId { set; get; }
 
         public string SourceFormRefId { set; get; }
@@ -45,11 +49,23 @@ namespace ExpressBase.Mobile
 
         public List<EbCTCMapper> ContextToControlMap { set; get; }
 
+        public bool ShowLinkIcon { set; get; }
+
         public bool ShowNewButton { set; get; }
 
         public string NewButtonText { set; get; }
 
-        public bool ShowLinkIcon { set; get; }
+        public bool UseLinkSettings { set; get; }
+
+        public string FabLinkRefId { get; set; }
+
+        public WebFormDVModes FabFormMode { set; get; }
+
+        public EbMobileDataColToControlMap FabFormId { set; get; }
+
+        public List<EbMobileDataColToControlMap> FabFormParameters { get; set; }
+
+        public List<EbCTCMapper> ContextToFabControlMap { set; get; }
 
         public bool EnableAlternateRowColoring { set; get; }
 

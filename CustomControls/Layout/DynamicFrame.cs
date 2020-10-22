@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.CustomControls.XControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Services;
@@ -122,6 +123,17 @@ namespace ExpressBase.Mobile.CustomControls
                 object data = this.DataRow[dc.ColumnName];
                 view = this.ResolveContentType(dc, data);
             }
+            else if (ctrl is EbMobileLabel label)
+            {
+                EbXLabel Lb = new EbXLabel { Text = label.Text };
+                Lb.XBackgroundColor = Color.FromHex(label.BackgroundColor);
+                Lb.BorderRadius = label.BorderRadius;
+                Lb.BorderColor = Color.FromHex(label.BackgroundColor);
+                Lb.Padding = new Thickness(label.Width, label.Height);
+                this.ApplyLabelStyle(Lb, label.Font);
+                view = Lb;
+            }
+
             return view;
         }
 
@@ -145,17 +157,15 @@ namespace ExpressBase.Mobile.CustomControls
                     break;
                 default:
                     Label label = new Label { Text = dc.GetContent(value) };
-                    this.ApplyLabelStyle(label, dc);
+                    this.ApplyLabelStyle(label, dc.Font);
                     view = label;
                     break;
             }
             return view;
         }
 
-        protected void ApplyLabelStyle(Label label, EbMobileDataColumn dc)
+        protected void ApplyLabelStyle(Label label, EbFont font)
         {
-            EbFont font = dc.Font;
-
             if (font != null)
             {
                 label.FontSize = font.Size;
@@ -270,7 +280,7 @@ namespace ExpressBase.Mobile.CustomControls
                 TextColor = Color.FromHex("315eff")
             };
 
-            ApplyLabelStyle(label, dc);
+            ApplyLabelStyle(label, dc.Font);
 
             var gesture = new TapGestureRecognizer();
             gesture.Tapped += (sender, args) => NativeLauncher.OpenDialerAsync(label.Text);
@@ -296,7 +306,7 @@ namespace ExpressBase.Mobile.CustomControls
                 Text = dc.GetContent(value),
                 TextColor = Color.FromHex("315eff")
             };
-            ApplyLabelStyle(label, dc);
+            ApplyLabelStyle(label, dc.Font);
 
             var gesture = new TapGestureRecognizer();
             gesture.Tapped += async (sender, args) => await NativeLauncher.OpenEmailAsync(value?.ToString());

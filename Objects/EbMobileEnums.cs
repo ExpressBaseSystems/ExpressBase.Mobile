@@ -53,4 +53,10 @@ namespace ExpressBase.Mobile
         Horizontal,
         Vertical,
     }
+
+    public enum MobileVisualizationType
+    {
+        Dynamic,
+        Static
+    }
 }

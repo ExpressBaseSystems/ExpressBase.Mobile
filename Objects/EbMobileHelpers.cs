@@ -66,4 +66,21 @@ namespace ExpressBase.Mobile
             return Script == null || string.IsNullOrEmpty(Script.Code);
         }
     }
+
+    public class EbMobileStaticListItem : EbMobilePageBase
+    {
+        public string EbSid { get; set; }
+
+        public string Icon { set; get; }
+
+        public string IconBackground { get; set; }
+
+        public string Title { set; get; }
+
+        public string TitleColor { get; set; }
+
+        public override string Description { set; get; }
+
+        public string LinkRefId { get; set; }
+    }
 }

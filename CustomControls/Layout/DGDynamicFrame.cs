@@ -43,7 +43,7 @@ namespace ExpressBase.Mobile.CustomControls
                     if (IsHeader)
                         label.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("Roboto-Medium");
                     else
-                        this.ApplyLabelStyle(label, column);
+                        this.ApplyLabelStyle(label, column.Font);
 
                     DynamicGrid.SetPosition(label, cell.RowIndex, cell.ColIndex);
                 }

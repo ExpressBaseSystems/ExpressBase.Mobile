@@ -104,14 +104,12 @@ namespace ExpressBase.Mobile
             {
                 return $"{Cordinates.Latitude},{Cordinates.Longitude}";
             }
-
             return null;
         }
 
         public override void SetValue(object value)
         {
             if (value == null) return;
-
             try
             {
                 string[] cordinates = value.ToString().Split(CharConstants.COMMA);
@@ -121,6 +119,7 @@ namespace ExpressBase.Mobile
                     double lat = Convert.ToDouble(cordinates[0]);
                     double lng = Convert.ToDouble(cordinates[1]);
 
+                    Cordinates = new EbGeoLocation { Latitude = lat, Longitude = lng };
                     mapView.SetLocation(lat, lng);
                 }
             }
