@@ -158,7 +158,10 @@ namespace ExpressBase.Mobile.Helpers
                         renderer = new FormRender(page);
                         break;
                     case EbMobileVisualization v:
-                        renderer = new ListRender(page);
+                        if (v.Type == MobileVisualizationType.Dynamic)
+                            renderer = new ListRender(page);
+                        else
+                            renderer = new StaticListRender(page);
                         break;
                     case EbMobileDashBoard d:
                         renderer = new DashBoardRender(page);

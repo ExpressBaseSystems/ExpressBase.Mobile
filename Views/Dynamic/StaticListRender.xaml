@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+             x:Class="ExpressBase.Mobile.Views.Dynamic.StaticListRender"
+             Style="{StaticResource ContentPageStyle}">
+    <ContentPage.Content>
+        <control:EbCPLayout x:Name="EbLayout"
+                            Title="{Binding PageTitle}"
+                            LoaderVisibilty="{Binding IsBusy}">
+
+            <control:EbCPLayout.Content>
+                
+                <Grid VerticalOptions="FillAndExpand"
+                      Background="White">
+                    <ListView x:Name="EbListView"
+                              HasUnevenRows="True"
+                              SelectionMode="None"
+                              SeparatorVisibility="{Binding ShowRowSeperator}"
+                              ItemsSource="{Binding Items}"
+                              RefreshControlColor="{DynamicResource Primary_Color}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Frame>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"></RowDefinition>
+                                                <RowDefinition Height="*"></RowDefinition>
+                                            </Grid.RowDefinitions>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Grid.RowSpan="2"
+                                                   Grid.Column="0"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="Center"
+                                                   FontSize="18"
+                                                   WidthRequest="30"
+                                                   TextColor="{Binding IconBackground}"
+                                                   FontFamily="{StaticResource FontAwesome}"
+                                                   Text="{Binding FontIcon}">
+                                            </Label>
+
+                                            <Label Grid.Row="0"
+                                                   Grid.Column="1"
+                                                   FontSize="16"
+                                                   TextColor="{Binding TitleColor}"
+                                                   FontFamily="{StaticResource Roboto-Medium}"
+                                                   Text="{Binding Title}">
+                                            </Label>
+
+                                            <Label Grid.Row="1"
+                                                   Grid.Column="1"
+                                                   FontFamily="{StaticResource Roboto-Regular}"
+                                                   Text="{Binding Description}">
+                                            </Label>
+
+                                        </Grid>
+                                    </Frame>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <StackLayout x:Name="EmptyMessage"
+                                 IsVisible="False"
+                                 VerticalOptions="Center">
+                        <Image Source="mt.png"
+                               HeightRequest="70">
+                        </Image>
+                        <Label Text="Empty list..."
+                               HorizontalTextAlignment="Center"></Label>
+                    </StackLayout>
+                    
+                </Grid>
+            </control:EbCPLayout.Content>
+        </control:EbCPLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,4 +1,6 @@
 ﻿using ExpressBase.Mobile.Structures;
+using System.Text.RegularExpressions;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -69,8 +71,6 @@ namespace ExpressBase.Mobile
 
     public class EbMobileStaticListItem : EbMobilePageBase
     {
-        public string EbSid { get; set; }
-
         public string Icon { set; get; }
 
         public string IconBackground { get; set; }
@@ -82,5 +82,16 @@ namespace ExpressBase.Mobile
         public override string Description { set; get; }
 
         public string LinkRefId { get; set; }
+
+        public string FontIcon
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Icon) || Icon.Length != 4)
+                    return Regex.Unescape("\\u" + "f128");
+
+                return Regex.Unescape("\\u" + Icon);
+            }
+        }
     }
 }
