@@ -19,6 +19,8 @@ namespace ExpressBase.Mobile
 
         public MobileVisualizationType Type { set; get; }
 
+        public List<EbMobileStaticParameter> StaticParameters { set; get; }
+
         public List<EbMobileStaticListItem> Items { set; get; }
 
         public string DataSourceRefId { set; get; }

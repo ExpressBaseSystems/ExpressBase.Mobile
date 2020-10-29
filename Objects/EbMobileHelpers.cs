@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Mobile.Structures;
-using System.Text.RegularExpressions;
-using Xamarin.Forms;
+using System.Collections.Generic;
 
 namespace ExpressBase.Mobile
 {
@@ -69,29 +68,26 @@ namespace ExpressBase.Mobile
         }
     }
 
+    public class EbMobileStaticParameter : EbMobilePageBase
+    {
+        public override string Name { get; set; }
+
+        public string Value { set; get; }
+
+        public bool EnableSearch { set; get; }
+    }
+
     public class EbMobileStaticListItem : EbMobilePageBase
     {
-        public string Icon { set; get; }
-
-        public string IconBackground { get; set; }
-
-        public string Title { set; get; }
-
-        public string TitleColor { get; set; }
-
-        public override string Description { set; get; }
-
+        public override string Name { get; set; }
+        
+        public List<EbMobileStaticParameter> Parameters { set; get; }
+        
         public string LinkRefId { get; set; }
 
-        public string FontIcon
+        public bool HasLink()
         {
-            get
-            {
-                if (string.IsNullOrEmpty(Icon) || Icon.Length != 4)
-                    return Regex.Unescape("\\u" + "f128");
-
-                return Regex.Unescape("\\u" + Icon);
-            }
+            return !string.IsNullOrEmpty(LinkRefId);
         }
     }
 }

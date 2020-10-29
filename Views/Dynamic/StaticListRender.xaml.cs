@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.ViewModels.Dynamic.ListView;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -13,6 +14,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             InitializeComponent();
             BindingContext = viewModel = new StaticListViewModel(page);
+        }
+
+        private void SearchButton_Clicked(object sender, EventArgs e)
+        {
+            SearchButton.IsVisible = false;
+            SearchBox.IsVisible = true;
+            SearchBox.Focus();
         }
     }
 }

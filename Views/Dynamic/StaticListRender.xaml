@@ -9,6 +9,31 @@
                             Title="{Binding PageTitle}"
                             LoaderVisibilty="{Binding IsBusy}">
 
+            <control:EbCPLayout.ToolBarItems>
+                <StackLayout Orientation="Horizontal">
+                    <Button IsVisible="{Binding IsSearchVisible}"
+                            x:Name="SearchButton"
+                            Text="&#xf002;"
+                            Style="{StaticResource ToolBarButtonStyle}"
+                            HorizontalOptions="End"
+                            Margin="0"
+                            Clicked="SearchButton_Clicked">
+                    </Button>
+                </StackLayout>
+            </control:EbCPLayout.ToolBarItems>
+
+            <control:EbCPLayout.ToolBarLayover>
+                <control:ListViewSearchBar IsVisible="False"
+                                           x:Name="SearchBox"
+                                           Style="{StaticResource ListViewSearchBar}"
+                                           HorizontalOptions="FillAndExpand"
+                                           HideIcon="True"
+                                           CancelButtonColor="White"
+                                           SearchCommand="{Binding SearchCommand}"
+                                           SearchCommandParameter="{Binding Text, Source={x:Reference SearchBox}}">
+                </control:ListViewSearchBar>
+            </control:EbCPLayout.ToolBarLayover>
+            
             <control:EbCPLayout.Content>
                 
                 <Grid VerticalOptions="FillAndExpand"
@@ -17,51 +42,13 @@
                               HasUnevenRows="True"
                               SelectionMode="None"
                               SeparatorVisibility="{Binding ShowRowSeperator}"
-                              ItemsSource="{Binding Items}"
-                              RefreshControlColor="{DynamicResource Primary_Color}">
+                              ItemsSource="{Binding Items}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <ViewCell>
-                                    <Frame>
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"></RowDefinition>
-                                                <RowDefinition Height="*"></RowDefinition>
-                                            </Grid.RowDefinitions>
-
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                            </Grid.ColumnDefinitions>
-
-                                            <Label Grid.RowSpan="2"
-                                                   Grid.Column="0"
-                                                   VerticalOptions="Center"
-                                                   HorizontalOptions="Center"
-                                                   FontSize="18"
-                                                   WidthRequest="30"
-                                                   TextColor="{Binding IconBackground}"
-                                                   FontFamily="{StaticResource FontAwesome}"
-                                                   Text="{Binding FontIcon}">
-                                            </Label>
-
-                                            <Label Grid.Row="0"
-                                                   Grid.Column="1"
-                                                   FontSize="16"
-                                                   TextColor="{Binding TitleColor}"
-                                                   FontFamily="{StaticResource Roboto-Medium}"
-                                                   Text="{Binding Title}">
-                                            </Label>
-
-                                            <Label Grid.Row="1"
-                                                   Grid.Column="1"
-                                                   FontFamily="{StaticResource Roboto-Regular}"
-                                                   Text="{Binding Description}">
-                                            </Label>
-
-                                        </Grid>
-                                    </Frame>
-                                </ViewCell>
+                                <control:DynamicViewCell Visualization="{Binding Path=BindingContext.Visualization,Source={x:Reference EbListView}}"
+                                                          ItemSelected="{Binding Path=BindingContext.ItemTappedCommand,Source={x:Reference EbListView}}"
+                                                          ItemIndex="{Binding Path=BindingContext.ListItemIndex,Source={x:Reference EbListView}}">
+                                </control:DynamicViewCell>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>

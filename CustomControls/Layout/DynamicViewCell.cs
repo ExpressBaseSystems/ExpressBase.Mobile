@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.CustomControls.Layout;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Models;
 using System;
 using System.Windows.Input;
@@ -37,36 +38,56 @@ namespace ExpressBase.Mobile.CustomControls
 
         private TapGestureRecognizer tapGesture;
 
-        public DynamicViewCell() { }
+        private void SetTapGestureEvent(View view)
+        {
+            tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+            tapGesture.Tapped += ItemTappedEvent;
+            view.GestureRecognizers.Add(tapGesture);
+        }
+
+        private void SetItemColoring(View view)
+        {
+            if (Visualization.EnableAlternateRowColoring)
+            {
+                SetBackGroundColor(ItemIndex.Value, view);
+                ItemIndex.Increment();
+            }
+        }
 
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
 
-            EbDataRow row = (EbDataRow)this.BindingContext;
-
             if (BindingContext != null)
             {
-                DynamicFrame li = new DynamicFrame(row, Visualization, false);
+                DynamicFrame li = null;
 
-                if (Visualization.HasLink())
+                if (this.BindingContext is EbDataRow row)
                 {
-                    tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
-                    tapGesture.Tapped += TapGesture_Tapped;
-
-                    li.GestureRecognizers.Add(tapGesture);
+                    li = new DynamicFrame(row, Visualization, false);
+                    if (Visualization.HasLink())
+                    {
+                        SetTapGestureEvent(li);
+                    }
+                }
+                else if (this.BindingContext is EbMobileStaticListItem item)
+                {
+                    li = new StaticLSFrame(item, Visualization, false);
+                    if (item.HasLink())
+                    {
+                        SetTapGestureEvent(li);
+                    }
                 }
 
-                if (Visualization.EnableAlternateRowColoring)
+                if (li != null)
                 {
-                    this.SetBackGroundColor(ItemIndex.Value, li);
-                    ItemIndex.Increment();
+                    SetItemColoring(li);
+                    this.View = li;
                 }
-                this.View = li;
             }
         }
 
-        private void TapGesture_Tapped(object sender, EventArgs e)
+        private void ItemTappedEvent(object sender, EventArgs e)
         {
             if (ItemSelected != null && ItemSelected.CanExecute(sender))
             {
@@ -74,7 +95,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        public void SetBackGroundColor(int index, DynamicFrame frame)
+        public void SetBackGroundColor(int index, View frame)
         {
             if (index % 2 == 0)
                 frame.BackgroundColor = Color.Default;

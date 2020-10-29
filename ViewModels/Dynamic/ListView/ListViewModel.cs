@@ -24,7 +24,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 ContextParams = this.Visualization.GetContextParams(ContextRecord, this.NetworkType);
             }
-            await this.SetDataAsync();
+            await SetDataAsync();
         }
 
         protected override async Task NavigateToLinkForm()

@@ -2,6 +2,7 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ExpressBase.Mobile.Extensions
 {
@@ -26,9 +27,28 @@ namespace ExpressBase.Mobile.Extensions
             return Convert.ToInt32(refid.Split(CharConstants.DASH)[3]);
         }
 
-        public static string RemoveSubstring(this string current,string word)
+        public static string RemoveSubstring(this string current, string word)
         {
             return current.Replace(word, string.Empty);
+        }
+
+        public static string ToFontIcon(this string iconString, string onError = null)
+        {
+            try
+            {
+                if (iconString.Length != 4)
+                    throw new Exception();
+
+                return Regex.Unescape("\\u" + iconString);
+            }
+            catch (Exception)
+            {
+                if(onError != null)
+                {
+                    return Regex.Unescape("\\u" + onError);
+                }
+            }
+            return null;
         }
     }
 }

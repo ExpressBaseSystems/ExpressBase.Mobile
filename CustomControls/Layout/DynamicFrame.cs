@@ -25,6 +25,11 @@ namespace ExpressBase.Mobile.CustomControls
             this.IsHeader = isHeader;
             this.DataRow = row;
 
+            this.Initialize(viz);
+        }
+
+        protected void Initialize(EbMobileVisualization viz)
+        {
             DynamicGrid = new DynamicGrid(viz.DataLayout);
             DynamicGrid.SetSpacing(viz.RowSpacing, viz.ColumnSpacing);
 
@@ -32,14 +37,14 @@ namespace ExpressBase.Mobile.CustomControls
 
             this.FillData(viz.DataLayout.CellCollection);
 
-            if (viz.ShowLinkIcon && !isHeader)
+            if (viz.ShowLinkIcon && !this.IsHeader)
             {
                 DynamicGrid.ShowLinkIcon();
             }
             this.Content = DynamicGrid;
         }
 
-        private void SetFrameStyle(EbMobileVisualization viz)
+        protected void SetFrameStyle(EbMobileVisualization viz)
         {
             if (!IsHeader)
             {
@@ -102,7 +107,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private View ResolveControlType(EbMobileControl ctrl)
+        protected virtual View ResolveControlType(EbMobileControl ctrl)
         {
             View view = null;
 
@@ -125,11 +130,13 @@ namespace ExpressBase.Mobile.CustomControls
             }
             else if (ctrl is EbMobileLabel label)
             {
-                EbXLabel Lb = new EbXLabel { Text = label.Text };
-                Lb.XBackgroundColor = Color.FromHex(label.BackgroundColor);
-                Lb.BorderRadius = label.BorderRadius;
-                Lb.BorderColor = Color.FromHex(label.BackgroundColor);
-                Lb.Padding = new Thickness(label.Width, label.Height);
+                EbXLabel Lb = new EbXLabel
+                {
+                    Text = label.Text,
+                    XBackgroundColor = Color.FromHex(label.BackgroundColor ?? "#ffffff"),
+                    BorderRadius = label.BorderRadius,
+                    BorderColor = Color.FromHex(label.BackgroundColor ?? "#ffffff"),
+                };
                 this.ApplyLabelStyle(Lb, label.Font);
                 view = Lb;
             }
@@ -270,7 +277,7 @@ namespace ExpressBase.Mobile.CustomControls
             image.SetValue(value);
 
             return image;
-        }  
+        }
 
         private View DC2PhoneNumber(EbMobileDataColumn dc, object value)
         {
