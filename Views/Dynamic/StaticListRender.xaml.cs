@@ -22,5 +22,35 @@ namespace ExpressBase.Mobile.Views.Dynamic
             SearchBox.IsVisible = true;
             SearchBox.Focus();
         }
+
+        protected bool BeforeBackButtonPressed()
+        {
+            if (SearchBox.IsVisible)
+            {
+                SearchBox.Unfocus();
+                SearchBox.IsVisible = false;
+                SearchButton.IsVisible = true;
+
+                viewModel.SetInitialState();
+
+                return false;
+            }
+            return true;
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (BeforeBackButtonPressed())
+            {
+                base.OnBackButtonPressed();
+                return false;
+            }
+            return true;
+        }
+
+        private bool ToolBarBackButtonPressed(object sender, EventArgs e)
+        {
+            return this.BeforeBackButtonPressed();
+        }
     }
 }

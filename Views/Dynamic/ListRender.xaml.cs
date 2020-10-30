@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
 using Xamarin.Forms.Xaml;
-using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Views.Base;
@@ -41,24 +40,16 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private void ToggleLinks()
         {
-            if (this.HasLink && ViewModel.Visualization.ShowNewButton)
+            if (this.HasFabLink)
             {
-                EbMobilePage page = EbPageFinder.GetPage(ViewModel.Visualization.LinkRefId);
-
-                if (page != null && page.Container is EbMobileForm)
+                if (this.HasFabText)
                 {
-                    if (this.HasLinkText)
-                    {
-                        FormLinkTextLabel.Text = ViewModel.Visualization.NewButtonText;
-                        FormLinkWText.IsVisible = true;
-                    }
-                    else
-                    {
-                        FormLinkWOText.IsVisible = true;
-                    }
+                    FormLinkTextLabel.Text = ViewModel.Visualization.NewButtonText;
+                    FormLinkWText.IsVisible = true;
                 }
+                else
+                    FormLinkWOText.IsVisible = true;
             }
-
             this.ToggleDataLength();
         }
 

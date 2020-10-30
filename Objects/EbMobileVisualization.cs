@@ -15,8 +15,6 @@ namespace ExpressBase.Mobile
 {
     public class EbMobileVisualization : EbMobileContainer
     {
-        #region Properties
-
         public MobileVisualizationType Type { set; get; }
 
         public List<EbMobileStaticParameter> StaticParameters { set; get; }
@@ -61,12 +59,6 @@ namespace ExpressBase.Mobile
 
         public string FabLinkRefId { get; set; }
 
-        public WebFormDVModes FabFormMode { set; get; }
-
-        public EbMobileDataColToControlMap FabFormId { set; get; }
-
-        public List<EbMobileDataColToControlMap> FabFormParameters { get; set; }
-
         public List<EbCTCMapper> ContextToFabControlMap { set; get; }
 
         public bool EnableAlternateRowColoring { set; get; }
@@ -91,8 +83,6 @@ namespace ExpressBase.Mobile
 
         public bool HideContext { set; get; }
 
-        #endregion
-
         public string GetQuery => HelperFunctions.B64ToString(this.OfflineQuery.Code);
 
         public EbMobileVisualization()
@@ -103,8 +93,6 @@ namespace ExpressBase.Mobile
             SortColumns = new List<EbMobileDataColumn>();
             LinkFormParameters = new List<EbMobileDataColToControlMap>();
         }
-
-        #region Methods
 
         public bool HasLink()
         {
@@ -283,7 +271,5 @@ namespace ExpressBase.Mobile
             }
             return search;
         }
-
-        #endregion
     }
 }

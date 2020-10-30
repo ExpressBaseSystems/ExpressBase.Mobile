@@ -52,23 +52,15 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             SourceDataEdit.IsVisible = this.HasSourceLink;
 
-            if (this.HasLink && ViewModel.Visualization.ShowNewButton)
+            if (this.HasFabLink)
             {
-                EbMobilePage page = EbPageFinder.GetPage(ViewModel.Visualization.LinkRefId);
-
-                if (page != null && page.Container is EbMobileForm)
+                if (this.HasFabText)
                 {
-                    if (this.HasLinkText)
-                    {
-                        FormLinkTextLabel.Text = ViewModel.Visualization.NewButtonText;
-                        FormLinkWText.IsVisible = true;
-                    }
-                    else
-                    {
-                        FormLinkWOText.IsVisible = true;
-                    }
+                    FormLinkTextLabel.Text = ViewModel.Visualization.NewButtonText;
+                    FormLinkWText.IsVisible = true;
                 }
-
+                else
+                    FormLinkWOText.IsVisible = true;
             }
             this.ToggleDataLength();
         }

@@ -39,7 +39,6 @@ namespace ExpressBase.Mobile.ViewModels.Login
         public LoginByPasswordViewModel() : base()
         {
             this.Email = App.Settings.CurrentSolution?.LastUser;
-            this.LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
         }
 
         private async Task LoginAction()

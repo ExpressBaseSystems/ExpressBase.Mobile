@@ -34,8 +34,8 @@ namespace ExpressBase.Mobile.ViewModels.Login
         public LoginBaseViewModel()
         {
             Service = IdentityService.Instance;
-
             IsSignUpVisible = App.Settings.CurrentSolution.SignupEnabled();
+            LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
         }
 
         protected virtual Task SubmitOTP(object o)

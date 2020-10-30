@@ -17,9 +17,11 @@ namespace ExpressBase.Mobile.Views.Base
 
         protected ListViewBaseVM ViewModel { set; get; }
 
+        protected bool HasFabLink => ViewModel.Visualization.ShowNewButton;
+
         protected bool HasLink => ViewModel.Visualization.HasLink();
 
-        protected bool HasLinkText => !string.IsNullOrEmpty(ViewModel.Visualization.NewButtonText);
+        protected bool HasFabText => !string.IsNullOrEmpty(ViewModel.Visualization.NewButtonText);
 
         public async void PagingPrevButton_Clicked(object sender, EventArgs e)
         {

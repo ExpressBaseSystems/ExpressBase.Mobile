@@ -1,9 +1,12 @@
 ﻿using ExpressBase.Mobile.CustomControls.Layout;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -15,7 +18,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic.ListView
 
         public SeparatorVisibility ShowRowSeperator => Visualization.XFSeperator();
 
-        public List<EbMobileStaticListItem> Items { set; get; }
+        private ObservableCollection<EbMobileStaticListItem> items;
+
+        public ObservableCollection<EbMobileStaticListItem> Items
+        {
+            get => items;
+            set
+            {
+                items = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public IntRef ListItemIndex { set; get; }
 
@@ -31,23 +44,34 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic.ListView
             }
         }
 
+        private List<string> searchParameters;
+
         protected bool IsTapped { set; get; }
 
         public Command ItemTappedCommand => new Command<StaticLSFrame>(async (o) => await NavigateToLink(o));
 
-        public Command SearchCommand => new Command<string>(async (query) => await SearchData(query));
+        public Command SearchCommand => new Command<string>((query) => SearchData(query));
 
         public StaticListViewModel(EbMobilePage page) : base(page)
         {
             Visualization = (EbMobileVisualization)page.Container;
-            Items = Visualization.Items;
+            Items = new ObservableCollection<EbMobileStaticListItem>(Visualization.Items);
 
             InitSearchable();
         }
 
         private void InitSearchable()
         {
-            if (Items == null) return;
+            if (Visualization.StaticParameters == null || Items == null)
+                IsSearchVisible = false;
+            else
+            {
+                searchParameters = Visualization.StaticParameters.FindAll(x => x.EnableSearch).Select(y => y.Name).ToList();
+                if (searchParameters != null && searchParameters.Any())
+                {
+                    IsSearchVisible = true;
+                }
+            }
         }
 
         private async Task NavigateToLink(StaticLSFrame item)
@@ -73,10 +97,41 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic.ListView
             IsTapped = false;
         }
 
-        public async Task SearchData(string search)
+        public void SearchData(string search)
         {
             if (search == null)
                 return;
+
+            search = search.ToLower();
+
+            Items.Clear();
+
+            foreach (var p in Visualization.Items)
+            {
+                List<EbMobileStaticParameter> parameters = p.Parameters?.FindAll(x => searchParameters.Contains(x.Name));
+
+                if (parameters == null || !parameters.Any())
+                    continue;
+
+                foreach (var par in parameters)
+                {
+                    string pvalue = par.Value ?? string.Empty;
+                    if (pvalue.ToLower().Contains(search))
+                    {
+                        Items.Add(p);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void SetInitialState()
+        {
+            if (Items.Count != Visualization.Items.Count)
+            {
+                Items.Clear();
+                Items.AddRange(Visualization.Items);
+            }
         }
     }
 }

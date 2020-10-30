@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command ItemTappedCommand => new Command<DynamicFrame>(async (o) => await NavigateToLink(o));
 
-        public Command AddCommand => new Command(async () => await NavigateToLinkForm());
+        public Command AddCommand => new Command(async () => await NavigateToFabLink());
 
         public Command ApplyFilterCommand => new Command<List<DbParameter>>(async (o) => await FilterData(o));
 
@@ -197,7 +197,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             await RefreshDataAsync();
         }
 
-        protected virtual Task NavigateToLinkForm()
+        protected virtual Task NavigateToFabLink()
         {
             return Task.FromResult(false);
         }

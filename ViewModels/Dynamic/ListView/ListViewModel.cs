@@ -27,9 +27,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             await SetDataAsync();
         }
 
-        protected override async Task NavigateToLinkForm()
+        protected override async Task NavigateToFabLink()
         {
-            EbMobilePage page = EbPageFinder.GetPage(Visualization.LinkRefId);
+            string linkRefID = Visualization.UseLinkSettings ? Visualization.LinkRefId: Visualization.FabLinkRefId;
+
+            EbMobilePage page = EbPageFinder.GetPage(linkRefID);
 
             if (page != null && page.Container is EbMobileForm form)
             {

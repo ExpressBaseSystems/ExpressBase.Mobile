@@ -28,7 +28,6 @@ namespace ExpressBase.Mobile.ViewModels.Login
         public LoginByOTPViewModel() : base()
         {
             this.UserName = App.Settings.CurrentSolution?.LastUser;
-            this.LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
         }
 
         private async Task SendOTP()

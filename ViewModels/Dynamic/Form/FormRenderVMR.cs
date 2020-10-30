@@ -29,7 +29,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (context.ContextToControlMap == null)
             {
-                EbLog.Warning($"colum to control map empty in context visualization in page '{this.Page.DisplayName}'");
+                EbLog.Warning($"column to control map empty in context visualization in page '{this.Page.DisplayName}'");
                 return;
             };
 
