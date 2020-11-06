@@ -211,7 +211,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void BackButton_Clicked(object sender, EventArgs e)
         {
-            await App.Navigation.PopMasterModalAsync(true);
+            await App.Navigation.PopModalByRenderer(true);
         }
 
         private void ResetSearch_Clicked(object sender, EventArgs e)

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Grid xmlns="http://xamarin.com/schemas/2014/forms"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      x:Class="ExpressBase.Mobile.CustomControls.ImagePopUp"
+      IsVisible="False"
+      VerticalOptions="FillAndExpand">
+
+    <BoxView  x:Name="ShadowView"
+              BackgroundColor="Black"
+              Opacity=".7">
+    </BoxView>
+
+    <Frame VerticalOptions="Center"
+           x:Name="FSWindowFrame"
+           Margin="15"
+           Padding="0"
+           Scale="0"
+           BackgroundColor="White"
+           CornerRadius="10">
+        <StackLayout Padding="0"
+                     Spacing="0">
+            <Label Text="Full Screen"
+                   FontSize="15"
+                   Padding="10"
+                   TextColor="#222"
+                   FontFamily="{StaticResource Roboto-Regular}">
+            </Label>
+            <Image VerticalOptions="Center"
+                   x:Name="FullScreenImage"
+                   Aspect="AspectFill"
+                   HeightRequest="300"
+                   Source="image_avatar.jpg">
+            </Image>
+            <Button x:Name="FullScreenClose"
+                    CornerRadius="0"
+                    Padding="0"
+                    Text="Close"
+                    BackgroundColor="Transparent"
+                    TextColor="#0076ff"
+                    HorizontalOptions="FillAndExpand"
+                    HeightRequest="50"
+                    Clicked="CloseButtonClicked">
+            </Button>
+        </StackLayout>
+    </Frame>
+</Grid>

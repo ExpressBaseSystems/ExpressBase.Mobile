@@ -40,9 +40,9 @@ namespace ExpressBase.Mobile.Services
 
         public int UserId => CurrentUser.UserId;
 
-        public int AppId => (CurrentApplication != null) ? CurrentApplication.AppId : 0;
+        public int AppId => CurrentApplication == null ? 0 : CurrentApplication.AppId;
 
-        public int CurrentLocId => CurrentLocation.LocId;
+        public int CurrentLocId => CurrentLocation == null ? 1 : CurrentLocation.LocId;
 
         public LoginType LoginType
         {
@@ -182,7 +182,7 @@ namespace ExpressBase.Mobile.Services
 
         private async Task ImportSolutionData(EbMobileSolutionData solData, bool export)
         {
-            if (solData == null) 
+            if (solData == null)
                 return;
 
             if (export)
@@ -207,7 +207,7 @@ namespace ExpressBase.Mobile.Services
 
         private async Task SetLocationInfo(List<EbLocation> locations)
         {
-            if (locations == null) 
+            if (locations == null)
                 return;
             try
             {

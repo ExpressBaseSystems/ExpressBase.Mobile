@@ -37,12 +37,9 @@ namespace ExpressBase.Mobile.Views.Shared
                     ScannerView.IsAnalyzing = false;
                     ScannerView.IsScanning = false;
 
-                    viewAction?.Invoke(result.Text);          
+                    viewAction?.Invoke(result.Text);
 
-                    if (App.RootMaster != null)
-                        App.Navigation.PopMasterModalAsync(true);
-                    else
-                        App.Navigation.PopModalAsync(true);
+                    App.Navigation.PopModalByRenderer(true);
                 }
                 else
                 {
@@ -67,10 +64,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void BackButton_Clicked(object sender, EventArgs e)
         {
-            if (App.RootMaster != null)
-                await App.Navigation.PopMasterModalAsync(true);
-            else
-                await App.Navigation.PopModalAsync(true);
+           await App.Navigation.PopModalByRenderer(true);
         }
     }
 }

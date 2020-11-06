@@ -82,7 +82,7 @@ namespace ExpressBase.Mobile.ViewModels
 
             App.RootMaster = null;
             Application.Current.MainPage = new NavigationPage();
-            await Application.Current.MainPage.Navigation.PushAsync(new MySolutions());
+            await App.Navigation.NavigateAsync(new MySolutions());
         }
 
         public async Task Logout()

@@ -98,7 +98,7 @@ namespace ExpressBase.Mobile
                 QrScanner scannerPage = new QrScanner();
                 scannerPage.BindMethod(OnScannedResult);
 
-                await App.RootMaster.Detail.Navigation.PushModalAsync(scannerPage);
+                await App.Navigation.NavigateByRenderer(scannerPage);
             }
             else
                 Utils.Toast("Allow permission to access camera");

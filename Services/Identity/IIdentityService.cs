@@ -1,13 +1,12 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
     public interface IIdentityService
     {
-        Task<ApiAuthResponse> AuthenticateAsync(string username, string password);
+        Task<ApiAuthResponse> AuthenticateAsync(string username, string password, bool anonymous = false);
 
         Task<ApiAuthResponse> AuthenticateSSOAsync(string username, SignInOtpType type);
 

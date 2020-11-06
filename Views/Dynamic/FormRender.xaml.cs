@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
@@ -9,7 +10,7 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class FormRender : ContentPage
+    public partial class FormRender : ContentPage, IFormRenderer
     {
         private bool isRendered;
 
@@ -77,20 +78,12 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EbFormHelper.SwitchViewToEdit();
         }
 
-        public void ShowFullScreenImage(Image tapedImage)
+        public void ShowFullScreenImage(ImageSource source)
         {
-            if (tapedImage != null)
+            if (source != null)
             {
-                FullScreenImage.Source = tapedImage.Source;
-                ImageFullScreen.IsVisible = true;
-                FSWindowFrame.ScaleTo(1, 200);
+                ImageFullScreen.SetSource(source).Show();
             }
-        }
-
-        private void FullScreenClose_Clicked(object sender, EventArgs e)
-        {
-            ImageFullScreen.IsVisible = false;
-            FSWindowFrame.Scale = 0;
         }
     }
 }

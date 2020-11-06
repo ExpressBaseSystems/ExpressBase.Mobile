@@ -74,13 +74,8 @@ namespace ExpressBase.Mobile.Views.Shared
         private void Logout_Tapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            Page navigator = (Application.Current.MainPage as MasterDetailPage).Detail;
-            Page current = (navigator as NavigationPage).CurrentPage;
-
-            if (current is Home)
-            {
-                (current as Home).ShowLogoutConfirmBox();
-            }
+            if (App.Navigation.GetCurrentPage() is Home current)
+                current.ShowLogoutConfirmBox();
         }
 
         private async void Setup_Tapped(object sender, EventArgs e)
@@ -104,13 +99,8 @@ namespace ExpressBase.Mobile.Views.Shared
         private void SyncButton_Tapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            Page navigator = (Application.Current.MainPage as MasterDetailPage).Detail;
-            Page current = (navigator as NavigationPage).CurrentPage;
-
-            if (current is Home)
-            {
-                (current as Home).TriggerSync();
-            }
+            if (App.Navigation.GetCurrentPage() is Home current)
+                current.TriggerSync();
         }
     }
 }

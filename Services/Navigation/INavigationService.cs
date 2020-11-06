@@ -8,6 +8,14 @@ namespace ExpressBase.Mobile.Services.Navigation
     {
         Task InitializeAppAsync(EbNFData payload);
 
+        Task NavigateByRenderer(Page page);
+
+        Task NavigateModalByRenderer(Page page);
+
+        Task PopByRenderer(bool animation);
+
+        Task PopModalByRenderer(bool animation);
+
         Task NavigateAsync(Page page);
 
         Task NavigateModalAsync(Page page);
@@ -29,5 +37,7 @@ namespace ExpressBase.Mobile.Services.Navigation
         void UpdateViewStack();
 
         void RefreshCurrentPage();
+
+        Page GetCurrentPage();
     }
 }

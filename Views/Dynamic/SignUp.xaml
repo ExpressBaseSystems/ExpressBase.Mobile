@@ -24,6 +24,7 @@
                         <StackLayout VerticalOptions="CenterAndExpand">
 
                             <Label Text="Sign Up"
+                                   Margin="0,15,0,0"
                                    HorizontalTextAlignment="Center"
                                    FontFamily="{StaticResource Roboto-Medium}"
                                    FontSize="20"
@@ -75,6 +76,8 @@
                             
                         </StackLayout>
                     </ScrollView>
+
+                    <controls:ImagePopUp x:Name="ImageFullScreen"></controls:ImagePopUp>
 
                     <controls:LoaderIconed x:Name="Loader"
                                      IsVisible="{Binding IsBusy}"

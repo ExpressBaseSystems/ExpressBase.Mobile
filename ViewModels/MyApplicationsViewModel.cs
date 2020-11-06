@@ -59,7 +59,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 if (IsCurrent(app.AppId))
                 {
-                    await App.RootMaster.Detail.Navigation.PopAsync(true);
+                    await App.Navigation.PopMasterAsync(true);
                 }
                 else
                 {

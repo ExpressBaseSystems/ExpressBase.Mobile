@@ -28,7 +28,7 @@ namespace ExpressBase.Mobile.Services
             Client = new RestClient(App.Settings.RootUrl);
         }
 
-        public async Task<ApiAuthResponse> AuthenticateAsync(string username, string password)
+        public async Task<ApiAuthResponse> AuthenticateAsync(string username, string password, bool anonymous = false)
         {
             ApiAuthResponse resp;
             try
@@ -38,7 +38,9 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("username", username.Trim());
                 request.AddParameter("password", string.Concat(password, username).ToMD5());
 
-                var response = await Client.ExecuteAsync(request);
+                if (anonymous) request.AddParameter("anonymous", true);
+
+                IRestResponse response = await Client.ExecuteAsync(request);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);

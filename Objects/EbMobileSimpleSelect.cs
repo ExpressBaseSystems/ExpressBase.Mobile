@@ -10,6 +10,7 @@ using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -19,8 +20,6 @@ namespace ExpressBase.Mobile
      */
     public class EbMobileSimpleSelect : EbMobileControl
     {
-        #region Properties
-
         public override EbDbTypes EbDbType
         {
             get
@@ -58,35 +57,15 @@ namespace ExpressBase.Mobile
 
         public List<Param> Parameters { set; get; }
 
-        //mobile props
         public EbXTextBox SearchBox { set; get; }
 
-        /// <summary>
-        /// Check simple select or power select
-        /// </summary>
-        public bool IsSimpleSelect
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(this.DataSourceRefId))
-                    return true;
-                return false;
-            }
-        }
-
-        #endregion
-
-        #region Local
+        public bool IsSimpleSelect => string.IsNullOrEmpty(this.DataSourceRefId);
 
         private ComboBoxLabel selected;
 
         private EbXPicker picker;
 
         private Color Background => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
-
-        #endregion
-
-        #region Methods
 
         public override void InitXControl(FormMode Mode, NetworkMode Network)
         {
@@ -137,7 +116,7 @@ namespace ExpressBase.Mobile
                 Placeholder = $"Search {this.Label}...",
                 BorderColor = Color.Transparent
             };
-            SearchBox.Focused += SearchBox_Focused;
+            SearchBox.Focused += async (sender, args) => await OnSearchBoxFocused(); ;
             Label icon = new Label
             {
                 Style = (Style)HelperFunctions.GetResourceValue("SSIconLabel"),
@@ -146,10 +125,9 @@ namespace ExpressBase.Mobile
             this.XControl = new InputGroup(SearchBox, icon) { XBackgroundColor = Background };
         }
 
-        private void SearchBox_Focused(object sender, FocusEventArgs e)
+        private async Task OnSearchBoxFocused()
         {
-            PowerSelectView powerSelect = new PowerSelectView(this);
-            App.RootMaster.Detail.Navigation.PushModalAsync(powerSelect);
+            await App.Navigation.NavigateModalByRenderer(new PowerSelectView(this));
         }
 
         public override object GetValue()
@@ -167,19 +145,18 @@ namespace ExpressBase.Mobile
 
         public override void SetValue(object value)
         {
-            if (value != null)
+            if (value == null) return;
+
+            if (IsSimpleSelect)
+                picker.SelectedItem = this.Options.Find(i => i.Value == value.ToString());
+            else
             {
-                if (IsSimpleSelect)
-                    picker.SelectedItem = this.Options.Find(i => i.Value == value.ToString());
-                else
+                EbDataTable dt = this.GetDisplayFromValue(value.ToString());
+                if (dt != null && dt.Rows.Any())
                 {
-                    EbDataTable dt = this.GetDisplayFromValue(value.ToString());
-                    if (dt != null && dt.Rows.Any())
-                    {
-                        var display_membertext = dt.Rows[0][DisplayMember.ColumnName].ToString();
-                        selected = new ComboBoxLabel { Text = display_membertext, Value = value };
-                        SearchBox.Text = display_membertext;
-                    }
+                    var display_membertext = dt.Rows[0][DisplayMember.ColumnName].ToString();
+                    selected = new ComboBoxLabel { Text = display_membertext, Value = value };
+                    SearchBox.Text = display_membertext;
                 }
             }
         }
@@ -205,7 +182,8 @@ namespace ExpressBase.Mobile
             this.selected = comboBox;
             this.SearchBox.Text = comboBox.Text;
             this.ValueChanged();
-            App.RootMaster.Detail.Navigation.PopModalAsync();
+
+            App.Navigation.PopModalByRenderer(true);
         }
 
         private EbDataTable GetDisplayFromValue(string value)
@@ -214,13 +192,9 @@ namespace ExpressBase.Mobile
             try
             {
                 if (this.NetworkType == NetworkMode.Offline)
-                {
                     dt = ResolveFromLocal(value);
-                }
                 else if (this.NetworkType == NetworkMode.Online)
-                {
                     dt = ResolveFromLive(value);
-                }
             }
             catch (Exception ex)
             {
@@ -291,8 +265,6 @@ namespace ExpressBase.Mobile
 
             (this.XControl as InputGroup).BorderColor = border;
         }
-
-        #endregion
     }
 
     public class EbMobileSSOption : EbMobilePageBase

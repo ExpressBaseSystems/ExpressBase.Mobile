@@ -5,6 +5,7 @@ using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -18,9 +19,9 @@ namespace ExpressBase.Mobile.ViewModels
 
         private SolutionInfo current;
 
-        private List<SolutionInfo> mySolutions;
+        private ObservableCollection<SolutionInfo> mySolutions;
 
-        public List<SolutionInfo> MySolutions
+        public ObservableCollection<SolutionInfo> MySolutions
         {
             set
             {
@@ -37,14 +38,13 @@ namespace ExpressBase.Mobile.ViewModels
         public MySolutionsViewModel()
         {
             solutionService = new SolutionService();
+            current = App.Settings.CurrentSolution;
+            sid = App.Settings.Sid;
         }
 
         public override async Task InitializeAsync()
         {
-            current = App.Settings.CurrentSolution;
-            sid = App.Settings.Sid;
-
-            MySolutions = await solutionService.GetDataAsync();
+            MySolutions = new ObservableCollection<SolutionInfo>(await solutionService.GetDataAsync());
         }
 
         private async Task SolutionTapedEvent(object obj)
@@ -56,7 +56,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (tapedInfo.SolutionName == sid && tapedInfo.RootUrl == current.RootUrl)
                     return;
 
-                SolutionInfo copy = solutionService.Clone(tapedInfo);
+                SolutionInfo copy = tapedInfo.Clone();
 
                 await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, copy);
                 App.Settings.CurrentSolution = copy;
@@ -79,7 +79,10 @@ namespace ExpressBase.Mobile.ViewModels
                 SolutionInfo info = (SolutionInfo)obj;
 
                 if (current != null && info.SolutionName == current.SolutionName && info.RootUrl == current.RootUrl)
+                {
+                    Utils.Toast("You can't delete working solution");
                     return;
+                }
                 this.MySolutions.Remove(info);
                 await solutionService.Remove(info);
             }

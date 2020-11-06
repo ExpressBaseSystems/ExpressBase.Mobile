@@ -2,7 +2,7 @@
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Views.Dynamic;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,11 +38,9 @@ namespace ExpressBase.Mobile
 
         public void ShowFullScreen(Image image)
         {
-            Page navigator = (Application.Current.MainPage as MasterDetailPage).Detail;
-            Page current = (navigator as NavigationPage).CurrentPage;
-            if (current is FormRender)
+            if (App.Navigation.GetCurrentPage() is IFormRenderer rendrer)
             {
-                (current as FormRender).ShowFullScreenImage(image);
+                rendrer.ShowFullScreenImage(image.Source);
             }
         }
 

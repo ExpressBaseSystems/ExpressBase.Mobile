@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -7,7 +8,7 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class SignUp : ContentPage
+    public partial class SignUp : ContentPage, IFormRenderer
     {
         private bool isRendered;
 
@@ -43,6 +44,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
         protected override bool OnBackButtonPressed()
         {
             return true;
+        }
+
+        public void ShowFullScreenImage(ImageSource source)
+        {
+            if (source != null)
+            {
+                ImageFullScreen.SetSource(source).Show();
+            }
         }
     }
 }

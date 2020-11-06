@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views.Base
 {
@@ -21,5 +22,10 @@ namespace ExpressBase.Mobile.Views.Base
         Dictionary<string, string> PageContent { get; }
 
         void SetContentFromConfig();
+    }
+
+    public interface IFormRenderer
+    {
+        void ShowFullScreenImage(ImageSource source);
     }
 }

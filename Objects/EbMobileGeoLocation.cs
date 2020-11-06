@@ -61,14 +61,14 @@ namespace ExpressBase.Mobile
                 ResultCommand = new Command<EbGeoLocation>(async (obj) => await GetResult(obj))
             };
 
-            await App.RootMaster.Detail.Navigation.PushModalAsync(new GeoMapView(binding));
+            await App.Navigation.NavigateModalByRenderer(new GeoMapView(binding));
         }
 
         private async Task GetResult(EbGeoLocation geoLocation)
         {
             Cordinates = geoLocation;
             mapView.SetLocation(Cordinates.Latitude, Cordinates.Longitude);
-            await App.RootMaster.Detail.Navigation.PopModalAsync(true);
+            await App.Navigation.PopModalByRenderer(true);
         }
 
         private async void SetCordinates()

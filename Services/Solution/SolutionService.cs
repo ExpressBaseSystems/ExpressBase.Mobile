@@ -133,17 +133,6 @@ namespace ExpressBase.Mobile.Services
             await HelperFunctions.CreateDirectory();
         }
 
-        public SolutionInfo Clone(SolutionInfo info)
-        {
-            return new SolutionInfo
-            {
-                SolutionName = info.SolutionName,
-                RootUrl = info.RootUrl,
-                LastUser = info.LastUser,
-                SolutionObject = info.SolutionObject
-            };
-        }
-
         public async Task Remove(SolutionInfo info)
         {
             List<SolutionInfo> sol = Utils.Solutions;

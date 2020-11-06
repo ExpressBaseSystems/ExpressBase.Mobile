@@ -54,5 +54,17 @@ namespace ExpressBase.Mobile.Models
             string regexed = EbSerializers.JsonToNETSTD(SignUpPage);
             return EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
         }
+
+        public SolutionInfo Clone()
+        {
+            return new SolutionInfo
+            {
+                SolutionName = this.SolutionName,
+                RootUrl = this.RootUrl,
+                LastUser = this.LastUser,
+                SolutionObject = this.SolutionObject,
+                SignUpPage = this.SignUpPage
+            };
+        }
     }
 }

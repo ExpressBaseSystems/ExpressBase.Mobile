@@ -35,6 +35,38 @@ namespace ExpressBase.Mobile.Services.Navigation
             }
         }
 
+        public async Task NavigateByRenderer(Page page)
+        {
+            if (App.RootMaster == null)
+                await NavigateAsync(page);
+            else
+                await NavigateMasterAsync(page);
+        }
+
+        public async Task NavigateModalByRenderer(Page page)
+        {
+            if (App.RootMaster == null)
+                await NavigateModalAsync(page);
+            else
+                await NavigateMasterModalAsync(page);
+        }
+
+        public async Task PopByRenderer(bool animation)
+        {
+            if (App.RootMaster == null)
+                await PopAsync(animation);
+            else
+                await PopMasterAsync(animation);
+        }
+
+        public async Task PopModalByRenderer(bool animation)
+        {
+            if (App.RootMaster == null)
+                await PopModalAsync(animation);
+            else
+                await PopMasterModalAsync(animation);
+        }
+
         public async Task NavigateAsync(Page page)
         {
             await CurrentApplication.MainPage.Navigation.PushAsync(page);
@@ -205,6 +237,17 @@ namespace ExpressBase.Mobile.Services.Navigation
             }
             else
                 EbLog.Info("Intentaction page not found for linkrefid:" + link.LinkRefId);
+        }
+
+        public Page GetCurrentPage()
+        {
+            Page navigator = App.RootMaster == null ? CurrentApplication.MainPage : App.RootMaster.Detail;
+
+            if (navigator is NavigationPage navp)
+            {
+                return navp.CurrentPage;
+            }
+            return null;
         }
     }
 }
