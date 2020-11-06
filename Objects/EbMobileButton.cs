@@ -1,8 +1,11 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -108,6 +111,55 @@ namespace ExpressBase.Mobile
             {
                 btn.FontSize = Font.Size;
                 btn.TextColor = Color.FromHex(Font.Color);
+            }
+        }
+
+        public async Task Navigate(EbDataRow row)
+        {
+            if (string.IsNullOrEmpty(this.LinkRefId))
+                return;
+
+            EbMobilePage page = EbPageFinder.GetPage(this.LinkRefId);
+
+            if (page != null)
+            {
+                EbMobileContainer container = page.Container;
+
+                if (container is EbMobileForm)
+                {
+                    if (this.FormMode == WebFormDVModes.New_Mode)
+                        await App.Navigation.NavigateMasterAsync(new FormRender(page, this.LinkFormParameters, row));
+                    else
+                    {
+                        try
+                        {
+                            var map = this.FormId;
+                            if (map == null)
+                            {
+                                EbLog.Info("form id should be set");
+                                throw new Exception("Form rendering exited! due to null value for 'FormId'");
+                            }
+                            else
+                            {
+                                int id = Convert.ToInt32(row[map.ColumnName]);
+                                if (id <= 0)
+                                {
+                                    EbLog.Info("id has ivalid value" + id);
+                                    throw new Exception("Form rendering exited! due to invalid id");
+                                }
+                                await App.Navigation.NavigateMasterAsync(new FormRender(page, id));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            EbLog.Error(ex.Message);
+                        }
+                    }
+                }
+                else if (container is EbMobileVisualization)
+                {
+                    await App.Navigation.NavigateMasterAsync(new ListRender(page, row));
+                }
             }
         }
     }

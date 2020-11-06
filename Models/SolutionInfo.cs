@@ -22,6 +22,8 @@ namespace ExpressBase.Mobile.Models
 
         public Eb_Solution SolutionObject { set; get; }
 
+        public string SignUpPage { set; get; }
+
         public void SetLogo()
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
@@ -40,30 +42,17 @@ namespace ExpressBase.Mobile.Models
 
         public bool SignupEnabled()
         {
-            SolutionSettings settings = SolutionObject?.SolutionSettings;
-
-            if (settings != null && settings.MobileAppSettings != null)
-            {
-                MobileAppSettings mobs = settings.MobileAppSettings;
-
-                if (mobs.MobileSignUpSettings != null && mobs.MobileSignUpSettings.SignUp)
-                {
-                    return true;
-                }
-            }
-            return false;
+            if (SolutionObject == null)
+                return false;
+            return SolutionObject.IsMobileSignupEnabled(out _);
         }
 
-        public MobileSignUpSettings GetSignUpSettings()
+        public EbMobilePage GetSignUpPage()
         {
-            SolutionSettings settings = SolutionObject?.SolutionSettings;
-
-            if (settings != null && settings.MobileAppSettings != null)
-            {
-                MobileAppSettings mobs = settings.MobileAppSettings;
-                return mobs?.MobileSignUpSettings;
-            }
-            return null;
+            if (string.IsNullOrEmpty(SignUpPage))
+                return null;
+            string regexed = EbSerializers.JsonToNETSTD(SignUpPage);
+            return EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
         }
     }
 }

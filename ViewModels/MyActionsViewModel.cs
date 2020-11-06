@@ -80,7 +80,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (Utils.HasInternet)
                 {
                     IsTapped = true;
-                    await App.RootMaster.Detail.Navigation.PushAsync(new DoAction(action));
+                    await App.Navigation.NavigateMasterAsync(new DoAction(action));
                 }
                 else
                     Utils.Alert_NoInternet();

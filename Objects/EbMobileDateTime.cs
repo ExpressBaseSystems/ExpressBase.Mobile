@@ -74,7 +74,7 @@ namespace ExpressBase.Mobile
                 GestureRecognizers = { gesture }
             };
 
-            this.XControl = new InputGroup(control, icon) { XBackgroundColor = XBackground };
+            this.XControl = new InputGroup(control, icon) { XBackgroundColor = XBackground, HasShadow = false };
         }
 
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)

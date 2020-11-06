@@ -43,14 +43,12 @@ namespace ExpressBase.Mobile.ViewModels
         public override void Initialize()
         {
             Applications = appService.GetDataAsync();
-
             IsEmpty = IsNullOrEmpty();
         }
 
         public override async Task UpdateAsync()
         {
             Applications = await appService.UpdateDataAsync();
-
             IsEmpty = IsNullOrEmpty();
             IsRefreshing = false;
         }

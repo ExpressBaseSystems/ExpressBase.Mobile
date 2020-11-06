@@ -4,40 +4,16 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+             xmlns:theme="clr-namespace:ExpressBase.Mobile.Themes"
              mc:Ignorable="d"
              x:Class="ExpressBase.Mobile.Views.Dynamic.FormRender"
              Style="{StaticResource ContentPageStyle}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <Style TargetType="control:EbXTextBox">
-                <Setter Property="FontSize"
-                        Value="15"></Setter>
-            </Style>
-            <Style TargetType="control:EbXDatePicker">
-                <Setter Property="FontSize"
-                        Value="15"></Setter>
-            </Style>
-            <Style TargetType="control:EbXTimePicker">
-                <Setter Property="FontSize"
-                        Value="15"></Setter>
-            </Style>
-            <Style TargetType="control:EbXNumericTextBox">
-                <Setter Property="FontSize"
-                        Value="15"></Setter>
-            </Style>
-            <Style TargetType="control:EbXPicker">
-                <Setter Property="FontSize"
-                        Value="15"></Setter>
-                <Setter Property="TextColor"
-                        Value="#333942"></Setter>
-            </Style>
-            <Style TargetType="control:EbXTextArea">
-                <Setter Property="FontSize"
-                        Value="15"></Setter>
-                <Setter Property="HeightRequest"
-                        Value="100"></Setter>
-            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <theme:FormControlDefaults></theme:FormControlDefaults>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -61,7 +37,7 @@
                         <RowDefinition Height="*"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <!--Order of binding should be this, controls should be the last-->
+                    
                     <control:FormView x:Name="FormViewComponent"
                                       Grid.Row="0"
                                       NetWorkType="{Binding NetworkType}"

@@ -73,7 +73,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
                 if (resp != null && resp.IsValid)
                     await AfterLoginSuccess(resp, this.UserName);
                 else
-                    DependencyService.Get<IToast>().Show("The OTP is Invalid or Expired");
+                    Utils.Toast("The OTP is Invalid or Expired");
             }
             catch (Exception ex)
             {
@@ -96,7 +96,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
                 });
 
                 if (App.Settings.Vendor.AllowNotifications)
-                    await NotificationService.Instance.UpdateNHRegisratation();
+                    await NotificationService.Instance.UpdateNHRegistration();
 
                 if (data != null)
                     await Service.Navigate(data);

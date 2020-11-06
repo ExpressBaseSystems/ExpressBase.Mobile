@@ -130,7 +130,7 @@ namespace ExpressBase.Mobile.Services
             return device;
         }
 
-        public async Task UpdateNHRegisratation()
+        public async Task UpdateNHRegistration()
         {
             if (!Utils.HasInternet)
                 return;

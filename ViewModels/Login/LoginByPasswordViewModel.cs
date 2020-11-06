@@ -11,6 +11,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
     public class LoginByPasswordViewModel : LoginBaseViewModel
     {
         private string email;
+        private string password;
 
         public string Email
         {
@@ -21,8 +22,6 @@ namespace ExpressBase.Mobile.ViewModels.Login
                 this.NotifyPropertyChanged();
             }
         }
-
-        private string password;
 
         public string PassWord
         {
@@ -95,7 +94,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
                 });
 
                 if (App.Settings.Vendor.AllowNotifications)
-                    await NotificationService.Instance.UpdateNHRegisratation();
+                    await NotificationService.Instance.UpdateNHRegistration();
 
                 if (data != null)
                     await Service.Navigate(data);

@@ -43,9 +43,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
 
                 if (validation)
-                    await App.RootMaster.Detail.Navigation.PushAsync(new FormRender(page, Visualization, ContextRecord));
+                    await App.Navigation.NavigateMasterAsync(new FormRender(page, Visualization, ContextRecord));
                 else
-                    await App.RootMaster.Detail.Navigation.PushAsync(new Redirect(form.MessageOnFailed));
+                    await App.Navigation.NavigateMasterAsync(new Redirect(form.MessageOnFailed));
             }
         }
 
@@ -59,7 +59,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 if (id != 0)
                 {
                     FormRender Renderer = new FormRender(page, id);
-                    await App.RootMaster.Detail.Navigation.PushAsync(Renderer);
+                    await App.Navigation.NavigateMasterAsync(Renderer);
                 }
             }
         }

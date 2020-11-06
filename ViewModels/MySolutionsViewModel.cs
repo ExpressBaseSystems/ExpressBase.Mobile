@@ -64,10 +64,7 @@ namespace ExpressBase.Mobile.ViewModels
                 await solutionService.ClearCached();
                 await solutionService.CreateDB(copy.SolutionName);
                 await solutionService.CreateDirectory();
-
-                Application.Current.MainPage = new NavigationPage();
-                await NavigationService.LoginWithCS();
-                App.RootMaster = null;
+                await App.Navigation.NavigateToLogin(true);
             }
             catch (Exception ex)
             {

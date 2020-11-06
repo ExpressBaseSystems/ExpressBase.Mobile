@@ -13,15 +13,8 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
-    /// <summary>
-    /// Service class for solution related tasks
-    /// </summary>
     public class SolutionService : ISolutionService
     {
-        /// <summary>
-        /// Method for list all the configured solutions
-        /// </summary>
-        /// <returns> List of Solutions meta</returns>
         public async Task<List<SolutionInfo>> GetDataAsync()
         {
             List<SolutionInfo> sln = new List<SolutionInfo>();
@@ -48,11 +41,6 @@ namespace ExpressBase.Mobile.Services
             return sln;
         }
 
-        /// <summary>
-        /// Api for validate solution url
-        /// </summary>
-        /// <param name="url"> eg : abc.expressbase.com </param>
-        /// <returns> validation object contain isValid boolean </returns>
         public async Task<ValidateSidResponse> ValidateSid(string url)
         {
             ValidateSidResponse response = null;
@@ -77,12 +65,6 @@ namespace ExpressBase.Mobile.Services
             return response ?? new ValidateSidResponse();
         }
 
-        /// <summary>
-        /// Method to add new solution to store
-        /// contains rooturl,name,lastusername
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
         public async Task SetDataAsync(SolutionInfo info)
         {
             try
@@ -109,13 +91,6 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
-        /// <summary>
-        /// Writing solution logo to AppDirectory/<SolutionName>
-        /// Logo.png
-        /// </summary>
-        /// <param name="solutionname"></param>
-        /// <param name="imageByte"></param>
-        /// <returns></returns>
         public async Task SaveLogoAsync(string solutionname, byte[] imageByte)
         {
             try
@@ -158,11 +133,6 @@ namespace ExpressBase.Mobile.Services
             await HelperFunctions.CreateDirectory();
         }
 
-        /// <summary>
-        /// Clone solution object
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
         public SolutionInfo Clone(SolutionInfo info)
         {
             return new SolutionInfo

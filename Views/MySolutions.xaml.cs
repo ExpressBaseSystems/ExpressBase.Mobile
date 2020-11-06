@@ -45,9 +45,9 @@ namespace ExpressBase.Mobile.Views
         private async void NewSolution_Clicked(object sender, System.EventArgs e)
         {
             if (isMasterPage)
-                await App.RootMaster.Detail.Navigation.PushAsync(new NewSolution(true));
+                await App.Navigation.NavigateMasterAsync(new NewSolution(true));
             else
-                await Application.Current.MainPage.Navigation.PushAsync(new NewSolution());
+                await App.Navigation.NavigateAsync(new NewSolution());
         }
     }
 }

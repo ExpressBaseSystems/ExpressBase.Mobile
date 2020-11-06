@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+                    x:Class="ExpressBase.Mobile.Themes.FormControlDefaults">
+
+    <Style TargetType="control:EbXTextBox">
+        <Setter Property="FontSize"
+                Value="15"></Setter>
+    </Style>
+    <Style TargetType="control:EbXDatePicker">
+        <Setter Property="FontSize"
+                Value="15"></Setter>
+    </Style>
+    <Style TargetType="control:EbXTimePicker">
+        <Setter Property="FontSize"
+                Value="15"></Setter>
+    </Style>
+    <Style TargetType="control:EbXNumericTextBox">
+        <Setter Property="FontSize"
+                Value="15"></Setter>
+    </Style>
+    <Style TargetType="control:EbXPicker">
+        <Setter Property="FontSize"
+                Value="15"></Setter>
+        <Setter Property="TextColor"
+                Value="#333942"></Setter>
+    </Style>
+    <Style TargetType="control:EbXTextArea">
+        <Setter Property="FontSize"
+                Value="15"></Setter>
+        <Setter Property="HeightRequest"
+                Value="100"></Setter>
+    </Style>
+
+</ResourceDictionary>

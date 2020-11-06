@@ -110,8 +110,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
 
             IsRefreshing = false;
-
-            NavigationService.RefreshCurrentPage();
+            App.Navigation.RefreshCurrentPage();
         }
 
         public async Task SearchData(string search)
@@ -181,7 +180,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     ContentPage renderer = EbPageFinder.ResolveByContext(this.Visualization, item.DataRow, page);
 
                     if (renderer != null)
-                        await App.RootMaster.Detail.Navigation.PushAsync(renderer);
+                        await App.Navigation.NavigateMasterAsync(renderer);
                 }
             }
             catch (Exception ex)

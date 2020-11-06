@@ -1,117 +1,157 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views;
 using ExpressBase.Mobile.Views.Base;
-using ExpressBase.Mobile.Views.Dynamic;
 using ExpressBase.Mobile.Views.Login;
-using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.Services
+namespace ExpressBase.Mobile.Services.Navigation
 {
-    public class NavigationService
+    public class NavigationService : INavigationService
     {
-        //login with new stack
-        public static async Task LoginWithNS()
-        {
-            App.RootMaster = null;
-            Application.Current.MainPage = new NavigationPage();
+        public static NavigationService Instance { get; set; }
 
-            if (App.Settings.LoginType == LoginType.SSO)
-                await Application.Current.MainPage.Navigation.PushAsync(new LoginByOTP());
-            else
-                await Application.Current.MainPage.Navigation.PushAsync(new LoginByPassword());
+        private Application CurrentApplication => Application.Current;
+
+        public NavigationService()
+        {
+            Instance = this;
         }
 
-        //login with current stack
-        public static async Task LoginWithCS()
+        public async Task InitializeAppAsync(EbNFData payload)
         {
-            if (App.Settings.LoginType == LoginType.SSO)
-                await Application.Current.MainPage.Navigation.PushAsync(new LoginByOTP());
-            else
-                await Application.Current.MainPage.Navigation.PushAsync(new LoginByPassword());
-        }
+            App.Settings.InitializeConfig();
 
-        public static bool IsTokenExpired(string rtoken)
-        {
-            JwtSecurityToken jwtToken = new JwtSecurityToken(rtoken);
+            await InitializeNavigation();
 
-            if (DateTime.Compare(jwtToken.ValidTo, DateTime.Now) < 0)
-                return true;
-            else
-                return false;
-        }
-
-        public static async Task NavigateIfTokenExpiredAsync()
-        {
-            if (IsTokenExpired(App.Settings.RToken))
+            if (payload != null)
             {
-                await LoginWithNS();
+                await InitRecievedIntentAction(payload);
             }
         }
 
-        public static async Task ReplaceTopAsync(Page page)
+        public async Task NavigateAsync(Page page)
         {
+            await CurrentApplication.MainPage.Navigation.PushAsync(page);
+        }
+
+        public async Task NavigateModalAsync(Page page)
+        {
+            await CurrentApplication.MainPage.Navigation.PushModalAsync(page);
+        }
+
+        public async Task NavigateMasterAsync(Page page)
+        {
+            await App.RootMaster.Detail.Navigation.PushAsync(page);
+        }
+
+        public async Task NavigateMasterModalAsync(Page page)
+        {
+            await App.RootMaster.Detail.Navigation.PushModalAsync(page);
+        }
+
+        public async Task PopAsync(bool animate)
+        {
+            await CurrentApplication.MainPage.Navigation.PopAsync(animate);
+        }
+
+        public async Task PopModalAsync(bool animate)
+        {
+            await CurrentApplication.MainPage.Navigation.PopModalAsync(animate);
+        }
+
+        public async Task PopMasterAsync(bool animate)
+        {
+            await App.RootMaster.Detail.Navigation.PopAsync(animate);
+        }
+
+        public async Task PopMasterModalAsync(bool animate)
+        {
+            await App.RootMaster.Detail.Navigation.PopModalAsync(animate);
+        }
+
+        private async Task InitializeNavigation()
+        {
+            CurrentApplication.MainPage = new NavigationPage();
+
+            await App.Settings.InitializeSettings();
+
+            if (App.Settings.Sid == null)
+            {
+                if (Utils.Solutions.Any())
+                    await NavigateAsync(new MySolutions());
+                else
+                    await NavigateAsync(new NewSolution());
+            }
+            else
+            {
+                if (App.Settings.RToken == null || IdentityService.IsTokenExpired())
+                {
+                    await NavigateToLogin();
+                    return;
+                }
+                else
+                {
+                    if (App.Settings.AppId <= 0)
+                        await NavigateAsync(new MyApplications());
+                    else
+                    {
+                        App.RootMaster = new RootMaster(typeof(Home));
+                        CurrentApplication.MainPage = App.RootMaster;
+                    }
+                }
+            }
+        }
+
+        public async Task InitRecievedIntentAction(EbNFData payload)
+        {
+            if (payload.Link == null && App.RootMaster == null)
+            {
+                EbLog.Info("Intentaction aborted, link and rootmaster null");
+                return;
+            }
+
+            EbNFLink link = payload.Link;
             try
             {
-                var stack = Application.Current.MainPage.Navigation.NavigationStack;
-
-                if (stack.Any())
-                {
-                    Page last = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
-
-                    await Application.Current.MainPage.Navigation.PushAsync(page);
-                    if (last != null)
-                        Application.Current.MainPage.Navigation.RemovePage(last);
-                }
+                if (link.LinkType == EbNFLinkTypes.Action)
+                    await ResolveAction(link);
+                else if (link.LinkType == EbNFLinkTypes.Page)
+                    await ResolveRedirection(link);
             }
             catch (Exception ex)
             {
-                EbLog.Info("failed to replace mainpage top page");
+                EbLog.Info("Unknown error at indent action");
                 EbLog.Error(ex.Message);
             }
         }
 
-        public static async Task ReplaceRootTopAsync(Page page)
+        public async Task NavigateToLogin(bool new_navigation = false)
         {
-            try
+            if (new_navigation)
             {
-                var stack = App.RootMaster.Detail.Navigation.NavigationStack;
-
-                if (stack.Any())
-                {
-                    Page last = App.RootMaster.Detail.Navigation.NavigationStack.LastOrDefault();
-
-                    await App.RootMaster.Detail.Navigation.PushAsync(page);
-                    if (last != null)
-                        App.RootMaster.Detail.Navigation.RemovePage(last);
-                }
+                App.RootMaster = null;
+                Application.Current.MainPage = new NavigationPage();
             }
-            catch (Exception ex)
-            {
-                EbLog.Info("failed to replace rootmaster top page");
-                EbLog.Error(ex.Message);
-            }
+
+            if (App.Settings.LoginType == LoginType.SSO)
+                await CurrentApplication.MainPage.Navigation.PushAsync(new LoginByOTP());
+            else
+                await CurrentApplication.MainPage.Navigation.PushAsync(new LoginByPassword());
         }
 
-        public static async Task LoginAction()
-        {
-            await App.RootMaster.Detail.Navigation.PushModalAsync(new LoginAction());
-        }
-
-        public static void UpdateViewStack()
+        public void UpdateViewStack()
         {
             try
             {
                 IReadOnlyList<Page> stack = App.RootMaster.Detail.Navigation.NavigationStack;
 
-                foreach (var page in stack)
+                foreach (Page page in stack)
                 {
                     if (page is IRefreshable iref && iref.CanRefresh())
                     {
@@ -126,7 +166,7 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
-        public static void RefreshCurrentPage()
+        public void RefreshCurrentPage()
         {
             Page current = App.RootMaster.Detail.Navigation.NavigationStack.Last();
 
@@ -136,49 +176,35 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
-        public static async Task NavigateButtonLinkPage(EbMobileButton button, EbDataRow row, EbMobilePage page)
+        private async Task ResolveAction(EbNFLink link)
         {
-            ContentPage renderer = null;
-            var container = page.Container;
-
-            if (container is EbMobileForm)
+            if (link.ActionId != 0)
             {
-                if (button.FormMode == WebFormDVModes.New_Mode)
-                    renderer = new FormRender(page, button.LinkFormParameters, row);
-                else
-                {
-                    try
-                    {
-                        var map = button.FormId;
-                        if (map == null)
-                        {
-                            EbLog.Info("form id should be set");
-                            throw new Exception("Form rendering exited! due to null value for 'FormId'");
-                        }
-                        else
-                        {
-                            int id = Convert.ToInt32(row[map.ColumnName]);
-                            if (id <= 0)
-                            {
-                                EbLog.Info("id has ivalid value" + id);
-                                throw new Exception("Form rendering exited! due to invalid id");
-                            }
-                            renderer = new FormRender(page, id);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        EbLog.Error(ex.Message);
-                    }
-                }
+                await App.Navigation.NavigateMasterAsync(new DoAction(link.ActionId));
+                EbLog.Info("Navigated to action submit : actionid =" + link.ActionId);
             }
-            else if (container is EbMobileVisualization)
-            {
-                renderer = new ListRender(page, row);
-            }
+            else
+                EbLog.Info("ActionId Empty, Intent action failed");
+        }
 
-            if (renderer != null)
-                await App.RootMaster.Detail.Navigation.PushAsync(renderer);
+        private async Task ResolveRedirection(EbNFLink link)
+        {
+            if (string.IsNullOrEmpty(link.LinkRefId))
+            {
+                EbLog.Info("Intentaction link type is page but linkrefid null");
+                return;
+            }
+            EbMobilePage page = EbPageFinder.GetPage(link.LinkRefId);
+
+            if (page != null)
+            {
+                EbLog.Info("Intentaction page rendering :" + page.DisplayName);
+
+                ContentPage renderer = EbPageFinder.GetPageByContainer(page);
+                await App.Navigation.NavigateMasterAsync(renderer);
+            }
+            else
+                EbLog.Info("Intentaction page not found for linkrefid:" + link.LinkRefId);
         }
     }
 }

@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:ExpressBase.Mobile.CustomControls"
+             xmlns:theme="clr-namespace:ExpressBase.Mobile.Themes"
+             x:Class="ExpressBase.Mobile.Views.Dynamic.SignUp"
+             Style="{StaticResource ContentPageStyle}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <theme:FormControlDefaults></theme:FormControlDefaults>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <controls:EbCPLayout x:Name="EbLayout"
+                             HasToolBar="False">
+
+            <controls:EbCPLayout.Content>
+                <Grid VerticalOptions="FillAndExpand">
+                    <ScrollView>
+                        <StackLayout VerticalOptions="CenterAndExpand">
+
+                            <Label Text="Sign Up"
+                                   HorizontalTextAlignment="Center"
+                                   FontFamily="{StaticResource Roboto-Medium}"
+                                   FontSize="20"
+                                   TextColor="#333">
+                            </Label>
+    
+                            <Image x:Name="LogoUrl"
+                                   Source="{Binding LogoUrl}"
+                                   Margin="20,20,20,30"
+                                   HeightRequest="100"
+                                   WidthRequest="200"
+                                   HorizontalOptions="Center">
+                            </Image>
+
+                            <Grid VerticalOptions="CenterAndExpand">
+                                <controls:FormView x:Name="FormViewComponent"
+                                                   NetWorkType="{Binding NetworkType}"
+                                                   FormMode="{Binding Mode}"
+                                                   Controls="{Binding Controls}">
+                                </controls:FormView>
+                            </Grid>
+
+                            <Button x:Name="SaveButton"
+                                    Text="{Binding SubmitButtonText}"
+                                    CornerRadius="6"
+                                    Margin="15"
+                                    HorizontalOptions="FillAndExpand"
+                                    BackgroundColor="{DynamicResource Primary_Color}"
+                                    TextColor="White"
+                                    Command="{Binding SaveCommand}">
+                            </Button>
+
+                            <Label HorizontalOptions="Center"
+                                   VerticalOptions="End"
+                                   Margin="0,15"
+                                   FontFamily="{StaticResource Roboto-Medium}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Already a member? "></Span>
+                                        <Span Text="Login"
+                                              TextColor="{DynamicResource Primary_Color}"></Span>
+                                    </FormattedString>
+                                </Label.FormattedText>
+
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GoToLoginCommand}"></TapGestureRecognizer>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            
+                        </StackLayout>
+                    </ScrollView>
+
+                    <controls:LoaderIconed x:Name="Loader"
+                                     IsVisible="{Binding IsBusy}"
+                                     AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                                     AbsoluteLayout.LayoutFlags="All">
+                    </controls:LoaderIconed>
+                </Grid>
+            </controls:EbCPLayout.Content>
+        </controls:EbCPLayout>
+    </ContentPage.Content>
+</ContentPage>

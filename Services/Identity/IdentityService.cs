@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Configuration;
-using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -9,6 +8,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -192,7 +192,7 @@ namespace ExpressBase.Mobile.Services
             {
                 if (Utils.IsFreshStart)
                 {
-                    await Application.Current.MainPage.Navigation.PushAsync(new WelcomPage(data));
+                    await App.Navigation.NavigateAsync(new WelcomPage(data));
                 }
                 else
                 {
@@ -209,7 +209,7 @@ namespace ExpressBase.Mobile.Services
                     }
                     else
                     {
-                        await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+                        await App.Navigation.NavigateAsync(new MyApplications());
                     }
                 }
             }
@@ -223,6 +223,16 @@ namespace ExpressBase.Mobile.Services
             char[] charArray = otp.ToCharArray();
 
             if (charArray.All(x => char.IsDigit(x)) && charArray.Length == 6)
+                return true;
+            else
+                return false;
+        }
+
+        public static bool IsTokenExpired()
+        {
+            JwtSecurityToken jwtToken = new JwtSecurityToken(App.Settings.RToken);
+
+            if (DateTime.Compare(jwtToken.ValidTo, DateTime.Now) < 0)
                 return true;
             else
                 return false;

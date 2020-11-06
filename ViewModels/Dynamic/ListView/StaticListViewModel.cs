@@ -1,8 +1,10 @@
 ﻿using ExpressBase.Mobile.CustomControls.Layout;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.BaseModels;
+using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,7 +48,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic.ListView
 
         private List<string> searchParameters;
 
-        protected bool IsTapped { set; get; }
+        bool isTapped;
 
         public Command ItemTappedCommand => new Command<StaticLSFrame>(async (o) => await NavigateToLink(o));
 
@@ -76,7 +78,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic.ListView
 
         private async Task NavigateToLink(StaticLSFrame item)
         {
-            if (IsTapped)
+            if (isTapped)
                 return;
             try
             {
@@ -84,17 +86,25 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic.ListView
 
                 if (page != null)
                 {
-                    IsTapped = true;
-                    ContentPage renderer = EbPageFinder.GetPageByContainer(page);
-                    if (renderer != null)
-                        await App.RootMaster.Detail.Navigation.PushAsync(renderer);
+                    isTapped = true;
+
+                    if (page.Container is EbMobileVisualization)
+                    {
+                        EbDataRow row = item.StaticItem.GetAsDataRow();
+                        await App.Navigation.NavigateMasterAsync(new ListRender(page, row));
+                    }
+                    else
+                    {
+                        ContentPage renderer = EbPageFinder.GetPageByContainer(page);
+                        await App.Navigation.NavigateMasterAsync(renderer);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            IsTapped = false;
+            isTapped = false;
         }
 
         public void SearchData(string search)

@@ -126,7 +126,7 @@ namespace ExpressBase.Mobile
                 Style = (Style)HelperFunctions.GetResourceValue("PSIconLabel"),
                 GestureRecognizers = { gesture }
             };
-            this.XControl = new InputGroup(picker, icon) { XBackgroundColor = Background };
+            this.XControl = new InputGroup(picker, icon) { XBackgroundColor = Background, HasShadow = false };
         }
 
         private void InitPowerSelect(TapGestureRecognizer gesture)

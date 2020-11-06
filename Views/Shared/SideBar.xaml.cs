@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Configuration;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System;
 using System.IO;
@@ -51,25 +50,25 @@ namespace ExpressBase.Mobile.Views.Shared
         private async void About_Tapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            await App.RootMaster.Detail.Navigation.PushAsync(new About());
+            await App.Navigation.NavigateMasterAsync(new About());
         }
 
         private async void ChangeSolution_Tapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            await App.RootMaster.Detail.Navigation.PushAsync(new MySolutions(true));
+            await App.Navigation.NavigateMasterAsync(new MySolutions(true));
         }
 
         private async void ChangeApplication_Tapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            await App.RootMaster.Detail.Navigation.PushAsync(new MyApplications(true));
+            await App.Navigation.NavigateMasterAsync(new MyApplications(true));
         }
 
         private async void ChangeLocation_Tapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            await App.RootMaster.Detail.Navigation.PushAsync(new MyLocations());
+            await App.Navigation.NavigateMasterAsync(new MyLocations());
         }
 
         private void Logout_Tapped(object sender, EventArgs e)
@@ -87,7 +86,7 @@ namespace ExpressBase.Mobile.Views.Shared
         private async void Setup_Tapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            await App.RootMaster.Detail.Navigation.PushAsync(new SettingsView());
+            await App.Navigation.NavigateMasterAsync(new SettingsView());
         }
 
         private async void MyActions_Tapped(object sender, EventArgs e)
@@ -99,7 +98,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
 
             App.RootMaster.IsPresented = false;
-            await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new MyActions());
+            await App.Navigation.NavigateMasterAsync(new MyActions());
         }
 
         private void SyncButton_Tapped(object sender, EventArgs e)

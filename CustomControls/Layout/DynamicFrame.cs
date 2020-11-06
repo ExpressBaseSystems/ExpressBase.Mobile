@@ -2,7 +2,6 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -324,14 +323,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         public async Task ButtonControlClick(EbMobileButton button)
         {
-            if (string.IsNullOrEmpty(button.LinkRefId))
-                return;
-
-            EbMobilePage page = EbPageFinder.GetPage(button.LinkRefId);
-            if (page != null)
-            {
-                await NavigationService.NavigateButtonLinkPage(button, this.DataRow, page);
-            }
+            await button.Navigate(this.DataRow);
         }
     }
 }

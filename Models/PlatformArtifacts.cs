@@ -219,6 +219,8 @@ namespace ExpressBase.Mobile.Models
 
         public Eb_Solution SolutionObj { get; set; }
 
+        public string SignUpPage { set; get; }
+
         public string Message { set; get; }
     }
 

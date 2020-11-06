@@ -148,9 +148,9 @@ namespace ExpressBase.Mobile.CustomControls
         private async Task PopNavigationAsync()
         {
             if (App.RootMaster != null)
-                await App.RootMaster.Detail.Navigation.PopAsync(true);
+                await App.Navigation.PopMasterAsync(true);
             else
-                await Application.Current.MainPage.Navigation.PopAsync(true);
+                await App.Navigation.PopAsync(true);
         }
 
         public void ShowLoader()

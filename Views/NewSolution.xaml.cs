@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
 using ExpressBase.Mobile.Views.Shared;
@@ -14,10 +13,6 @@ using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.Views
 {
-    /// <summary>
-    /// Page to add new solution
-    /// Includes QR scanner
-    /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewSolution : ContentPage, IDynamicContent
     {
@@ -26,8 +21,7 @@ namespace ExpressBase.Mobile.Views
         private ValidateSidResponse response;
 
         private readonly bool isMasterPage;
-
-        ///<value> return Dynamic content dictionary from vendor JSON </value>
+        
         public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.NewSolution;
 
         public NewSolution(bool hasBackButton = false)
@@ -44,7 +38,7 @@ namespace ExpressBase.Mobile.Views
             base.OnAppearing();
             this.SetContentFromConfig();
 
-            await viewModel.GetCameraAccess();
+            await AppPermission.Camera();
         }
 
         public void SetContentFromConfig()
@@ -53,10 +47,6 @@ namespace ExpressBase.Mobile.Views
             SolutionName.Placeholder = PageContent["TextBoxPlaceHolder"];
         }
 
-        /// <summary>
-        /// Callbak method on qr scan
-        /// </summary>
-        /// <param name="meta"></param>
         private void QrScannerCallback(string payload)
         {
             SolutionQrMeta meta = null;
@@ -89,13 +79,7 @@ namespace ExpressBase.Mobile.Views
                     if (response.IsValid)
                     {
                         await viewModel.AddSolution(meta.Sid, response);
-
-                        if (isMasterPage)
-                        {
-                            App.RootMaster = null;
-                            Application.Current.MainPage = new NavigationPage();
-                        }
-                        await NavigationService.LoginWithCS();
+                        await App.Navigation.NavigateToLogin(isMasterPage);
                     }
                     else
                         Utils.Toast("invalid qr code meta");
@@ -109,14 +93,9 @@ namespace ExpressBase.Mobile.Views
             });
         }
 
-        /// <summary>
-        /// qr show button taped event
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private async void QrButton_Tapped(object sender, EventArgs e)
         {
-            bool hasCameraAccess = await viewModel.GetCameraAccess();
+            bool hasCameraAccess = await AppPermission.Camera();
 
             if (hasCameraAccess)
             {
@@ -124,19 +103,14 @@ namespace ExpressBase.Mobile.Views
                 scannerPage.BindMethod(QrScannerCallback);
 
                 if (App.RootMaster != null)
-                    await App.RootMaster.Detail.Navigation.PushModalAsync(scannerPage);
+                    await App.Navigation.NavigateMasterModalAsync(scannerPage);
                 else
-                    await Application.Current.MainPage.Navigation.PushModalAsync(scannerPage);
+                    await App.Navigation.NavigateModalAsync(scannerPage);
             }
             else
                 Utils.Toast("Allow permission to access camera");
         }
 
-        /// <summary>
-        /// Validate solution when solution url is typing
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private async void SaveSolution_Clicked(object sender, EventArgs e)
         {
             try
@@ -160,7 +134,7 @@ namespace ExpressBase.Mobile.Views
                     surl += $".{domain}";
                     SolutionName.Text = surl;
                 }
-                //api call for validating solution
+
                 response = await viewModel.Validate(surl);
 
                 if (response.IsValid)
@@ -207,11 +181,6 @@ namespace ExpressBase.Mobile.Views
             this.HideSIDConfirmBox();
         }
 
-        /// <summary>
-        /// After validation api response confirm solution when propmt
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private async void ConfirmButton_Clicked(object sender, EventArgs e)
         {
             try
@@ -221,12 +190,7 @@ namespace ExpressBase.Mobile.Views
                 EbLayout.HideLoader();
                 this.HideSIDConfirmBox();
 
-                if (isMasterPage)
-                {
-                    App.RootMaster = null;
-                    Application.Current.MainPage = new NavigationPage();
-                }
-                await NavigationService.LoginWithCS();
+                await App.Navigation.NavigateToLogin(isMasterPage);
             }
             catch (Exception)
             {

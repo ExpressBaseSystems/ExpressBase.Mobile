@@ -40,9 +40,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
 
                 if (validation)
-                    await App.RootMaster.Detail.Navigation.PushAsync(new FormRender(page));
+                    await App.Navigation.NavigateMasterAsync(new FormRender(page));
                 else
-                    await App.RootMaster.Detail.Navigation.PushAsync(new Redirect(form.MessageOnFailed));
+                    await App.Navigation.NavigateMasterAsync(new Redirect(form.MessageOnFailed));
             }
         }
 

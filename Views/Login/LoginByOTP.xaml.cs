@@ -58,12 +58,12 @@ namespace ExpressBase.Mobile.Views.Login
 
         private async void CredLoginButton_Clicked(object sender, EventArgs e)
         {
-            await NavigationService.ReplaceTopAsync(new LoginByPassword());
+            await viewModel.ReplaceTopAsync(new LoginByPassword());
         }
 
         private async void NewSolutionButton_Clicked(object sender, EventArgs e)
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new NewSolution(true));
+            await App.Navigation.NavigateAsync(new NewSolution(true));
         }
 
         protected override bool OnBackButtonPressed()

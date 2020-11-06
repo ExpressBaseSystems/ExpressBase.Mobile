@@ -1,9 +1,12 @@
 ﻿using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
-using ExpressBase.Mobile.Views;
+using ExpressBase.Mobile.Views.Dynamic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -50,12 +53,34 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         private async Task GoToSignUp()
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new SignUp());
+            await App.Navigation.NavigateAsync(new SignUp());
         }
 
         public void Bind2FAToggleEvent(Action<ApiAuthResponse> action)
         {
             Toggle2FAW = action;
+        }
+
+        public async Task ReplaceTopAsync(Page page)
+        {
+            try
+            {
+                IReadOnlyList<Page> stack = Application.Current.MainPage.Navigation.NavigationStack;
+
+                if (stack.Any())
+                {
+                    Page last = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
+
+                    await App.Navigation.NavigateAsync(page);
+                    if (last != null)
+                        Application.Current.MainPage.Navigation.RemovePage(last);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info("failed to replace mainpage top page");
+                EbLog.Error(ex.Message);
+            }
         }
     }
 }

@@ -103,6 +103,7 @@
                                         </Grid.ColumnDefinitions>
                                         <control:EbXTextBox x:Name="SolutionName"
                                                          BorderColor="Transparent"
+                                                         BackgroundColor="Transparent"
                                                          FontSize="16"
                                                          VerticalTextAlignment="Center"
                                                          Grid.Column="0"

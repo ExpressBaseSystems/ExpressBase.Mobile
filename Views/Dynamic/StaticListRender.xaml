@@ -47,8 +47,8 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <control:DynamicViewCell Visualization="{Binding Path=BindingContext.Visualization,Source={x:Reference EbListView}}"
-                                                          ItemSelected="{Binding Path=BindingContext.ItemTappedCommand,Source={x:Reference EbListView}}"
-                                                          ItemIndex="{Binding Path=BindingContext.ListItemIndex,Source={x:Reference EbListView}}">
+                                                         ItemSelected="{Binding Path=BindingContext.ItemTappedCommand,Source={x:Reference EbListView}}"
+                                                         ItemIndex="{Binding Path=BindingContext.ListItemIndex,Source={x:Reference EbListView}}">
                                 </control:DynamicViewCell>
                             </DataTemplate>
                         </ListView.ItemTemplate>

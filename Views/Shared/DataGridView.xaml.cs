@@ -87,12 +87,12 @@ namespace ExpressBase.Mobile.Views.Shared
             this.ResetControls();
         }
 
-        private void SaveAndClose_Clicked(object sender, EventArgs e)
+        private async void SaveAndClose_Clicked(object sender, EventArgs e)
         {
             if (!Validate())
                 return;
 
-            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
+            await App.Navigation.PopMasterModalAsync(true);
             if (mode == GridMode.New)
                 dataGrid.RowAddCallBack();
             else
@@ -105,9 +105,9 @@ namespace ExpressBase.Mobile.Views.Shared
                 ctrl.Reset();
         }
 
-        private void BackButton_Clicked(object sender, EventArgs e)
+        private async void BackButton_Clicked(object sender, EventArgs e)
         {
-            (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PopModalAsync();
+            await App.Navigation.PopMasterModalAsync(true);
         }
 
         public bool Validate()

@@ -17,6 +17,19 @@ namespace ExpressBase.Mobile.Models
         public SolutionSettings SolutionSettings { get; set; }
 
         public SolutionType SolutionType { get; set; }
+
+        public bool IsMobileSignupEnabled(out string refid)
+        {
+            bool exist = false;
+            refid = null;
+
+            if (SolutionSettings != null && SolutionSettings.MobileAppSettings != null)
+            {
+                refid = SolutionSettings.MobileAppSettings.SignUpPageRefId;
+                exist = SolutionSettings.MobileAppSettings.IsSignupEnabled();
+            }
+            return exist;
+        }
     }
 
     public class SolutionSettings
@@ -26,22 +39,14 @@ namespace ExpressBase.Mobile.Models
 
     public class MobileAppSettings
     {
-        public MobileSignUpSettings MobileSignUpSettings { get; set; }
-    }
-
-    public class MobileSignUpSettings
-    {
-        public bool SignUp { get; set; }
-
-        public bool Email { get; set; }
-
-        public bool MobileNo { get; set; }
-
-        public bool Password { get; set; }
-
-        public bool Verification { get; set; }
+        public string SignUpPageRefId { set; get; }
 
         public List<string> ProfileSetupPages { get; set; }
+
+        public bool IsSignupEnabled()
+        {
+            return !string.IsNullOrEmpty(SignUpPageRefId);
+        }
     }
 
     public enum SolutionType

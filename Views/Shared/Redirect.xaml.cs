@@ -23,7 +23,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void Button_Clicked(object sender, System.EventArgs e)
         {
-            await App.RootMaster.Detail.Navigation.PopAsync(true);
+            await App.Navigation.PopMasterAsync(true);
         }
     }
 }

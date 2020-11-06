@@ -11,6 +11,6 @@ namespace ExpressBase.Mobile.Services
 
         Task<bool> UnRegisterAsync(string regId);
 
-        Task UpdateNHRegisratation();
+        Task UpdateNHRegistration();
     }
 }

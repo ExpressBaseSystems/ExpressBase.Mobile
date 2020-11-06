@@ -28,6 +28,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command SaveCommand => new Command(async () => await this.FormSubmitClicked());
 
+        public FormRenderViewModel() { }
+
         public FormRenderViewModel(EbMobilePage page) : base(page)
         {
             this.Mode = FormMode.NEW;
@@ -83,7 +85,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private async Task Submit()
+        protected virtual async Task Submit()
         {
             try
             {
@@ -95,8 +97,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     if (response.Status)
                     {
-                        NavigationService.UpdateViewStack();
-                        await App.RootMaster.Detail.Navigation.PopAsync(true);
+                        App.Navigation.UpdateViewStack();
+                        await App.Navigation.PopMasterAsync(true);
                     }
 
                     IsBusy = false;
@@ -110,7 +112,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 EbLog.Info($"Submit() raised some error");
                 EbLog.Error(ex.Message);
-
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
             }
         }

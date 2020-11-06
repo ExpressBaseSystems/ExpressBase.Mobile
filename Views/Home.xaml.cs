@@ -96,7 +96,7 @@ namespace ExpressBase.Mobile.Views
 
         private async void LocationSwitch_Clicked(object sender, EventArgs e)
         {
-            await App.RootMaster.Detail.Navigation.PushAsync(new MyLocations());
+            await App.Navigation.NavigateMasterAsync(new MyLocations());
         }
     }
 }

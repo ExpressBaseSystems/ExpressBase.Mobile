@@ -103,9 +103,9 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                if (NavigationService.IsTokenExpired(App.Settings.RToken))
+                if (IdentityService.IsTokenExpired())
                 {
-                    await NavigationService.LoginAction();
+                    await App.Navigation.NavigateToLogin(true);
                 }
                 else
                 {
@@ -154,10 +154,10 @@ namespace ExpressBase.Mobile.ViewModels
                 if (render)
                 {
                     ContentPage renderer = EbPageFinder.GetPageByContainer(page);
-                    await App.RootMaster.Detail.Navigation.PushAsync(renderer);
+                    await App.Navigation.NavigateMasterAsync(renderer);
                 }
                 else
-                    await App.RootMaster.Detail.Navigation.PushAsync(new Redirect(message));
+                    await App.Navigation.NavigateMasterAsync(new Redirect(message));
 
                 isTapped = false;
             }

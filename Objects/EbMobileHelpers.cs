@@ -1,5 +1,9 @@
-﻿using ExpressBase.Mobile.Structures;
+﻿using CodingSeb.ExpressionEvaluator;
+using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Extensions;
+using ExpressBase.Mobile.Structures;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExpressBase.Mobile
 {
@@ -80,14 +84,43 @@ namespace ExpressBase.Mobile
     public class EbMobileStaticListItem : EbMobilePageBase
     {
         public override string Name { get; set; }
-        
+
         public List<EbMobileStaticParameter> Parameters { set; get; }
-        
+
         public string LinkRefId { get; set; }
 
         public bool HasLink()
         {
             return !string.IsNullOrEmpty(LinkRefId);
+        }
+
+        public EbDataRow GetAsDataRow()
+        {
+            EbDataRow row = null;
+            EbDataTable dt = new EbDataTable();
+
+            if (Parameters != null && Parameters.Any())
+            {
+                row = dt.NewDataRow();
+                dt.Rows.Add(row);
+
+                List<object> dataArray = new List<object>();
+
+                for (int i = 0; i < Parameters.Count; i++)
+                {
+                    EbMobileStaticParameter pm = Parameters[i];
+
+                    dt.Columns.Add(new EbDataColumn
+                    {
+                        ColumnName = pm.Name,
+                        ColumnIndex = i
+                    });
+
+                    dataArray.Add(pm.Value);
+                }
+                row.AddRange(dataArray.ToArray());
+            }
+            return row ?? dt.NewDataRow();
         }
     }
 }

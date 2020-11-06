@@ -40,9 +40,9 @@ namespace ExpressBase.Mobile.Views.Shared
                     viewAction?.Invoke(result.Text);          
 
                     if (App.RootMaster != null)
-                        App.RootMaster.Detail.Navigation.PopModalAsync(true);
+                        App.Navigation.PopMasterModalAsync(true);
                     else
-                        Application.Current.MainPage.Navigation.PopModalAsync(true);
+                        App.Navigation.PopModalAsync(true);
                 }
                 else
                 {
@@ -65,12 +65,12 @@ namespace ExpressBase.Mobile.Views.Shared
             viewAction = action;
         }
 
-        private void BackButton_Clicked(object sender, EventArgs e)
+        private async void BackButton_Clicked(object sender, EventArgs e)
         {
             if (App.RootMaster != null)
-                App.RootMaster.Detail.Navigation.PopModalAsync(true);
+                await App.Navigation.PopMasterModalAsync(true);
             else
-                Application.Current.MainPage.Navigation.PopModalAsync(true);
+                await App.Navigation.PopModalAsync(true);
         }
     }
 }

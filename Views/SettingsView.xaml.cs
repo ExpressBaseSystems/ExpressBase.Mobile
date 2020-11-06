@@ -49,7 +49,7 @@ namespace ExpressBase.Mobile.Views
                 }
                 else
                 {
-                    DependencyService.Get<IToast>().Show("logs.txt not found!");
+                    Utils.Toast("logs.txt not found!");
                 }
             }
             catch (FeatureNotSupportedException)

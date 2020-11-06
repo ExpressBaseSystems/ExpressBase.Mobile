@@ -88,7 +88,7 @@ namespace ExpressBase.Mobile.ViewModels
         public async Task Logout()
         {
             Store.ResetCashedSolutionData();
-            await NavigationService.LoginWithNS();
+            await App.Navigation.NavigateToLogin(true);
 
             if (Utils.HasInternet && App.Settings.Vendor.AllowNotifications)
             {

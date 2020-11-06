@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.Login;
 using ExpressBase.Mobile.Views.Base;
 using System;
@@ -72,12 +71,12 @@ namespace ExpressBase.Mobile.Views.Login
 
         private async void NewSolutionButton_Clicked(object sender, EventArgs e)
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new NewSolution(true));
+            await App.Navigation.NavigateAsync(new NewSolution(true));
         }
 
         private async void SSOLoginButton_Clicked(object sender, EventArgs e)
         {
-            await NavigationService.ReplaceTopAsync(new LoginByOTP());
+            await viewModel.ReplaceTopAsync(new LoginByOTP());
         }
 
         protected override bool OnBackButtonPressed()

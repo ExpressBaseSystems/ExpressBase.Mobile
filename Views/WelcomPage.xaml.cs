@@ -63,7 +63,7 @@ namespace ExpressBase.Mobile.Views
             }
             else
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new MyApplications());
+                await App.Navigation.NavigateAsync(new MyApplications());
             }
         }
     }

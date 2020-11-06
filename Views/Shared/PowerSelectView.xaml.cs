@@ -2,7 +2,6 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
@@ -212,7 +211,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void BackButton_Clicked(object sender, EventArgs e)
         {
-            await App.RootMaster.Detail.Navigation.PopModalAsync();
+            await App.Navigation.PopMasterModalAsync(true);
         }
 
         private void ResetSearch_Clicked(object sender, EventArgs e)

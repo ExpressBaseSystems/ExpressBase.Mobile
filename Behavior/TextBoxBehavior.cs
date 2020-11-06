@@ -40,7 +40,7 @@ namespace ExpressBase.Mobile.Behavior
                 else
                     isValid = true;
 
-                ((EbXTextBox)sender).Text = isValid ? args.NewTextValue : args.NewTextValue.Remove(args.NewTextValue.Length - 1);
+                ((EbXTextBox)sender).Text = isValid ? args.NewTextValue.ToLower() : args.NewTextValue.Remove(args.NewTextValue.Length - 1);
             }
         }
     }

@@ -44,7 +44,7 @@ namespace ExpressBase.Mobile.Services
                 }
             }
             //filter all pages with respect to current location
-            var filter = App.Settings.CurrentUser.FilterByLocation(objectList);
+            List<MobilePagesWraper> filter = App.Settings.CurrentUser.FilterByLocation(objectList);
 
             return filter;
         }

@@ -13,11 +13,16 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class DoActionViewModel : StaticBaseViewModel
     {
-        #region Properties
-
         private readonly IMyActionsService myActionService;
-
         private EbStageActions status;
+        private string comments;
+        private string stagename;
+        private List<Param> actiondata;
+        private List<EbStageActions> stageactions;
+        private EbMyAction action;
+        private EbStageInfo stageInfo;
+        private readonly int actionId;
+
         public EbStageActions Status
         {
             get => this.status;
@@ -28,7 +33,6 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private string comments;
         public string Comments
         {
             get => this.comments;
@@ -39,7 +43,6 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private string stagename;
         public string StageName
         {
             get => stagename;
@@ -50,7 +53,6 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private List<Param> actiondata;
         public List<Param> ActionData
         {
             get => actiondata;
@@ -60,8 +62,6 @@ namespace ExpressBase.Mobile.ViewModels
                 this.NotifyPropertyChanged();
             }
         }
-
-        private List<EbStageActions> stageactions;
 
         public List<EbStageActions> StageActions
         {
@@ -73,14 +73,6 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private EbMyAction action;
-
-        private EbStageInfo stageInfo;
-
-        private readonly int actionId;
-
-        #endregion
-
         public Command SubmitCommand => new Command(async () => await SubmitAction());
 
         public DoActionViewModel(EbMyAction myAction) : base(myAction.Description)
@@ -91,26 +83,23 @@ namespace ExpressBase.Mobile.ViewModels
 
         public DoActionViewModel(int actionid)
         {
-            this.actionId = actionid;
+            actionId = actionid;
             myActionService = new MyActionsService();
         }
-
-        #region Methods
 
         public override async Task InitializeAsync()
         {
             if (action == null && actionId > 0)
             {
-                ParticularActionResponse particular = await myActionService.GetParticularActionAsync(this.actionId);
-                this.action = particular.Action;
-                this.stageInfo = particular.ActionInfo;
-
+                ParticularActionResponse particular = await myActionService.GetParticularActionAsync(actionId);
+                action = particular.Action;
+                stageInfo = particular.ActionInfo;
                 this.PageTitle = action.Description;
             }
             else
-                this.stageInfo = await myActionService.GetMyActionInfoAsync(this.action.StageId, this.action.WebFormRefId, this.action.WebFormDataId);
+                stageInfo = await myActionService.GetMyActionInfoAsync(action.StageId, action.WebFormRefId, action.WebFormDataId);
 
-            if (this.stageInfo != null)
+            if (stageInfo != null)
             {
                 this.StageName = stageInfo.StageName;
                 this.StageActions = stageInfo.StageActions;
@@ -131,9 +120,9 @@ namespace ExpressBase.Mobile.ViewModels
                     LocId = App.Settings.CurrentLocId,
                     Columns =
                     {
-                        new SingleColumn{ Name = "stage_unique_id", Type = (int)EbDbTypes.String, Value = this.stageInfo.StageUniqueId },
+                        new SingleColumn{ Name = "stage_unique_id", Type = (int)EbDbTypes.String, Value = stageInfo.StageUniqueId },
                         new SingleColumn{ Name = "action_unique_id", Type = (int)EbDbTypes.String, Value = this.Status.ActionUniqueId },
-                        new SingleColumn{ Name = "eb_my_actions_id", Type = (int)EbDbTypes.Int32, Value = this.action.Id },
+                        new SingleColumn{ Name = "eb_my_actions_id", Type = (int)EbDbTypes.Int32, Value = action.Id },
                         new SingleColumn{ Name = "comments", Type = (int)EbDbTypes.String, Value = this.Comments }
                     }
                 };
@@ -141,9 +130,8 @@ namespace ExpressBase.Mobile.ViewModels
                 SingleTable st = new SingleTable { row };
                 webformData.MultipleTables.Add("eb_approval_lines", st);
 
-                await this.SendWebFormData(webformData, this.action.WebFormDataId, this.action.WebFormRefId);
-
-                await App.RootMaster.Detail.Navigation.PopAsync(true);
+                await SendWebFormData(webformData, action.WebFormDataId, action.WebFormRefId);
+                await App.Navigation.PopAsync(true);
             }
             catch (Exception ex)
             {
@@ -151,20 +139,20 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private async Task SendWebFormData(WebformData webform, int rowid, string webformrefid)
+        private async Task SendWebFormData(WebformData webForm, int rowid, string webformRefid)
         {
             try
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
-                PushResponse resp = await FormDataServices.Instance.SendFormDataAsync(webform, rowid, webformrefid, App.Settings.CurrentLocId);
+                PushResponse resp = await FormDataServices.Instance.SendFormDataAsync(webForm, rowid, webformRefid, App.Settings.CurrentLocId);
 
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
 
                 if (resp.RowAffected > 0)
                 {
                     Utils.Toast("Action saved successfully :)");
-                    NavigationService.UpdateViewStack();
+                    App.Navigation.UpdateViewStack();
                 }
                 else
                     Utils.Toast("Unable to save action :( ");
@@ -173,11 +161,8 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 EbLog.Info("Failed to submit form data in doaction");
                 EbLog.Error(ex.Message);
-
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
             }
         }
-
-        #endregion
     }
 }

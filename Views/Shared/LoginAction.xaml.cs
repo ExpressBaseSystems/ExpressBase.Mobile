@@ -1,7 +1,6 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using ExpressBase.Mobile.Services;
 
 namespace ExpressBase.Mobile.Views.Shared
 {
@@ -15,7 +14,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void GoToLogin_Clicked(object sender, EventArgs e)
         {
-            await NavigationService.LoginWithNS();
+            await App.Navigation.NavigateToLogin(true);
         }
     }
 }
