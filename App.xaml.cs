@@ -30,7 +30,6 @@ namespace ExpressBase.Mobile
         public App(EbNFData payload = null)
         {
             InitializeComponent();
-
             InitializeNavigation(payload);
         }
 

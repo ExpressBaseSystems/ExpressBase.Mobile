@@ -12,7 +12,7 @@
                             LoaderVisibilty="{Binding IsBusy}"
                             BackButtonPressed="ToolBarBackButtonPressed">
             <control:EbCPLayout.ToolBarItems>
-                <StackLayout Orientation="Horizontal">
+                <StackLayout Orientation="Horizontal" Spacing="0">
                     <Button x:Name="FilterButton"
                             IsVisible="{Binding IsFilterVisible}"
                             Text="&#xf0b0;"
@@ -30,6 +30,15 @@
                     </Button>
                 </StackLayout>
             </control:EbCPLayout.ToolBarItems>
+
+            <control:EbCPLayout.ToolBarItemsSecondary>
+                <StackLayout Spacing="10">
+                    <control:EbCPToolBarItem Icon="&#xf015;"
+                                             Text="Home"
+                                             Name="Home"
+                                             Command="{Binding GoToHomeCommand}"></control:EbCPToolBarItem>
+                </StackLayout>
+            </control:EbCPLayout.ToolBarItemsSecondary>
 
             <control:EbCPLayout.ToolBarLayover>
                 <control:ListViewSearchBar IsVisible="False"

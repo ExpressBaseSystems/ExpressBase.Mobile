@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Grid xmlns="http://xamarin.com/schemas/2014/forms" 
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:controls="clr-namespace:ExpressBase.Mobile.CustomControls"
+<Grid xmlns="http://xamarin.com/schemas/2014/forms"
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:controls="clr-namespace:ExpressBase.Mobile.CustomControls"
       x:Class="ExpressBase.Mobile.CustomControls.EbCPLayout"
       RowSpacing="0"
       ColumnSpacing="0"
@@ -9,18 +10,25 @@
 
     <Grid.Resources>
         <ResourceDictionary>
-            <Style x:Key="TitleLabelStyle" TargetType="Label">
-                <Setter Property="TextColor" Value="{DynamicResource Gray-White}" />
-                <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
-                <Setter Property="FontSize" Value="16" />
-                <Setter Property="LineBreakMode" Value="TailTruncation" />
-                <Setter Property="VerticalOptions" Value="Center"></Setter>
+            <Style x:Key="TitleLabelStyle"
+                   TargetType="Label">
+                <Setter Property="TextColor"
+                        Value="{DynamicResource Gray-White}" />
+                <Setter Property="FontFamily"
+                        Value="{StaticResource Roboto-Regular}" />
+                <Setter Property="FontSize"
+                        Value="16" />
+                <Setter Property="LineBreakMode"
+                        Value="TailTruncation" />
+                <Setter Property="VerticalOptions"
+                        Value="Center"></Setter>
             </Style>
         </ResourceDictionary>
     </Grid.Resources>
-    
+
     <Grid.RowDefinitions>
-        <RowDefinition x:Name="HeaderRow" Height="Auto"></RowDefinition>
+        <RowDefinition x:Name="HeaderRow"
+                       Height="Auto"></RowDefinition>
         <RowDefinition Height="*"></RowDefinition>
     </Grid.RowDefinitions>
 
@@ -28,52 +36,94 @@
         <ColumnDefinition Width="Auto"></ColumnDefinition>
         <ColumnDefinition Width="*"></ColumnDefinition>
         <ColumnDefinition Width="Auto"></ColumnDefinition>
+        <ColumnDefinition Width="Auto"></ColumnDefinition>
     </Grid.ColumnDefinitions>
 
-    <BoxView
-        Grid.Row="0"
-        Grid.ColumnSpan="3"
-        HeightRequest="56"
-        BackgroundColor="{DynamicResource Primary_Color}">
+    <BoxView Grid.Row="0"
+             Grid.ColumnSpan="4"
+             HeightRequest="56"
+             BackgroundColor="{DynamicResource Primary_Color}">
     </BoxView>
 
-    <ImageButton
-        x:Name="BackButton"
-        Grid.Row="0"
-        Grid.Column="0"
-        Padding="0"
-        Source="back_btn.png"
-        BackgroundColor="Transparent"
-        VerticalOptions="Center"
-        HorizontalOptions="Center"
-        HeightRequest="34"
-        WidthRequest="34"
-        Margin="10,0,10,0"
-        Clicked="BackButton_Clicked">
+    <ImageButton x:Name="BackButton"
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 Padding="0"
+                 Source="back_btn.png"
+                 BackgroundColor="Transparent"
+                 VerticalOptions="Center"
+                 HorizontalOptions="Center"
+                 HeightRequest="34"
+                 WidthRequest="34"
+                 Margin="10,0,10,0"
+                 Clicked="BackButton_Clicked">
     </ImageButton>
 
-    <Label
-        x:Name="TitleLabel"
-        Style="{StaticResource TitleLabelStyle}"
-        Grid.Row="0"
-        Margin="5,0,0,0"
-        Grid.Column="1">
+    <Label x:Name="TitleLabel"
+           Style="{StaticResource TitleLabelStyle}"
+           Grid.Row="0"
+           Margin="5,0,0,0"
+           Grid.Column="1">
     </Label>
 
-    <StackLayout
-        x:Name="Container"
-        Grid.Row="1"
-        VerticalOptions="FillAndExpand"
-        HorizontalOptions="FillAndExpand"
-        Grid.ColumnSpan="3">
-        
-    </StackLayout>
+    <ContentView x:Name="ToolBarItemsContainer"
+                 Grid.Row="0"
+                 Grid.Column="2">
+    </ContentView>
 
-    <controls:LoaderIconed 
-        IsVisible="False"
-        Grid.Row="1"
-        Grid.ColumnSpan="3"
-        x:Name="Loader">
+    <Button Grid.Column="3"
+            BackgroundColor="Transparent"
+            Grid.Row="0"
+            IsVisible="False"
+            x:Name="SecondaryToggle"
+            Style="{StaticResource ToolBarButtonStyle}"
+            Text="&#xf142;"
+            Clicked="SecondaryToggle_Clicked">
+    </Button>
+
+    <ContentView x:Name="Container"
+                 Grid.Row="1"
+                 VerticalOptions="FillAndExpand"
+                 HorizontalOptions="FillAndExpand"
+                 Grid.ColumnSpan="4">
+    </ContentView>
+
+    <BoxView Grid.RowSpan="2"
+             IsVisible="False"
+             x:Name="SecondaryToolBarFade"
+             BackgroundColor="#333"
+             Opacity=".5"
+             Grid.ColumnSpan="4">
+    </BoxView>
+
+    <ContentView Grid.ColumnSpan="4"
+                 x:Name="SecondaryToolbar"
+                 Opacity="0"
+                 TranslationX="150"
+                 IsVisible="False"
+                 Grid.RowSpan="2">
+
+        <ContentView.GestureRecognizers>
+            <TapGestureRecognizer Tapped="SecondaryToolbar_Tapped"></TapGestureRecognizer>
+        </ContentView.GestureRecognizers>
+
+        <Frame x:Name="SecondaryToolbarContainer"
+               Margin="10"
+               Padding="10"
+               BackgroundColor="White"
+               CornerRadius="4"
+               HasShadow="True"
+               BorderColor="White"
+               HorizontalOptions="End"
+               VerticalOptions="Start"
+               WidthRequest="150">
+        </Frame>
+    </ContentView>
+
+    <controls:LoaderIconed IsVisible="False"
+                           Grid.Row="1"
+                           Grid.ColumnSpan="4"
+                           x:Name="Loader">
     </controls:LoaderIconed>
 
 </Grid>

@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Enums;
 using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
@@ -85,5 +86,20 @@ namespace ExpressBase.Mobile.Helpers
         string GenerateHashKey();
 
         void StartSMSRetrieverReceiver();
+    }
+
+    public interface IEbAudioHelper
+    {
+        bool StopRecordingAfterTimeout { set; get; }
+
+        TimeSpan TotalAudioTimeout { set; get; }
+
+        Task<string> StartRecording();
+
+        Task<byte[]> StopRecording();
+
+        Task StartPlaying(byte[] audioFile);
+
+        void StopPlaying();
     }
 }

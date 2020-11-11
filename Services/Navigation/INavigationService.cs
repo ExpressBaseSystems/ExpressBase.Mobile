@@ -34,6 +34,8 @@ namespace ExpressBase.Mobile.Services.Navigation
 
         Task PopMasterModalAsync(bool animate);
 
+        Task PopToRootAsync(bool animation);
+
         void UpdateViewStack();
 
         void RefreshCurrentPage();

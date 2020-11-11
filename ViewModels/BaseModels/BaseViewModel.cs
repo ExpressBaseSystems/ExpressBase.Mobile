@@ -67,6 +67,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command LogoutCommand => new Command(async () => await Logout());
 
+        public Command GoToHomeCommand => new Command(async () => await GoToHome());
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
@@ -94,6 +96,11 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 await NotificationService.Instance.UnRegisterCurrent();
             }
+        }
+
+        public async Task GoToHome()
+        {
+            await App.Navigation.PopToRootAsync(true);
         }
 
         public virtual void RefreshPage() { }

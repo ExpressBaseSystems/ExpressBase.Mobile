@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Views.Base;
+﻿using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -9,14 +10,19 @@ namespace ExpressBase.Mobile.CustomControls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class EbCPLayout : Grid
     {
+        private static EbCPLayout instance;
+
         public static readonly BindableProperty ContentProperty =
             BindableProperty.Create(nameof(Content), typeof(View), typeof(EbCPLayout), propertyChanged: OnContentPropertyChanged);
 
         public static readonly BindableProperty ToolBarItemsProperty =
             BindableProperty.Create(nameof(ToolBarItems), typeof(View), typeof(EbCPLayout), propertyChanged: OnItemsPropertyChanged);
 
+        public static readonly BindableProperty ToolBarItemsSecondaryProperty =
+            BindableProperty.Create(nameof(ToolBarItemsSecondary), typeof(View), typeof(EbCPLayout), propertyChanged: OnItemsSecondaryPropertyChanged);
+
         public static readonly BindableProperty ToolBarLayoverProperty =
-            BindableProperty.Create(nameof(ToolBarItems), typeof(View), typeof(EbCPLayout), propertyChanged: OnLayoverPropertyChanged);
+            BindableProperty.Create(nameof(ToolBarLayover), typeof(View), typeof(EbCPLayout), propertyChanged: OnLayoverPropertyChanged);
 
         public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(nameof(Title), typeof(string), typeof(EbCPLayout), propertyChanged: OnTitlePropertyChanged);
@@ -42,6 +48,12 @@ namespace ExpressBase.Mobile.CustomControls
         {
             get { return (View)GetValue(ToolBarItemsProperty); }
             set { SetValue(ToolBarItemsProperty, value); }
+        }
+
+        public View ToolBarItemsSecondary
+        {
+            get { return (View)GetValue(ToolBarItemsSecondaryProperty); }
+            set { SetValue(ToolBarItemsSecondaryProperty, value); }
         }
 
         public View ToolBarLayover
@@ -77,21 +89,26 @@ namespace ExpressBase.Mobile.CustomControls
         public EbCPLayout()
         {
             InitializeComponent();
+            instance = this;
         }
 
         private static void OnContentPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
             EbCPLayout binding = bindable as EbCPLayout;
-            View newView = (View)newValue;
-            binding.Container.Children.Add(newView);
+            binding.Container.Content = (View)newValue;
         }
 
         private static void OnItemsPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
             EbCPLayout binding = bindable as EbCPLayout;
-            View newView = (View)newValue;
+            binding.ToolBarItemsContainer.Content = (View)newValue;
+        }
 
-            binding.Children.Add(newView, 2, 0);
+        private static void OnItemsSecondaryPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            EbCPLayout binding = bindable as EbCPLayout;
+            binding.SecondaryToolbarContainer.Content = (View)newValue;
+            binding.SecondaryToggle.IsVisible = true;
         }
 
         private static void OnTitlePropertyChanged(BindableObject bindable, object oldValue, object newValue)
@@ -109,7 +126,7 @@ namespace ExpressBase.Mobile.CustomControls
             binding.Children.Add(newView);
             Grid.SetRow(newView, 0);
             Grid.SetColumn(newView, 1);
-            Grid.SetColumnSpan(newView, 2);
+            Grid.SetColumnSpan(newView, 3);
         }
 
         private static void OnLoaderVisiblePropertyChanged(BindableObject bindable, object oldValue, object newValue)
@@ -158,6 +175,32 @@ namespace ExpressBase.Mobile.CustomControls
         public void HideLoader()
         {
             Loader.IsVisible = false;
+        }
+
+        private void SecondaryToggle_Clicked(object sender, EventArgs e)
+        {
+            SecondaryToolbar.IsVisible = true;
+            SecondaryToolbar.FadeTo(1, 150);
+            SecondaryToolbar.TranslateTo(SecondaryToolbar.TranslationY, 0);
+            SecondaryToolBarFade.IsVisible = true;
+        }
+
+        private void SecondaryToolbar_Tapped(object sender, EventArgs e)
+        {
+            SecondaryToolBarFade.IsVisible = false;
+            var fade = new Animation(v => SecondaryToolbar.Opacity = v, 1, 0);
+            var translation = new Animation(v => SecondaryToolbar.TranslationX = v, 0, SecondaryToolbar.Width, null, () =>
+            {
+                SecondaryToolbar.IsVisible = false;
+            });
+            var parent = new Animation { { 0.5, 1, fade }, { 0, 1, translation } };
+            parent.Commit(this, "SecondaryToolbarHide");
+        }
+
+        public static void SecondaryItemClicked(string name)
+        {
+            instance?.SecondaryToolbar_Tapped(null, null);
+            EbLog.Info($"secondary toolbar ite clicked '{name}'");
         }
     }
 }

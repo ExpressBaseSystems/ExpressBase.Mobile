@@ -21,13 +21,20 @@
         <control:EbCPLayout x:Name="EbLayout"
                             Title="{Binding PageTitle}">
             <control:EbCPLayout.ToolBarItems>
-                <Button IsVisible="False"
-                        x:Name="EditButton"
-                        Text="&#xf040;"
-                        Style="{StaticResource ToolBarButtonStyle}"
-                        HorizontalOptions="End"
-                        Clicked="EditButton_Clicked">
-                </Button>
+                <StackLayout Orientation="Horizontal" Spacing="0">
+                    <Button IsVisible="False"
+                            x:Name="EditButton"
+                            Text="&#xf040;"
+                            Style="{StaticResource ToolBarButtonStyle}"
+                            HorizontalOptions="End"
+                            Clicked="EditButton_Clicked">
+                    </Button>
+                    <Button Text="&#xf015;"
+                            Style="{StaticResource ToolBarButtonStyle}"
+                            HorizontalOptions="End"
+                            Command="{Binding GoToHomeCommand}">
+                    </Button>
+                </StackLayout>
             </control:EbCPLayout.ToolBarItems>
 
             <control:EbCPLayout.Content>

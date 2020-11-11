@@ -1,10 +1,7 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;

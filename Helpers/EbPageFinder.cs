@@ -15,9 +15,7 @@ namespace ExpressBase.Mobile.Helpers
         public static ContentPage ResolveByContext(EbMobileVisualization vis, EbDataRow row, EbMobilePage page)
         {
             ContentPage renderer = null;
-
-            var container = page.Container;
-
+            EbMobileContainer container = page.Container;
             try
             {
                 if (container is EbMobileForm)
@@ -26,10 +24,10 @@ namespace ExpressBase.Mobile.Helpers
                         renderer = new FormRender(page, vis.LinkFormParameters, row);
                     else
                     {
-                        var map = vis.FormId;
+                        EbMobileDataColToControlMap map = vis.FormId;
                         if (map == null)
                         {
-                            EbLog.Info("form id should be set");
+                            EbLog.Info("form id must be set");
                             throw new Exception("Form rendering exited! due to null value for 'FormId'");
                         }
                         else
@@ -37,10 +35,14 @@ namespace ExpressBase.Mobile.Helpers
                             int id = Convert.ToInt32(row[map.ColumnName]);
                             if (id <= 0)
                             {
-                                EbLog.Info("formid has ivalid value" + id);
-                                throw new Exception("Form rendering exited! due to invalid formid");
+                                EbLog.Info($"formid has ivalid value {id}, switching to new mode");
+                                renderer = new FormRender(page, vis.LinkFormParameters, row);
                             }
-                            renderer = new FormRender(page, id);
+                            else
+                            {
+                                EbLog.Info($"formid has value {id}, rendering edit mode");
+                                renderer = new FormRender(page, id);
+                            }
                         }
                     }
                 }
@@ -62,20 +64,18 @@ namespace ExpressBase.Mobile.Helpers
 
         public static EbMobilePage GetPage(string Refid)
         {
-            EbMobilePage page = null;
-
             if (string.IsNullOrEmpty(Refid))
                 return null;
             try
             {
                 MobilePagesWraper wrpr = App.Settings.MobilePages?.Find(item => item.RefId == Refid);
-                page = wrpr?.GetPage();
+                return wrpr?.GetPage();
             }
             catch (Exception ex)
             {
                 EbLog.Error("Page not found" + ex.Message);
             }
-            return page;
+            return null;
         }
 
         public static List<EbMobileForm> GetOfflineForms()
@@ -103,46 +103,40 @@ namespace ExpressBase.Mobile.Helpers
 
         public static async Task<bool> ValidateFormRendering(EbMobileForm form, EbDataRow context = null)
         {
-            string refid = form.RenderValidatorRefId;
+            if (string.IsNullOrEmpty(form.RenderValidatorRefId))
+                return true;
+
             bool status = true;
 
-            if (!string.IsNullOrEmpty(refid))
+            try
             {
-                try
+                List<Param> cParams = form.GetRenderValidatorParams(context);
+
+                cParams.Add(new Param
                 {
-                    var cParams = form.GetRenderValidatorParams(context);
+                    Name = "eb_loc_id",
+                    Type = "11",
+                    Value = App.Settings.CurrentLocation.LocId.ToString()
+                });
 
-                    cParams.Add(new Param
-                    {
-                        Name = "eb_loc_id",
-                        Type = "11",
-                        Value = App.Settings.CurrentLocation.LocId.ToString()
-                    });
+                MobileVisDataRespnse data = await DataService.Instance.GetDataAsync(form.RenderValidatorRefId, 0, 0, cParams, null, null, false);
 
-                    MobileVisDataRespnse data = await DataService.Instance.GetDataAsync(refid, 0, 0, cParams, null, null, false);
+                if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
+                {
+                    var render = row[0];
 
-                    if (data.HasData())
-                    {
-                        if (data.TryGetFirstRow(1, out var row))
-                        {
-                            var render = row[0];
-
-                            if (render != null)
-                                status = Convert.ToBoolean(render);
-                            else
-                                EbLog.Info("Form render validation return true");
-                        }
-                        else
-                            EbLog.Info("Render validator returned empty row collection");
-                    }
+                    if (render != null)
+                        status = Convert.ToBoolean(render);
                     else
-                        EbLog.Info("before render returned null or empty");
+                        EbLog.Info("Form render validation return true");
                 }
-                catch (Exception ex)
-                {
-                    EbLog.Info("Error at form render validation api call");
-                    EbLog.Info(ex.Message);
-                }
+                else
+                    EbLog.Info("before render api returned empty row collection");
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info("Error at form render validation api call");
+                EbLog.Info(ex.Message);
             }
             return status;
         }

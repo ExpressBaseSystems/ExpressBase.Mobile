@@ -86,7 +86,7 @@ namespace ExpressBase.Mobile
                 btn.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome");
 
                 if (string.IsNullOrEmpty(this.Text))
-                    btn.Text = "\\uf192";
+                    btn.Text = "\uf192";
                 else
                 {
                     try
@@ -97,7 +97,7 @@ namespace ExpressBase.Mobile
                     }
                     catch
                     {
-                        btn.Text = "\\uf192";
+                        btn.Text = "\uf192";
                     }
                 }
             }

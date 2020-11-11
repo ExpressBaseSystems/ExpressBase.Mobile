@@ -136,6 +136,8 @@ namespace ExpressBase.Mobile.Models
 
         public string LinkRefId { set; get; }
 
+        public int DataId { set; get; }
+
         public int ActionId { set; get; }
 
         public Param LinkParameters { set; get; }

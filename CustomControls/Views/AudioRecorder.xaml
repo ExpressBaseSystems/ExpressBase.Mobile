@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Frame xmlns="http://xamarin.com/schemas/2014/forms"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       x:Class="ExpressBase.Mobile.CustomControls.Views.AudioRecorder"
+       Padding="10,5"
+       CornerRadius="6"
+       BackgroundColor="#eee">
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="40"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Row="0"
+                x:Name="RecordButton"
+                Padding="0"
+                Grid.Column="0"
+                Text="&#xf130;"
+                BackgroundColor="#3c903c"
+                BorderColor="#3c903c"
+                BorderWidth="2"
+                TextColor="White"
+                HeightRequest="40"
+                CornerRadius="20"
+                FontFamily="{StaticResource FontAwesome}"
+                Clicked="RecordButton_Clicked">
+        </Button>
+
+        <Label Grid.Row="0"
+               IsVisible="False"
+               x:Name="RecordingTimer"
+               VerticalOptions="Center"
+               Text="0.00"
+               Grid.Column="1">
+        </Label>
+
+        <Button Grid.Row="0"
+                x:Name="StopRecording"
+                IsVisible="True"
+                Padding="0"
+                Grid.Column="2"
+                FontSize="14"
+                Text="&#xf04d;"
+                BackgroundColor="White"
+                BorderWidth="2"
+                BorderColor="#d85a5a"
+                TextColor="#d85a5a"
+                HeightRequest="30"
+                WidthRequest="30"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                CornerRadius="15"
+                FontFamily="{StaticResource FontAwesome}"
+                Clicked="StopRecording_Clicked">
+        </Button>
+
+        <StackLayout x:Name="RecordList"
+                     Grid.Row="1"
+                     Grid.ColumnSpan="3">
+        </StackLayout>
+
+    </Grid>
+
+</Frame>

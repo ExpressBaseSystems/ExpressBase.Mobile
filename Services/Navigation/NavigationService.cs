@@ -107,6 +107,11 @@ namespace ExpressBase.Mobile.Services.Navigation
             await App.RootMaster.Detail.Navigation.PopModalAsync(animate);
         }
 
+        public async Task PopToRootAsync(bool animation)
+        {
+            await App.RootMaster.Detail.Navigation.PopToRootAsync(animation);
+        }
+
         private async Task InitializeNavigation()
         {
             CurrentApplication.MainPage = new NavigationPage();

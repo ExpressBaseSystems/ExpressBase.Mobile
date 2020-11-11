@@ -53,5 +53,16 @@ namespace ExpressBase.Mobile.Helpers
             }
             return status == PermissionStatus.Granted;
         }
+
+        public static async Task<bool> Audio()
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.Microphone>();
+
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.Microphone>();
+            }
+            return status == PermissionStatus.Granted;
+        }
     }
 }

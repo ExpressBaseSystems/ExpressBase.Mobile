@@ -168,4 +168,21 @@
                 Value="False"></Setter>
     </Style>
 
+    <Style TargetType="Frame" x:Key="AudioRecordFrame">
+        <Setter Property="Padding" Value="0"></Setter>
+    </Style>
+    
+    <Style TargetType="Button" x:Key="AudioPlayButton">
+        <Setter Property="Padding" Value="5"></Setter>
+        <Setter Property="FontFamily" Value="{DynamicResource FontAwesome}"></Setter>
+        <Setter Property="WidthRequest" Value="30"></Setter>
+        <Setter Property="HeightRequest" Value="30"></Setter>
+        <Setter Property="BackgroundColor" Value="Transparent"></Setter>
+        <Setter Property="HorizontalOptions" Value="Start"></Setter>
+        <Setter Property="TextColor" Value="Green"></Setter>
+    </Style>
+    <Style TargetType="Slider" x:Key="AudioPlaySlider">
+        <Setter Property="HorizontalOptions" Value="FillAndExpand"></Setter>
+    </Style>
+
 </ResourceDictionary>
