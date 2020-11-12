@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -90,16 +91,20 @@ namespace ExpressBase.Mobile.Helpers
 
     public interface IEbAudioHelper
     {
-        bool StopRecordingAfterTimeout { set; get; }
+        double MaximumDuration { set; get; }
 
-        TimeSpan TotalAudioTimeout { set; get; }
+        Task StartRecording();
 
-        Task<string> StartRecording();
+        void StopRecording();
 
-        Task<byte[]> StopRecording();
-
-        Task StartPlaying(byte[] audioFile);
+        Task<int> StartPlaying(byte[] audioFile, Button playButton);
 
         void StopPlaying();
+
+        event EbEventHandler OnRecordingCompleted;
+
+        event EbEventHandler OnPlayerCompleted;
+
+        int GetPlayerPosition();
     }
 }

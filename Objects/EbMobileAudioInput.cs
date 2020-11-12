@@ -5,7 +5,7 @@ namespace ExpressBase.Mobile
 {
     public class EbMobileAudioInput : EbMobileControl, INonPersistControl
     {
-        public int MaxDUration { set; get; }
+        public double MaximumDuration { set; get; }
 
         public virtual bool MultiSelect { set; get; }
 

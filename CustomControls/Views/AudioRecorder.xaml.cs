@@ -1,8 +1,6 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 using System.Timers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -21,50 +19,101 @@ namespace ExpressBase.Mobile.CustomControls.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AudioRecorder : Frame
     {
-        private const string ACTION_PLAY = "play";
+        public bool MultiSelect { set; get; }
+
+        private const string ACTION_START = "start";
         private const string ACTION_STOP = "stop";
 
-        private readonly EbMobileAudioInput audioControl;
+        readonly IEbAudioHelper audioHelper;
+        Timer recordingTimer;
+        Timer playerTimer;
+        int elapsedMinutes = 0;
+        int elapsedSeconds = 0;
+        readonly double maxDuration = 120000;//2 minutes
 
-        IEbAudioHelper audioHelper;
-
-        private Dictionary<string, byte[]> audioFiles = new Dictionary<string, byte[]>();
-
-        bool progress = false;
+        private readonly Dictionary<string, byte[]> audioFiles = new Dictionary<string, byte[]>();
 
         public AudioRecorder(EbMobileAudioInput audio)
         {
             InitializeComponent();
 
-            audioControl = audio;
             audioHelper = DependencyService.Get<IEbAudioHelper>();
+            double max = audio.MaximumDuration <= maxDuration && audio.MaximumDuration > 0 ? audio.MaximumDuration : maxDuration;
+            audioHelper.MaximumDuration = max * 60000;
+            audioHelper.OnRecordingCompleted += OnRecordingCompleted;
+            audioHelper.OnPlayerCompleted += OnPlayerCompleted;
+        }
+
+        private void OnRecordingCompleted(object sender, EventArgs e)
+        {
+            byte[] note = (byte[])sender;
+            if (note != null)
+            {
+                if (!MultiSelect)
+                {
+                    audioFiles.Clear();
+                    RecordList.Children.Clear();
+                }
+                AddAudioFrame(note);
+            }
+            RecordingCompleted();
+        }
+
+        private void OnPlayerCompleted(object sender, EventArgs e)
+        {
+            XAudioButton audioButton = (XAudioButton)sender;
+            audioButton.AudioSlider.Value = 0;
+            SetPlayButtonStyle(audioButton);
+            playerTimer?.Stop();
+            playerTimer = null;
         }
 
         private async void RecordButton_Clicked(object sender, EventArgs e)
         {
-            if (await AppPermission.Audio())
+            XAudioButton btn = (XAudioButton)sender;
+
+            if (btn.ActionType == ACTION_START)
             {
-                StopRecording.IsVisible = true;
-                RecordingTimer.IsVisible = true;
-                string path = await audioHelper.StartRecording();
-                UpdateRecordingTimer();
+                if (await AppPermission.Audio())
+                {
+                    RecordingTimerLabel.IsVisible = true;
+                    await audioHelper.StartRecording();
+                    StartRecordingTimer();
+                    SetStopRecordButtonSyle();
+                }
+                else
+                    Utils.Toast("Microphone permission revoked");
             }
             else
             {
-                Utils.Toast("Microphone permission revoked");
+                audioHelper.StopRecording();
+                SetRecordButtonSyle();
             }
         }
 
-        private async void StopRecording_Clicked(object sender, EventArgs e)
+        private void SetRecordButtonSyle()
         {
-            progress = false;
-            byte[] note = await audioHelper.StopRecording();
+            RecordButton.ActionType = ACTION_START;
+            RecordButton.Text = "\uf130";
+            RecordButton.TextColor = Color.FromHex("#3c903c");
+            RecordButton.BorderColor = Color.FromHex("#3c903c");
+            RecordingPlaceHolder.IsVisible = false;
+        }
 
-            StopRecording.IsVisible = false;
-            if (note != null)
-            {
-                AddAudioFrame(note);
-            }
+        private void SetStopRecordButtonSyle()
+        {
+            RecordButton.ActionType = ACTION_STOP;
+            RecordButton.Text = "\uf04d";
+            RecordButton.TextColor = Color.FromHex("#d85a5a");
+            RecordButton.BorderColor = Color.FromHex("#d85a5a");
+            RecordingPlaceHolder.IsVisible = true;
+        }
+
+        private void RecordingCompleted()
+        {
+            RecordingTimerLabel.Text = "0:00";
+            recordingTimer?.Stop();
+            elapsedMinutes = elapsedSeconds = 0;
         }
 
         private void AddAudioFrame(byte[] note)
@@ -82,7 +131,6 @@ namespace ExpressBase.Mobile.CustomControls.Views
             {
                 Style = (Style)HelperFunctions.GetResourceValue("AudioPlaySlider")
             };
-            audioSlider.DragCompleted += AudioSlider_DragCompleted;
 
             XAudioButton audioBtn = new XAudioButton
             {
@@ -90,43 +138,87 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 AudioSlider = audioSlider,
                 Name = name,
                 Text = "\uf04b",
-                ActionType = ACTION_PLAY,
+                ActionType = ACTION_START,
             };
             audioBtn.Clicked += AudioBtn_Clicked;
 
+            Label lengthLabel = new Label
+            {
+                VerticalOptions = LayoutOptions.Center,
+                Text = $"{elapsedMinutes}:{elapsedSeconds}",
+                HorizontalOptions = LayoutOptions.End,
+                FontSize = 13
+            };
+
             containerInner.Children.Add(audioBtn);
             containerInner.Children.Add(audioSlider);
+            containerInner.Children.Add(lengthLabel);
+
             container.Content = containerInner;
-
             RecordList.Children.Add(container);
-        }
-
-        private void AudioSlider_DragCompleted(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private async void AudioBtn_Clicked(object sender, EventArgs e)
         {
             XAudioButton btn = (XAudioButton)sender;
-            var audioFile = audioFiles[btn.Name];
+            byte[] audioFile = audioFiles[btn.Name];
 
-            if (btn.ActionType == ACTION_PLAY)
+            if (btn.ActionType == ACTION_START)
             {
-                await audioHelper.StartPlaying(audioFile);
+                int duration = await audioHelper.StartPlaying(audioFile, btn);
+                SetPauseButtonStyle(btn);
+
+                btn.AudioSlider.Maximum = duration;
+                btn.AudioSlider.Minimum = 0;
+                btn.AudioSlider.Value = audioHelper.GetPlayerPosition();
+                StartSlidingTimer(btn.AudioSlider);
             }
             else if (btn.ActionType == ACTION_STOP)
             {
                 audioHelper.StopPlaying();
+                SetPlayButtonStyle(btn);
             }
         }
 
-        private void UpdateRecordingTimer()
+        private void SetPlayButtonStyle(XAudioButton btn)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            btn.Text = "\uf04b";
+            btn.ActionType = ACTION_START;
+        }
+
+        private void SetPauseButtonStyle(XAudioButton btn)
+        {
+            btn.Text = "\uf04c";
+            btn.ActionType = ACTION_STOP;
+        }
+
+        private void StartRecordingTimer()
+        {
+            recordingTimer = new Timer(1000);
+            recordingTimer.Elapsed += (sender, e) =>
             {
-                
-            });
+                if (elapsedSeconds == 60)
+                {
+                    elapsedMinutes += 1;
+                    elapsedSeconds = 0;
+                }
+                else
+                    elapsedSeconds += 1;
+
+                string seconsNotaion = elapsedSeconds < 10 ? $"0{elapsedSeconds}" : $"{elapsedSeconds}";
+                Device.BeginInvokeOnMainThread(() => RecordingTimerLabel.Text = $"{elapsedMinutes}:{seconsNotaion}");
+            };
+            recordingTimer.Start();
+        }
+
+        private void StartSlidingTimer(Slider slider)
+        {
+            playerTimer = new Timer(1);
+            playerTimer.Elapsed += (sender, e) =>
+            {
+                Device.BeginInvokeOnMainThread(() => slider.Value = audioHelper.GetPlayerPosition());
+            };
+            playerTimer.Start();
         }
     }
 }
