@@ -22,12 +22,10 @@ namespace ExpressBase.Mobile.Views.Login
         {
             InitializeComponent();
             BindingContext = viewModel = new LoginByPasswordViewModel();
-
-            SetContentFromConfig();
             viewModel.Bind2FAToggleEvent(ShowTwoFAWindow);
         }
 
-        public void SetContentFromConfig()
+        public void OnDynamicContentRendering()
         {
             LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
             SubmitButton.Text = PageContent["LoginButtonText"];

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class SettingsServices : ISettingsService
+    public class SettingsServices : BaseService, ISettingsService
     {
         public SolutionInfo CurrentSolution { set; get; }
 
@@ -32,7 +32,7 @@ namespace ExpressBase.Mobile.Services
 
         public string Sid => CurrentSolution?.SolutionName;
 
-        public string RootUrl => "https://" + CurrentSolution?.RootUrl;
+        public string RootUrl => ApiConstants.PROTOCOL + CurrentSolution?.RootUrl;
 
         public string UserName => CurrentUser?.Email;
 

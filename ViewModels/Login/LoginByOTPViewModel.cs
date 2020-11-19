@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using System;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -37,20 +36,19 @@ namespace ExpressBase.Mobile.ViewModels.Login
             if (string.IsNullOrEmpty(username))
                 return;
 
-            IToast toast = DependencyService.Get<IToast>();
             SignInOtpType otpT = OtpType(username);
 
             IsBusy = true;
             try
             {
-                AuthResponse = await Service.AuthenticateSSOAsync(username, otpT);
+                AuthResponse = await Service.SendAuthenticationOTP(username, otpT);
 
                 if (AuthResponse != null && AuthResponse.IsValid)
                 {
                     Toggle2FAW?.Invoke(AuthResponse);
                 }
                 else
-                    toast.Show("username or mobile invalid");
+                    Utils.Toast("username or mobile invalid");
             }
             catch (Exception ex)
             {
@@ -71,7 +69,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
                 ApiAuthResponse resp = await Service.VerifyOTP(AuthResponse, otp);
 
                 if (resp != null && resp.IsValid)
-                    await AfterLoginSuccess(resp, this.UserName);
+                    await AfterLoginSuccess(resp, this.UserName, LoginType.SSO);
                 else
                     Utils.Toast("The OTP is Invalid or Expired");
             }
@@ -81,30 +79,6 @@ namespace ExpressBase.Mobile.ViewModels.Login
             }
 
             IsBusy = false;
-        }
-
-        private async Task AfterLoginSuccess(ApiAuthResponse resp, string username)
-        {
-            try
-            {
-                await Service.UpdateAuthInfo(resp, username);
-                await Service.UpdateLastUser(username);
-
-                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true, callback: status =>
-                {
-                    Utils.Alert_SlowNetwork();
-                });
-
-                if (App.Settings.Vendor.AllowNotifications)
-                    await NotificationService.Instance.UpdateNHRegistration();
-
-                if (data != null)
-                    await Service.Navigate(data);
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("Exception at after login :: " + ex.Message);
-            }
         }
 
         protected override async Task ResendOTP()
@@ -120,7 +94,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
             }
 
             if (resp != null && resp.IsValid)
-                DependencyService.Get<IToast>().Show("OTP sent");
+                Utils.Toast("OTP sent");
         }
 
         private SignInOtpType OtpType(string username)

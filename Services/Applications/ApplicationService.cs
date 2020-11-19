@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class ApplicationService : IApplicationService
+    public class ApplicationService : BaseService, IApplicationService
     {
         public List<AppData> GetDataAsync()
         {

@@ -77,6 +77,11 @@
                         </StackLayout>
                     </ScrollView>
 
+                    <controls:TwoFAView x:Name="TwoFAWindow"
+                                        IsVisible="{Binding OTPWindowVisibility}"
+                                        SubmitClicked="{Binding SubmitOTPCommand}">
+                    </controls:TwoFAView>
+
                     <controls:ImagePopUp x:Name="ImageFullScreen"></controls:ImagePopUp>
 
                     <controls:LoaderIconed x:Name="Loader"

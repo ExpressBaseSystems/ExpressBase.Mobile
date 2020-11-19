@@ -314,6 +314,8 @@ namespace ExpressBase.Mobile.Models
         public bool Status { set; get; }
 
         public string Message { set; get; }
+
+        public PushResponse PushResponse { set; get; }
     }
 
     public class SyncResponse

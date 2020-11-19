@@ -12,19 +12,19 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class FormDataServices : IFormDataService
+    public class FormDataServices : BaseService, IFormDataService
     {
         private static FormDataServices _instance;
 
-        public static FormDataServices Instance => _instance ?? (_instance = new FormDataServices());
+        public static FormDataServices Instance => _instance ??= new FormDataServices();
+
+        public FormDataServices() : base(true) { }
 
         public async Task<WebformData> GetFormLiveDataAsync(string refid, int row_id, int loc_id)
         {
             WebformData wd;
             try
             {
-                RestClient client = new RestClient(App.Settings.RootUrl);
-
                 RestRequest request = new RestRequest("api/get_formdata", Method.GET);
                 request.AddParameter("refid", refid);
                 request.AddParameter("row_id", row_id);
@@ -34,7 +34,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-                IRestResponse iresp = await client.ExecuteAsync(request);
+                IRestResponse iresp = await HttpClient.ExecuteAsync(request);
                 MobileFormDataResponse response = JsonConvert.DeserializeObject<MobileFormDataResponse>(iresp.Content);
                 wd = response.Data;
             }
@@ -81,8 +81,6 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                RestClient client = new RestClient(App.Settings.RootUrl);
-
                 RestRequest request = new RestRequest("api/push_data", Method.POST);
                 request.AddParameter("webform_data", JsonConvert.SerializeObject(WebFormData));
                 request.AddParameter("rowid", RowId);
@@ -93,7 +91,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-                IRestResponse response = await client.ExecuteAsync(request);
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
                 return JsonConvert.DeserializeObject<PushResponse>(response.Content);
             }
             catch (Exception e)
@@ -108,8 +106,6 @@ namespace ExpressBase.Mobile.Services
             List<ApiFileData> FileData = null;
             try
             {
-                RestClient client = new RestClient(App.Settings.RootUrl);
-
                 RestRequest request = new RestRequest("api/files/upload", Method.POST);
 
                 foreach (FileWrapper file in Files)
@@ -119,7 +115,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-                IRestResponse response = await client.ExecuteAsync(request);
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
                 if (response.StatusCode == HttpStatusCode.OK)
                     FileData = JsonConvert.DeserializeObject<List<ApiFileData>>(response.Content);
             }
@@ -135,8 +131,6 @@ namespace ExpressBase.Mobile.Services
             ApiFileResponse resp = null;
             try
             {
-                RestClient client = new RestClient(App.Settings.RootUrl);
-
                 RestRequest request = new RestRequest("api/get_file", Method.GET);
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
@@ -145,7 +139,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("category", (int)category);
                 request.AddParameter("filename", filename);
 
-                IRestResponse response = await client.ExecuteAsync(request);
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     resp = JsonConvert.DeserializeObject<ApiFileResponse>(response.Content);

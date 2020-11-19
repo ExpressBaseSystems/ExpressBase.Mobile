@@ -1,12 +1,83 @@
-﻿using CodingSeb.ExpressionEvaluator;
-using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Extensions;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ExpressBase.Mobile
 {
+    public class EbScript
+    {
+        public string Code { get; set; }
+
+        public ScriptingLanguage Lang { get; set; }
+
+        public string GetCode()
+        {
+            return HelperFunctions.B64ToString(this.Code);
+        }
+
+        public bool IsEmpty()
+        {
+            return string.IsNullOrEmpty(Code);
+        }
+    }
+
+    public class EbFont
+    {
+        public string FontName { get; set; }
+
+        public int Size { get; set; }
+
+        public FontStyle Style { get; set; }
+
+        [JsonProperty("color")]
+        public string Color { get; set; }
+
+        public bool Caps { get; set; }
+
+        public bool Strikethrough { get; set; }
+
+        public bool Underline { get; set; }
+    }
+
+    public class Param
+    {
+        public Param() { }
+
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public string Value { get; set; }
+
+        public dynamic ValueTo
+        {
+            get
+            {
+                if (Type == ((int)EbDbTypes.Decimal).ToString())
+                    return Convert.ToDecimal(Value);
+                else if (Type == ((int)EbDbTypes.Int16).ToString())
+                    return Convert.ToInt16(Value);
+                else if (Type == ((int)EbDbTypes.Int32).ToString())
+                    return Convert.ToInt32(Value);
+                else if (Type == ((int)EbDbTypes.Int64).ToString())
+                    return Convert.ToInt64(Value);
+                else if (Type == ((int)EbDbTypes.Date).ToString())
+                    return Convert.ToDateTime(Value);
+                else if (Type == ((int)EbDbTypes.DateTime).ToString())
+                    return Convert.ToDateTime(Value);
+                else if (Type == ((int)EbDbTypes.Boolean).ToString())
+                    return Convert.ToBoolean(Value);
+                else
+                    return Value;
+            }
+        }
+    }
+
     public class EbMobileDataColToControlMap : EbMobilePageBase
     {
         public string ColumnName { set; get; }

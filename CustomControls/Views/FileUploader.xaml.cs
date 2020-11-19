@@ -25,9 +25,9 @@ namespace ExpressBase.Mobile.CustomControls
 
         private double thumbnailWidth;
 
-        private Dictionary<string, byte[]> Files { set; get; }
+        private readonly Dictionary<string, byte[]> Files = new Dictionary<string, byte[]>();
 
-        private readonly TapGestureRecognizer recognizer;
+        private TapGestureRecognizer recognizer;
 
         private Action<Image> bindableFS;
 
@@ -35,26 +35,28 @@ namespace ExpressBase.Mobile.CustomControls
 
         private FupControlType controlType;
 
-        public FileUploader()
+        public FileUploader(EbMobileControl control)
         {
             InitializeComponent();
-
-            Files = new Dictionary<string, byte[]>();
-            recognizer = new TapGestureRecognizer();
-            recognizer.Tapped += ThumbNail_Tapped;
+            Initialize(control);
         }
 
-        public void Initialize(EbMobileFileUpload fup)
+        private void Initialize(EbMobileControl control)
         {
-            controlType = fup is EbMobileDisplayPicture ? FupControlType.DP : FupControlType.CONTEXT;
+            recognizer = new TapGestureRecognizer();
+            recognizer.Tapped += ThumbNail_Tapped;
 
-            if (!fup.EnableCameraSelect)
+            if (control is EbMobileDisplayPicture dp)
             {
-                CameraButton.IsVisible = false;
+                controlType = FupControlType.DP;
+                CameraButton.IsVisible = dp.EnableCameraSelect;
+                FilesButton.IsVisible = dp.EnableFileSelect;
             }
-            if (!fup.EnableFileSelect)
+            else if (control is EbMobileFileUpload fup)
             {
-                FilesButton.IsVisible = false;
+                controlType = FupControlType.CONTEXT;
+                CameraButton.IsVisible = fup.EnableCameraSelect;
+                FilesButton.IsVisible = fup.EnableFileSelect;
             }
         }
 
@@ -84,7 +86,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void Container_SizeChanged(object sender, EventArgs e)
         {
-            if(controlType == FupControlType.DP)
+            if (controlType == FupControlType.DP)
                 thumbnailWidth = (sender as FlexLayout).Width;
             else
                 thumbnailWidth = (sender as FlexLayout).Width / 3 - 10;
@@ -238,7 +240,7 @@ namespace ExpressBase.Mobile.CustomControls
                             this.AppendToGallery(info.FileName, resp.Bytea);
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         EbLog.Error("GetFile api error ::" + ex.Message);
                     }

@@ -41,12 +41,12 @@ namespace ExpressBase.Mobile
         }
     }
 
-    public class EbMobileStackLayout : EbMobileDashBoardControls
+    public class EbMobileStackLayout : EbMobileDashBoardControl
     {
         public StackOrientation Orientation { set; get; }
 
         public bool AllowScrolling { set; get; }
 
-        public List<EbMobileDashBoardControls> ChildControls { set; get; }
+        public List<EbMobileDashBoardControl> ChildControls { set; get; }
     }
 }

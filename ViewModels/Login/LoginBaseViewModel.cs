@@ -82,5 +82,29 @@ namespace ExpressBase.Mobile.ViewModels.Login
                 EbLog.Error(ex.Message);
             }
         }
+
+        protected async Task AfterLoginSuccess(ApiAuthResponse resp, string username, LoginType loginType)
+        {
+            try
+            {
+                await Service.UpdateAuthInfo(resp, username);
+                await Service.UpdateLastUser(username, loginType);
+
+                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true, callback: status =>
+                {
+                    Utils.Alert_SlowNetwork();
+                });
+
+                if (App.Settings.Vendor.AllowNotifications)
+                    await NotificationService.Instance.UpdateNHRegistration();
+
+                if (data != null)
+                    await Service.Navigate(data);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Exception at after login :: " + ex.Message);
+            }
+        }
     }
 }

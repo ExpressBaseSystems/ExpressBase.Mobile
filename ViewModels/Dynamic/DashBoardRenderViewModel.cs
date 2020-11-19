@@ -30,7 +30,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             StackLayout stack = new StackLayout();
 
-            foreach(EbMobileDashBoardControls ctrl in this.DashBoard.ChildControls)
+            foreach(EbMobileDashBoardControl ctrl in this.DashBoard.ChildControls)
             {
                 ctrl.InitXControl(LinkedDataRow);
                 stack.Children.Add(ctrl.XView);

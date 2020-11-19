@@ -34,10 +34,7 @@ namespace ExpressBase.Mobile
 
         public Dictionary<string, EbMobileControl> ControlDictionary { set; get; }
 
-        private bool HasFileSelect
-        {
-            get { return ControlDictionary.Any(x => x.Value.GetType() == typeof(EbMobileFileUpload)); }
-        }
+        private bool HasFileSelect => ControlDictionary.Any(x => x.Value.GetType() == typeof(EbMobileFileUpload));
 
         public EbMobileForm()
         {
@@ -117,67 +114,99 @@ namespace ExpressBase.Mobile
         private async Task<MobileFormData> GetFormData(int RowId)
         {
             MobileFormData formData = new MobileFormData(this.TableName);
-
             MobileTable table = formData.CreateTable();
             MobileTableRow row = table.CreateRow(RowId);
 
-            foreach (var pair in this.ControlDictionary)
+            foreach (KeyValuePair<string, EbMobileControl> pair in this.ControlDictionary)
             {
                 EbMobileControl ctrl = pair.Value;
 
-                if (ctrl is EbMobileFileUpload)
+                if (ctrl is IFileUploadControl)
                 {
                     await this.GetFileData(ctrl, table, row);
                 }
-                else if (ctrl is EbMobileDataGrid)
+                else if (ctrl is EbMobileDataGrid dataGrid)
                 {
-                    formData.Tables.Add((MobileTable)(ctrl as EbMobileDataGrid).GetValue());
+                    formData.Tables.Add(dataGrid.GetValue<MobileTable>());
                 }
                 else
                 {
                     MobileTableColumn Column = ctrl.GetMobileTableColumn();
-                    if (Column != null)
-                        row.Columns.Add(Column);
+                    if (Column != null) row.Columns.Add(Column);
                 }
             }
-            if (RowId <= 0)
-                row.AppendEbColValues();
+            if (RowId <= 0) row.AppendEbColValues();
 
             return formData;
         }
 
         private async Task GetFileData(EbMobileControl ctrl, MobileTable table, MobileTableRow row)
         {
-            if (ctrl is EbMobileDisplayPicture)
-            {
-                List<FileWrapper> files = ctrl.GetValue() as List<FileWrapper>;
-                if (!files.Any()) return;
-                try
-                {
-                    List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(files);
-                    if (resp.Any())
-                    {
-                        MobileTableColumn column = ctrl.GetMobileTableColumn();
-                        int refid = resp[0].FileRefId;
-                        column.Value = refid;
-                        if (refid > 0)
-                            row.Columns.Add(column);
-                    }
-                }
-                catch (Exception)
-                {
-                    EbLog.Error("Upload file api error");
-                }
-            }
-            else if (ctrl is EbMobileFileUpload fup)
+            if (ctrl is EbMobileFileUpload fup)
             {
                 List<FileWrapper> files = fup.GetValue() as List<FileWrapper>;
                 table.Files.Add(ctrl.Name, files);
+            }
+            else if (ctrl is EbMobileDisplayPicture || ctrl is EbMobileAudioInput)
+            {
+                await SendAndFillFupPersisant(ctrl, row);
             }
             else
             {
                 EbLog.Warning("Unknown control");
                 EbLog.Warning(ctrl.ToString());
+            }
+        }
+
+        private async Task<bool> SendAndFillFupData(WebformData webformdata, MobileTable table)
+        {
+            if (table.NewFiles.Any())
+            {
+                try
+                {
+                    List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(table.NewFiles);
+
+                    webformdata.FillFromSendFileResp(table.NewFiles, resp);
+                    webformdata.FillUploadedFileRef(table.OldFiles);
+
+                    if (!webformdata.ExtendedTables.Any())
+                    {
+                        EbLog.Error("Image upload response empty, breaking save");
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Error("SendFilesAsync error :: " + ex.Message);
+                }
+            }
+            return true;
+        }
+
+        private async Task SendAndFillFupPersisant(EbMobileControl ctrl, MobileTableRow row)
+        {
+            List<FileWrapper> imageFiles = ctrl.GetValue<List<FileWrapper>>();
+
+            if (!imageFiles.Any()) return;
+
+            try
+            {
+                List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(imageFiles);
+                if (resp.Any())
+                {
+                    MobileTableColumn column = ctrl.GetMobileTableColumn();
+                    List<int> refIds = (from item in resp where item.FileRefId > 0 select item.FileRefId).ToList();
+                    if (refIds.Count > 0)
+                    {
+                        column.Value = string.Join<int>(",", refIds);
+                        row.Columns.Add(column);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("error occured when sending persistant fup controls values");
+                EbLog.Error(ex.Message + ", STACKTRACE:" + ex.StackTrace);
             }
         }
 
@@ -210,6 +239,7 @@ namespace ExpressBase.Mobile
                 {
                     response.Status = true;
                     response.Message = "saved successfully :)";
+                    response.PushResponse = pushResponse;
                 }
                 else
                     throw new Exception("Failed to save");
@@ -220,38 +250,6 @@ namespace ExpressBase.Mobile
                 response.Message = "Something went wrong :(";
                 EbLog.Error(ex.Message);
             }
-        }
-
-        private void LogPushResponse(PushResponse resp)
-        {
-            EbLog.Info(resp.Message);
-            EbLog.Info(resp.MessageInt);
-            EbLog.Info(JsonConvert.SerializeObject(resp));
-        }
-
-        private async Task<bool> SendAndFillFupData(WebformData webformdata, MobileTable table)
-        {
-            if (table.NewFiles.Any())
-            {
-                try
-                {
-                    List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(table.NewFiles);
-
-                    webformdata.FillFromSendFileResp(table.NewFiles, resp);
-                    webformdata.FillUploadedFileRef(table.OldFiles);
-
-                    if (!webformdata.ExtendedTables.Any())
-                    {
-                        EbLog.Error("Image upload response empty, breaking save");
-                        return false;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Error("SendFilesAsync error :: " + ex.Message);
-                }
-            }
-            return true;
         }
 
         private async Task SaveToLocalDB(MobileFormData data, FormSaveResponse response, int rowId)
@@ -284,6 +282,13 @@ namespace ExpressBase.Mobile
                 response.Message = "Something went wrong :(";
                 EbLog.Error("EbMobileForm.PersistOnLocal::" + ex.Message);
             }
+        }
+
+        private void LogPushResponse(PushResponse resp)
+        {
+            EbLog.Info(resp.Message);
+            EbLog.Info(resp.MessageInt);
+            EbLog.Info(JsonConvert.SerializeObject(resp));
         }
 
         private async Task WriteFilesToLocal(object LastRowId)
@@ -345,7 +350,7 @@ namespace ExpressBase.Mobile
         {
             DbTypedValue TV = new DbTypedValue(name, value, type);
 
-            var ctrl = ControlDictionary.ContainsKey(name) ? ControlDictionary[name] : null;
+            EbMobileControl ctrl = ControlDictionary.ContainsKey(name) ? ControlDictionary[name] : null;
             if (ctrl != null)
             {
                 TV.Type = ctrl.EbDbType;

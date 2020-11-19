@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
 using System.Timers;
@@ -22,13 +23,19 @@ namespace ExpressBase.Mobile.CustomControls.Views
         public bool MultiSelect { set; get; }
 
         private const string ACTION_START = "start";
+
         private const string ACTION_STOP = "stop";
 
         readonly IEbAudioHelper audioHelper;
+
         Timer recordingTimer;
+
         Timer playerTimer;
+
         int elapsedMinutes = 0;
+
         int elapsedSeconds = 0;
+
         readonly double maxDuration = 120000;//2 minutes
 
         private readonly Dictionary<string, byte[]> audioFiles = new Dictionary<string, byte[]>();
@@ -219,6 +226,28 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 Device.BeginInvokeOnMainThread(() => slider.Value = audioHelper.GetPlayerPosition());
             };
             playerTimer.Start();
+        }
+
+        public List<FileWrapper> GetFiles(string ctrlName)
+        {
+            List<FileWrapper> files = new List<FileWrapper>();
+
+            foreach (var pair in audioFiles)
+            {
+                files.Add(new FileWrapper
+                {
+                    Name = pair.Key,
+                    FileName = pair.Key + ".mpeg4",
+                    Bytea = pair.Value,
+                    ControlName = ctrlName
+                });
+            }
+            return files;
+        }
+
+        public async void SetValue(NetworkMode nw, FUPSetValueMeta meta, string ctrlname)
+        {
+            
         }
     }
 }

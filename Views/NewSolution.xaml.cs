@@ -36,12 +36,10 @@ namespace ExpressBase.Mobile.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            this.SetContentFromConfig();
-
             await AppPermission.Camera();
         }
 
-        public void SetContentFromConfig()
+        public void OnDynamicContentRendering()
         {
             WallLabel.Text = PageContent["WallLabel"];
             SolutionName.Placeholder = PageContent["TextBoxPlaceHolder"];
@@ -164,12 +162,12 @@ namespace ExpressBase.Mobile.Views
         private void HideSIDConfirmBox()
         {
             ShadowView.IsVisible = false;
-            var fade = new Animation(v => MainContent.Opacity = v, 1, 0);
-            var translation = new Animation(v => MainContent.TranslationY = v, 0, MainContent.Height, null, () =>
+            Animation fade = new Animation(v => MainContent.Opacity = v, 1, 0);
+            Animation translation = new Animation(v => MainContent.TranslationY = v, 0, MainContent.Height, null, () =>
             {
                 PopupContainer.IsVisible = false;
             });
-            var parent = new Animation { { 0.5, 1, fade }, { 0, 1, translation } };
+            Animation parent = new Animation { { 0.5, 1, fade }, { 0, 1, translation } };
             parent.Commit(this, "HidePopupContainer");
         }
 

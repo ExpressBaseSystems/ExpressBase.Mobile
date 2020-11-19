@@ -17,7 +17,6 @@ namespace ExpressBase.Mobile
 
         public static readonly Color ReadOnlyBackground = Color.FromHex("eeeeee");
 
-
         public virtual string Label { set; get; }
 
         public virtual EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
@@ -110,6 +109,8 @@ namespace ExpressBase.Mobile
         public bool DefaultExprEvaluated { set; get; }
 
         public virtual object GetValue() { return null; }
+
+        public virtual T GetValue<T>() { return (T)GetValue(); }
 
         public virtual void SetValue(object value) { }
 

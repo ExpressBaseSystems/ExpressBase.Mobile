@@ -9,18 +9,13 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services.GoogleMap
 {
-    public class GoogleMapApiService : IGoogleMapApiService
+    public class GoogleMapApiService :BaseService, IGoogleMapApiService
     {
         readonly string GoogleMapApiKey = Device.RuntimePlatform == Device.Android ? EbBuildConfig.GMapAndroidKey : EbBuildConfig.GMapiOSKey;
 
         const string ApiBaseAddress = "https://maps.googleapis.com/maps/";
 
-        readonly RestClient client;
-
-        public GoogleMapApiService()
-        {
-            client = new RestClient(ApiBaseAddress);
-        }
+        public GoogleMapApiService() : base(ApiBaseAddress) { }
 
         public async Task<GooglePlaceAutoCompleteResults> GetPlaces(string text)
         {
@@ -31,7 +26,7 @@ namespace ExpressBase.Mobile.Services.GoogleMap
                 request.AddParameter("input", Uri.EscapeUriString(text));
                 request.AddParameter("key", GoogleMapApiKey);
 
-                IRestResponse iresp = await client.ExecuteAsync(request);
+                IRestResponse iresp = await HttpClient.ExecuteAsync(request);
 
                 if (iresp.IsSuccessful)
                 {
@@ -55,7 +50,7 @@ namespace ExpressBase.Mobile.Services.GoogleMap
                 request.AddParameter("placeid", Uri.EscapeUriString(placeId));
                 request.AddParameter("key", GoogleMapApiKey);
 
-                IRestResponse iresp = await client.ExecuteAsync(request);
+                IRestResponse iresp = await HttpClient.ExecuteAsync(request);
 
                 if (iresp.IsSuccessful)
                 {

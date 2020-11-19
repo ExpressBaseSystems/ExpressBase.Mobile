@@ -55,4 +55,9 @@ namespace ExpressBase.Mobile
 
         int ColumnSpan { set; get; }
     }
+
+    public interface IFileUploadControl
+    {
+
+    }
 }

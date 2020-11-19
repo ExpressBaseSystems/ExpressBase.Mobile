@@ -17,30 +17,25 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class IdentityService : IIdentityService
+    public class IdentityService : BaseService, IIdentityService
     {
-        public RestClient Client { set; get; }
-
         public static IdentityService Instance => new IdentityService();
 
-        public IdentityService()
-        {
-            Client = new RestClient(App.Settings.RootUrl);
-        }
+        public IdentityService() : base(true) { }
 
         public async Task<ApiAuthResponse> AuthenticateAsync(string username, string password, bool anonymous = false)
         {
             ApiAuthResponse resp;
             try
             {
-                RestRequest request = new RestRequest("api/auth", Method.GET);
+                RestRequest request = new RestRequest(ApiConstants.AUTHETICATE, Method.GET);
 
                 request.AddParameter("username", username.Trim());
                 request.AddParameter("password", string.Concat(password, username).ToMD5());
 
                 if (anonymous) request.AddParameter("anonymous", true);
 
-                IRestResponse response = await Client.ExecuteAsync(request);
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
@@ -49,24 +44,50 @@ namespace ExpressBase.Mobile.Services
             }
             catch (Exception ex)
             {
-                EbLog.Error("Auth.TryAuthenticate---" + ex.Message);
+                EbLog.Error(ex.Message);
                 resp = new ApiAuthResponse { IsValid = false };
             }
             return resp;
         }
 
-        public async Task<ApiAuthResponse> AuthenticateSSOAsync(string username, SignInOtpType type)
+        public async Task<ApiAuthResponse> AuthenticateSSOAsync(string username, string authid, string token)
+        {
+            ApiAuthResponse resp;
+            try
+            {
+                RestRequest request = new RestRequest(ApiConstants.AUTHETICATE_SSO, Method.GET);
+
+                request.AddParameter("username", username.Trim());
+                request.AddParameter("authid", authid);
+                request.AddParameter("token", token);
+
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                    resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
+                else
+                    resp = new ApiAuthResponse { IsValid = false };
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+                resp = new ApiAuthResponse { IsValid = false };
+            }
+            return resp;
+        }
+
+        public async Task<ApiAuthResponse> SendAuthenticationOTP(string username, SignInOtpType type)
         {
             ApiAuthResponse resp;
 
-            RestRequest request = new RestRequest("api/auth_sso", Method.POST);
+            RestRequest request = new RestRequest(ApiConstants.SEND_AUTH_OTP, Method.POST);
 
             request.AddParameter("username", username);
             request.AddParameter("type", (int)type);
 
             try
             {
-                var response = await Client.ExecuteAsync(request);
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
@@ -81,9 +102,9 @@ namespace ExpressBase.Mobile.Services
             return resp;
         }
 
-        public async Task<ApiAuthResponse> VerifyOTP(ApiAuthResponse autheresp, string otp)
+        public async Task<ApiAuthResponse> VerifyOTP(ApiAuthResponse autheresp, string otp, bool user_verification = false)
         {
-            RestRequest request = new RestRequest("api/verify_otp", Method.POST);
+            RestRequest request = new RestRequest(ApiConstants.VERIFY_OTP, Method.POST);
 
             if (!string.IsNullOrEmpty(autheresp.BToken))
             {
@@ -94,10 +115,11 @@ namespace ExpressBase.Mobile.Services
             request.AddParameter("token", autheresp.TwoFAToken);
             request.AddParameter("authid", autheresp.UserAuthId);
             request.AddParameter("otp", otp);
+            request.AddParameter("user_verification", user_verification);
 
             try
             {
-                var response = await Client.ExecuteAsync(request);
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
                 if (response.IsSuccessful)
                 {
                     return JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
@@ -113,7 +135,7 @@ namespace ExpressBase.Mobile.Services
 
         public async Task<ApiGenerateOTPResponse> GenerateOTP(ApiAuthResponse autheresp)
         {
-            RestRequest request = new RestRequest("api/resend_otp", Method.POST);
+            RestRequest request = new RestRequest(ApiConstants.RESEND_OTP, Method.POST);
 
             if (!string.IsNullOrEmpty(autheresp.BToken))
             {
@@ -126,7 +148,7 @@ namespace ExpressBase.Mobile.Services
 
             try
             {
-                var response = await Client.ExecuteAsync(request);
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
                 if (response.IsSuccessful)
                 {
                     return JsonConvert.DeserializeObject<ApiGenerateOTPResponse>(response.Content);
@@ -136,7 +158,6 @@ namespace ExpressBase.Mobile.Services
             {
                 EbLog.Error("2FA verification failed :: " + ex.Message);
             }
-
             return null;
         }
 

@@ -16,7 +16,6 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
             BindingContext = this;
-            SetContentFromConfig();
         }
 
         public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.About;
@@ -25,7 +24,7 @@ namespace ExpressBase.Mobile.Views
 
         public string VendorLogo => App.Settings.Vendor.Logo;
 
-        public void SetContentFromConfig()
+        public void OnDynamicContentRendering()
         {
             INativeHelper helper = DependencyService.Get<INativeHelper>();
 

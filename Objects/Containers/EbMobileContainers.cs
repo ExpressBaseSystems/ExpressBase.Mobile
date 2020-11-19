@@ -45,11 +45,11 @@ namespace ExpressBase.Mobile
 
     public class EbMobileDashBoard : EbMobileContainer
     {
-        public List<EbMobileDashBoardControls> ChildControls { get; set; }
+        public List<EbMobileDashBoardControl> ChildControls { get; set; }
 
         public EbMobileDashBoard()
         {
-            ChildControls = new List<EbMobileDashBoardControls>();
+            ChildControls = new List<EbMobileDashBoardControl>();
         }
     }
 

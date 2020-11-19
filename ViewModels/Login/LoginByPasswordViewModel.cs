@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -70,7 +69,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
                     if (AuthResponse.Is2FEnabled)
                         Toggle2FAW?.Invoke(AuthResponse);
                     else
-                        await AfterLoginSuccess(_username);
+                        await AfterLoginSuccess(AuthResponse, _username, LoginType.CREDENTIALS);
                 }
                 else
                     toast.Show("wrong username or password.");
@@ -79,30 +78,6 @@ namespace ExpressBase.Mobile.ViewModels.Login
             }
             else
                 toast.Show("Email/Password cannot be empty");
-        }
-
-        private async Task AfterLoginSuccess(string username)
-        {
-            try
-            {
-                await Service.UpdateAuthInfo(AuthResponse, username);
-                await Service.UpdateLastUser(username, LoginType.CREDENTIALS);
-
-                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true, callback: status =>
-                {
-                    Utils.Alert_SlowNetwork();
-                });
-
-                if (App.Settings.Vendor.AllowNotifications)
-                    await NotificationService.Instance.UpdateNHRegistration();
-
-                if (data != null)
-                    await Service.Navigate(data);
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("Exception at after login :: " + ex.Message);
-            }
         }
 
         protected override async Task SubmitOTP(object o)
@@ -122,7 +97,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
             IsBusy = false;
             if (resp != null && resp.IsValid)
-                await AfterLoginSuccess(this.Email.Trim());
+                await AfterLoginSuccess(resp, this.Email.Trim(), LoginType.CREDENTIALS);
             else
                 DependencyService.Get<IToast>().Show("The OTP is Invalid or Expired");
         }

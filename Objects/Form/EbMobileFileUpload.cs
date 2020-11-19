@@ -11,17 +11,15 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileFileUpload : EbMobileControl, INonPersistControl
+    public class EbMobileFileUpload : EbMobileControl, INonPersistControl, IFileUploadControl
     {
         public bool EnableCameraSelect { set; get; }
 
         public bool EnableFileSelect { set; get; }
 
-        public virtual bool MultiSelect { set; get; }
+        public bool MultiSelect { set; get; }
 
-        public virtual bool EnableEdit { set; get; }
-
-        protected FileUploader XamControl;
+        private FileUploader XamControl;
 
         private List<FileMetaInfo> uploadedFileRef;
 
@@ -29,24 +27,15 @@ namespace ExpressBase.Mobile
         {
             base.InitXControl(Mode, Network);
 
-            XamControl = new FileUploader();
-            XamControl.Initialize(this);
+            XamControl = new FileUploader(this);
             XamControl.BindFullScreenCallback(ShowFullScreen);
-            XamControl.BindDeleteCallback(DeleteFile);
             this.XControl = XamControl;
         }
 
         public void ShowFullScreen(Image image)
         {
             if (App.Navigation.GetCurrentPage() is IFormRenderer rendrer)
-            {
                 rendrer.ShowFullScreenImage(image.Source);
-            }
-        }
-
-        public void DeleteFile()
-        {
-
         }
 
         public override MobileTableColumn GetMobileTableColumn()
@@ -92,7 +81,6 @@ namespace ExpressBase.Mobile
             if (value != null)
             {
                 uploadedFileRef = (value as FUPSetValueMeta).Files;
-
                 XamControl.SetValue(this.NetworkType, value as FUPSetValueMeta, this.Name);
             }
         }
@@ -100,10 +88,8 @@ namespace ExpressBase.Mobile
         public override bool Validate()
         {
             List<FileWrapper> files = this.GetValue() as List<FileWrapper>;
-
             if (this.Required && !files.Any())
                 return false;
-
             return true;
         }
     }

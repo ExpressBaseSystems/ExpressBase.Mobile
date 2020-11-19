@@ -5,6 +5,7 @@ using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace ExpressBase.Mobile.Extensions
 {
@@ -106,6 +107,19 @@ namespace ExpressBase.Mobile.Extensions
                 EbLog.Error(ex.StackTrace);
             }
             return files;
+        }
+
+        public static T GetValue<T>(this Dictionary<string, string> dictionary, string key)
+        {
+            if (dictionary.TryGetValue(key, out var value))
+            {
+                TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+                if (converter != null)
+                {
+                    return (T)converter.ConvertFromString(value);
+                }
+            }
+            return default;
         }
     }
 }

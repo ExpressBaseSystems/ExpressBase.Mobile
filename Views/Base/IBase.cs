@@ -21,7 +21,7 @@ namespace ExpressBase.Mobile.Views.Base
     {
         Dictionary<string, string> PageContent { get; }
 
-        void SetContentFromConfig();
+        void OnDynamicContentRendering();
     }
 
     public interface IFormRenderer

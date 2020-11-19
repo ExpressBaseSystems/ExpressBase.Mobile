@@ -8,13 +8,15 @@ namespace ExpressBase.Mobile.Services
     {
         Task<ApiAuthResponse> AuthenticateAsync(string username, string password, bool anonymous = false);
 
-        Task<ApiAuthResponse> AuthenticateSSOAsync(string username, SignInOtpType type);
+        Task<ApiAuthResponse> AuthenticateSSOAsync(string username, string authid, string token);
+
+        Task<ApiAuthResponse> SendAuthenticationOTP(string username, SignInOtpType type);
 
         Task UpdateAuthInfo(ApiAuthResponse resp, string username);
 
         Task UpdateLastUser(string username, LoginType logintype = LoginType.SSO);
 
-        Task<ApiAuthResponse> VerifyOTP(ApiAuthResponse autheresp, string otp);
+        Task<ApiAuthResponse> VerifyOTP(ApiAuthResponse autheresp, string otp, bool user_verification = false);
 
         Task<ApiGenerateOTPResponse> GenerateOTP(ApiAuthResponse autheresp);
 

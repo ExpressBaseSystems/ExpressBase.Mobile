@@ -69,21 +69,25 @@ namespace ExpressBase.Mobile.Services.Navigation
 
         public async Task NavigateAsync(Page page)
         {
+            SetDynamicContent(page);
             await CurrentApplication.MainPage.Navigation.PushAsync(page);
         }
 
         public async Task NavigateModalAsync(Page page)
         {
+            SetDynamicContent(page);
             await CurrentApplication.MainPage.Navigation.PushModalAsync(page);
         }
 
         public async Task NavigateMasterAsync(Page page)
         {
+            SetDynamicContent(page);
             await App.RootMaster.Detail.Navigation.PushAsync(page);
         }
 
         public async Task NavigateMasterModalAsync(Page page)
         {
+            SetDynamicContent(page);
             await App.RootMaster.Detail.Navigation.PushModalAsync(page);
         }
 
@@ -177,9 +181,9 @@ namespace ExpressBase.Mobile.Services.Navigation
             }
 
             if (App.Settings.LoginType == LoginType.SSO)
-                await CurrentApplication.MainPage.Navigation.PushAsync(new LoginByOTP());
+                await NavigateAsync(new LoginByOTP());
             else
-                await CurrentApplication.MainPage.Navigation.PushAsync(new LoginByPassword());
+                await NavigateAsync(new LoginByPassword());
         }
 
         public void UpdateViewStack()
@@ -253,6 +257,14 @@ namespace ExpressBase.Mobile.Services.Navigation
                 return navp.CurrentPage;
             }
             return null;
+        }
+
+        private void SetDynamicContent(Page page)
+        {
+            if (page is IDynamicContent dynamicPage)
+            {
+                dynamicPage.OnDynamicContentRendering();
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using ExpressBase.Mobile.Views.Base;
-using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 

@@ -31,13 +31,12 @@ namespace ExpressBase.Mobile.Views
 
             if (!isRendered)
             {
-                SetContentFromConfig();
                 await viewModel.InitializeAsync();
                 isRendered = true;
             }
         }
 
-        public void SetContentFromConfig()
+        public void OnDynamicContentRendering()
         {
             EbLayout.Title = PageContent["Title"];
         }

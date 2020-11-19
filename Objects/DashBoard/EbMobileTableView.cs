@@ -7,26 +7,12 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileDashBoardControls : EbMobilePageBase
-    {
-        public virtual View XView { set; get; }
-
-        public EbThickness Margin { set; get; }
-
-        public EbThickness Padding { set; get; }
-
-        public virtual void InitXControl() { }
-
-        public virtual void InitXControl(EbDataRow DataRow) { }
-    }
-
-    public class EbMobileTableView : EbMobileDashBoardControls
+    public class EbMobileTableView : EbMobileDashBoardControl
     {
         public string DataSourceRefId { set; get; }
 
         public EbScript OfflineQuery { set; get; }
 
-        //mob prop
         private EbDataTable Data { set; get; }
 
         private EbDataRow LinkedDataRow { set; get; }
@@ -42,7 +28,7 @@ namespace ExpressBase.Mobile
 
         private void InitXView()
         {
-            var wview = new WebView
+            WebView wview = new WebView
             {
                 MinimumHeightRequest = 100,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -67,11 +53,11 @@ namespace ExpressBase.Mobile
             try
             {
                 string sql = HelperFunctions.WrapSelectQueryUnPaged(HelperFunctions.B64ToString(this.OfflineQuery.Code));
-                List<DbParameter> _DbParams = new List<DbParameter>();
-                List<string> _Params = HelperFunctions.GetSqlParams(sql);
-                if (_Params.Count > 0)
-                    this.GetParameterValues(_DbParams, _Params);
-                Data = App.DataDB.DoQuery(sql, _DbParams.ToArray());
+                List<DbParameter> dbParams = new List<DbParameter>();
+                List<string> parameters = HelperFunctions.GetSqlParams(sql);
+                if (parameters.Count > 0)
+                    this.GetParameterValues(dbParams, parameters);
+                Data = App.DataDB.DoQuery(sql, dbParams.ToArray());
             }
             catch (Exception ex)
             {
@@ -79,16 +65,16 @@ namespace ExpressBase.Mobile
             }
         }
 
-        private void GetParameterValues(List<DbParameter> _DbParams, List<string> _Params)
+        private void GetParameterValues(List<DbParameter> dbParams, List<string> parameters)
         {
             try
             {
-                foreach (string _p in _Params)
+                foreach (string param in parameters)
                 {
-                    _DbParams.Add(new DbParameter
+                    dbParams.Add(new DbParameter
                     {
-                        ParameterName = _p,
-                        Value = this.LinkedDataRow[_p],
+                        ParameterName = param,
+                        Value = this.LinkedDataRow[param],
                     });
                 }
             }

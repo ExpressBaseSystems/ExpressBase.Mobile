@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+
 namespace ExpressBase.Mobile.Data
 {
     public class WebformData
@@ -18,8 +19,11 @@ namespace ExpressBase.Mobile.Data
         public string MasterTable { get; set; }
 
         public int FormVersionId { get; set; }
+
         public bool IsLocked { get; set; }
+
         public string DataPushId { get; set; }
+
         public int SourceId { get; set; }
 
         public WebformData()
@@ -138,7 +142,7 @@ namespace ExpressBase.Mobile.Data
 
         public int RowId { get; set; }
 
-        public int LocalRowId { get; set; }
+        public int LocalRowId { get; set; }//local db use
 
         public string FormData { get; set; }
 
@@ -161,5 +165,24 @@ namespace ExpressBase.Mobile.Data
         public string StackTraceInt { get; set; }
 
         public string AffectedEntries { get; set; }
+
+        public Dictionary<string, string> MetaData { set; get; }
+
+        public EbSignUpUserInfo GetSignUpUserInfo()
+        {
+            if (MetaData != null || MetaData.Count > 0)
+            {
+                if (MetaData.TryGetValue(FormMetaDataKeys.signup_user, out string signupUser))
+                {
+                    return JsonConvert.DeserializeObject<EbSignUpUserInfo>(signupUser);
+                }
+            }
+            return null;
+        }
+    }
+
+    public static class FormMetaDataKeys
+    {
+        public const string signup_user = "signup_user";
     }
 }

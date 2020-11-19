@@ -1,8 +1,6 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
-using ExpressBase.Mobile.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,13 +15,13 @@ namespace ExpressBase.Mobile.Models
         HttpStatusCode StatusCode { set; get; }
     }
 
-    public class EbMobileSolutionData : IEbApiStatusCode
+    public class EbMobileSolutionData
     {
         public List<AppData> Applications { set; get; }
 
         public List<EbLocation> Locations { get; set; }
 
-        public HttpStatusCode StatusCode { get; set; }
+        public List<MobilePagesWraper> ProfilePages { set; get; }
 
         public EbDataSet GetOfflineData()
         {
@@ -62,27 +60,7 @@ namespace ExpressBase.Mobile.Models
         public EbDataSet OfflineData { set; get; }
 
         [JsonIgnore]
-        public string AppNotation
-        {
-            get
-            {
-                try
-                {
-                    string notation = string.Empty;
-                    foreach (var item in AppName.Split(' ').Take(2))
-                    {
-                        if (string.IsNullOrEmpty(item)) continue;
-                        notation += item[0];
-                    }
-                    return notation.ToUpper();
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Error(ex.Message);
-                    return "??";
-                }
-            }
-        }
+        public string AppNotation => AppName?.ToCharNotation(2).ToUpper();
 
         public bool HasMenuApi()
         {
@@ -154,27 +132,7 @@ namespace ExpressBase.Mobile.Models
             }
         }
 
-        public string Notation
-        {
-            get
-            {
-                try
-                {
-                    string notation = string.Empty;
-                    foreach (var item in Description.Split(CharConstants.SPACE).Take(2))
-                    {
-                        if (string.IsNullOrEmpty(item)) continue;
-                        notation += item[0];
-                    }
-                    return notation.ToUpper();
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Error(ex.Message);
-                    return "??";
-                }
-            }
-        }
+        public string Notation => Description?.ToCharNotation(2).ToUpper();
 
         public bool IsTagVisible => ActionType == MyActionTypes.Approval;
     }
@@ -221,7 +179,37 @@ namespace ExpressBase.Mobile.Models
 
         public string SignUpPage { set; get; }
 
+        public List<EbProfileUserType> Profile { set; get; }
+
         public string Message { set; get; }
+    }
+
+    public class EbProfileUserType
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string RefId { get; set; }
+    }
+
+    public class EbSignUpUserInfo
+    {
+        public string AuthId { get; set; }
+
+        public string UserName { get; set; }
+
+        public int UserType { get; set; }
+
+        public bool VerificationRequired { get; set; }
+
+        public string VerifyEmail { get; set; }
+
+        public string VerifyPhone { get; set; }
+
+        public string Message { get; set; }
+
+        public string Token { get; set; }
     }
 
     public class MobileVisDataRespnse

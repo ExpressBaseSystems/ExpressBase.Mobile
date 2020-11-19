@@ -40,17 +40,19 @@ namespace ExpressBase.Mobile.ViewModels
                     SolutionName = sid,
                     RootUrl = solutionUrl,
                     SolutionObject = response.SolutionObj,
-                    SignUpPage = response.SignUpPage
+                    SignUpPage = response.SignUpPage,
+                    Profile = response.Profile
                 };
 
                 await solutionService.SetDataAsync(info);
-
                 await solutionService.ClearCached();
                 await solutionService.CreateDB(sid);
                 await solutionService.CreateDirectory();
 
                 if (response.Logo != null)
+                {
                     await solutionService.SaveLogoAsync(sid, response.Logo);
+                }
             }
             catch (Exception ex)
             {

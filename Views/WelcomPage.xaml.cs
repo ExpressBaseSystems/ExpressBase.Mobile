@@ -35,12 +35,10 @@ namespace ExpressBase.Mobile.Views
         protected override void OnAppearing()
         {
             base.OnAppearing();
-
-            SetContentFromConfig();
             SolutionImage.ScaleTo(1, 300);
         }
 
-        public void SetContentFromConfig()
+        public void OnDynamicContentRendering()
         {
             string desc = PageContent["Description"];
             Description.Text = desc.Replace("@solutionname@", App.Settings.Sid);

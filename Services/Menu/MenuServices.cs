@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -8,14 +7,12 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class MenuServices : IMenuServices
+    public class MenuServices : BaseService, IMenuServices
     {
         private static MenuServices instance;
 

@@ -12,18 +12,18 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class DataService : IDataService
+    public class DataService : BaseService, IDataService
     {
         private static DataService _instance;
 
         public static DataService Instance => _instance ??= new DataService();
 
+        public DataService() : base(true) { }
+
         public MobileVisDataRespnse GetData(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
         {
             try
             {
-                RestClient client = new RestClient(App.Settings.RootUrl);
-
                 RestRequest request = new RestRequest(ApiConstants.GET_VIS_DATA, Method.POST);
                 request.AddParameter("refid", refid);
 
@@ -44,7 +44,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-                IRestResponse iresp = client.Execute(request);
+                IRestResponse iresp = HttpClient.Execute(request);
                 return JsonConvert.DeserializeObject<MobileVisDataRespnse>(iresp.Content);
             }
             catch (Exception ex)
@@ -58,8 +58,6 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                var client = new RestClient(App.Settings.RootUrl);
-
                 RestRequest request = new RestRequest(ApiConstants.GET_VIS_DATA, Method.POST);
                 request.AddParameter("refid", refid);
 
@@ -80,7 +78,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-                IRestResponse iresp = await client.ExecuteAsync(request);
+                IRestResponse iresp = await HttpClient.ExecuteAsync(request);
                 return JsonConvert.DeserializeObject<MobileVisDataRespnse>(iresp.Content);
             }
             catch (Exception ex)
@@ -95,8 +93,6 @@ namespace ExpressBase.Mobile.Services
             ApiFileResponse resp = null;
             try
             {
-                RestClient client = new RestClient(App.Settings.RootUrl);
-
                 RestRequest request = new RestRequest("api/get_file", Method.GET);
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
@@ -105,7 +101,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("category", (int)category);
                 request.AddParameter("filename", filename);
 
-                IRestResponse response = await client.ExecuteAsync(request);
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     resp = JsonConvert.DeserializeObject<ApiFileResponse>(response.Content);
@@ -122,8 +118,6 @@ namespace ExpressBase.Mobile.Services
             ApiFileResponse resp = null;
             try
             {
-                RestClient client = new RestClient(App.Settings.RootUrl);
-
                 RestRequest request = new RestRequest("api/get_file", Method.GET);
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
@@ -132,7 +126,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("category", (int)category);
                 request.AddParameter("filename", filename);
 
-                IRestResponse response = client.Execute(request);
+                IRestResponse response = HttpClient.Execute(request);
 
                 if (response.StatusCode == HttpStatusCode.OK)
                     resp = JsonConvert.DeserializeObject<ApiFileResponse>(response.Content);

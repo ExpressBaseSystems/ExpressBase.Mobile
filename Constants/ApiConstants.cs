@@ -11,16 +11,19 @@
         public const string VALIDATE_SOL = "api/validate_solution";
 
         public const string GET_ACTIONS = "api/get_actions";
-
         public const string GET_ACTION_INFO = "api/get_action_info";
 
         public const string GET_SOLUTION_DATA = "api/get_solution_data";
-
         public const string GET_VIS_DATA = "api/get_data";
 
 
-        public const int TIMEOUT_STD = 10000;
+        public const string AUTHETICATE = "api/auth";
+        public const string AUTHETICATE_SSO = "api/auth/sso";
+        public const string SEND_AUTH_OTP = "api/send_authentication_otp";
+        public const string VERIFY_OTP = "api/verify_otp";
+        public const string RESEND_OTP = "api/resend_otp";
 
+        public const int TIMEOUT_STD = 10000;
         public const int TIMEOUT_IMPORT = 15000;
     }
 }

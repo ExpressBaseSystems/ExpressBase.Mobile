@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.Login;
 using ExpressBase.Mobile.Views.Base;
 using System;
@@ -23,8 +22,6 @@ namespace ExpressBase.Mobile.Views.Login
         {
             InitializeComponent();
             BindingContext = viewModel = new LoginByOTPViewModel();
-
-            SetContentFromConfig();
             viewModel.Bind2FAToggleEvent(ShowTwoFAWindow);
         }
 
@@ -36,7 +33,7 @@ namespace ExpressBase.Mobile.Views.Login
             });
         }
 
-        public void SetContentFromConfig()
+        public void OnDynamicContentRendering()
         {
             LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
         }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class NotificationService : INotificationService
+    public class NotificationService : BaseService, INotificationService
     {
         private static NotificationService instance;
 
@@ -18,7 +18,7 @@ namespace ExpressBase.Mobile.Services
 
         public EbAppVendors AppVendor { set; get; }
 
-        public NotificationService()
+        public NotificationService() : base(true)
         {
             AppVendor = EbBuildConfig.GetVendor();
         }
@@ -27,13 +27,11 @@ namespace ExpressBase.Mobile.Services
         {
             string token = string.Empty;
 
-            RestClient client = new RestClient(App.Settings.RootUrl);
-
             RestRequest request = new RestRequest("api/notifications/get_registration_id", Method.GET);
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-            IRestResponse response = await client.ExecuteAsync<string>(request);
+            IRestResponse response = await HttpClient.ExecuteAsync<string>(request);
             if (response.IsSuccessful)
             {
                 token = response.Content.Trim('"');
@@ -43,8 +41,6 @@ namespace ExpressBase.Mobile.Services
 
         public async Task<EbNFRegisterResponse> CreateOrUpdateRegistration(string regid, DeviceRegistration device)
         {
-
-            RestClient client = new RestClient(App.Settings.RootUrl);
             RestRequest request = new RestRequest("api/notifications/register", Method.POST);
 
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
@@ -55,7 +51,7 @@ namespace ExpressBase.Mobile.Services
 
             try
             {
-                IRestResponse response = await client.ExecuteAsync(request);
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
                 if (response.IsSuccessful)
                 {
                     return JsonConvert.DeserializeObject<EbNFRegisterResponse>(response.Content);
@@ -70,15 +66,13 @@ namespace ExpressBase.Mobile.Services
 
         public async Task<bool> UnRegisterAsync(string regid)
         {
-            RestClient client = new RestClient(App.Settings.RootUrl);
-
             RestRequest request = new RestRequest("api/notifications/delete_registration", Method.DELETE);
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
             request.AddParameter("regid", regid);
 
-            IRestResponse response = await client.ExecuteAsync(request);
+            IRestResponse response = await HttpClient.ExecuteAsync(request);
             if (response.IsSuccessful)
             {
                 return true;
