@@ -65,4 +65,23 @@ namespace ExpressBase.Mobile.Configuration
 
         public const string GMapiOSKey = "";
     }
+
+    public static class Tiwi
+    {
+        public const string VendorName = "Tiwi";
+
+        public const string AppIcon = "@mipmap/icon_ks";
+
+        public const string AppLabel = "Tiwi";
+
+        public const string StatusBar = "#a2217d";
+
+        public const string SplashTheme = "@style/Theme.SplashKS";
+
+        public const bool NFEnabled = false;
+
+        public const string GMapAndroidKey = "";
+
+        public const string GMapiOSKey = "";
+    }
 }

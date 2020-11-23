@@ -136,7 +136,6 @@ namespace ExpressBase.Mobile.Services
         public async Task Remove(SolutionInfo info)
         {
             List<SolutionInfo> sol = Utils.Solutions;
-
             sol.Remove(sol.Find(item => item.SolutionName == info.SolutionName && item.RootUrl == info.RootUrl));
             await Store.SetJSONAsync(AppConst.MYSOLUTIONS, sol);
         }
@@ -150,6 +149,12 @@ namespace ExpressBase.Mobile.Services
             url = url.Trim();
             string sname = url.Split(CharConstants.DOT)[0];
             return Utils.Solutions.Any(item => item.SolutionName == sname && item.RootUrl == url);
+        }
+
+        public SolutionInfo GetSolution(string url)
+        {
+            string sname = url.Split(CharConstants.DOT)[0];
+            return Utils.Solutions.Find(item => item.SolutionName == sname && item.RootUrl == url);
         }
     }
 }

@@ -36,6 +36,12 @@ namespace ExpressBase.Mobile
 
         private bool HasFileSelect => ControlDictionary.Any(x => x.Value.GetType() == typeof(EbMobileFileUpload));
 
+        public bool RenderingAsExternal { set; get; }
+
+        public Type RAERedirectionType { set; get; }
+
+        public object[] RAERedirectionParams { set; get; }
+
         public EbMobileForm()
         {
             RenderValidatorParams = new List<Param>();
@@ -86,22 +92,20 @@ namespace ExpressBase.Mobile
                 MobileFormData data = await this.GetFormData(rowId);
                 data.SortByMaster();
 
-                switch (this.NetworkType)
+                if(NetworkType == NetworkMode.Online)
                 {
-                    case NetworkMode.Online:
+                    await this.SaveToCloudDB(data, response, rowId);
+                }
+                else if(NetworkType == NetworkMode.Offline)
+                {
+                    await this.SaveToLocalDB(data, response, rowId);
+                }
+                else
+                {
+                    if (Utils.HasInternet)
                         await this.SaveToCloudDB(data, response, rowId);
-                        break;
-                    case NetworkMode.Mixed:
-                        {
-                            if (Utils.HasInternet)
-                                await this.SaveToCloudDB(data, response, rowId);
-                            else
-                                await this.SaveToLocalDB(data, response, rowId);
-                        }
-                        break;
-                    default:
+                    else
                         await this.SaveToLocalDB(data, response, rowId);
-                        break;
                 }
             }
             catch (Exception ex)
@@ -222,14 +226,15 @@ namespace ExpressBase.Mobile
                     {
                         table.InitFilesToUpload();
                         bool status = await this.SendAndFillFupData(webFormData, table);
-
                         if (!status)
-                            throw new Exception("Image Upload faild");
+                        {
+                            throw new Exception("Image Upload faild, breaking form save");
+                        }
                     }
                 }
 
                 int locid = App.Settings.CurrentLocId;
-                EbLog.Info($"Current location when form submit is {locid}");
+                EbLog.Info($"saving record in location {locid}");
 
                 PushResponse pushResponse = await FormDataServices.Instance.SendFormDataAsync(webFormData, rowId, this.WebFormRefId, locid);
 

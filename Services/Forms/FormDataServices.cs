@@ -14,11 +14,12 @@ namespace ExpressBase.Mobile.Services
 {
     public class FormDataServices : BaseService, IFormDataService
     {
-        private static FormDataServices _instance;
+        public static FormDataServices Instance { set; get; }
 
-        public static FormDataServices Instance => _instance ??= new FormDataServices();
-
-        public FormDataServices() : base(true) { }
+        public FormDataServices() : base(true)
+        {
+            Instance = this;
+        }
 
         public async Task<WebformData> GetFormLiveDataAsync(string refid, int row_id, int loc_id)
         {

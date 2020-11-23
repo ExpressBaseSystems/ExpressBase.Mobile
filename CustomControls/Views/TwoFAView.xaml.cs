@@ -36,11 +36,6 @@ namespace ExpressBase.Mobile.CustomControls
             };
         }
 
-        protected override void OnPropertyChanged(string propertyName = null)
-        {
-            base.OnPropertyChanged(propertyName);
-        }
-
         public void SetAddress(string address)
         {
             ToAddressLabel.Text = address;

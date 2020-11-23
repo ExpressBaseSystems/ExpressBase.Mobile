@@ -21,7 +21,7 @@ namespace ExpressBase.Mobile.Views
         private ValidateSidResponse response;
 
         private readonly bool isMasterPage;
-        
+
         public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.NewSolution;
 
         public NewSolution(bool hasBackButton = false)
@@ -108,19 +108,18 @@ namespace ExpressBase.Mobile.Views
 
         private async void SaveSolution_Clicked(object sender, EventArgs e)
         {
+            string surl = SolutionName.Text?.Trim();
+
+            if (string.IsNullOrEmpty(surl))
+                return;
+
             try
             {
-                string surl = SolutionName.Text.Trim();
-
                 if (!Utils.HasInternet)
                 {
                     Utils.Alert_NoInternet();
                     return;
                 }
-                if (string.IsNullOrEmpty(surl) || viewModel.IsSolutionExist(surl))
-                    return;
-
-                EbLayout.ShowLoader();
 
                 string domain = App.Settings.Vendor.GetDomain();
 
@@ -129,6 +128,14 @@ namespace ExpressBase.Mobile.Views
                     surl += $".{domain}";
                     SolutionName.Text = surl;
                 }
+
+                if (viewModel.IsSolutionExist(surl))
+                {
+                    await viewModel.RedirectToExistingSolution(surl, isMasterPage);
+                    return;
+                }
+
+                EbLayout.ShowLoader();
 
                 response = await viewModel.Validate(surl);
 

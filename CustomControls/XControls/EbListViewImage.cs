@@ -39,10 +39,11 @@ namespace ExpressBase.Mobile.CustomControls
             }
 
             string refid = value.ToString().Split(CharConstants.COMMA)[0];
+            string fileName = $"{App.Settings.ISid}-{refid}.jpg";
 
             try
             {
-                byte[] file = DataService.Instance.GetLocalFile($"{refid}.jpg");
+                byte[] file = DataService.Instance.GetLocalFile(fileName);
 
                 if (file == null)
                 {
@@ -50,7 +51,7 @@ namespace ExpressBase.Mobile.CustomControls
                     if (resp.HasContent)
                     {
                         this.Source = ImageSource.FromStream(() => { return new MemoryStream(resp.Bytea); });
-                        this.CacheImage(refid, resp.Bytea);
+                        this.CacheImage(fileName, resp.Bytea);
                     }
                 }
                 else
@@ -92,7 +93,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void CacheImage(string filename, byte[] fileBytea)
         {
-            HelperFunctions.WriteFilesLocal(filename + ".jpg", fileBytea);
+            HelperFunctions.WriteFilesLocal(filename, fileBytea);
         }
     }
 }

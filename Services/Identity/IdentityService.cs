@@ -19,9 +19,11 @@ namespace ExpressBase.Mobile.Services
 {
     public class IdentityService : BaseService, IIdentityService
     {
-        public static IdentityService Instance => new IdentityService();
+        private static IdentityService _identity;
 
-        public IdentityService() : base(true) { }
+        public static IdentityService Instance => _identity ??= new IdentityService();
+
+        private IdentityService() : base(true) { }
 
         public async Task<ApiAuthResponse> AuthenticateAsync(string username, string password, bool anonymous = false)
         {
@@ -102,7 +104,7 @@ namespace ExpressBase.Mobile.Services
             return resp;
         }
 
-        public async Task<ApiAuthResponse> VerifyOTP(ApiAuthResponse autheresp, string otp, bool user_verification = false)
+        public async Task<ApiAuthResponse> VerifyOTP(ApiAuthResponse autheresp, string otp)
         {
             RestRequest request = new RestRequest(ApiConstants.VERIFY_OTP, Method.POST);
 
@@ -115,7 +117,6 @@ namespace ExpressBase.Mobile.Services
             request.AddParameter("token", autheresp.TwoFAToken);
             request.AddParameter("authid", autheresp.UserAuthId);
             request.AddParameter("otp", otp);
-            request.AddParameter("user_verification", user_verification);
 
             try
             {
@@ -130,6 +131,30 @@ namespace ExpressBase.Mobile.Services
                 EbLog.Error("2FA verification failed :: " + ex.Message);
             }
 
+            return null;
+        }
+
+        public async Task<ApiAuthResponse> VerifyUserByOTP(string token, string authid, string otp)
+        {
+            RestRequest request = new RestRequest(ApiConstants.VERIFY_OTP, Method.POST);
+
+            request.AddParameter("token", token);
+            request.AddParameter("authid", authid);
+            request.AddParameter("otp", otp);
+            request.AddParameter("user_verification", true);
+
+            try
+            {
+                IRestResponse response = await HttpClient.ExecuteAsync(request);
+                if (response.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("user verification failed :: " + ex.Message);
+            }
             return null;
         }
 

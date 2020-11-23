@@ -16,7 +16,9 @@ namespace ExpressBase.Mobile.Services
 
         Task UpdateLastUser(string username, LoginType logintype = LoginType.SSO);
 
-        Task<ApiAuthResponse> VerifyOTP(ApiAuthResponse autheresp, string otp, bool user_verification = false);
+        Task<ApiAuthResponse> VerifyOTP(ApiAuthResponse autheresp, string otp);
+
+        Task<ApiAuthResponse> VerifyUserByOTP(string token, string authid, string otp);
 
         Task<ApiGenerateOTPResponse> GenerateOTP(ApiAuthResponse autheresp);
 

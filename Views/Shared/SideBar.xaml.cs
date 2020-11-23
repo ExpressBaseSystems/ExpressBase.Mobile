@@ -18,8 +18,6 @@ namespace ExpressBase.Mobile.Views.Shared
 
         public bool HasMyActions => App.Settings.Vendor.HasActions;
 
-        public bool HasOfflineSupport => App.Settings.Vendor.HasOfflineFeature;
-
         public SideBar()
         {
             InitializeComponent();
@@ -94,13 +92,6 @@ namespace ExpressBase.Mobile.Views.Shared
 
             App.RootMaster.IsPresented = false;
             await App.Navigation.NavigateMasterAsync(new MyActions());
-        }
-
-        private void SyncButton_Tapped(object sender, EventArgs e)
-        {
-            App.RootMaster.IsPresented = false;
-            if (App.Navigation.GetCurrentPage() is Home current)
-                current.TriggerSync();
         }
     }
 }

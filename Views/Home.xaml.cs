@@ -68,16 +68,6 @@ namespace ExpressBase.Mobile.Views
             LogoutDialog.Show();
         }
 
-        public void TriggerSync()
-        {
-            if (!Utils.HasInternet)
-            {
-                Utils.Alert_NoInternet();
-                return;
-            }
-            PushConfirmBox.Show();
-        }
-
         public override bool CanRefresh()
         {
             return viewModel.RefreshOnAppearing;

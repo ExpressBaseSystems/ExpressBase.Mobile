@@ -97,11 +97,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     if (response.Status)
                     {
-                        App.Navigation.UpdateViewStack();
-                        await App.Navigation.PopMasterAsync(true);
+                        if (Form.RenderingAsExternal)
+                        {
+                            Page contentPage = (Page)Activator.CreateInstance(Form.RAERedirectionType, Form.RAERedirectionParams);
+                            await App.Navigation.NavigateByRenderer(contentPage);
+                        }
+                        else
+                        {
+                            App.Navigation.UpdateViewStack();
+                            await App.Navigation.PopMasterAsync(true);
+                        }
                     }
-
-                    IsBusy = false;
                     Utils.Toast(response.Message);
 
                     EbLog.Info($"{this.PageName} save status '{response.Status}'");
@@ -112,8 +118,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 EbLog.Info($"Submit() raised some error");
                 EbLog.Error(ex.Message);
-                Device.BeginInvokeOnMainThread(() => IsBusy = false);
             }
+            Device.BeginInvokeOnMainThread(() => IsBusy = false);
         }
 
         protected void InitDefaultValueExpressions()

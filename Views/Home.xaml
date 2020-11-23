@@ -124,11 +124,7 @@
                                   AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
                                   AbsoluteLayout.LayoutFlags="All">
             </control:LoaderIconed>
-            <control:ConfirmBox x:Name="PushConfirmBox"
-                                Title="Confirm"
-                                Message="Do you really want to push your local data to cloud?"
-                                ConfirmClicked="{Binding SyncButtonCommand}">
-            </control:ConfirmBox>
+            
             <control:ConfirmBox x:Name="LogoutDialog"
                                 Title="Confirm"
                                 Message="Do you want to logout?"

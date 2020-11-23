@@ -179,18 +179,7 @@ namespace ExpressBase.Mobile.Models
 
         public string SignUpPage { set; get; }
 
-        public List<EbProfileUserType> Profile { set; get; }
-
         public string Message { set; get; }
-    }
-
-    public class EbProfileUserType
-    {
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
-        public string RefId { get; set; }
     }
 
     public class EbSignUpUserInfo

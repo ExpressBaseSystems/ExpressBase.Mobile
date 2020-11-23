@@ -9,13 +9,22 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MyApplications : ContentPage
     {
-        private bool isRendered;
+        private bool isRendered = false;
 
         private readonly MyApplicationsViewModel viewModel;
 
         private readonly bool isInternal;
 
-        public MyApplications(bool is_internal = false)
+        public MyApplications()
+        {
+            InitializeComponent();
+
+            EbLayout.ShowLoader();
+            BindingContext = viewModel = new MyApplicationsViewModel();
+            EbLayout.HasBackButton = false;
+        }
+
+        public MyApplications(bool is_internal)
         {
             isInternal = is_internal;
             InitializeComponent();
@@ -32,7 +41,6 @@ namespace ExpressBase.Mobile.Views
         protected async override void OnAppearing()
         {
             base.OnAppearing();
-
             try
             {
                 CurrentLocation.Text = App.Settings.CurrentLocation?.LongName.ToLower();
@@ -49,18 +57,22 @@ namespace ExpressBase.Mobile.Views
                     }
                     isRendered = true;
                 }
-                EbLayout.HideLoader();
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
-                EbLayout.HideLoader();
             }
+            EbLayout.HideLoader();
         }
 
         private void ResetButton_Clicked(object sender, EventArgs e)
         {
             ConfimReset.Show();
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return !isInternal;
         }
     }
 }

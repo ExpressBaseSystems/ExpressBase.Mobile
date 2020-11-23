@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.Helpers
                             int id = Convert.ToInt32(row[map.ColumnName]);
                             if (id <= 0)
                             {
-                                EbLog.Info($"formid has ivalid value {id}, switching to new mode");
+                                EbLog.Info($"formid has invalid value {id}, switching to new mode");
                                 renderer = new FormRender(page, vis.LinkFormParameters, row);
                             }
                             else

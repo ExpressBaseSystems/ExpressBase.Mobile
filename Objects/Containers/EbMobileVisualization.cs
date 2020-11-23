@@ -150,7 +150,7 @@ namespace ExpressBase.Mobile
             {
                 dbParameters ??= new List<DbParameter>();
 
-                DbParameter userParam = dbParameters.Find(item => item.ParameterName == "current_userid");
+                DbParameter userParam = dbParameters.Find(item => item.ParameterName == "eb_currentuser_id");
 
                 if (userParam != null)
                 {

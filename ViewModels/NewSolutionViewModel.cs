@@ -40,8 +40,7 @@ namespace ExpressBase.Mobile.ViewModels
                     SolutionName = sid,
                     RootUrl = solutionUrl,
                     SolutionObject = response.SolutionObj,
-                    SignUpPage = response.SignUpPage,
-                    Profile = response.Profile
+                    SignUpPage = response.SignUpPage
                 };
 
                 await solutionService.SetDataAsync(info);
@@ -57,6 +56,20 @@ namespace ExpressBase.Mobile.ViewModels
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
+            }
+        }
+
+        public async Task RedirectToExistingSolution(string rooturl, bool masterPage)
+        {
+            SolutionInfo solInfo = solutionService.GetSolution(rooturl);
+
+            if (solInfo != null)
+            {
+                SolutionInfo copy = solInfo.Clone();
+                await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, copy);
+                App.Settings.CurrentSolution = copy;
+
+                await App.Navigation.NavigateToLogin(masterPage);
             }
         }
     }

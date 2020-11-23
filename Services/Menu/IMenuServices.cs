@@ -7,8 +7,6 @@ namespace ExpressBase.Mobile.Services
 {
     public interface IMenuServices
     {
-        Task<SyncResponse> Sync();
-
         Task<List<MobilePagesWraper>> GetDataAsync();
 
         Task<List<MobilePagesWraper>> UpdateDataAsync();

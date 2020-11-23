@@ -24,7 +24,7 @@ namespace ExpressBase.Mobile.Services
             HttpClient = new RestClient(url);
         }
 
-        public static RestClient GetRestClient(string url)
+        public RestClient GetRestClient(string url)
         {
             return new RestClient(url);
         }

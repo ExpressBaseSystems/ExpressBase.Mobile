@@ -139,19 +139,6 @@
                                 <Label Grid.Column="1" Text="Action Required" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
-                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasOfflineSupport}">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="SyncButton_Tapped"/>
-                            </Frame.GestureRecognizers>
-                            <Grid Padding="0,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30"/>
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Label Text="&#xf021;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="Sync" Style="{StaticResource LinkLabel}"/>
-                            </Grid>
-                        </Frame>
                     </StackLayout>
                     <StackLayout VerticalOptions="End" Padding="0" Spacing="0">
                         <Frame Style="{StaticResource SideBarFrame}">
@@ -164,7 +151,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Label Text="&#xf013;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="Options" Style="{StaticResource LinkLabel}"/>
+                                <Label Grid.Column="1" Text="Settings" Style="{StaticResource LinkLabel}"/>
                             </Grid>
                         </Frame>
                         <Frame Style="{StaticResource SideBarFrame}">

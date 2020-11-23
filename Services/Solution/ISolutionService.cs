@@ -23,5 +23,7 @@ namespace ExpressBase.Mobile.Services
         Task Remove(SolutionInfo info);
 
         bool IsSolutionExist(string url);
+
+        SolutionInfo GetSolution(string surl);
     }
 }

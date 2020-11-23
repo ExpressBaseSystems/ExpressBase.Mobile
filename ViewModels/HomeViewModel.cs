@@ -43,8 +43,6 @@ namespace ExpressBase.Mobile.ViewModels
 
         public bool RefreshOnAppearing => App.Settings.CurrentApplication.HasMenuApi();
 
-        public Command SyncButtonCommand => new Command(async () => await SyncButtonEvent());
-
         public Command MenuItemTappedCommand => new Command<MobilePagesWraper>(async (o) => await ItemTapedEvent(o));
 
         public Command RefreshDataCommand => new Command(async () => await UpdateAsync());
@@ -82,51 +80,20 @@ namespace ExpressBase.Mobile.ViewModels
                 if (!Utils.HasInternet)
                 {
                     Utils.Alert_NoInternet();
+                    return;
                 }
-                else
-                {
-                    this.ObjectList = await menuServices.UpdateDataAsync();
-                    this.IsEmpty = IsObjectsEmpty();
 
-                    await menuServices.DeployFormTables(ObjectList);
-                    EbLog.Info($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
-                }
+                this.ObjectList = await menuServices.UpdateDataAsync();
+                this.IsEmpty = IsObjectsEmpty();
+
+                await menuServices.DeployFormTables(ObjectList);
+                EbLog.Info($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
             }
             catch (Exception ex)
             {
                 EbLog.Error("Home page update data request failed ::" + ex.Message);
             }
             IsRefreshing = false;
-        }
-
-        private async Task SyncButtonEvent()
-        {
-            try
-            {
-                if (IdentityService.IsTokenExpired())
-                {
-                    await App.Navigation.NavigateToLogin(true);
-                }
-                else
-                {
-                    await Task.Run(async () =>
-                    {
-                        Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
-
-                        SyncResponse response = await menuServices.Sync();
-
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            IsBusy = false;
-                            DependencyService.Get<IToast>().Show(response.Message);
-                        });
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("Failed to sync::" + ex.Message);
-            }
         }
 
         private async Task ItemTapedEvent(MobilePagesWraper item)
@@ -158,15 +125,13 @@ namespace ExpressBase.Mobile.ViewModels
                 }
                 else
                     await App.Navigation.NavigateMasterAsync(new Redirect(message));
-
-                isTapped = false;
             }
             catch (Exception ex)
             {
-                isTapped = false;
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
                 EbLog.Error("Failed to open page ::" + ex.Message);
             }
+            isTapped = false;
         }
 
         public async Task LocationSwitched()

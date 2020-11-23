@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Xamarin.Forms;
 
@@ -12,6 +11,8 @@ namespace ExpressBase.Mobile.Models
         public string RootUrl { set; get; }
 
         public string SolutionName { set; get; }
+
+        public string ISolutionId => SolutionObject == null ? SolutionName : (SolutionObject.SolutionID ?? SolutionName);
 
         public ImageSource Logo { set; get; }
 
@@ -24,8 +25,6 @@ namespace ExpressBase.Mobile.Models
         public Eb_Solution SolutionObject { set; get; }
 
         public string SignUpPage { set; get; }
-
-        public List<EbProfileUserType> Profile { set; get; }
 
         public void SetLogo()
         {
@@ -66,9 +65,15 @@ namespace ExpressBase.Mobile.Models
                 RootUrl = this.RootUrl,
                 LastUser = this.LastUser,
                 SolutionObject = this.SolutionObject,
-                SignUpPage = this.SignUpPage,
-                Profile = this.Profile
+                SignUpPage = this.SignUpPage
             };
+        }
+
+        public EbProfileUserType GetUserTypeById(int id)
+        {
+            if (SolutionObject == null)
+                return null;
+            return SolutionObject.GetUserTypeProfile()?.Find(item => item.Id == id);
         }
     }
 }

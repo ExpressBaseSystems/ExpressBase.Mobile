@@ -32,6 +32,8 @@ namespace ExpressBase.Mobile.Services
 
         public string Sid => CurrentSolution?.SolutionName;
 
+        public string ISid => CurrentSolution?.ISolutionId;
+
         public string RootUrl => ApiConstants.PROTOCOL + CurrentSolution?.RootUrl;
 
         public string UserName => CurrentUser?.Email;
@@ -120,10 +122,17 @@ namespace ExpressBase.Mobile.Services
 
         public void InitializeConfig()
         {
-            EbBuildConfig conf = EbSerializers.DeserializeJsonFile<EbBuildConfig>("Configuration.Config.json");
-            Vendor = conf.Current;
-            HelperFunctions.SetResourceValue("Primary_Color", Vendor.GetPrimaryColor());
-            HelperFunctions.SetResourceValue("PrimaryLower_Color", Vendor.GetPrimaryLowerColor());
+            try
+            {
+                EbBuildConfig conf = EbSerializers.DeserializeJsonFile<EbBuildConfig>("Configuration.Config.json");
+                Vendor = conf.Current;
+                HelperFunctions.SetResourceValue("Primary_Color", Vendor.GetPrimaryColor());
+                HelperFunctions.SetResourceValue("PrimaryLower_Color", Vendor.GetPrimaryLowerColor());
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public void Reset()

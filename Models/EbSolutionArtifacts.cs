@@ -20,15 +20,35 @@ namespace ExpressBase.Mobile.Models
 
         public bool IsMobileSignupEnabled(out string refid)
         {
-            bool exist = false;
             refid = null;
+
+            if (GetMobileSettings(out MobileAppSettings settings))
+            {
+                refid = settings.SignUpPageRefId;
+                return settings.IsSignupEnabled();
+            }
+            return false;
+        }
+
+        public bool GetMobileSettings(out MobileAppSettings settings)
+        {
+            settings = null;
 
             if (SolutionSettings != null && SolutionSettings.MobileAppSettings != null)
             {
-                refid = SolutionSettings.MobileAppSettings.SignUpPageRefId;
-                exist = SolutionSettings.MobileAppSettings.IsSignupEnabled();
+                settings = SolutionSettings.MobileAppSettings;
+                return true;
             }
-            return exist;
+            return false;
+        }
+
+        public List<EbProfileUserType> GetUserTypeProfile()
+        {
+            if (GetMobileSettings(out MobileAppSettings settings))
+            {
+                return settings.UserTypeForms;
+            }
+            return null;
         }
     }
 
@@ -41,7 +61,7 @@ namespace ExpressBase.Mobile.Models
     {
         public string SignUpPageRefId { set; get; }
 
-        public List<string> ProfileSetupPages { get; set; }
+        public List<EbProfileUserType> UserTypeForms { get; set; }
 
         public bool IsSignupEnabled()
         {
@@ -54,5 +74,19 @@ namespace ExpressBase.Mobile.Models
         NORMAL = 1,
         PRIMARY = 2,
         REPLICA = 3
+    }
+
+    public class EbProfileUserType
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string RefId { get; set; }
+
+        public bool HasUserTypeForm()
+        {
+            return !string.IsNullOrEmpty(RefId);
+        }
     }
 }

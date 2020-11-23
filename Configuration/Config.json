@@ -83,13 +83,33 @@
       "PoweredBy": "Powered by EXPRESSbase",
       "DefaultLoginType": "CREDENTIALS",
       "Content": {
-        "NewSolution": {
-          "WallLabel": "Add new Solution",
-          "TextBoxPlaceHolder": "Enter solution URL"
+        "Login": {
+          "NewSolutionButtonText": "Add new Solution",
+          "LoginButtonText": "Login"
         },
-        "MySolutions": {
-          "Title": "Switch Solution"
+        "About": {
+          "VendorName": "Kudumbashree Community Loans"
         },
+        "WelcomePage": {
+          "Description": "Have a nice time with the community loans mobile app!"
+        }
+      }
+    },
+    "Tiwi": {
+      "BuildType": "Embedded",
+      "SolutionURL": "alarz.eb-test.cloud",
+      "AllowNotifications": false,
+      "PrimaryColor": "a2217d",
+      "PrimaryLowerColor": "a2217d",
+      "HasOfflineFeature": false,
+      "HasActions": true,
+      "HasAppSwitcher": true,
+      "HasLocationswitcher": true,
+      "HasSolutionSwitcher": false,
+      "Logo": "icon_ks.png",
+      "PoweredBy": "Powered by EXPRESSbase",
+      "DefaultLoginType": "CREDENTIALS",
+      "Content": {
         "Login": {
           "NewSolutionButtonText": "Add new Solution",
           "LoginButtonText": "Login"
