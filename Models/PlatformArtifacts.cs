@@ -254,15 +254,7 @@ namespace ExpressBase.Mobile.Models
 
         public byte[] Bytea { set; get; }
 
-        public HttpStatusCode StatusCode { set; get; }
-
-        public bool HasContent
-        {
-            get
-            {
-                return (Bytea != null && Bytea.Length > 0);
-            }
-        }
+        public bool HasContent => (Bytea != null && Bytea.Length > 0);
     }
 
     public class EbApiMeta

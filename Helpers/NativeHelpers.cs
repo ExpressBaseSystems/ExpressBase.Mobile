@@ -97,14 +97,6 @@ namespace ExpressBase.Mobile.Helpers
 
         void StopRecording();
 
-        Task<int> StartPlaying(byte[] audioFile, Button playButton);
-
-        void StopPlaying();
-
         event EbEventHandler OnRecordingCompleted;
-
-        event EbEventHandler OnPlayerCompleted;
-
-        int GetPlayerPosition();
     }
 }

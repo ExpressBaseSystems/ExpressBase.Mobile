@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -82,8 +83,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 object data = masterRow[ctrl.Name];
                 try
                 {
-                    if (ctrl is EbMobileFileUpload)
-                        this.SetFileData(ctrl as EbMobileFileUpload, data);
+                    if (ctrl is IFileUploadControl)
+                    {
+                        this.SetFileData(ctrl, data);
+                    }
                     else if (ctrl is ILinesEnabled line)
                     {
                         EbDataTable lines = this.formData.Tables.Find(table => table.TableName == line.TableName);
@@ -102,26 +105,21 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        private void SetFileData(EbMobileFileUpload ctrl, object data)
+        private void SetFileData(EbMobileControl ctrl, object data)
         {
             FUPSetValueMeta fup = new FUPSetValueMeta
             {
                 TableName = this.Form.TableName,
-                RowId = this.RowId
+                RowId = this.RowId,
+                FileRefIds = data?.ToString()
             };
 
-            if (ctrl is EbMobileDisplayPicture)
-            {
-                fup.Files.Add(new FileMetaInfo
-                {
-                    FileCategory = EbFileCategory.Images,
-                    FileRefId = data != null ? Convert.ToInt32(data) : 0
-                });
-            }
-            else
+            if (ctrl is EbMobileFileUpload)
             {
                 if (this.filesData != null && this.filesData.ContainsKey(ctrl.Name))
+                {
                     fup.Files.AddRange(this.filesData[ctrl.Name]);
+                }
             }
             ctrl.SetValue(fup);
         }

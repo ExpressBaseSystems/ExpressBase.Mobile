@@ -108,6 +108,8 @@ namespace ExpressBase.Mobile
 
         public bool DefaultExprEvaluated { set; get; }
 
+        public object OldValue { set; get; }
+
         public virtual object GetValue() { return null; }
 
         public virtual T GetValue<T>() { return (T)GetValue(); }

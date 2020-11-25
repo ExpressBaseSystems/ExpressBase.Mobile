@@ -1,8 +1,10 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.Views.Base;
+using System;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -48,9 +50,25 @@ namespace ExpressBase.Mobile
 
         public override void SetValue(object value)
         {
-            if (value != null)
+            if (value != null && value is FUPSetValueMeta fupMeta)
             {
-                XamControl.SetValue(this.NetworkType, value as FUPSetValueMeta, this.Name);
+                try
+                {
+                    if (!string.IsNullOrEmpty(fupMeta.FileRefIds))
+                    {
+                        fupMeta.Files.Add(new FileMetaInfo
+                        {
+                            FileCategory = EbFileCategory.Images,
+                            FileRefId = Convert.ToInt32(fupMeta.FileRefIds)
+                        });
+
+                        XamControl.SetValue(this.NetworkType, fupMeta, this.Name);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    EbLog.Error("[DisplayPicture] setvalue error, " + ex.Message);
+                }
             }
         }
 

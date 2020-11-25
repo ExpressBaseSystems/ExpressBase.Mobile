@@ -333,6 +333,8 @@ namespace ExpressBase.Mobile.Models
 
         public List<FileMetaInfo> Files { set; get; }
 
+        public string FileRefIds { set; get; }
+
         public FUPSetValueMeta()
         {
             Files = new List<FileMetaInfo>();

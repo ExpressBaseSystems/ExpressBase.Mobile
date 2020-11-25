@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
 using System.Timers;
@@ -13,8 +14,6 @@ namespace ExpressBase.Mobile.CustomControls.Views
         public string Name { set; get; }
 
         public string ActionType { set; get; }
-
-        public Slider AudioSlider { set; get; }
     }
 
     [XamlCompilation(XamlCompilationOptions.Compile)]
@@ -22,15 +21,15 @@ namespace ExpressBase.Mobile.CustomControls.Views
     {
         public bool MultiSelect { set; get; }
 
-        private const string ACTION_START = "start";
+        private const string AUDIO_TYPE = ".mp3";
 
-        private const string ACTION_STOP = "stop";
+        const string ACTION_START = "start";
+
+        const string ACTION_STOP = "stop";
 
         readonly IEbAudioHelper audioHelper;
 
         Timer recordingTimer;
-
-        Timer playerTimer;
 
         int elapsedMinutes = 0;
 
@@ -40,15 +39,19 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         private readonly Dictionary<string, byte[]> audioFiles = new Dictionary<string, byte[]>();
 
+        private readonly Dictionary<string, View> audioTemplates = new Dictionary<string, View>();
+
+        private readonly List<string> uploadedFiles = new List<string>();
+
         public AudioRecorder(EbMobileAudioInput audio)
         {
             InitializeComponent();
 
+            MultiSelect = audio.MultiSelect;
             audioHelper = DependencyService.Get<IEbAudioHelper>();
             double max = audio.MaximumDuration <= maxDuration && audio.MaximumDuration > 0 ? audio.MaximumDuration : maxDuration;
             audioHelper.MaximumDuration = max * 60000;
             audioHelper.OnRecordingCompleted += OnRecordingCompleted;
-            audioHelper.OnPlayerCompleted += OnPlayerCompleted;
         }
 
         private void OnRecordingCompleted(object sender, EventArgs e)
@@ -64,15 +67,6 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 AddAudioFrame(note);
             }
             RecordingCompleted();
-        }
-
-        private void OnPlayerCompleted(object sender, EventArgs e)
-        {
-            XAudioButton audioButton = (XAudioButton)sender;
-            audioButton.AudioSlider.Value = 0;
-            SetPlayButtonStyle(audioButton);
-            playerTimer?.Stop();
-            playerTimer = null;
         }
 
         private async void RecordButton_Clicked(object sender, EventArgs e)
@@ -123,80 +117,31 @@ namespace ExpressBase.Mobile.CustomControls.Views
             elapsedMinutes = elapsedSeconds = 0;
         }
 
-        private void AddAudioFrame(byte[] note)
+        private void AddAudioFrame(byte[] note, string name = null)
         {
-            string name = Guid.NewGuid().ToString("N");
-            audioFiles.Add(name, note);
+            AudioTemplate template = new AudioTemplate(note, name);
+            template.OnDelete += TemplateOnDelete;
 
-            Frame container = new Frame
-            {
-                Style = (Style)HelperFunctions.GetResourceValue("AudioRecordFrame")
-            };
-            var containerInner = new StackLayout { Orientation = Xamarin.Forms.StackOrientation.Horizontal };
+            View view = template.CreateView();
+            audioTemplates.Add(template.Name, view);
 
-            Slider audioSlider = new Slider()
-            {
-                Style = (Style)HelperFunctions.GetResourceValue("AudioPlaySlider")
-            };
-
-            XAudioButton audioBtn = new XAudioButton
-            {
-                Style = (Style)HelperFunctions.GetResourceValue("AudioPlayButton"),
-                AudioSlider = audioSlider,
-                Name = name,
-                Text = "\uf04b",
-                ActionType = ACTION_START,
-            };
-            audioBtn.Clicked += AudioBtn_Clicked;
-
-            Label lengthLabel = new Label
-            {
-                VerticalOptions = LayoutOptions.Center,
-                Text = $"{elapsedMinutes}:{elapsedSeconds}",
-                HorizontalOptions = LayoutOptions.End,
-                FontSize = 13
-            };
-
-            containerInner.Children.Add(audioBtn);
-            containerInner.Children.Add(audioSlider);
-            containerInner.Children.Add(lengthLabel);
-
-            container.Content = containerInner;
-            RecordList.Children.Add(container);
+            RecordList.Children.Add(view);
         }
 
-        private async void AudioBtn_Clicked(object sender, EventArgs e)
+        private void TemplateOnDelete(object sender, EventArgs e)
         {
-            XAudioButton btn = (XAudioButton)sender;
-            byte[] audioFile = audioFiles[btn.Name];
+            string templateName = sender.ToString();
 
-            if (btn.ActionType == ACTION_START)
+            if (audioTemplates.TryGetValue(templateName, out var view))
             {
-                int duration = await audioHelper.StartPlaying(audioFile, btn);
-                SetPauseButtonStyle(btn);
+                audioTemplates.Remove(templateName);
+                RecordList.Children.Remove(view);
 
-                btn.AudioSlider.Maximum = duration;
-                btn.AudioSlider.Minimum = 0;
-                btn.AudioSlider.Value = audioHelper.GetPlayerPosition();
-                StartSlidingTimer(btn.AudioSlider);
+                if (audioFiles.ContainsKey(templateName))
+                {
+                    audioFiles.Remove(templateName);
+                }
             }
-            else if (btn.ActionType == ACTION_STOP)
-            {
-                audioHelper.StopPlaying();
-                SetPlayButtonStyle(btn);
-            }
-        }
-
-        private void SetPlayButtonStyle(XAudioButton btn)
-        {
-            btn.Text = "\uf04b";
-            btn.ActionType = ACTION_START;
-        }
-
-        private void SetPauseButtonStyle(XAudioButton btn)
-        {
-            btn.Text = "\uf04c";
-            btn.ActionType = ACTION_STOP;
         }
 
         private void StartRecordingTimer()
@@ -218,26 +163,18 @@ namespace ExpressBase.Mobile.CustomControls.Views
             recordingTimer.Start();
         }
 
-        private void StartSlidingTimer(Slider slider)
-        {
-            playerTimer = new Timer(1);
-            playerTimer.Elapsed += (sender, e) =>
-            {
-                Device.BeginInvokeOnMainThread(() => slider.Value = audioHelper.GetPlayerPosition());
-            };
-            playerTimer.Start();
-        }
-
         public List<FileWrapper> GetFiles(string ctrlName)
         {
             List<FileWrapper> files = new List<FileWrapper>();
 
             foreach (var pair in audioFiles)
             {
+                if (uploadedFiles.Contains(pair.Key)) continue;
+
                 files.Add(new FileWrapper
                 {
                     Name = pair.Key,
-                    FileName = pair.Key + ".mpeg4",
+                    FileName = pair.Key + AUDIO_TYPE,
                     Bytea = pair.Value,
                     ControlName = ctrlName
                 });
@@ -245,9 +182,42 @@ namespace ExpressBase.Mobile.CustomControls.Views
             return files;
         }
 
-        public async void SetValue(NetworkMode nw, FUPSetValueMeta meta, string ctrlname)
+        public async void SetValue(NetworkMode network, FUPSetValueMeta meta, string ctrlname)
         {
-            
+            if (network == NetworkMode.Offline)
+            {
+                string pattern = $"{meta.TableName}-{meta.RowId}-{ctrlname}*";
+
+                List<FileWrapper> Files = HelperFunctions.GetFilesByPattern(pattern);
+
+                foreach (FileWrapper file in Files)
+                {
+                    string name = Guid.NewGuid().ToString("N");
+                    uploadedFiles.Add(name);
+                    this.AddAudioFrame(file.Bytea, name);
+                }
+            }
+            else if (network == NetworkMode.Online)
+            {
+                foreach (FileMetaInfo info in meta.Files)
+                {
+                    try
+                    {
+                        ApiFileResponse resp = await FormDataServices.Instance.GetFile(info.FileCategory, $"{info.FileRefId + AUDIO_TYPE}");
+
+                        if (resp != null && resp.HasContent)
+                        {
+                            string name = Guid.NewGuid().ToString("N");
+                            uploadedFiles.Add(name);
+                            this.AddAudioFrame(resp.Bytea, name);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EbLog.Error("GetFile api error ::" + ex.Message);
+                    }
+                }
+            }
         }
     }
 }

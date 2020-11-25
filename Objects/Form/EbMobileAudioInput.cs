@@ -1,7 +1,10 @@
-﻿using ExpressBase.Mobile.CustomControls.Views;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls.Views;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,8 +19,6 @@ namespace ExpressBase.Mobile
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
 
         private AudioRecorder recorder;
-
-        private List<FileMetaInfo> uploadedFileRef;
 
         public override void InitXControl(FormMode mode, NetworkMode network)
         {
@@ -38,30 +39,36 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
-            List<FileWrapper> files = recorder.GetFiles(this.Name);
-
-            if (uploadedFileRef != null && files.Any())
-            {
-                foreach (var meta in uploadedFileRef)
-                {
-                    files.Add(new FileWrapper
-                    {
-                        FileRefId = meta.FileRefId,
-                        FileName = meta.FileName,
-                        IsUploaded = true,
-                        ControlName = Name,
-                    });
-                }
-            }
-            return files;
+            return recorder.GetFiles(this.Name);
         }
 
         public override void SetValue(object value)
         {
-            if (value != null)
+            if (value != null && value is FUPSetValueMeta fupMeta)
             {
-                uploadedFileRef = (value as FUPSetValueMeta).Files;
-                recorder.SetValue(this.NetworkType, value as FUPSetValueMeta, this.Name);
+                try
+                {
+                    if (!string.IsNullOrEmpty(fupMeta.FileRefIds))
+                    {
+                        this.OldValue = fupMeta.FileRefIds;
+
+                        string[] refids = fupMeta.FileRefIds.Split(CharConstants.COMMA);
+
+                        foreach (string id in refids)
+                        {
+                            fupMeta.Files.Add(new FileMetaInfo
+                            {
+                                FileCategory = EbFileCategory.Audio,
+                                FileRefId = Convert.ToInt32(id)
+                            });
+                        }
+                        recorder.SetValue(this.NetworkType, fupMeta, this.Name);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Error("[AudioInput] setvalue error, " + ex.Message);
+                }
             }
         }
 

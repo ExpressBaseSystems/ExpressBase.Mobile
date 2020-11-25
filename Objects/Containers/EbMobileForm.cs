@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -92,11 +93,11 @@ namespace ExpressBase.Mobile
                 MobileFormData data = await this.GetFormData(rowId);
                 data.SortByMaster();
 
-                if(NetworkType == NetworkMode.Online)
+                if (NetworkType == NetworkMode.Online)
                 {
                     await this.SaveToCloudDB(data, response, rowId);
                 }
-                else if(NetworkType == NetworkMode.Offline)
+                else if (NetworkType == NetworkMode.Offline)
                 {
                     await this.SaveToLocalDB(data, response, rowId);
                 }
@@ -148,8 +149,7 @@ namespace ExpressBase.Mobile
         {
             if (ctrl is EbMobileFileUpload fup)
             {
-                List<FileWrapper> files = fup.GetValue() as List<FileWrapper>;
-                table.Files.Add(ctrl.Name, files);
+                table.Files.Add(ctrl.Name, fup.GetValue<List<FileWrapper>>());
             }
             else if (ctrl is EbMobileDisplayPicture || ctrl is EbMobileAudioInput)
             {
@@ -189,20 +189,26 @@ namespace ExpressBase.Mobile
 
         private async Task SendAndFillFupPersisant(EbMobileControl ctrl, MobileTableRow row)
         {
-            List<FileWrapper> imageFiles = ctrl.GetValue<List<FileWrapper>>();
+            List<FileWrapper> Files = ctrl.GetValue<List<FileWrapper>>();
 
-            if (!imageFiles.Any()) return;
+            if (!Files.Any()) return;
 
             try
             {
-                List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(imageFiles);
+                List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(Files);
                 if (resp.Any())
                 {
                     MobileTableColumn column = ctrl.GetMobileTableColumn();
                     List<int> refIds = (from item in resp where item.FileRefId > 0 select item.FileRefId).ToList();
                     if (refIds.Count > 0)
                     {
-                        column.Value = string.Join<int>(",", refIds);
+                        string uploadedRefs = string.Join<int>(",", refIds);
+
+                        if (ctrl is EbMobileAudioInput audio && audio.MultiSelect)
+                        {
+                            if (audio.OldValue != null) uploadedRefs = audio.OldValue.ToString() + CharConstants.COMMA + uploadedRefs;
+                        }
+                        column.Value = uploadedRefs;
                         row.Columns.Add(column);
                     }
                 }

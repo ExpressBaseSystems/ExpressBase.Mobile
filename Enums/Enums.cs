@@ -103,7 +103,8 @@ namespace ExpressBase.Mobile.Enums
         //ImageSmall,
         //ImageMed,
         //ImageLarge,
-        LocationFile = 5
+        LocationFile = 5,
+        Audio = 6
     }
 
     public enum BuildEnvironement

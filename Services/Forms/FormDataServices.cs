@@ -142,7 +142,7 @@ namespace ExpressBase.Mobile.Services
 
                 IRestResponse response = await HttpClient.ExecuteAsync(request);
 
-                if (response.StatusCode == HttpStatusCode.OK)
+                if (response.IsSuccessful)
                     resp = JsonConvert.DeserializeObject<ApiFileResponse>(response.Content);
             }
             catch (Exception ex)
