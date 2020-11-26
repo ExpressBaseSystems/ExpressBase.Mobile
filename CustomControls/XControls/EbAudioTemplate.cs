@@ -5,11 +5,13 @@ using System;
 using System.IO;
 using Xamarin.Forms;
 
-namespace ExpressBase.Mobile.CustomControls.Views
+namespace ExpressBase.Mobile.CustomControls
 {
-    public class AudioTemplate
+    public class EbAudioTemplate
     {
         public string Name { set; get; }
+
+        public bool AllowDelete { set; get; } = true;
 
         public event EbEventHandler OnDelete;
 
@@ -25,12 +27,14 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         readonly ISimpleAudioPlayer player;
 
-        public AudioTemplate()
+        bool paused;
+
+        public EbAudioTemplate()
         {
             player = CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
         }
 
-        public AudioTemplate(byte[] audio, string name = null)
+        public EbAudioTemplate(byte[] audio, string name = null)
         {
             player = CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
             player.Load(ByteToStream(audio));
@@ -67,20 +71,24 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 FontSize = 13
             };
 
-            Button delete = new Button
-            {
-                VerticalOptions = LayoutOptions.Center,
-                Style = (Style)HelperFunctions.GetResourceValue("AudioPlayButton"),
-                HorizontalOptions = LayoutOptions.End,
-                Text = "\uf1f8",
-                TextColor = Color.Red
-            };
-            delete.Clicked += Delete_Clicked;
-
             containerInner.Children.Add(playButton);
             containerInner.Children.Add(slider);
             containerInner.Children.Add(lengthLabel);
-            containerInner.Children.Add(delete);
+
+            if (AllowDelete)
+            {
+                Button delete = new Button
+                {
+                    VerticalOptions = LayoutOptions.Center,
+                    Style = (Style)HelperFunctions.GetResourceValue("AudioPlayButton"),
+                    HorizontalOptions = LayoutOptions.End,
+                    Text = "\uf1f8",
+                    TextColor = Color.Red
+                };
+
+                delete.Clicked += Delete_Clicked;
+                containerInner.Children.Add(delete);
+            }
 
             container.Content = containerInner;
 
@@ -96,6 +104,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
         {
             if (playButton.ActionType == ACTION_START)
             {
+                paused = false;
                 player.Play();
                 slider.Maximum = player.Duration;
                 slider.IsEnabled = player.CanSeek;
@@ -104,6 +113,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
             }
             else if (playButton.ActionType == ACTION_STOP)
             {
+                paused = true;
                 player.Pause();
                 SetPlayButtonStyle();
             }
@@ -117,13 +127,18 @@ namespace ExpressBase.Mobile.CustomControls.Views
             slider.Value = player.CurrentPosition;
             slider.ValueChanged += SliderPostionValueChanged;
 
-            if (!player.IsPlaying)
+            if (!player.IsPlaying && !paused)
             {
-                slider.ClearValue(Slider.ValueProperty);
-                lengthLabel.Text = $"0/{(int)player.Duration}";
-                SetPlayButtonStyle();
+                OnPlayerCompletes();
             }
             return player.IsPlaying;
+        }
+
+        void OnPlayerCompletes()
+        {
+            slider.ClearValue(Slider.ValueProperty);
+            lengthLabel.Text = $"0/{(int)player.Duration}";
+            SetPlayButtonStyle();
         }
 
         private void SetPlayButtonStyle()

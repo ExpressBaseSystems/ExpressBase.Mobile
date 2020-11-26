@@ -12,7 +12,7 @@ namespace ExpressBase.Mobile.Services
 
         Task SetDataAsync(SolutionInfo info);
 
-        Task SaveLogoAsync(string solutionname, byte[] imageByte);
+        void SaveLogo(string solutionname, byte[] imageByte);
 
         Task ClearCached();
 

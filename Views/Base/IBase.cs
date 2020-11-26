@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ExpressBase.Mobile.CustomControls.XControls;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views.Base
@@ -27,5 +28,10 @@ namespace ExpressBase.Mobile.Views.Base
     public interface IFormRenderer
     {
         void ShowFullScreenImage(ImageSource source);
+    }
+
+    public interface IListRenderer
+    {
+        void ShowAudioFiles(EbPlayButton playButton);
     }
 }

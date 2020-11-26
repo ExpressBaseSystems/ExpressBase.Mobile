@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile.ViewModels
                 SolutionLogo = CommonServices.GetLogo(App.Settings.Sid);
                 await HelperFunctions.CreateDirectory("FILES");
 
-                EbLog.Info($"Current Application :'{PageTitle}' with page count of {this.ObjectList.Count}.");
+                LogApplicationInfo();
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace ExpressBase.Mobile.ViewModels
                 this.IsEmpty = IsObjectsEmpty();
 
                 await menuServices.DeployFormTables(ObjectList);
-                EbLog.Info($"Current Application :'{PageTitle}' refreshed with page count of {this.ObjectList.Count}.");
+                LogApplicationInfo();
             }
             catch (Exception ex)
             {
@@ -103,12 +103,16 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 EbMobilePage page = EbPageFinder.GetPage(item.RefId);
 
-                if (page == null) return;
+                if (page == null)
+                {
+                    Utils.Toast("page not found");
+                    EbLog.Error($"requested page with refid '{item.RefId}' not found");
+                    return;
+                }
 
                 isTapped = true;
 
-                bool render = true;
-                string message = string.Empty;
+                bool render = true; string message = string.Empty;
 
                 if (page.Container is EbMobileForm form)
                 {
@@ -120,6 +124,8 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (render)
                 {
+                    EbLog.Info($"Rendering page '{page.Name}'");
+
                     ContentPage renderer = EbPageFinder.GetPageByContainer(page);
                     await App.Navigation.NavigateMasterAsync(renderer);
                 }
@@ -143,6 +149,14 @@ namespace ExpressBase.Mobile.ViewModels
         public bool IsObjectsEmpty()
         {
             return !ObjectList.Any();
+        }
+
+        private void LogApplicationInfo()
+        {
+            EbLog.Info($"Current solution : '{App.Settings.Sid}'");
+            EbLog.Info($"Current Application :'{PageTitle}'");
+            int objeCount = ObjectList == null ? 0 : ObjectList.Count;
+            EbLog.Info($"Rendering total of {objeCount} pages with location id: {App.Settings.CurrentLocation.LocId}");
         }
     }
 }

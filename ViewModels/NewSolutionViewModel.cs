@@ -50,7 +50,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (response.Logo != null)
                 {
-                    await solutionService.SaveLogoAsync(sid, response.Logo);
+                    solutionService.SaveLogo(sid, response.Logo);
                 }
             }
             catch (Exception ex)

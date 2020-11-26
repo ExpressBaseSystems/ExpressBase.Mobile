@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         public bool IsResetVisible => App.Settings.Vendor.HasSolutionSwitcher;
 
-        public bool IsSignUpVisible { set; get; }
+        public bool IsSignUpVisible => App.Settings.CurrentSolution.SignupEnabled();
 
         protected readonly IIdentityService Service;
 
@@ -36,8 +36,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         public LoginBaseViewModel()
         {
-            Service = IdentityService.Instance;
-            IsSignUpVisible = App.Settings.CurrentSolution.SignupEnabled();
+            Service = IdentityService.Current;
             LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
         }
 
@@ -46,9 +45,22 @@ namespace ExpressBase.Mobile.ViewModels.Login
             return Task.FromResult(false);
         }
 
-        protected virtual Task ResendOTP()
+        private async Task ResendOTP()
         {
-            return Task.FromResult(false);
+            try
+            {
+                ApiGenerateOTPResponse resp = await Service.GenerateOTP(AuthResponse);
+
+                if (resp != null && resp.IsValid)
+                    Utils.Toast("OTP sent");
+                else
+                    Utils.Toast("Unable to resend otp");
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("failed to regenerate otp :: " + ex.Message);
+                Utils.Toast("Unable to resend otp");
+            }
         }
 
         private async Task GoToSignUp()
@@ -69,11 +81,14 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
                 if (stack.Any())
                 {
+                    await App.Navigation.NavigateAsync(page);
+
                     Page last = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
 
-                    await App.Navigation.NavigateAsync(page);
                     if (last != null)
+                    {
                         Application.Current.MainPage.Navigation.RemovePage(last);
+                    }
                 }
             }
             catch (Exception ex)
@@ -96,10 +111,14 @@ namespace ExpressBase.Mobile.ViewModels.Login
                 });
 
                 if (App.Settings.Vendor.AllowNotifications)
+                {
                     await NotificationService.Instance.UpdateNHRegistration();
+                }
 
                 if (data != null)
+                {
                     await Service.Navigate(data);
+                }
             }
             catch (Exception ex)
             {

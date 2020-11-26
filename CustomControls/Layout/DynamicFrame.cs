@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -161,6 +162,9 @@ namespace ExpressBase.Mobile.CustomControls
                 case DataColumnRenderType.Email:
                     view = this.DC2Email(dc, value);
                     break;
+                case DataColumnRenderType.Audio:
+                    view = this.DC2Audio(dc, value);
+                    break;
                 default:
                     Label label = new Label { Text = dc.GetContent(value) };
                     this.ApplyLabelStyle(label, dc.Font);
@@ -211,17 +215,11 @@ namespace ExpressBase.Mobile.CustomControls
         private void SetFontDecoration(EbFont font, Label label)
         {
             if (font.Underline)
-            {
                 label.TextDecorations = TextDecorations.Underline;
-            }
             else if (font.Strikethrough)
-            {
                 label.TextDecorations = TextDecorations.Strikethrough;
-            }
             else
-            {
                 label.TextDecorations = TextDecorations.None;
-            }
         }
 
         private void SetHorrizontalAlign(MobileHorrizontalAlign align, View view)
@@ -314,7 +312,7 @@ namespace ExpressBase.Mobile.CustomControls
             };
             ApplyLabelStyle(label, dc.Font);
 
-            var gesture = new TapGestureRecognizer();
+            TapGestureRecognizer gesture = new TapGestureRecognizer();
             gesture.Tapped += async (sender, args) => await NativeLauncher.OpenEmailAsync(value?.ToString());
             label.GestureRecognizers.Add(gesture);
 
@@ -324,6 +322,35 @@ namespace ExpressBase.Mobile.CustomControls
         public async Task ButtonControlClick(EbMobileButton button)
         {
             await button.Navigate(this.DataRow);
+        }
+
+        private View DC2Audio(EbMobileDataColumn dc, object value)
+        {
+            Color color = value == null ? Color.FromHex("#cccccc") : Color.Green;
+
+            EbPlayButton audioButton = new EbPlayButton
+            {
+                Style = (Style)HelperFunctions.GetResourceValue("ListViewAudioButton"),
+                TextColor = color,
+                BorderColor = color,
+                IsEnabled = (value != null)
+            };
+
+            if (value != null)
+            {
+                audioButton.SetValue(value);
+            }
+
+            audioButton.Clicked += (sender, e) =>
+            {
+                var current = App.Navigation.GetCurrentPage();
+                if (current is IListRenderer ls)
+                {
+                    ls.ShowAudioFiles((EbPlayButton)sender);
+                }
+            };
+
+            return audioButton;
         }
     }
 }

@@ -12,16 +12,15 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services.Navigation
 {
-    public class NavigationService : INavigationService
+    public sealed class NavigationService : INavigationService
     {
-        public static NavigationService Instance { get; set; }
+        private static NavigationService _current;
+
+        public static NavigationService Current => _current ??= new NavigationService();
 
         private Application CurrentApplication => Application.Current;
 
-        public NavigationService()
-        {
-            Instance = this;
-        }
+        private NavigationService() { }
 
         public async Task InitializeAppAsync(EbNFData payload)
         {

@@ -1,5 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.CustomControls.Views;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;

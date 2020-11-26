@@ -84,4 +84,11 @@ namespace ExpressBase.Mobile.CustomControls
             Value = value;
         }
     }
+
+    public class XAudioButton : Button
+    {
+        public string Name { set; get; }
+
+        public string ActionType { set; get; }
+    }
 }

@@ -12,7 +12,8 @@
                             LoaderVisibilty="{Binding IsBusy}"
                             HasToolBar="False">
             <control:EbCPLayout.Content>
-                <Grid BackgroundColor="White" VerticalOptions="FillAndExpand">
+                <Grid BackgroundColor="White"
+                      VerticalOptions="FillAndExpand">
                     <ScrollView x:Name="scrollView">
                         <StackLayout VerticalOptions="FillAndExpand">
 
@@ -66,11 +67,11 @@
                                            Style="{StaticResource LabelStyle}">
                                     </Label>
                                     <control:EbXTextBox x:Name="UserName"
-                                                     HeightRequest="55"
-                                                     XBackgroundColor="#f1f6fb"
-                                                     EnableFocus="True"
-                                                     BorderOnFocus="{DynamicResource Primary_Color}"
-                                                     Text="{Binding UserName}">
+                                                        HeightRequest="55"
+                                                        XBackgroundColor="#f1f6fb"
+                                                        EnableFocus="True"
+                                                        BorderOnFocus="{DynamicResource Primary_Color}"
+                                                        Text="{Binding UserName}">
                                     </control:EbXTextBox>
                                 </StackLayout>
                                 <!--  next button  -->
@@ -154,7 +155,6 @@
                     </control:TwoFAView>
                 </Grid>
             </control:EbCPLayout.Content>
-
         </control:EbCPLayout>
     </ContentPage.Content>
 </ContentPage>

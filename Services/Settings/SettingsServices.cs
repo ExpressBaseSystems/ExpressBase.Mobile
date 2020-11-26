@@ -12,8 +12,14 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class SettingsServices : BaseService, ISettingsService
+    public sealed class SettingsServices : BaseService, ISettingsService
     {
+        private static SettingsServices _current;
+
+        public static SettingsServices Current => _current ??= new SettingsServices();
+
+        private SettingsServices() { }
+
         public SolutionInfo CurrentSolution { set; get; }
 
         public User CurrentUser { set; get; }

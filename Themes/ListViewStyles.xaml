@@ -25,6 +25,28 @@
         <Setter Property="HorizontalOptions" Value="EndAndExpand"></Setter>
     </Style>
 
+    <Style TargetType="Button"
+           x:Key="ListViewAudioButton">
+        <Setter Property="BackgroundColor"
+                Value="White"></Setter>
+        <Setter Property="BorderWidth"
+                Value="1"></Setter>
+        <Setter Property="FontFamily"
+                Value="{DynamicResource FontAwesome}"></Setter>
+        <Setter Property="Text"
+                Value="&#xf04b;"></Setter>
+        <Setter Property="WidthRequest"
+                Value="30"></Setter>
+        <Setter Property="HeightRequest"
+                Value="30"></Setter>
+        <Setter Property="CornerRadius"
+                Value="15"></Setter>
+        <Setter Property="Padding"
+                Value="0"></Setter>
+        <Setter Property="HorizontalOptions"
+                Value="EndAndExpand"></Setter>
+    </Style>
+
     <Style TargetType="Label" x:Key="ListViewLinkIconStyle">
         <Setter Property="FontSize" Value="18"></Setter>
         <Setter Property="VerticalOptions" Value="Center"></Setter>

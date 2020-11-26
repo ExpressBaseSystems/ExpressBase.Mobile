@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.CustomControls.Views;
+using ExpressBase.Mobile.CustomControls.XControls;
 using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using ExpressBase.Mobile.Views.Base;
 using System;
@@ -144,6 +145,25 @@ namespace ExpressBase.Mobile.Views.Dynamic
         private bool ToolBarBackButtonPressed(object sender, EventArgs e)
         {
             return this.BeforeBackButtonPressed();
+        }
+
+        public override void ShowAudioFiles(EbPlayButton playButton)
+        {
+            if (playButton.AudioFiles == null)
+                return;
+
+            AudioPopup.Children.Clear();
+
+            foreach (var file in playButton.AudioFiles)
+            {
+                EbAudioTemplate template = new EbAudioTemplate(file.Bytea)
+                {
+                    AllowDelete = false
+                };
+                AudioPopup.Children.Add(template.CreateView());
+            }
+
+            AudioPopupView.Show();
         }
     }
 }

@@ -225,6 +225,14 @@
                                         OnDisAppearing="FilterView_OnDisAppearing">
                     </control:FilterView>
 
+                    <control:PopUpView x:Name="AudioPopupView"
+                                       Title="Play Audio"
+                                       Grid.RowSpan="2">
+                        <control:PopUpView.Content>
+                            <StackLayout x:Name="AudioPopup"></StackLayout>
+                        </control:PopUpView.Content>
+                    </control:PopUpView>
+
                 </Grid>
             </control:EbCPLayout.Content>
         </control:EbCPLayout>

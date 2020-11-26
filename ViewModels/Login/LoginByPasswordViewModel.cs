@@ -41,11 +41,9 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         private async Task LoginAction()
         {
-            IToast toast = DependencyService.Get<IToast>();
-
             if (!Utils.HasInternet)
             {
-                toast.Show("Not connected to internet!");
+                Utils.Alert_NoInternet();
                 return;
             }
 
@@ -72,53 +70,35 @@ namespace ExpressBase.Mobile.ViewModels.Login
                         await AfterLoginSuccess(AuthResponse, _username, LoginType.CREDENTIALS);
                 }
                 else
-                    toast.Show("wrong username or password.");
+                    Utils.Toast("wrong username or password.");
 
                 IsBusy = false;
             }
             else
-                toast.Show("Email/Password cannot be empty");
+                Utils.Toast("Email/Password cannot be empty");
         }
 
         protected override async Task SubmitOTP(object o)
         {
-            string otp = o.ToString();
-            ApiAuthResponse resp = null;
+            string otp = o?.ToString();
             IsBusy = true;
-
             try
             {
-                resp = await Service.VerifyOTP(AuthResponse, otp);
+                ApiAuthResponse resp = await Service.VerifyOTP(AuthResponse, otp);
+
+                if (resp != null && resp.IsValid)
+                    await AfterLoginSuccess(resp, this.Email.Trim(), LoginType.CREDENTIALS);
+                else
+                    Utils.Toast("The OTP is Invalid or Expired");
             }
             catch (Exception ex)
             {
                 EbLog.Error("Otp verification failed :: " + ex.Message);
             }
-
             IsBusy = false;
-            if (resp != null && resp.IsValid)
-                await AfterLoginSuccess(resp, this.Email.Trim(), LoginType.CREDENTIALS);
-            else
-                DependencyService.Get<IToast>().Show("The OTP is Invalid or Expired");
         }
 
-        protected override async Task ResendOTP()
-        {
-            ApiGenerateOTPResponse resp = null;
-            try
-            {
-                resp = await Service.GenerateOTP(AuthResponse);
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("failed to regenerate otp :: " + ex.Message);
-            }
-
-            if (resp != null && resp.IsValid)
-                DependencyService.Get<IToast>().Show("OTP sent");
-        }
-
-        bool CanLogin()
+        private bool CanLogin()
         {
             if (string.IsNullOrEmpty(this.Email) || string.IsNullOrEmpty(this.PassWord))
                 return false;

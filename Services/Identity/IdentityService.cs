@@ -19,9 +19,9 @@ namespace ExpressBase.Mobile.Services
 {
     public class IdentityService : BaseService, IIdentityService
     {
-        private static IdentityService _identity;
+        private static IdentityService _current;
 
-        public static IdentityService Instance => _identity ??= new IdentityService();
+        public static IdentityService Current => _current ??= new IdentityService();
 
         private IdentityService() : base(true) { }
 
@@ -190,7 +190,6 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                //primitive data
                 await Store.SetValueAsync(AppConst.BTOKEN, resp.BToken);
                 await Store.SetValueAsync(AppConst.RTOKEN, resp.RToken);
 
@@ -221,7 +220,7 @@ namespace ExpressBase.Mobile.Services
             current.LastUser = username;
             current.LoginType = logintype;
 
-            foreach (var sol in solutions)
+            foreach (SolutionInfo sol in solutions)
             {
                 if (sol.SolutionName == current.SolutionName && sol.RootUrl == current.RootUrl)
                 {
@@ -270,20 +269,13 @@ namespace ExpressBase.Mobile.Services
 
             char[] charArray = otp.ToCharArray();
 
-            if (charArray.All(x => char.IsDigit(x)) && charArray.Length == 6)
-                return true;
-            else
-                return false;
+            return (charArray.All(x => char.IsDigit(x)) && charArray.Length == 6);
         }
 
         public static bool IsTokenExpired()
         {
             JwtSecurityToken jwtToken = new JwtSecurityToken(App.Settings.RToken);
-
-            if (DateTime.Compare(jwtToken.ValidTo, DateTime.Now) < 0)
-                return true;
-            else
-                return false;
+            return (DateTime.Compare(jwtToken.ValidTo, DateTime.Now) < 0);
         }
     }
 }

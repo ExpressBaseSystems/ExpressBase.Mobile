@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Frame xmlns="http://xamarin.com/schemas/2014/forms"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-       xmlns:views="clr-namespace:ExpressBase.Mobile.CustomControls.Views"
-       x:Class="ExpressBase.Mobile.CustomControls.Views.AudioRecorder"
+       xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+       x:Class="ExpressBase.Mobile.CustomControls.AudioRecorder"
        Padding="10,5"
        CornerRadius="6"
        BackgroundColor="#eee">
@@ -20,7 +20,7 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <views:XAudioButton Grid.Row="0"
+        <control:XAudioButton Grid.Row="0"
                 x:Name="RecordButton"
                 Padding="0"
                 Grid.Column="0"
@@ -34,7 +34,7 @@
                 CornerRadius="20"
                 FontFamily="{StaticResource FontAwesome}"
                 Clicked="RecordButton_Clicked">
-        </views:XAudioButton>
+        </control:XAudioButton>
 
         <Label Grid.Row="0"
                IsVisible="False"

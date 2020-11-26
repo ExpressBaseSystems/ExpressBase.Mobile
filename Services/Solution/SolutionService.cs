@@ -61,7 +61,6 @@ namespace ExpressBase.Mobile.Services
                 EbLog.Info("validate_solution api failure");
                 EbLog.Error(e.Message);
             }
-            //safe return
             return response ?? new ValidateSidResponse();
         }
 
@@ -79,7 +78,6 @@ namespace ExpressBase.Mobile.Services
                     solutions.Add(info);
                 }
 
-                //store solution data to store
                 await Store.SetJSONAsync(AppConst.MYSOLUTIONS, solutions);
                 await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, info);
 
@@ -91,12 +89,10 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
-        public async Task SaveLogoAsync(string solutionname, byte[] imageByte)
+        public void SaveLogo(string solutionname, byte[] imageByte)
         {
             try
             {
-                await Task.Delay(1);
-
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
                 string root = App.Settings.AppDirectory;
 

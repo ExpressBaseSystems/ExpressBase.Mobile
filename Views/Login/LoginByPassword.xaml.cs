@@ -96,10 +96,9 @@ namespace ExpressBase.Mobile.Views.Login
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    DependencyService.Get<IToast>().Show("Press again to EXIT!");
+                    Utils.Toast("Press again to EXIT!");
                 });
             }
-
             return true;
         }
     }

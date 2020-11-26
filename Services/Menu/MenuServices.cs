@@ -11,16 +11,13 @@ namespace ExpressBase.Mobile.Services
 {
     public class MenuServices : BaseService, IMenuServices
     {
-        private static MenuServices instance;
-
-        public static MenuServices Instance => instance ??= new MenuServices();
-
         public async Task<List<MobilePagesWraper>> GetDataAsync()
         {
             List<MobilePagesWraper> objectList = App.Settings.MobilePages ?? new List<MobilePagesWraper>();
 
             if (App.Settings.CurrentUser.IsAdmin)
             {
+                EbLog.Info($"logged in as [admin], service returning [{objectList.Count}] objects");
                 return objectList;
             }
             else
@@ -30,7 +27,10 @@ namespace ExpressBase.Mobile.Services
                 if (settings != null && settings.HasMenuPreloadApi)
                 {
                     if (Utils.HasInternet)
+                    {
+                        EbLog.Info("Network connection is live and [preload api] connected");
                         objectList = await GetFromMenuPreload(settings.MenuApi);
+                    }
                     else
                     {
                         Utils.Alert_NoInternet();
@@ -55,12 +55,12 @@ namespace ExpressBase.Mobile.Services
                     if (status == ResponseStatus.TimedOut)
                     {
                         Utils.Alert_SlowNetwork();
-                        EbLog.Info("solution data api raised timeout in UpdateDataAsync");
+                        EbLog.Info("[solutiondata api] raised timeout in UpdateDataAsync");
                     }
                     else
                     {
                         Utils.Alert_NetworkError();
-                        EbLog.Info("solution data api raised network error in UpdateDataAsync");
+                        EbLog.Info("[solutiondata api] raised network error in UpdateDataAsync");
                     }
                 });
 

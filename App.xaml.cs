@@ -23,8 +23,9 @@ namespace ExpressBase.Mobile
 
         static App()
         {
-            Settings = new SettingsServices();
-            Navigation = new NavigationService();
+            Settings = SettingsServices.Current;
+
+            Navigation = NavigationService.Current;
         }
 
         public App(EbNFData payload = null)

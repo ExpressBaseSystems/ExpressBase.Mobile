@@ -7,15 +7,8 @@ using System.Timers;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace ExpressBase.Mobile.CustomControls.Views
+namespace ExpressBase.Mobile.CustomControls
 {
-    public class XAudioButton : Button
-    {
-        public string Name { set; get; }
-
-        public string ActionType { set; get; }
-    }
-
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AudioRecorder : Frame
     {
@@ -64,7 +57,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                     audioFiles.Clear();
                     RecordList.Children.Clear();
                 }
-                AddAudioFrame(note);
+                AddAudioFrame(note, true);
             }
             RecordingCompleted();
         }
@@ -117,13 +110,14 @@ namespace ExpressBase.Mobile.CustomControls.Views
             elapsedMinutes = elapsedSeconds = 0;
         }
 
-        private void AddAudioFrame(byte[] note, string name = null)
+        private void AddAudioFrame(byte[] note, bool deleteButton, string name = null)
         {
-            AudioTemplate template = new AudioTemplate(note, name);
+            EbAudioTemplate template = new EbAudioTemplate(note, name) { AllowDelete = deleteButton };
             template.OnDelete += TemplateOnDelete;
 
             View view = template.CreateView();
             audioTemplates.Add(template.Name, view);
+            audioFiles.Add(template.Name, note);
 
             RecordList.Children.Add(view);
         }
@@ -194,7 +188,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 {
                     string name = Guid.NewGuid().ToString("N");
                     uploadedFiles.Add(name);
-                    this.AddAudioFrame(file.Bytea, name);
+                    this.AddAudioFrame(file.Bytea, false, name);
                 }
             }
             else if (network == NetworkMode.Online)
@@ -209,7 +203,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                         {
                             string name = Guid.NewGuid().ToString("N");
                             uploadedFiles.Add(name);
-                            this.AddAudioFrame(resp.Bytea, name);
+                            this.AddAudioFrame(resp.Bytea, false, name);
                         }
                     }
                     catch (Exception ex)

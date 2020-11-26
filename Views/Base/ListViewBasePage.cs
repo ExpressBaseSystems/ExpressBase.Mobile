@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls.XControls;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
 
@@ -11,7 +12,7 @@ namespace ExpressBase.Mobile.Views.Base
         public string PageCount { set; get; }
     }
 
-    public class ListViewBasePage : EbContentPage
+    public class ListViewBasePage : EbContentPage, IListRenderer
     {
         protected int PageCount { set; get; } = 1;
 
@@ -83,5 +84,7 @@ namespace ExpressBase.Mobile.Views.Base
         protected virtual void UpdatePaginationBar() { }
 
         protected virtual void ToggleDataLength() { }
+
+        public virtual void ShowAudioFiles(EbPlayButton playButton) { }
     }
 }

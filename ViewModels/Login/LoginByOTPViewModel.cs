@@ -77,24 +77,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
             {
                 EbLog.Error("OTP verification failed :: " + ex.Message);
             }
-
             IsBusy = false;
-        }
-
-        protected override async Task ResendOTP()
-        {
-            ApiGenerateOTPResponse resp = null;
-            try
-            {
-                resp = await Service.GenerateOTP(AuthResponse);
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("Failed to regenerate otp :: " + ex.Message);
-            }
-
-            if (resp != null && resp.IsValid)
-                Utils.Toast("OTP sent");
         }
 
         private SignInOtpType OtpType(string username)
