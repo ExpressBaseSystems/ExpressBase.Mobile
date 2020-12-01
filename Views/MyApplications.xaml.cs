@@ -30,12 +30,8 @@ namespace ExpressBase.Mobile.Views
             InitializeComponent();
 
             EbLayout.ShowLoader();
-            BindingContext = viewModel = new MyApplicationsViewModel();
-
-            if (isInternal)
-                ResetButton.IsVisible = false;
-            else
-                EbLayout.HasBackButton = false;
+            BindingContext = viewModel = new MyApplicationsViewModel { IsInternal = is_internal };
+            EbLayout.HasBackButton = isInternal;
         }
 
         protected async override void OnAppearing()
@@ -73,6 +69,27 @@ namespace ExpressBase.Mobile.Views
         protected override bool OnBackButtonPressed()
         {
             return !isInternal;
+        }
+
+        private async void EmptyBoxReloadClicked(object sender, EventArgs e)
+        {
+            if (!Utils.HasInternet)
+            {
+                Utils.Alert_NoInternet();
+                return;
+            }
+
+            EbLayout.ShowLoader();
+
+            try
+            {
+                await viewModel.UpdateAsync();
+            }
+            catch(Exception ex)
+            {
+                EbLog.Error("error at [EmptyBoxReload] event in application page, " + ex.Message);
+            }
+            EbLayout.HideLoader();
         }
     }
 }

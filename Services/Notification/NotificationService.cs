@@ -16,12 +16,9 @@ namespace ExpressBase.Mobile.Services
 
         public static NotificationService Instance => instance ??= new NotificationService();
 
-        public EbAppVendors AppVendor { set; get; }
+        private string appVendorName = EbBuildConfig.VendorName;
 
-        public NotificationService() : base(true)
-        {
-            AppVendor = EbBuildConfig.GetVendor();
-        }
+        public NotificationService() : base(true) { }
 
         public async Task<string> GetAzureTokenAsync()
         {
@@ -82,7 +79,7 @@ namespace ExpressBase.Mobile.Services
 
         private List<string> GetTags()
         {
-            List<string> tags = new List<string> { $"global:eb_pns_tag_{AppVendor}" };
+            List<string> tags = new List<string> { $"global:eb_pns_tag_{appVendorName}" };
 
             if (App.Settings.Sid != null)
             {
@@ -118,7 +115,7 @@ namespace ExpressBase.Mobile.Services
             {
                 Handle = pns_token,
                 Tags = this.GetTags(),
-                Vendor = AppVendor
+                VendorName = appVendorName
             };
 
             return device;

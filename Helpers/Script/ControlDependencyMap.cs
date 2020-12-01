@@ -23,10 +23,10 @@ namespace ExpressBase.Mobile.Helpers.Script
 
             foreach (EbMobileControl ctrl in controls.Values)
             {
-                bool hasValueExpr = ctrl.ValueExpr != null && !ctrl.ValueExpr.IsEmpty();
-                bool hasHideExpr = ctrl.HiddenExpr != null && !ctrl.HiddenExpr.IsEmpty();
-                bool hasDisableExpr = ctrl.DisableExpr != null && !ctrl.DisableExpr.IsEmpty();
-                bool hasDefaultExpr = ctrl.DefaultValueExpression != null && !ctrl.DefaultValueExpression.IsEmpty();
+                bool hasValueExpr = ctrl.HasExpression(ExprType.ValueExpr);
+                bool hasHideExpr = ctrl.HasExpression(ExprType.HideExpr);
+                bool hasDisableExpr = ctrl.HasExpression(ExprType.DisableExpr);
+                bool hasDefaultExpr = ctrl.HasExpression(ExprType.DefaultExpr);
 
                 if (!hasValueExpr && !hasHideExpr && !hasDisableExpr && !hasDefaultExpr) continue;
 

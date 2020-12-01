@@ -32,16 +32,18 @@ namespace ExpressBase.Mobile.Helpers
         {
             controls = null;
             dependencyMap = null;
+            evaluator.RemoveVariable("form");
         }
 
-        public static void Initialize(Dictionary<string, EbMobileControl> controls)
+        public static void Initialize(EbMobileForm form, FormMode mode)
         {
             Instance.Dispose();
 
-            Instance.controls = controls;
+            Instance.controls = form.ControlDictionary;
+            Instance.evaluator.SetVariable("form", new EbFormEvaluator(mode));
 
             Instance.dependencyMap = new ControlDependencyMap();
-            Instance.dependencyMap.Init(controls);
+            Instance.dependencyMap.Init(form.ControlDictionary);
         }
 
         public static void ControlValueChanged(string controlName)
@@ -67,15 +69,15 @@ namespace ExpressBase.Mobile.Helpers
                 {
                     if (mode == FormMode.NEW || mode == FormMode.PREFILL)
                     {
-                        Instance.InitHideExpr(exprDep);
-                        Instance.InitDisableExpr(exprDep);
+                        Instance.InitHideExpr(exprDep, ctrl);
+                        Instance.InitDisableExpr(exprDep, ctrl);
                     }
                     else if (mode == FormMode.EDIT)
                     {
                         if (ctrl.DoNotPersist)
                             Instance.InitValueExpr(exprDep, ctrl.Name);
 
-                        Instance.InitHideExpr(exprDep);
+                        Instance.InitHideExpr(exprDep, ctrl);
                     }
                 }
             }
@@ -138,7 +140,7 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        private void InitHideExpr(ExprDependency exprDep)
+        private void InitHideExpr(ExprDependency exprDep, EbMobileControl currentControl = null)
         {
             if (exprDep.HasHideDependency)
             {
@@ -148,9 +150,13 @@ namespace ExpressBase.Mobile.Helpers
                     this.EvaluateHideExpr(ctrl);
                 }
             }
+            else if (currentControl != null)
+            {
+                this.EvaluateHideExpr(currentControl);
+            }
         }
 
-        private void InitDisableExpr(ExprDependency exprDep)
+        private void InitDisableExpr(ExprDependency exprDep, EbMobileControl currentControl = null)
         {
             if (exprDep.HasDisableDependency)
             {
@@ -159,6 +165,10 @@ namespace ExpressBase.Mobile.Helpers
                     EbMobileControl ctrl = this.controls[name];
                     this.EvaluateDisableExpr(ctrl);
                 }
+            }
+            else if (currentControl != null)
+            {
+                this.EvaluateDisableExpr(currentControl);
             }
         }
 
@@ -347,12 +357,12 @@ namespace ExpressBase.Mobile.Helpers
 
                     EbScriptExpression ebExpr = this.GetExpression(matchUnit);
 
-                    if (ebExpr == null)
-                        throw new Exception("Eb script expression format error" + matchUnit);
+                    if (ebExpr != null)
+                    {
+                        object value = this.controls[ebExpr.Name].InvokeDynamically(ebExpr.Method);
 
-                    object value = this.controls[ebExpr.Name].InvokeDynamically(ebExpr.Method);
-
-                    expr = expr.Replace(matchUnit + "()", Convert(value));
+                        expr = expr.Replace(matchUnit + "()", Convert(value));
+                    }
                 }
 
                 computedResult = expr;

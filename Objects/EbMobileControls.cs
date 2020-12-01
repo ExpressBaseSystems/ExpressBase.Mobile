@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
@@ -189,6 +190,20 @@ namespace ExpressBase.Mobile
 
             validationLabel.Text = message;
             validationLabel.IsVisible = !status;
+        }
+
+        public bool HasExpression(ExprType type)
+        {
+            if (type == ExprType.ValueExpr)
+                return ValueExpr != null && !ValueExpr.IsEmpty();
+            else if (type == ExprType.HideExpr)
+                return HiddenExpr != null && !HiddenExpr.IsEmpty();
+            else if (type == ExprType.DisableExpr)
+                return DisableExpr != null && !DisableExpr.IsEmpty();
+            else if (type == ExprType.HideExpr)
+                return DefaultValueExpression != null && !DefaultValueExpression.IsEmpty();
+            else
+                return false;
         }
     }
 }

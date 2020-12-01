@@ -29,7 +29,11 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public bool IsResetVisible => (App.Settings.Vendor.BuildType != AppBuildType.Embedded);
+        public bool IsResetVisible => (App.Settings.Vendor.BuildType != AppBuildType.Embedded && IsInternal);
+
+        public bool ShowCurrentLocation => App.Settings.Vendor.HasLocationSwitcher;
+
+        public bool IsInternal { set; get; }
 
         public Command AppSelectedCommand => new Command<AppData>(async (obj) => await AppSelected(obj));
 

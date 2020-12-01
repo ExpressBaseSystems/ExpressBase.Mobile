@@ -115,14 +115,21 @@ namespace ExpressBase.Mobile.Services.Navigation
             await App.RootMaster.Detail.Navigation.PopToRootAsync(animation);
         }
 
-        private async Task InitializeNavigation()
+        public async Task InitializeNavigation()
         {
-            CurrentApplication.MainPage = new NavigationPage();
+            CurrentApplication.MainPage ??= new NavigationPage();
 
             await App.Settings.InitializeSettings();
 
+            if (App.Settings.OnBoarding)
+            {
+                await App.Navigation.NavigateAsync(new WelcomeBoard());
+                return;
+            }
+
             if (App.Settings.Sid == null)
             {
+
                 if (Utils.Solutions.Any())
                     await NavigateAsync(new MySolutions());
                 else

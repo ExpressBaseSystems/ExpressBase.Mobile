@@ -9,7 +9,7 @@
       "HasOfflineFeature": true,
       "HasActions": true,
       "HasAppSwitcher": true,
-      "HasLocationswitcher": true,
+      "HasLocationSwitcher": true,
       "HasSolutionSwitcher": true,
       "Logo": "icon_eb.png",
       "PoweredBy": "Powered by EXPRESSbase",
@@ -43,7 +43,7 @@
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": true,
-      "HasLocationswitcher": true,
+      "HasLocationSwitcher": true,
       "HasSolutionSwitcher": false,
       "Logo": "icon_mo.png",
       "PoweredBy": "Powered by EXPRESSbase",
@@ -77,7 +77,7 @@
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": true,
-      "HasLocationswitcher": true,
+      "HasLocationSwitcher": true,
       "HasSolutionSwitcher": false,
       "Logo": "icon_ks.png",
       "PoweredBy": "Powered by EXPRESSbase",
@@ -97,19 +97,26 @@
     },
     "Tiwi": {
       "BuildType": "Embedded",
-      "SolutionURL": "alarz.eb-test.cloud",
+      "SolutionURL": "tiwi.eb-test.cloud",
       "AllowNotifications": false,
-      "PrimaryColor": "a2217d",
-      "PrimaryLowerColor": "a2217d",
+      "PrimaryColor": "4e2c94",
+      "PrimaryLowerColor": "427f3c",
       "HasOfflineFeature": false,
       "HasActions": true,
-      "HasAppSwitcher": true,
-      "HasLocationswitcher": true,
+      "HasAppSwitcher": false,
+      "HasLocationSwitcher": false,
       "HasSolutionSwitcher": false,
-      "Logo": "icon_ks.png",
+      "Logo": "icon_tw.png",
       "PoweredBy": "Powered by EXPRESSbase",
-      "DefaultLoginType": "CREDENTIALS",
+      "DefaultLoginType": "SSO",
       "Content": {
+        "NewSolution": {
+          "WallLabel": "Add new Solution",
+          "TextBoxPlaceHolder": "Enter solution URL"
+        },
+        "MySolutions": {
+          "Title": "Solution Switcher"
+        },
         "Login": {
           "NewSolutionButtonText": "Add new Solution",
           "LoginButtonText": "Login"

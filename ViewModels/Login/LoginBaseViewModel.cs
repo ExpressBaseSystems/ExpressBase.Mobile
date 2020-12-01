@@ -81,10 +81,8 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
                 if (stack.Any())
                 {
-                    await App.Navigation.NavigateAsync(page);
-
                     Page last = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
-
+                    await App.Navigation.NavigateAsync(page);
                     if (last != null)
                     {
                         Application.Current.MainPage.Navigation.RemovePage(last);

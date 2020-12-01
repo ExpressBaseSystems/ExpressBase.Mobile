@@ -20,6 +20,8 @@ namespace ExpressBase.Mobile.Services
 
         private SettingsServices() { }
 
+        public bool OnBoarding { set; get; }
+
         public SolutionInfo CurrentSolution { set; get; }
 
         public User CurrentUser { set; get; }
@@ -75,13 +77,15 @@ namespace ExpressBase.Mobile.Services
 
                 if (CurrentSolution == null && Vendor.BuildType == AppBuildType.Embedded)
                 {
-                    await CreateEmbeddedSolution();
+                    //await CreateEmbeddedSolution();
                 }
 
                 if (CurrentSolution != null)
                 {
                     App.DataDB.SetDbPath(CurrentSolution.SolutionName);
                 }
+
+                OnBoarding = this.IsOnBoarding();
 
                 RToken = await this.GetRToken();
                 BToken = await this.GetBToken();
@@ -135,7 +139,7 @@ namespace ExpressBase.Mobile.Services
                 HelperFunctions.SetResourceValue("Primary_Color", Vendor.GetPrimaryColor());
                 HelperFunctions.SetResourceValue("PrimaryLower_Color", Vendor.GetPrimaryLowerColor());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -144,6 +148,15 @@ namespace ExpressBase.Mobile.Services
         public void Reset()
         {
             CurrentSolution = null; CurrentUser = null; RToken = null; BToken = null; CurrentApplication = null; CurrentLocation = null;
+        }
+
+        private bool IsOnBoarding()
+        {
+            if (!Store.TryGetValue<bool>(AppConst.ON_BOARDING, out _) && CurrentSolution == null)
+            {
+                return true;
+            }
+            return false;
         }
 
         private SolutionInfo GetSolution() => Store.GetJSON<SolutionInfo>(AppConst.SOLUTION_OBJ);

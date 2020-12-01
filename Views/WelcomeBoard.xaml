@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
+             x:Class="ExpressBase.Mobile.Views.WelcomeBoard"
+             Style="{StaticResource ContentPageStyle}"
+             BackgroundColor="{DynamicResource Primary_Color}">
+    <ContentPage.Content>
+
+        <control:EbCPLayout x:Name="EbLayout"
+                            HasToolBar="False">
+
+            <control:EbCPLayout.Content>
+                <StackLayout>
+                    <StackLayout VerticalOptions="CenterAndExpand">
+                        <Frame HeightRequest="100"
+                               HorizontalOptions="Center"
+                               WidthRequest="100"
+                               CornerRadius="50"
+                               Padding="0">
+                            <Image Source="icon_tw"></Image>
+                        </Frame>
+                        <Label HorizontalTextAlignment="Center"
+                               Margin="0,10,0,0"
+                               FontSize="16"
+                               TextColor="White">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="&quot; "></Span>
+                                    <Span Text="Jobs"></Span>
+                                    <Span Text=" &quot;"></Span>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </StackLayout>
+                    <StackLayout VerticalOptions="End"
+                                 Padding="20"
+                                 BackgroundColor="White">
+
+                        <Frame HeightRequest="40"
+                               Padding="0"
+                               CornerRadius="15"
+                               Margin="-20,-45,-20,0"
+                               BackgroundColor="White"></Frame>
+
+                        <Label Text="Title"
+                               FontFamily="{StaticResource Roboto-Medium}"
+                               FontSize="20"
+                               Margin="0,0,0,15"
+                               TextColor="#222"></Label>
+                        <Label Text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum"></Label>
+
+                        <Button Text="Let's go"
+                                BorderColor="#eee"
+                                Margin="0,20,0,0"
+                                BorderWidth="1"
+                                Padding="0"
+                                CornerRadius="10"
+                                HeightRequest="40"
+                                TextColor="{DynamicResource Primary_Color}"
+                                BackgroundColor="White"
+                                Clicked="StartApplicationClicked">
+                        </Button>
+
+                    </StackLayout>
+                </StackLayout>
+            </control:EbCPLayout.Content>
+        </control:EbCPLayout>
+    </ContentPage.Content>
+</ContentPage>

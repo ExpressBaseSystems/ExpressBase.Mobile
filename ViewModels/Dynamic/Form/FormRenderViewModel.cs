@@ -43,7 +43,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public override async Task InitializeAsync()
         {
             this.Form.InitializeControlDict();
-            EbFormHelper.Initialize(this.Form.ControlDictionary);
+
+            EbFormHelper.Initialize(this.Form, this.Mode);
 
             if (!this.IsOnline())
             {

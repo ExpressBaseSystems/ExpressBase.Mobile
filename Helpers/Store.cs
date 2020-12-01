@@ -85,6 +85,31 @@ namespace ExpressBase.Mobile.Helpers
             return default;
         }
 
+        public static bool TryGetValue<T>(string key, out T value)
+        {
+            value = default;
+            try
+            {
+                string temp = SecureStorage.GetAsync(key).Result;
+
+                if (temp != null || temp != "null")
+                {
+                    var converter = TypeDescriptor.GetConverter(typeof(T));
+                    if (converter != null)
+                    {
+                        value = (T)converter.ConvertFromString(temp);
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Store.GetValue::" + ex.Message);
+                return false;
+            }
+            return false;
+        }
+
         public static void SetValue(string key, string val)
         {
             try

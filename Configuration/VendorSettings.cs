@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ExpressBase.Mobile.Configuration
+﻿namespace ExpressBase.Mobile.Configuration
 {
-    /// <summary>
-    /// Namespace contains all the vendor settings constants
-    /// </summary>
-    /// 
-
     public static class Expressbase
     {
         public const string VendorName = "ExpressBase";
@@ -70,13 +61,13 @@ namespace ExpressBase.Mobile.Configuration
     {
         public const string VendorName = "Tiwi";
 
-        public const string AppIcon = "@mipmap/icon_ks";
+        public const string AppIcon = "@mipmap/icon_tw";
 
         public const string AppLabel = "Tiwi";
 
-        public const string StatusBar = "#a2217d";
+        public const string StatusBar = "#4e2c94";
 
-        public const string SplashTheme = "@style/Theme.SplashKS";
+        public const string SplashTheme = "@style/Theme.SplashTW";
 
         public const bool NFEnabled = false;
 

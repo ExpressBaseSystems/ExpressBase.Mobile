@@ -14,7 +14,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         public bool HasSolutionSwitcher => App.Settings.Vendor.HasSolutionSwitcher;
 
-        public bool HasLocationSwitcher => App.Settings.Vendor.HasLocationswitcher && Utils.Locations.Count > 1;
+        public bool HasLocationSwitcher => App.Settings.Vendor.HasLocationSwitcher && Utils.Locations.Count > 1;
 
         public bool HasMyActions => App.Settings.Vendor.HasActions;
 

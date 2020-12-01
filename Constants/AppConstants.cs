@@ -31,6 +31,8 @@ namespace ExpressBase.Mobile.Constants
         public const string AZURE_REGID = "azure_regid";
 
         public const string IS_FRESH_START = "is_fresh_start";
+
+        public const string ON_BOARDING = "on_boarding";
     }
 
     public static class RegexConstants

@@ -14,13 +14,6 @@ namespace ExpressBase.Mobile.Models
         ALL = 4
     }
 
-    public enum EbAppVendors
-    {
-        ExpressBase = 1,
-        MoveOn = 2,
-        kudumbaShree = 3
-    }
-
     public enum EbNFLinkTypes
     {
         Page = 1,
@@ -35,7 +28,7 @@ namespace ExpressBase.Mobile.Models
 
         public List<string> Tags { get; set; }
 
-        public EbAppVendors Vendor { set; get; }
+        public string VendorName { set; get; }
 
         public DeviceRegistration()
         {

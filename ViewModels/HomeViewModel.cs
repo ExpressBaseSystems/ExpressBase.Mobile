@@ -39,7 +39,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public bool HasLocationSwitcher => App.Settings.Vendor.HasLocationswitcher && Utils.Locations.Count > 1;
+        public bool HasLocationSwitcher => App.Settings.Vendor.HasLocationSwitcher && Utils.Locations.Count > 1;
 
         public bool RefreshOnAppearing => App.Settings.CurrentApplication.HasMenuApi();
 

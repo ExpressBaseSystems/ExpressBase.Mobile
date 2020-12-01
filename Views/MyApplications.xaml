@@ -18,6 +18,7 @@
             <control:EbCPLayout.ToolBarItems>
                 <StackLayout Orientation="Horizontal">
                     <Button x:Name="ResetButton"
+                            IsVisible="{Binding IsResetVisible}"
                             Text="&#xf013;"
                             Style="{StaticResource ToolBarButtonStyle}"
                             HorizontalOptions="End"
@@ -35,6 +36,7 @@
                         <RowDefinition Height="*"></RowDefinition>
                     </Grid.RowDefinitions>
                     <FlexLayout Padding="10,0"
+                                IsVisible="{Binding ShowCurrentLocation}"
                                 BackgroundColor="White"
                                 HeightRequest="40"
                                 Grid.Row="0"
@@ -137,6 +139,8 @@
 
                     <control:EmptyBox Grid.Row="2"
                                       Message="Applications empty..."
+                                      ShowReloadButton="True"
+                                      ReloadClicked="EmptyBoxReloadClicked"
                                       IsVisible="{Binding IsEmpty}">
                     </control:EmptyBox>
 

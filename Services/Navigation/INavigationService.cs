@@ -8,6 +8,8 @@ namespace ExpressBase.Mobile.Services.Navigation
     {
         Task InitializeAppAsync(EbNFData payload);
 
+        Task InitializeNavigation();
+
         Task NavigateByRenderer(Page page);
 
         Task NavigateModalByRenderer(Page page);

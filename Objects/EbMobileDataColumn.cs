@@ -12,6 +12,8 @@ namespace ExpressBase.Mobile
 
         public DataColumnRenderType RenderAs { set; get; }
 
+        public string BackgroundColor { get; set; }
+
         public int BorderRadius { get; set; }
 
         public string TextFormat { get; set; }
