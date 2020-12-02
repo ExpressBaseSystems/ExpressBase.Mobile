@@ -82,7 +82,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic.ListView
                 return;
             try
             {
-                EbMobilePage page = EbPageFinder.GetPage(item.StaticItem.LinkRefId);
+                EbMobilePage page = EbPageHelper.GetPage(item.StaticItem.LinkRefId);
 
                 if (page != null)
                 {
@@ -95,7 +95,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic.ListView
                     }
                     else
                     {
-                        ContentPage renderer = EbPageFinder.GetPageByContainer(page);
+                        ContentPage renderer = EbPageHelper.GetPageByContainer(page);
                         await App.Navigation.NavigateMasterAsync(renderer);
                     }
                 }

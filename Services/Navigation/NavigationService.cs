@@ -121,7 +121,7 @@ namespace ExpressBase.Mobile.Services.Navigation
 
             await App.Settings.InitializeSettings();
 
-            if (App.Settings.OnBoarding)
+            if (App.Settings.IsFirstRun)
             {
                 await App.Navigation.NavigateAsync(new WelcomeBoard());
                 return;
@@ -241,13 +241,13 @@ namespace ExpressBase.Mobile.Services.Navigation
                 EbLog.Info("Intentaction link type is page but linkrefid null");
                 return;
             }
-            EbMobilePage page = EbPageFinder.GetPage(link.LinkRefId);
+            EbMobilePage page = EbPageHelper.GetPage(link.LinkRefId);
 
             if (page != null)
             {
                 EbLog.Info("Intentaction page rendering :" + page.DisplayName);
 
-                ContentPage renderer = EbPageFinder.GetPageByContainer(page);
+                ContentPage renderer = EbPageHelper.GetPageByContainer(page);
                 await App.Navigation.NavigateMasterAsync(renderer);
             }
             else

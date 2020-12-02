@@ -16,6 +16,8 @@ namespace ExpressBase.Mobile.Constants
 
         public const string APP_COLLECTION = "app_collection";
 
+        public const string EXTERNAL_PAGES = "external_pages";
+
         public const string CURRENT_APP = "current_app";
 
         public const string WEBOBJ_COLLECTION = "webobj_collection";
@@ -32,7 +34,7 @@ namespace ExpressBase.Mobile.Constants
 
         public const string IS_FRESH_START = "is_fresh_start";
 
-        public const string ON_BOARDING = "on_boarding";
+        public const string FIRST_RUN = "first_run";
     }
 
     public static class RegexConstants

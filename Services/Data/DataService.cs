@@ -88,6 +88,35 @@ namespace ExpressBase.Mobile.Services
             return new MobileVisDataRespnse();
         }
 
+        public async Task<MobileVisDataRespnse> GetQueryDataAsync(string query, int limit, int offset, List<Param> param)
+        {
+            try
+            {
+                RestRequest request = new RestRequest(ApiConstants.GET_QUERY_DATA, Method.POST);
+                request.AddParameter("query", query);
+
+                if (param != null)
+                    request.AddParameter("param", JsonConvert.SerializeObject(param));
+
+                request.AddParameter("limit", limit);
+                request.AddParameter("offset", offset);
+
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+                IRestResponse iresp = await HttpClient.ExecuteAsync(request);
+                if (iresp.IsSuccessful)
+                    return JsonConvert.DeserializeObject<MobileVisDataRespnse>(iresp.Content);
+                else
+                    EbLog.Error(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return null;
+        }
+
         public async Task<ApiFileResponse> GetFileAsync(EbFileCategory category, string filename)
         {
             ApiFileResponse resp = null;

@@ -10,30 +10,50 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <Style x:Key="SideBarFrame" TargetType="Frame">
-                <Setter Property="Padding" Value="0" />
-                <Setter Property="HasShadow" Value="False" />
-                <Setter Property="CornerRadius" Value="0" />
-                <Setter Property="BorderColor" Value="White"></Setter>
-                <Setter Property="BackgroundColor" Value="Transparent"></Setter>
-                <Setter Property="Margin" Value="10,0,0,0"></Setter>
-            </Style>
-            
-            <Style x:Key="SideBarIconStyle" TargetType="Label">
-                <Setter Property="FontFamily" Value="{StaticResource FontAwesome}" />
-                <Setter Property="FontSize" Value="20" />
-                <Setter Property="VerticalOptions" Value="Center"></Setter>
-                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
-                <Setter Property="HorizontalTextAlignment" Value="Start"></Setter>
-                <Setter Property="Margin" Value="0"></Setter>
-                <Setter Property="TextColor" Value="#737373"></Setter>
+            <Style x:Key="SideBarFrame"
+                   TargetType="Frame">
+                <Setter Property="Padding"
+                        Value="0" />
+                <Setter Property="HasShadow"
+                        Value="False" />
+                <Setter Property="CornerRadius"
+                        Value="0" />
+                <Setter Property="BorderColor"
+                        Value="White"></Setter>
+                <Setter Property="BackgroundColor"
+                        Value="Transparent"></Setter>
+                <Setter Property="Margin"
+                        Value="10,0,0,0"></Setter>
             </Style>
 
-            <Style x:Key="LinkLabel" TargetType="Label">
-                <Setter Property="FontFamily" Value="{StaticResource Roboto-Regular}" />
-                <Setter Property="FontSize" Value="15" />
-                <Setter Property="TextColor" Value="#333" />
-                <Setter Property="VerticalTextAlignment" Value="Center"></Setter>
+            <Style x:Key="SideBarIconStyle"
+                   TargetType="Label">
+                <Setter Property="FontFamily"
+                        Value="{StaticResource FontAwesome}" />
+                <Setter Property="FontSize"
+                        Value="20" />
+                <Setter Property="VerticalOptions"
+                        Value="Center"></Setter>
+                <Setter Property="VerticalTextAlignment"
+                        Value="Center"></Setter>
+                <Setter Property="HorizontalTextAlignment"
+                        Value="Start"></Setter>
+                <Setter Property="Margin"
+                        Value="0"></Setter>
+                <Setter Property="TextColor"
+                        Value="#737373"></Setter>
+            </Style>
+
+            <Style x:Key="LinkLabel"
+                   TargetType="Label">
+                <Setter Property="FontFamily"
+                        Value="{StaticResource Roboto-Regular}" />
+                <Setter Property="FontSize"
+                        Value="15" />
+                <Setter Property="TextColor"
+                        Value="#333" />
+                <Setter Property="VerticalTextAlignment"
+                        Value="Center"></Setter>
             </Style>
 
         </ResourceDictionary>
@@ -41,143 +61,189 @@
 
     <ContentPage.Content>
         <Grid BackgroundColor="#ffffff">
-            <ScrollView 
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
-                AbsoluteLayout.LayoutFlags="All">
-                <StackLayout 
-                    Spacing="0"
-                    VerticalOptions="FillAndExpand"
-                    x:Name="SideBarLayout">
+            <ScrollView AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                        AbsoluteLayout.LayoutFlags="All">
+                <StackLayout Spacing="0"
+                             VerticalOptions="FillAndExpand"
+                             x:Name="SideBarLayout">
                     <StackLayout VerticalOptions="Start">
-                        <Grid BackgroundColor="{DynamicResource Primary_Color}" Padding="10" ColumnSpacing="10">
+                        <Grid BackgroundColor="{DynamicResource Primary_Color}"
+                              Padding="10"
+                              ColumnSpacing="10">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <customcontrols:ImageCircle
-                               x:Name="UserDp"
-                               Grid.Row="0"
-                               HeightRequest="70"
-                               WidthRequest="70"
-                               HorizontalOptions="Center"
-                               Source="user_avatar.jpg">
+                            <customcontrols:ImageCircle x:Name="UserDp"
+                                                        Grid.Row="0"
+                                                        HeightRequest="70"
+                                                        WidthRequest="70"
+                                                        HorizontalOptions="Center"
+                                                        Source="{Binding DisplayPicture}">
                             </customcontrols:ImageCircle>
 
-                            <Label
-                                x:Name="UserName"
-                                TextColor="White"
-                                Grid.Row="1"
-                                FontFamily="{StaticResource Roboto-Medium}"
-                                HorizontalTextAlignment="Center"
-                                FontSize="16">
+                            <Label x:Name="UserName"
+                                   Text="{Binding UserName}"
+                                   TextColor="White"
+                                   Grid.Row="1"
+                                   FontFamily="{StaticResource Roboto-Medium}"
+                                   HorizontalTextAlignment="Center"
+                                   FontSize="16">
                             </Label>
 
-                            <Label
-                                x:Name="Email"
-                                Grid.Row="2"
-                                FontFamily="{StaticResource Roboto-Regular}"
-                                FontSize="12"
-                                TextColor="White"
-                                HorizontalTextAlignment="Center">
+                            <Label x:Name="Email"
+                                   Text="{Binding Email}"
+                                   Grid.Row="2"
+                                   FontFamily="{StaticResource Roboto-Regular}"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalTextAlignment="Center">
                             </Label>
+
+                            <Button FontFamily="{StaticResource FontAwesome}"
+                                    IsVisible="{Binding IsProfileEditable}"
+                                    Grid.RowSpan="3"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="20"
+                                    BackgroundColor="White"
+                                    Padding="0"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="End"
+                                    Text="&#xf040;">
+                            </Button>
+                            
                         </Grid>
                     </StackLayout>
-                    <StackLayout VerticalOptions="FillAndExpand" Orientation="Vertical" Padding="0" Spacing="0">
-                        <Frame Style="{StaticResource SideBarFrame}" Margin="10,5,0,0" IsVisible="{Binding HasSolutionSwitcher}">
+                    <StackLayout VerticalOptions="FillAndExpand"
+                                 Orientation="Vertical"
+                                 Padding="0"
+                                 Spacing="0">
+                        <Frame Style="{StaticResource SideBarFrame}"
+                               Margin="10,5,0,0"
+                               IsVisible="{Binding HasSolutionSwitcher}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="ChangeSolution_Tapped"/>
+                                <TapGestureRecognizer Tapped="ChangeSolution_Tapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                
-                                <Label Text="&#xf140;" Style="{StaticResource SideBarIconStyle}"/>
-                                
-                                <Label Grid.Column="1" Text="Switch Solution" Style="{StaticResource LinkLabel}"/>
+
+                                <Label Text="&#xf140;"
+                                       Style="{StaticResource SideBarIconStyle}" />
+
+                                <Label Grid.Column="1"
+                                       Text="Switch Solution"
+                                       Style="{StaticResource LinkLabel}" />
                             </Grid>
                         </Frame>
-                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasAppSwitcher}">
+                        <Frame Style="{StaticResource SideBarFrame}"
+                               IsVisible="{Binding HasAppSwitcher}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="ChangeApplication_Tapped"/>
+                                <TapGestureRecognizer Tapped="ChangeApplication_Tapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Label Text="&#xf009;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="Switch Application" Style="{StaticResource LinkLabel}"/>
+                                <Label Text="&#xf009;"
+                                       Style="{StaticResource SideBarIconStyle}" />
+                                <Label Grid.Column="1"
+                                       Text="Switch Application"
+                                       Style="{StaticResource LinkLabel}" />
                             </Grid>
                         </Frame>
-                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasLocationSwitcher}">
+                        <Frame Style="{StaticResource SideBarFrame}"
+                               IsVisible="{Binding HasLocationSwitcher}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="ChangeLocation_Tapped"/>
+                                <TapGestureRecognizer Tapped="ChangeLocation_Tapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Label Text="&#xf041;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="Switch Location" Style="{StaticResource LinkLabel}"/>
+                                <Label Text="&#xf041;"
+                                       Style="{StaticResource SideBarIconStyle}" />
+                                <Label Grid.Column="1"
+                                       Text="Switch Location"
+                                       Style="{StaticResource LinkLabel}" />
                             </Grid>
                         </Frame>
-                        <Frame Style="{StaticResource SideBarFrame}" IsVisible="{Binding HasMyActions}">
+                        <Frame Style="{StaticResource SideBarFrame}"
+                               IsVisible="{Binding HasMyActions}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="MyActions_Tapped"/>
+                                <TapGestureRecognizer Tapped="MyActions_Tapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Label Text="&#xf25a;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="Action Required" Style="{StaticResource LinkLabel}"/>
+                                <Label Text="&#xf25a;"
+                                       Style="{StaticResource SideBarIconStyle}" />
+                                <Label Grid.Column="1"
+                                       Text="Action Required"
+                                       Style="{StaticResource LinkLabel}" />
                             </Grid>
                         </Frame>
                     </StackLayout>
-                    <StackLayout VerticalOptions="End" Padding="0" Spacing="0">
+                    <StackLayout VerticalOptions="End"
+                                 Padding="0"
+                                 Spacing="0">
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer x:Name="Setup" Tapped="Setup_Tapped"/>
+                                <TapGestureRecognizer x:Name="Setup"
+                                                      Tapped="Setup_Tapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Label Text="&#xf013;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="Settings" Style="{StaticResource LinkLabel}"/>
+                                <Label Text="&#xf013;"
+                                       Style="{StaticResource SideBarIconStyle}" />
+                                <Label Grid.Column="1"
+                                       Text="Settings"
+                                       Style="{StaticResource LinkLabel}" />
                             </Grid>
                         </Frame>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer x:Name="About" Tapped="About_Tapped"/>
+                                <TapGestureRecognizer x:Name="About"
+                                                      Tapped="About_Tapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Label Text="&#xf05a;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="About" Style="{StaticResource LinkLabel}"/>
+                                <Label Text="&#xf05a;"
+                                       Style="{StaticResource SideBarIconStyle}" />
+                                <Label Grid.Column="1"
+                                       Text="About"
+                                       Style="{StaticResource LinkLabel}" />
                             </Grid>
                         </Frame>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="Logout_Tapped"/>
+                                <TapGestureRecognizer Tapped="Logout_Tapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Label Text="&#xf08b;" Style="{StaticResource SideBarIconStyle}"/>
-                                <Label Grid.Column="1" Text="Logout" Style="{StaticResource LinkLabel}"/>
+                                <Label Text="&#xf08b;"
+                                       Style="{StaticResource SideBarIconStyle}" />
+                                <Label Grid.Column="1"
+                                       Text="Logout"
+                                       Style="{StaticResource LinkLabel}" />
                             </Grid>
                         </Frame>
                     </StackLayout>

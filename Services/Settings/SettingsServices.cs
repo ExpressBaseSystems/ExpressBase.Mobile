@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.Services
 
         private SettingsServices() { }
 
-        public bool OnBoarding { set; get; }
+        public bool IsFirstRun { set; get; }
 
         public SolutionInfo CurrentSolution { set; get; }
 
@@ -35,6 +35,8 @@ namespace ExpressBase.Mobile.Services
         public EbLocation CurrentLocation { set; get; }
 
         public List<MobilePagesWraper> MobilePages { set; get; }
+
+        public List<MobilePagesWraper> ExternalMobilePages { set; get; }
 
         public AppVendor Vendor { set; get; }
 
@@ -75,17 +77,12 @@ namespace ExpressBase.Mobile.Services
             {
                 CurrentSolution = this.GetSolution();
 
-                if (CurrentSolution == null && Vendor.BuildType == AppBuildType.Embedded)
-                {
-                    //await CreateEmbeddedSolution();
-                }
-
                 if (CurrentSolution != null)
                 {
                     App.DataDB.SetDbPath(CurrentSolution.SolutionName);
                 }
 
-                OnBoarding = this.IsOnBoarding();
+                IsFirstRun = this.IsApplicationFirstRun();
 
                 RToken = await this.GetRToken();
                 BToken = await this.GetBToken();
@@ -99,34 +96,11 @@ namespace ExpressBase.Mobile.Services
 
                 CurrentUser = this.GetUser();
                 CurrentLocation = this.GetCurrentLocation();
+                ExternalMobilePages = this.GetExternalPages();
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
-            }
-        }
-
-        private async Task CreateEmbeddedSolution()
-        {
-            SolutionInfo sln = new SolutionInfo
-            {
-                SolutionName = Vendor.SolutionURL.Split(CharConstants.DOT)[0],
-                RootUrl = Vendor.SolutionURL,
-                IsCurrent = true,
-            };
-            CurrentSolution = sln;
-
-            try
-            {
-                await Store.SetJSONAsync(AppConst.MYSOLUTIONS, new List<SolutionInfo> { sln });
-                await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, sln);
-
-                App.DataDB.CreateDB(sln.SolutionName);
-                await HelperFunctions.CreateDirectory();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
             }
         }
 
@@ -145,16 +119,23 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
-        public void Reset()
+        public void ResetSettings()
         {
             CurrentSolution = null; CurrentUser = null; RToken = null; BToken = null; CurrentApplication = null; CurrentLocation = null;
         }
 
-        private bool IsOnBoarding()
+        private bool IsApplicationFirstRun()
         {
-            if (!Store.TryGetValue<bool>(AppConst.ON_BOARDING, out _) && CurrentSolution == null)
+            try
             {
-                return true;
+                if (!Store.TryGetValue<bool>(AppConst.FIRST_RUN, out _) && CurrentSolution == null)
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("application first run check error, " + ex.Message);
             }
             return false;
         }
@@ -170,6 +151,8 @@ namespace ExpressBase.Mobile.Services
         private User GetUser() => Store.GetJSON<User>(AppConst.USER_OBJECT);
 
         private EbLocation GetCurrentLocation() => Store.GetJSON<EbLocation>(AppConst.CURRENT_LOCOBJ);
+
+        private List<MobilePagesWraper> GetExternalPages() => Store.GetJSON<List<MobilePagesWraper>>(AppConst.EXTERNAL_PAGES);
 
         public async Task<EbMobileSolutionData> GetSolutionDataAsync(bool export, int timeout = 0, Action<ResponseStatus> callback = null)
         {
@@ -210,8 +193,7 @@ namespace ExpressBase.Mobile.Services
 
         private async Task ImportSolutionData(EbMobileSolutionData solData, bool export)
         {
-            if (solData == null)
-                return;
+            if (solData == null) return;
 
             if (export)
             {
@@ -225,6 +207,11 @@ namespace ExpressBase.Mobile.Services
 
             await Store.SetJSONAsync(AppConst.APP_COLLECTION, solData.Applications);
             await SetLocationInfo(solData.Locations);
+
+            if (solData.ProfilePages != null && solData.ProfilePages.Count > 0)
+            {
+                await Store.SetJSONAsync(AppConst.EXTERNAL_PAGES, solData.ProfilePages);
+            }
 
             if (this.CurrentApplication != null)
             {

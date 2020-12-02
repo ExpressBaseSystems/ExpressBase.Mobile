@@ -34,12 +34,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             string linkRefID = Visualization.UseLinkSettings ? Visualization.LinkRefId : Visualization.FabLinkRefId;
 
-            EbMobilePage page = EbPageFinder.GetPage(linkRefID);
+            EbMobilePage page = EbPageHelper.GetPage(linkRefID);
 
             if (page != null && page.Container is EbMobileForm form)
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
-                bool validation = await EbPageFinder.ValidateFormRendering(form, this.ContextRecord);
+                bool validation = await EbPageHelper.ValidateFormRendering(form, this.ContextRecord);
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
 
                 if (validation)
@@ -51,7 +51,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private async Task EditButtonClicked()
         {
-            EbMobilePage page = EbPageFinder.GetPage(Context.SourceFormRefId);
+            EbMobilePage page = EbPageHelper.GetPage(Context.SourceFormRefId);
 
             if (page != null)
             {

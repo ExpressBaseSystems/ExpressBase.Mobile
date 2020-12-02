@@ -71,7 +71,7 @@
 
         public const bool NFEnabled = false;
 
-        public const string GMapAndroidKey = "";
+        public const string GMapAndroidKey = "AIzaSyDDgTEIxUMxT71PPeZzazJAV6caQ205mds";
 
         public const string GMapiOSKey = "";
     }

@@ -11,7 +11,7 @@ namespace ExpressBase.Mobile.Services
 
         void InitializeConfig();
 
-        void Reset();
+        void ResetSettings();
 
         Task<EbMobileSolutionData> GetSolutionDataAsync(bool export, int timeout, Action<ResponseStatus> callback);
     }

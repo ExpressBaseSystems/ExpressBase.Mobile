@@ -178,9 +178,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         protected async Task SubmitOTP(object o)
         {
             if (o == null) return;
-            string otp = o?.ToString();
+            
             try
             {
+                string otp = o?.ToString();
+
                 ApiAuthResponse authResponse = await IdentityService.Current.VerifyUserByOTP(createdUser.Token, createdUser.AuthId, otp);
 
                 if (authResponse != null && authResponse.IsValid)

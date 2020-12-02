@@ -83,6 +83,8 @@ namespace ExpressBase.Mobile.Models
 
         public int SignInLogId { get; set; }
 
+        public int UserType { get; set; }
+
         public List<string> EbObjectIds { set; get; }
 
         public List<int> LocationIds { get; }

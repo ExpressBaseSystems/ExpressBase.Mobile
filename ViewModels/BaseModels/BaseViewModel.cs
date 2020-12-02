@@ -80,7 +80,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             Store.ResetCashedSolutionData();
             Store.RemoveJSON(AppConst.SOLUTION_OBJ);
-            App.Settings.Reset();
+            App.Settings.ResetSettings();
 
             App.RootMaster = null;
             Application.Current.MainPage = new NavigationPage();

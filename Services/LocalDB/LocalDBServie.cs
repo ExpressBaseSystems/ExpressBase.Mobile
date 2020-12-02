@@ -16,7 +16,7 @@ namespace ExpressBase.Mobile.Services
             SyncResponse response = new SyncResponse();
             try
             {
-                List<EbMobileForm> FormCollection = EbPageFinder.GetOfflineForms();
+                List<EbMobileForm> FormCollection = EbPageHelper.GetOfflineForms();
 
                 WebformData webdata = new WebformData();
 

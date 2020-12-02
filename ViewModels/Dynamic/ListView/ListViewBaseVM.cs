@@ -167,7 +167,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             IToast toast = DependencyService.Get<IToast>();
             try
             {
-                EbMobilePage page = EbPageFinder.GetPage(this.Visualization.LinkRefId);
+                EbMobilePage page = EbPageHelper.GetPage(this.Visualization.LinkRefId);
 
                 if (this.NetworkType != page.NetworkMode)
                 {
@@ -178,7 +178,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     IsTapped = true;
 
-                    ContentPage renderer = EbPageFinder.ResolveByContext(this.Visualization, item.DataRow, page);
+                    ContentPage renderer = EbPageHelper.ResolveByContext(this.Visualization, item.DataRow, page);
 
                     if (renderer != null)
                         await App.Navigation.NavigateMasterAsync(renderer);

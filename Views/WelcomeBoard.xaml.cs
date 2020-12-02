@@ -43,7 +43,7 @@ namespace ExpressBase.Mobile.Views
                     if (response != null && response.IsValid)
                     {
                         await CreateEmbeddedSolution(response);
-                        await Store.SetValueAsync(AppConst.ON_BOARDING, "true");
+                        await Store.SetValueAsync(AppConst.FIRST_RUN, "true");
                         await App.Navigation.InitializeNavigation();
                     }
                 }

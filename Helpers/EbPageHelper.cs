@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
 {
-    public class EbPageFinder
+    public class EbPageHelper
     {
         public static ContentPage ResolveByContext(EbMobileVisualization vis, EbDataRow row, EbMobilePage page)
         {
@@ -74,6 +74,22 @@ namespace ExpressBase.Mobile.Helpers
             catch (Exception ex)
             {
                 EbLog.Error("Page not found" + ex.Message);
+            }
+            return null;
+        }
+
+        public static EbMobilePage GetExternalPage(string Refid)
+        {
+            if (string.IsNullOrEmpty(Refid))
+                return null;
+            try
+            {
+                MobilePagesWraper wrpr = App.Settings.ExternalMobilePages?.Find(item => item.RefId == Refid);
+                return wrpr?.GetPage();
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("external page not found, " + ex.Message);
             }
             return null;
         }

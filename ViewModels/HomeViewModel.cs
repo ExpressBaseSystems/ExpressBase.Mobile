@@ -101,7 +101,7 @@ namespace ExpressBase.Mobile.ViewModels
             if (isTapped) return;
             try
             {
-                EbMobilePage page = EbPageFinder.GetPage(item.RefId);
+                EbMobilePage page = EbPageHelper.GetPage(item.RefId);
 
                 if (page == null)
                 {
@@ -117,7 +117,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (page.Container is EbMobileForm form)
                 {
                     Device.BeginInvokeOnMainThread(() => IsBusy = true);
-                    render = await EbPageFinder.ValidateFormRendering(form);
+                    render = await EbPageHelper.ValidateFormRendering(form);
                     message = form.MessageOnFailed;
                     Device.BeginInvokeOnMainThread(() => IsBusy = false);
                 }
@@ -126,7 +126,7 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     EbLog.Info($"Rendering page '{page.Name}'");
 
-                    ContentPage renderer = EbPageFinder.GetPageByContainer(page);
+                    ContentPage renderer = EbPageHelper.GetPageByContainer(page);
                     await App.Navigation.NavigateMasterAsync(renderer);
                 }
                 else

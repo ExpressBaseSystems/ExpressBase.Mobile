@@ -1,7 +1,6 @@
 ﻿using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.ViewModels;
 using System;
-using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -10,39 +9,10 @@ namespace ExpressBase.Mobile.Views.Shared
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SideBar : ContentPage
     {
-        public bool HasAppSwitcher => Utils.Applications.Count > 1;
-
-        public bool HasSolutionSwitcher => App.Settings.Vendor.HasSolutionSwitcher;
-
-        public bool HasLocationSwitcher => App.Settings.Vendor.HasLocationSwitcher && Utils.Locations.Count > 1;
-
-        public bool HasMyActions => App.Settings.Vendor.HasActions;
-
         public SideBar()
         {
             InitializeComponent();
-            BindingContext = this;
-
-            User user = App.Settings.CurrentUser;
-            UserName.Text = user.FullName;
-            Email.Text = user.Email;
-            this.SetDp();
-        }
-
-        private void SetDp()
-        {
-            try
-            {
-                INativeHelper helper = DependencyService.Get<INativeHelper>();
-
-                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{App.Settings.Sid}/user.png");
-                if (bytes != null)
-                    UserDp.Source = ImageSource.FromStream(() => new MemoryStream(bytes));
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("SideBar.SetDp---" + ex.Message);
-            }
+            BindingContext = new SideBarViewModel();
         }
 
         private async void About_Tapped(object sender, EventArgs e)
