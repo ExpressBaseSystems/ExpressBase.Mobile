@@ -135,7 +135,7 @@ namespace ExpressBase.Mobile.Helpers
                     Value = App.Settings.CurrentLocation.LocId.ToString()
                 });
 
-                MobileVisDataRespnse data = await DataService.Instance.GetDataAsync(form.RenderValidatorRefId, 0, 0, cParams, null, null, false);
+                MobileVisDataResponse data = await DataService.Instance.GetDataAsync(form.RenderValidatorRefId, 0, 0, cParams, null, null, false);
 
                 if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
                 {

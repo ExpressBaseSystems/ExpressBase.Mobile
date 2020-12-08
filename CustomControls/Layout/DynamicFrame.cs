@@ -270,7 +270,7 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 Style = (Style)HelperFunctions.GetResourceValue("ListViewImage")
             };
-            image.SetExpansion(dc);
+            image.SetDimensions(dc);
             image.SetValue(value);
 
             return image;
@@ -326,30 +326,29 @@ namespace ExpressBase.Mobile.CustomControls
 
         private View DC2Audio(EbMobileDataColumn dc, object value)
         {
-            Color color = value == null ? Color.FromHex("#cccccc") : Color.Green;
+            Color color = dc.Font == null || string.IsNullOrEmpty(dc.Font.Color) ? Color.Green : Color.FromHex(dc.Font.Color);
 
             EbPlayButton audioButton = new EbPlayButton
             {
                 Style = (Style)HelperFunctions.GetResourceValue("ListViewAudioButton"),
                 TextColor = color,
-                BorderColor = color,
-                IsEnabled = (value != null)
+                FontSize = dc.Font == null || dc.Font.Size <= 0 ? 14 : dc.Font.Size,
+                IsEnabled = (value != null),
+                BackgroundColor = Color.FromHex(dc.BackgroundColor ?? "ffffff"),
+                CornerRadius = dc.BorderRadius,
             };
 
-            if (value != null)
-            {
-                audioButton.SetValue(value);
-            }
+            audioButton.SetDimensions(dc);
+            if (value != null) audioButton.SetValue(value);
 
             audioButton.Clicked += (sender, e) =>
             {
-                var current = App.Navigation.GetCurrentPage();
+                Page current = App.Navigation.GetCurrentPage();
                 if (current is IListRenderer ls)
                 {
                     ls.ShowAudioFiles((EbPlayButton)sender);
                 }
             };
-
             return audioButton;
         }
     }

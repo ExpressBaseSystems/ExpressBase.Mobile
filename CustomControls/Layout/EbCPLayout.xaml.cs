@@ -202,5 +202,13 @@ namespace ExpressBase.Mobile.CustomControls
             instance?.SecondaryToolbar_Tapped(null, null);
             EbLog.Info($"secondary toolbar ite clicked '{name}'");
         }
+
+        public static void Loading(bool show)
+        {
+            if(instance != null)
+            {
+                instance.Loader.IsVisible = show;
+            }
+        }
     }
 }

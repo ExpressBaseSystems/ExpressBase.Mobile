@@ -35,6 +35,16 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EditButton.IsVisible = true;
         }
 
+        //edit
+        public FormRender(EbMobilePage page, int rowId, WebformData data)
+        {
+            InitializeComponent();
+            BindingContext = viewModel = new FormRenderVME(page, rowId, data);
+
+            SaveButton.IsVisible = false;
+            EditButton.IsVisible = true;
+        }
+
         //prefill/new mode 
         public FormRender(EbMobilePage page, List<EbMobileDataColToControlMap> linkMap, EbDataRow contextRow)
         {

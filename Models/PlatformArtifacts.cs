@@ -23,6 +23,10 @@ namespace ExpressBase.Mobile.Models
 
         public List<MobilePagesWraper> ProfilePages { set; get; }
 
+        public User CurrentUser { set; get; }
+
+        public Eb_Solution CurrentSolution { set; get; }
+
         public EbDataSet GetOfflineData()
         {
             EbDataSet ds = new EbDataSet();
@@ -201,7 +205,7 @@ namespace ExpressBase.Mobile.Models
         public string Token { get; set; }
     }
 
-    public class MobileVisDataRespnse
+    public class MobileVisDataResponse
     {
         public string Message { set; get; }
 
@@ -234,6 +238,15 @@ namespace ExpressBase.Mobile.Models
         public string FileType { set; get; }
 
         public int FileRefId { set; get; }
+    }
+
+    public class MobileProfileData
+    {
+        public string Message { set; get; }
+
+        public WebformData Data { set; get; }
+
+        public int RowId { set; get; }
     }
 
     public class MobileFormDataResponse

@@ -13,6 +13,11 @@ namespace ExpressBase.Mobile.CustomControls
         Color XBackgroundColor { set; get; }
     }
 
+    public interface IDynamicHeight
+    {
+        bool CalcHeight { set; get; }
+    }
+
     public class EbXHiddenEntry : Entry
     {
 

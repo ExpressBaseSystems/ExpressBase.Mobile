@@ -6,15 +6,27 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls.XControls
 {
-    public class EbPlayButton : Button
+    public class EbPlayButton : Button, IDynamicHeight
     {
+        public bool CalcHeight { set; get; }
+
         public List<ApiFileResponse> AudioFiles { set; get; }
+
+        public void SetDimensions(EbMobileDataColumn dc)
+        {
+            if (dc.VerticalAlign == MobileVerticalAlign.Fill)
+                this.CalcHeight = true;
+            else
+                this.HeightRequest = dc.Height;
+
+            if (dc.HorrizontalAlign != MobileHorrizontalAlign.Fill)
+                this.WidthRequest = dc.Width;
+        }
 
         public async void SetValue(object value)
         {
@@ -47,7 +59,7 @@ namespace ExpressBase.Mobile.CustomControls.XControls
             {
                 RestClient client = new RestClient(App.Settings.RootUrl);
                 RestRequest request = new RestRequest("api/get_file", Method.GET);
-                
+
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 

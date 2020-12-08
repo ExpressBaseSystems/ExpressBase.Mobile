@@ -7,12 +7,12 @@ namespace ExpressBase.Mobile.Services
 {
     public interface IDataService
     {
-        MobileVisDataRespnse GetData(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect);
+        MobileVisDataResponse GetData(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect);
 
-        Task<MobileVisDataRespnse> GetDataAsync(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect);
+        Task<MobileVisDataResponse> GetDataAsync(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect);
 
-        Task<MobileVisDataRespnse> GetQueryDataAsync(string query, int limit, int offset, List<Param> param);
-        
+        Task<MobileProfileData> GetProfileDataAsync(string refid, int loc_id);
+
         Task<ApiFileResponse> GetFileAsync(EbFileCategory category, string filename);
 
         ApiFileResponse GetFile(EbFileCategory category, string filename);

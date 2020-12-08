@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -150,7 +151,7 @@ namespace ExpressBase.Mobile
             {
                 dbParameters ??= new List<DbParameter>();
 
-                DbParameter userParam = dbParameters.Find(item => item.ParameterName == "eb_currentuser_id");
+                DbParameter userParam = dbParameters.Find(item => item.ParameterName == EbKeywords.UserId);
 
                 if (userParam != null)
                 {
@@ -184,7 +185,7 @@ namespace ExpressBase.Mobile
                 {
                     param.Add(new Param
                     {
-                        Name = "eb_loc_id",
+                        Name = EbKeywords.Location,
                         Type = "11",
                         Value = App.Settings.CurrentLocation.LocId.ToString()
                     });

@@ -17,10 +17,21 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private Dictionary<string, List<FileMetaInfo>> filesData;
 
+        private WebformData webFormData;
+
         public FormRenderVME(EbMobilePage page, int rowid) : base(page)
         {
             this.Mode = FormMode.EDIT;
             this.RowId = rowid;
+
+            SubmitButtonText = "Save Changes";
+        }
+
+        public FormRenderVME(EbMobilePage page, int rowId, WebformData data) : base(page)
+        {
+            this.Mode = FormMode.EDIT;
+            this.RowId = rowId;
+            webFormData = data;
 
             SubmitButtonText = "Save Changes";
         }
@@ -42,10 +53,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
                 else if (IsOnline())
                 {
-                    WebformData webform = await FormDataService.GetFormLiveDataAsync(this.Page.RefId, this.RowId, App.Settings.CurrentLocId);
-
-                    this.formData = webform?.ToDataSet();
-                    this.filesData = webform?.ToFilesMeta();
+                    if (webFormData == null)
+                    {
+                        webFormData = await FormDataService.GetFormLiveDataAsync(this.Page.RefId, this.RowId, App.Settings.CurrentLocId);
+                    }
+                    this.formData = webFormData?.ToDataSet();
+                    this.filesData = webFormData?.ToFilesMeta();
                 }
             }
             catch (Exception ex)

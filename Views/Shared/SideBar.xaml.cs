@@ -9,10 +9,19 @@ namespace ExpressBase.Mobile.Views.Shared
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SideBar : ContentPage
     {
+        private readonly SideBarViewModel viewModel;
+
         public SideBar()
         {
             InitializeComponent();
-            BindingContext = new SideBarViewModel();
+            BindingContext = viewModel = new SideBarViewModel();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            viewModel.Initialize();
         }
 
         private async void About_Tapped(object sender, EventArgs e)

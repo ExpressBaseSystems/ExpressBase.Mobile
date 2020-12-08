@@ -19,7 +19,7 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
             BindingContext = viewModel = new HomeViewModel();
-            IconedLoader.IsVisible = true;
+            EbLayout.ShowLoader();
         }
 
         protected override async void OnAppearing()
@@ -35,13 +35,12 @@ namespace ExpressBase.Mobile.Views
                     await viewModel.InitializeAsync();
                     IsRendered = true;
                 }
-                IconedLoader.IsVisible = false;
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
-                IconedLoader.IsVisible = false;
             }
+            EbLayout.HideLoader();
         }
 
         protected override bool OnBackButtonPressed()

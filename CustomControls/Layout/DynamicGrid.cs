@@ -65,11 +65,11 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void TriggerSizeChanged(View view, int colnum)
         {
-            if (view is EbListViewImage lm)
+            if (view is IDynamicHeight dynH)
             {
-                if (lm.CalcHeight)
+                if (dynH.CalcHeight)
                 {
-                    lm.HeightRequest = this.GetColumnWidth(colnum);
+                    view.HeightRequest = this.GetColumnWidth(colnum);
                     return;
                 }
             }

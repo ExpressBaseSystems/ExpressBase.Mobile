@@ -112,7 +112,8 @@
                                     Padding="0"
                                     HorizontalOptions="End"
                                     VerticalOptions="End"
-                                    Text="&#xf040;">
+                                    Text="&#xf040;"
+                                    Command="{Binding EditProfileCommand}">
                             </Button>
                             
                         </Grid>

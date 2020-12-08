@@ -6,6 +6,7 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Views.Base;
 using ExpressBase.Mobile.CustomControls.XControls;
 using ExpressBase.Mobile.CustomControls.Views;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
@@ -146,9 +147,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 {
                     AllowDelete = false
                 };
-                AudioPopup.Children.Add(template.CreateView());
+                Frame view = (Frame)template.CreateView();
+                view.HasShadow = false;
+                AudioPopup.Children.Add(view);
             }
-
             AudioPopupView.Show();
         }
     }

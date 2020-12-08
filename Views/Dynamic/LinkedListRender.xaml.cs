@@ -160,9 +160,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 {
                     AllowDelete = false
                 };
-                AudioPopup.Children.Add(template.CreateView());
+                Frame view = (Frame)template.CreateView();
+                view.HasShadow = false;
+                AudioPopup.Children.Add(view);
             }
-
             AudioPopupView.Show();
         }
     }

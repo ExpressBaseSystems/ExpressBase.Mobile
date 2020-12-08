@@ -15,7 +15,7 @@
 
         public const string GET_SOLUTION_DATA = "api/get_solution_data";
         public const string GET_VIS_DATA = "api/get_data";
-        public const string GET_QUERY_DATA = "api/get_query_data";
+        public const string GET_PROFILE_DATA = "api/get_profile";
 
 
         public const string AUTHETICATE = "api/auth";

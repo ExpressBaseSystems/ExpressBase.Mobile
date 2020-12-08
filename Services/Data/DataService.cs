@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.Services
 
         public DataService() : base(true) { }
 
-        public MobileVisDataRespnse GetData(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
+        public MobileVisDataResponse GetData(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
         {
             try
             {
@@ -45,16 +45,16 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
                 IRestResponse iresp = HttpClient.Execute(request);
-                return JsonConvert.DeserializeObject<MobileVisDataRespnse>(iresp.Content);
+                return JsonConvert.DeserializeObject<MobileVisDataResponse>(iresp.Content);
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }
-            return new MobileVisDataRespnse();
+            return new MobileVisDataResponse();
         }
 
-        public async Task<MobileVisDataRespnse> GetDataAsync(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
+        public async Task<MobileVisDataResponse> GetDataAsync(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
         {
             try
             {
@@ -79,34 +79,30 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
                 IRestResponse iresp = await HttpClient.ExecuteAsync(request);
-                return JsonConvert.DeserializeObject<MobileVisDataRespnse>(iresp.Content);
+                return JsonConvert.DeserializeObject<MobileVisDataResponse>(iresp.Content);
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }
-            return new MobileVisDataRespnse();
+            return new MobileVisDataResponse();
         }
 
-        public async Task<MobileVisDataRespnse> GetQueryDataAsync(string query, int limit, int offset, List<Param> param)
+        public async Task<MobileProfileData> GetProfileDataAsync(string refid, int loc_id)
         {
             try
             {
-                RestRequest request = new RestRequest(ApiConstants.GET_QUERY_DATA, Method.POST);
-                request.AddParameter("query", query);
+                RestRequest request = new RestRequest(ApiConstants.GET_PROFILE_DATA, Method.GET);
 
-                if (param != null)
-                    request.AddParameter("param", JsonConvert.SerializeObject(param));
-
-                request.AddParameter("limit", limit);
-                request.AddParameter("offset", offset);
+                request.AddParameter("refid", refid);
+                request.AddParameter("loc_id", loc_id);
 
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
                 IRestResponse iresp = await HttpClient.ExecuteAsync(request);
                 if (iresp.IsSuccessful)
-                    return JsonConvert.DeserializeObject<MobileVisDataRespnse>(iresp.Content);
+                    return JsonConvert.DeserializeObject<MobileProfileData>(iresp.Content);
                 else
                     EbLog.Error(iresp.Content);
             }

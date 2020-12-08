@@ -29,107 +29,110 @@
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
-        <Grid>
-            <RefreshView x:Name="RootRefreshView"
-                         IsRefreshing="{Binding IsRefreshing}"
-                         RefreshColor="{DynamicResource Primary_Color}"
-                         Command="{Binding RefreshDataCommand}">
-                <ScrollView>
-                    <StackLayout VerticalOptions="FillAndExpand">
-                        <Frame Padding="10"
-                               Margin="10,15"
-                               CornerRadius="8"
-                               BackgroundColor="#e8f0fe"
-                               BorderColor="#e8f0fe"
-                               HasShadow="True">
-                            <Grid ColumnSpacing="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <BoxView HeightRequest="50"
-                                         WidthRequest="50"
-                                         CornerRadius="28"
-                                         BackgroundColor="White">
-                                </BoxView>
-                                <Frame HeightRequest="50"
-                                       Padding="0"
-                                       WidthRequest="50"
-                                       CornerRadius="25"
-                                       HasShadow="False"
-                                       IsClippedToBounds="True">
-                                    <Image Source="{Binding SolutionLogo}"
-                                           VerticalOptions="Center"
-                                           HorizontalOptions="Center"
-                                           Aspect="AspectFill">
-                                    </Image>
+        <control:EbCPLayout x:Name="EbLayout"
+                            HasToolBar="False"
+                            HasBackButton="False"
+                            LoaderVisibilty="{Binding IsBusy}">
+            <control:EbCPLayout.Content>
+                <Grid>
+                    <RefreshView x:Name="RootRefreshView"
+                                 IsRefreshing="{Binding IsRefreshing}"
+                                 RefreshColor="{DynamicResource Primary_Color}"
+                                 Command="{Binding RefreshDataCommand}">
+                        <ScrollView>
+                            <StackLayout VerticalOptions="FillAndExpand">
+                                <Frame Padding="10"
+                                       Margin="10,15"
+                                       CornerRadius="8"
+                                       BackgroundColor="#e8f0fe"
+                                       BorderColor="#e8f0fe"
+                                       HasShadow="True">
+                                    <Grid ColumnSpacing="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <BoxView HeightRequest="50"
+                                                 WidthRequest="50"
+                                                 CornerRadius="28"
+                                                 BackgroundColor="White">
+                                        </BoxView>
+                                        <Frame HeightRequest="50"
+                                               Padding="0"
+                                               WidthRequest="50"
+                                               CornerRadius="25"
+                                               HasShadow="False"
+                                               IsClippedToBounds="True">
+                                            <Image Source="{Binding SolutionLogo}"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="Center"
+                                                   Aspect="AspectFill">
+                                            </Image>
+                                        </Frame>
+
+                                        <StackLayout Grid.Column="1">
+                                            <Label x:Name="CurrentSolution"
+                                                   FontSize="15"
+                                                   FontFamily="{StaticResource Roboto-Medium}">
+                                            </Label>
+                                            <Label LineBreakMode="TailTruncation">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="&#xf041;"
+                                                              FontFamily="{StaticResource FontAwesome}"></Span>
+                                                        <Span Text=" "></Span>
+                                                        <Span Text="Default"
+                                                              FontSize="13"
+                                                              x:Name="CurrentLocation"
+                                                              FontFamily="{StaticResource Roboto-Medium}">
+                                                        </Span>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </StackLayout>
+
+                                        <Button Grid.Column="2"
+                                                IsVisible="{Binding HasLocationSwitcher}"
+                                                Text="Change"
+                                                BackgroundColor="Green"
+                                                TextColor="White"
+                                                HeightRequest="20"
+                                                WidthRequest="50"
+                                                CornerRadius="4"
+                                                Padding="0"
+                                                FontSize="10"
+                                                HorizontalOptions="End"
+                                                VerticalOptions="End"
+                                                Clicked="LocationSwitch_Clicked">
+                                        </Button>
+
+                                    </Grid>
                                 </Frame>
 
-                                <StackLayout Grid.Column="1">
-                                    <Label x:Name="CurrentSolution"
-                                           FontSize="15"
-                                           FontFamily="{StaticResource Roboto-Medium}">
-                                    </Label>
-                                    <Label LineBreakMode="TailTruncation">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="&#xf041;"
-                                                      FontFamily="{StaticResource FontAwesome}"></Span>
-                                                <Span Text=" "></Span>
-                                                <Span Text="Default"
-                                                      FontSize="13"
-                                                      x:Name="CurrentLocation"
-                                                      FontFamily="{StaticResource Roboto-Medium}">
-                                                </Span>
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                </StackLayout>
+                                <control:Menu x:Name="MenuView"
+                                              ItemSource="{Binding ObjectList}"
+                                              ItemTaped="{Binding MenuItemTappedCommand}">
+                                </control:Menu>
 
-                                <Button Grid.Column="2"
-                                        IsVisible="{Binding HasLocationSwitcher}"
-                                        Text="Change"
-                                        BackgroundColor="Green"
-                                        TextColor="White"
-                                        HeightRequest="20"
-                                        WidthRequest="50"
-                                        CornerRadius="4"
-                                        Padding="0"
-                                        FontSize="10"
-                                        HorizontalOptions="End"
-                                        VerticalOptions="End"
-                                        Clicked="LocationSwitch_Clicked">
-                                </Button>
-                                
-                            </Grid>
-                        </Frame>
-                        
-                        <control:Menu x:Name="MenuView"
-                                      ItemSource="{Binding ObjectList}"
-                                      ItemTaped="{Binding MenuItemTappedCommand}">
-                        </control:Menu>
+                                <control:EmptyBox VerticalOptions="CenterAndExpand"
+                                                  Message="Empty..."
+                                                  IsVisible="{Binding IsEmpty}">
+                                </control:EmptyBox>
 
-                        <control:EmptyBox VerticalOptions="CenterAndExpand"
-                                          Message="Empty..."
-                                          IsVisible="{Binding IsEmpty}">
-                        </control:EmptyBox>
-
-                    </StackLayout>
-                </ScrollView>
-            </RefreshView>
-            <!--loader-->
-            <control:LoaderIconed x:Name="IconedLoader"
-                                  IsVisible="{Binding IsBusy}"
-                                  AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                                  AbsoluteLayout.LayoutFlags="All">
-            </control:LoaderIconed>
-            
-            <control:ConfirmBox x:Name="LogoutDialog"
-                                Title="Confirm"
-                                Message="Do you want to logout?"
-                                ConfirmClicked="{Binding LogoutCommand}">
-            </control:ConfirmBox>
-        </Grid>
+                            </StackLayout>
+                        </ScrollView>
+                    </RefreshView>
+                    <!--loader-->
+                    
+                    <control:ConfirmBox x:Name="LogoutDialog"
+                                        Title="Confirm"
+                                        Message="Do you want to logout?"
+                                        ConfirmClicked="{Binding LogoutCommand}">
+                    </control:ConfirmBox>
+                </Grid>
+            </control:EbCPLayout.Content>
+        </control:EbCPLayout>
+        
     </ContentPage.Content>
 </base:EbContentPage>

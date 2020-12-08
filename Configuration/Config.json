@@ -97,7 +97,7 @@
     },
     "Tiwi": {
       "BuildType": "Embedded",
-      "SolutionURL": "tiwi.eb-test.cloud",
+      "SolutionURL": "tiwi.eb-test.site",
       "AllowNotifications": false,
       "PrimaryColor": "4e2c94",
       "PrimaryLowerColor": "427f3c",

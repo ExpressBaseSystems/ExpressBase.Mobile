@@ -23,6 +23,7 @@ namespace ExpressBase.Mobile.Views
         public WelcomeBoard()
         {
             InitializeComponent();
+            VendorLogo.Source = Vendor.Logo;
         }
 
         private async void StartApplicationClicked(object sender, EventArgs e)
@@ -55,6 +56,7 @@ namespace ExpressBase.Mobile.Views
             }
             else
             {
+                await Store.SetValueAsync(AppConst.FIRST_RUN, "true");
                 await App.Navigation.InitializeNavigation();
             }
         }

@@ -207,6 +207,8 @@ namespace ExpressBase.Mobile.Services
 
             await Store.SetJSONAsync(AppConst.APP_COLLECTION, solData.Applications);
             await SetLocationInfo(solData.Locations);
+            await SetCurrentUser(solData.CurrentUser);
+            await SetSolutionObject(solData.CurrentSolution);
 
             if (solData.ProfilePages != null && solData.ProfilePages.Count > 0)
             {
@@ -238,6 +240,46 @@ namespace ExpressBase.Mobile.Services
             catch (Exception ex)
             {
                 EbLog.Error("Failed to set location :: " + ex.Message);
+            }
+        }
+
+        private async Task SetSolutionObject(Eb_Solution solution)
+        {
+            if (solution == null) return;
+
+            try
+            {
+                this.CurrentSolution.SolutionObject = solution;
+
+                List<SolutionInfo> allSolutions = Utils.Solutions;
+
+                SolutionInfo current = allSolutions.Find(x => x.SolutionName == CurrentSolution.SolutionName && x.RootUrl == CurrentSolution.RootUrl);
+
+                if(current != null)
+                {
+                    current.SolutionObject = solution;
+                    await Store.SetJSONAsync(AppConst.MYSOLUTIONS, allSolutions);
+                    await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, current);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("failed to set solution object, " + ex.Message);
+            }
+        }
+
+        private async Task SetCurrentUser(User currentUser)
+        {
+            if (currentUser == null) return;
+
+            try
+            {
+                this.CurrentUser = currentUser;
+                await Store.SetJSONAsync(AppConst.USER_OBJECT, currentUser);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("failed to set user object, " + ex.Message);
             }
         }
     }

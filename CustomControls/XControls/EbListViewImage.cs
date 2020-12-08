@@ -13,13 +13,11 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
-    public class EbListViewImage : Image
+    public class EbListViewImage : Image, IDynamicHeight
     {
-        public double InitialWidth { set; get; }
-
         public bool CalcHeight { set; get; }
 
-        public void SetExpansion(EbMobileDataColumn dc)
+        public void SetDimensions(EbMobileDataColumn dc)
         {
             if (dc.VerticalAlign == MobileVerticalAlign.Fill)
                 this.CalcHeight = true;

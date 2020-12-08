@@ -1,8 +1,11 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
+using ExpressBase.Mobile.Views.Dynamic;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -21,7 +24,17 @@ namespace ExpressBase.Mobile.ViewModels
 
         public ImageSource DisplayPicture { set; get; }
 
-        public bool IsProfileEditable { set; get; }
+        private bool _isProfileEditable;
+
+        public bool IsProfileEditable
+        {
+            get => _isProfileEditable;
+            set
+            {
+                _isProfileEditable = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public string UserName => currentUser?.FullName;
 
@@ -31,17 +44,16 @@ namespace ExpressBase.Mobile.ViewModels
 
         private MobilePagesWraper profilePage;
 
-        public Command EditProfileCommand { set; get; }
+        public Command EditProfileCommand => new Command(async () => await EditProfile());
 
         public SideBarViewModel()
         {
-            Initialize();
+            SetDisplayPicture();
         }
 
         public override void Initialize()
         {
-            SetDisplayPicture();
-            SetProfileEdit();
+            AllowProfileEditIfEnabled();
         }
 
         private void SetDisplayPicture()
@@ -67,7 +79,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        private void SetProfileEdit()
+        private void AllowProfileEditIfEnabled()
         {
             if (currentUser.UserType == 0) return;
 
@@ -81,24 +93,42 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     IsProfileEditable = true;
                     profilePage = profilePageWrapper;
-
-                    EditProfileCommand = new Command(async () => await EditProfile());
                 }
             }
         }
 
         private async Task EditProfile()
         {
-            if (profilePage != null)
-            {
-                EbMobilePage page = profilePage.GetPage();
+            if (profilePage == null || !Utils.HasInternet) return;
 
-                if (page != null && page.Container is EbMobileForm)
+            EbMobilePage page = profilePage.GetPage();
+
+            if (page != null && page.Container is EbMobileForm)
+            {
+                App.RootMaster.IsPresented = false;
+
+                try
                 {
-                    App.RootMaster.IsPresented = false;
-                    ContentPage renderer = EbPageHelper.GetPageByContainer(page);
-                    await App.Navigation.NavigateAsync(renderer);
+                    EbCPLayout.Loading(true);
+
+                    MobileProfileData profileData = await DataService.Instance.GetProfileDataAsync(page.RefId, App.Settings.CurrentLocId);
+
+                    if (profileData != null && profileData.RowId > 0)
+                    {
+                        EbLog.Info($"profile [rowid] value = '{profileData.RowId}', rendering form in Edit");
+                        await App.Navigation.NavigateByRenderer(new FormRender(page, profileData.RowId, profileData.Data));
+                    }
+                    else
+                    {
+                        EbLog.Info($"profile data null or [rowid] value = '0', rendering form in new mode");
+                        await App.Navigation.NavigateByRenderer(new FormRender(page));
+                    }
                 }
+                catch (Exception ex)
+                {
+                    EbLog.Error(ex.Message);
+                }
+                EbCPLayout.Loading(false);
             }
         }
     }
