@@ -101,27 +101,32 @@
                                    TextColor="White"
                                    HorizontalTextAlignment="Center">
                             </Label>
-
-                            <Button FontFamily="{StaticResource FontAwesome}"
-                                    IsVisible="{Binding IsProfileEditable}"
-                                    Grid.RowSpan="3"
-                                    WidthRequest="40"
-                                    HeightRequest="40"
-                                    CornerRadius="20"
-                                    BackgroundColor="White"
-                                    Padding="0"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="End"
-                                    Text="&#xf040;"
-                                    Command="{Binding EditProfileCommand}">
-                            </Button>
-                            
                         </Grid>
                     </StackLayout>
                     <StackLayout VerticalOptions="FillAndExpand"
                                  Orientation="Vertical"
                                  Padding="0"
                                  Spacing="0">
+                        <Frame Style="{StaticResource SideBarFrame}"
+                               Margin="10,5,0,0"
+                               IsVisible="{Binding IsProfileEditable}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding EditProfileCommand}" />
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Text="&#xf007;"
+                                       Style="{StaticResource SideBarIconStyle}" />
+
+                                <Label Grid.Column="1"
+                                       Text="Profile"
+                                       Style="{StaticResource LinkLabel}" />
+                            </Grid>
+                        </Frame>
                         <Frame Style="{StaticResource SideBarFrame}"
                                Margin="10,5,0,0"
                                IsVisible="{Binding HasSolutionSwitcher}">

@@ -205,16 +205,13 @@
                             FontFamily="{StaticResource FontAwesome}"
                             Command="{Binding AddCommand}">
                     </Button>
-
-                    <StackLayout Grid.RowSpan="2"
-                                 x:Name="EmptyMessage"
-                                 IsVisible="False"
-                                 VerticalOptions="Center">
-                        <Image Source="mt.png"
-                               HeightRequest="70"></Image>
-                        <Label Text="Empty list..."
-                               HorizontalTextAlignment="Center"></Label>
-                    </StackLayout>
+                    
+                    <control:EmptyBox Grid.RowSpan="2"
+                                      x:Name="EmptyMessage"
+                                      IsVisible="False"
+                                      VerticalOptions="Center"
+                                      Message="{Binding Visualization.MessageOnEmpty}">
+                    </control:EmptyBox>
 
                     <control:FilterView Grid.RowSpan="2"
                                         x:Name="FilterView"

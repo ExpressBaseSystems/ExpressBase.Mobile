@@ -18,6 +18,8 @@ namespace ExpressBase.Mobile
 
         public bool HideSearchBox { set; get; }
 
+        public int ZoomLevel { set; get; }
+
         private GoogleMap mapView;
 
         public EbGeoLocation Cordinates { set; get; }

@@ -213,6 +213,7 @@ namespace ExpressBase.Mobile.Services
             if (solData.ProfilePages != null && solData.ProfilePages.Count > 0)
             {
                 await Store.SetJSONAsync(AppConst.EXTERNAL_PAGES, solData.ProfilePages);
+                this.ExternalMobilePages = solData.ProfilePages;
             }
 
             if (this.CurrentApplication != null)
@@ -255,7 +256,7 @@ namespace ExpressBase.Mobile.Services
 
                 SolutionInfo current = allSolutions.Find(x => x.SolutionName == CurrentSolution.SolutionName && x.RootUrl == CurrentSolution.RootUrl);
 
-                if(current != null)
+                if (current != null)
                 {
                     current.SolutionObject = solution;
                     await Store.SetJSONAsync(AppConst.MYSOLUTIONS, allSolutions);

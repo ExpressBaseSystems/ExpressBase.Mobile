@@ -78,17 +78,32 @@ namespace ExpressBase.Mobile.CustomControls.Views
         {
             InitializeComponent();
             service = new GoogleMapApiService();
+
+            //OpenSettings();
+        }
+
+        private void OpenSettings()
+        {
+            try
+            {
+                ILocationHelper locService = DependencyService.Get<ILocationHelper>();
+                locService.OpenSettings();
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("failed to open location settings in [GoogleMap] view, " + ex.Message);
+            }
         }
 
         protected override void OnPropertyChanged(string propertyName = null)
         {
             base.OnPropertyChanged(propertyName);
 
-            if(propertyName == EnableTrafficProperty.PropertyName)
+            if (propertyName == EnableTrafficProperty.PropertyName)
             {
                 MapView.TrafficEnabled = EnableTraffic;
-            } 
-            else if(propertyName == SearchEnabledProperty.PropertyName)
+            }
+            else if (propertyName == SearchEnabledProperty.PropertyName)
             {
                 SearchBox.IsVisible = SearchEnabled;
             }

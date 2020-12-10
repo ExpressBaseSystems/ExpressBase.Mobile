@@ -99,4 +99,9 @@ namespace ExpressBase.Mobile.Helpers
 
         event EbEventHandler OnRecordingCompleted;
     }
+
+    public interface ILocationHelper
+    {
+        void OpenSettings();
+    }
 }

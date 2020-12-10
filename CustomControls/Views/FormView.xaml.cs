@@ -16,6 +16,8 @@ namespace ExpressBase.Mobile.CustomControls
 
         public static readonly BindableProperty FormModeProperty = BindableProperty.Create("FormMode", typeof(FormMode), typeof(ContentView));
 
+        public static readonly BindableProperty SpacingProperty = BindableProperty.Create(nameof(Spacing), typeof(int), typeof(ContentView), defaultValue: 0);
+
         public List<EbMobileControl> Controls
         {
             get { return (List<EbMobileControl>)GetValue(ControlsProperty); }
@@ -34,6 +36,12 @@ namespace ExpressBase.Mobile.CustomControls
             set { SetValue(FormModeProperty, value); }
         }
 
+        public int Spacing
+        {
+            get { return (int)GetValue(SpacingProperty); }
+            set { SetValue(SpacingProperty, value); }
+        }
+
         public FormView()
         {
             InitializeComponent();
@@ -43,6 +51,8 @@ namespace ExpressBase.Mobile.CustomControls
         {
             base.OnBindingContextChanged();
             this.Render();
+
+            FormViewContainer.Spacing = Spacing;
         }
 
         private void Render()
@@ -71,7 +81,7 @@ namespace ExpressBase.Mobile.CustomControls
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }

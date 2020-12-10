@@ -30,6 +30,8 @@ namespace ExpressBase.Mobile
 
         public int PageLength { set; get; } = 30;
 
+        public string MessageOnEmpty { set; get; } = "List Empty...";
+
         public WebFormDVModes FormMode { set; get; }
 
         public EbMobileDataColToControlMap FormId { set; get; }

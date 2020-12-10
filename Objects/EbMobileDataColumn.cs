@@ -18,6 +18,8 @@ namespace ExpressBase.Mobile
 
         public string TextFormat { get; set; }
 
+        public MobileTextWrap TextWrap { set; get; }
+
         public EbFont Font { get; set; }
 
         public int RowSpan { set; get; }

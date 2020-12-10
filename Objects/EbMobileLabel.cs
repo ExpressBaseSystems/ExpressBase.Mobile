@@ -1,5 +1,4 @@
 ﻿using ExpressBase.Mobile.CustomControls.XControls;
-using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using Xamarin.Forms;
 
@@ -14,6 +13,8 @@ namespace ExpressBase.Mobile
         public string Icon { set; get; }
 
         public EbFont Font { get; set; }
+
+        public MobileTextWrap TextWrap { set; get; }
 
         public int BorderRadius { get; set; }
 

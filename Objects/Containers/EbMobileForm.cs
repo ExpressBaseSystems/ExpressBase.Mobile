@@ -33,6 +33,8 @@ namespace ExpressBase.Mobile
 
         public string SubmitButtonText { set; get; }
 
+        public int Spacing { set; get; }
+
         public Dictionary<string, EbMobileControl> ControlDictionary { set; get; }
 
         private bool HasFileSelect => ControlDictionary.Any(x => x.Value.GetType() == typeof(EbMobileFileUpload));
@@ -85,7 +87,7 @@ namespace ExpressBase.Mobile
             return dt;
         }
 
-        public async Task<FormSaveResponse> Save(int rowId)
+        public async Task<FormSaveResponse> Save(int rowId, string pageRefId)
         {
             FormSaveResponse response = new FormSaveResponse();
             try
@@ -95,7 +97,7 @@ namespace ExpressBase.Mobile
 
                 if (NetworkType == NetworkMode.Online)
                 {
-                    await this.SaveToCloudDB(data, response, rowId);
+                    await this.SaveToCloudDB(data, response, rowId, pageRefId);
                 }
                 else if (NetworkType == NetworkMode.Offline)
                 {
@@ -104,7 +106,7 @@ namespace ExpressBase.Mobile
                 else
                 {
                     if (Utils.HasInternet)
-                        await this.SaveToCloudDB(data, response, rowId);
+                        await this.SaveToCloudDB(data, response, rowId, pageRefId);
                     else
                         await this.SaveToLocalDB(data, response, rowId);
                 }
@@ -220,7 +222,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        private async Task SaveToCloudDB(MobileFormData data, FormSaveResponse response, int rowId)
+        private async Task SaveToCloudDB(MobileFormData data, FormSaveResponse response, int rowId, string pageRefId)
         {
             try
             {
@@ -242,7 +244,7 @@ namespace ExpressBase.Mobile
                 int locid = App.Settings.CurrentLocId;
                 EbLog.Info($"saving record in location {locid}");
 
-                PushResponse pushResponse = await FormDataServices.Instance.SendFormDataAsync(webFormData, rowId, this.WebFormRefId, locid);
+                PushResponse pushResponse = await FormDataServices.Instance.SendFormDataAsync(pageRefId, webFormData, rowId, this.WebFormRefId, locid);
 
                 this.LogPushResponse(pushResponse);
 

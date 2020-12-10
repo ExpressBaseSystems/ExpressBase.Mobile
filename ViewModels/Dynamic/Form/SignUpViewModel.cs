@@ -59,7 +59,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
-            FormSaveResponse response = await this.Form.Save(this.RowId);
+            FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
 
             if (response.Status)
             {
@@ -166,7 +166,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 else
                 {
                     throw new Exception("profile user type [null] or [refid] empty");
-                } 
+                }
             }
             catch (Exception ex)
             {
@@ -178,7 +178,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         protected async Task SubmitOTP(object o)
         {
             if (o == null) return;
-            
+
             try
             {
                 string otp = o?.ToString();

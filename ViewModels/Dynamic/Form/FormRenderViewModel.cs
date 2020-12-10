@@ -92,7 +92,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
-                FormSaveResponse response = await this.Form.Save(this.RowId);
+                FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
 
                 Device.BeginInvokeOnMainThread(async () =>
                 {

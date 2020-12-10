@@ -11,7 +11,7 @@ namespace ExpressBase.Mobile.Services
 
         Task<EbDataSet> GetFormLocalDataAsync(EbMobileForm form, int rowid);
 
-        Task<PushResponse> SendFormDataAsync(WebformData WebFormData, int RowId, string WebFormRefId, int LocId);
+        Task<PushResponse> SendFormDataAsync(string mobilePageRefid, WebformData WebFormData, int RowId, string WebFormRefId, int LocId);
 
         Task<ApiFileResponse> GetFile(EbFileCategory category, string filename);
     }
