@@ -18,7 +18,8 @@
                       MapType="Street"
                       HasZoomEnabled="False"
                       TrafficEnabled="False"
-                      IsShowingUser="True">
+                      IsShowingUser="True"
+                      MapClicked="OnMapAreaTouched">
             </maps:Map>
 
             <Frame Grid.Row="1"

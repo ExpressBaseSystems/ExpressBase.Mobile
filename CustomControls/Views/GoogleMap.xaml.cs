@@ -32,6 +32,9 @@ namespace ExpressBase.Mobile.CustomControls.Views
         public static readonly BindableProperty ZoomEnabledProperty =
             BindableProperty.Create(nameof(ZoomEnabled), typeof(bool), typeof(GoogleMap));
 
+        public static readonly BindableProperty ZoomLevelProperty =
+            BindableProperty.Create(nameof(ZoomLevel), typeof(int), typeof(GoogleMap), defaultValue: 14);
+
         public event EbEventHandler ChangeLocationClicked;
 
         public bool SearchEnabled
@@ -70,6 +73,12 @@ namespace ExpressBase.Mobile.CustomControls.Views
             set { SetValue(ZoomEnabledProperty, value); }
         }
 
+        public int ZoomLevel
+        {
+            get { return (int)GetValue(ZoomLevelProperty); }
+            set { SetValue(ZoomLevelProperty, value); }
+        }
+
         private EbGeoLocation selectedLocation;
 
         readonly GoogleMapApiService service;
@@ -79,7 +88,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
             InitializeComponent();
             service = new GoogleMapApiService();
 
-            //OpenSettings();
+            OpenSettings();
         }
 
         private void OpenSettings()
@@ -124,7 +133,9 @@ namespace ExpressBase.Mobile.CustomControls.Views
         private void SetSingleLocation(double lat, double lng)
         {
             Position pos = new Position(lat, lng);
-            MapSpan span = MapSpan.FromCenterAndRadius(pos, Distance.FromMiles(10));
+
+            double latlongDegrees = 360 / (Math.Pow(2, ZoomLevel));
+            MapSpan span = new MapSpan(pos, latlongDegrees, latlongDegrees);
             MapView.MoveToRegion(span);
 
             Pin pin = new Pin
@@ -251,6 +262,14 @@ namespace ExpressBase.Mobile.CustomControls.Views
         private void SaveLocationButton_Clicked(object sender, EventArgs e)
         {
             GetResultCommand?.Execute(selectedLocation);
+        }
+
+        private void OnMapAreaTouched(object sender, MapClickedEventArgs e)
+        {
+            if (LocationPickerEnabled && e.Position != null)
+            {
+                SetLocation(e.Position.Latitude, e.Position.Longitude);
+            }
         }
     }
 }

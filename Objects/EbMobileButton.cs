@@ -119,7 +119,7 @@ namespace ExpressBase.Mobile
             if (string.IsNullOrEmpty(this.LinkRefId))
                 return;
 
-            EbMobilePage page = EbPageHelper.GetPage(this.LinkRefId);
+            EbMobilePage page = EbPageHelper.GetPage(this.LinkRefId) ?? EbPageHelper.GetExternalPage(this.LinkRefId);
 
             if (page != null)
             {

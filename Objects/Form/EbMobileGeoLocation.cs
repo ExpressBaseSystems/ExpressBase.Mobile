@@ -33,9 +33,14 @@ namespace ExpressBase.Mobile
                 Style = (Style)HelperFunctions.GetResourceValue("GeoLocFrame"),
                 Content = mapView = new GoogleMap
                 {
-                    ChangeLocationEnabled = true
+                    ChangeLocationEnabled = true,
                 }
             };
+
+            if (ZoomLevel > 0)
+            {
+                mapView.ZoomLevel = this.ZoomLevel;
+            }
 
             mapView.ChangeLocationClicked += async (sender, e) =>
             {
