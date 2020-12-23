@@ -28,6 +28,8 @@ namespace ExpressBase.Mobile
 
         public NetworkMode NetworkMode { get; set; }
 
+        public string BackgroundColor { get; set; }
+
         public bool HideFromMenu { set; get; }
 
         public string Icon { set; get; }

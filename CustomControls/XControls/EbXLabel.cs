@@ -41,5 +41,17 @@ namespace ExpressBase.Mobile.CustomControls.XControls
         }
 
         public EbXLabel() { }
+
+        public EbXLabel(EbMobileDataColumn dc)
+        {
+            XBackgroundColor = Color.FromHex(dc.BackgroundColor ?? "#ffffff00");
+            BorderColor = Color.FromHex(dc.BorderColor ?? "#ffffff00");
+            BorderRadius = dc.BorderRadius;
+            BorderThickness = dc.BorderThickness;
+            Padding = dc.Padding == null ? 0 : dc.Padding.ConvertToXValue();
+
+            if (dc.Width > 0) this.WidthRequest = dc.Width;
+            if (dc.Height > 0) this.HeightRequest = dc.Height;
+        }
     }
 }

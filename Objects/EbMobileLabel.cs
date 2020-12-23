@@ -1,10 +1,11 @@
 ﻿using ExpressBase.Mobile.CustomControls.XControls;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileLabel : EbMobileControl, INonPersistControl, IMobileAlignment, IGridSpan
+    public class EbMobileLabel : EbMobileControl, INonPersistControl, IGridAlignment, IMobileUIControl
     {
         public string Text { get; set; }
 
@@ -20,6 +21,10 @@ namespace ExpressBase.Mobile
 
         public string BackgroundColor { get; set; }
 
+        public string BorderColor { get; set; }
+
+        public int BorderThickness { get; set; }
+
         public int RowSpan { set; get; }
 
         public int ColumnSpan { set; get; }
@@ -32,15 +37,20 @@ namespace ExpressBase.Mobile
 
         public int Width { set; get; }
 
+        public EbThickness Padding { set; get; }
+
         public EbMobileStaticParameter BindingParam { set; get; }
 
-        public EbXLabel CreateXControl()
+        public EbXLabel Draw()
         {
             EbXLabel label = new EbXLabel
             {
+                Text = this.Text,
                 XBackgroundColor = Color.FromHex(BackgroundColor ?? "#ffffff"),
                 BorderRadius = BorderRadius,
-                BorderColor = Color.FromHex(BackgroundColor ?? "#ffffff")
+                BorderColor = Color.FromHex(BackgroundColor ?? "#ffffff"),
+                Padding = this.Padding == null ? 0 : this.Padding.ConvertToXValue(),
+                BorderThickness = BorderThickness
             };
 
             if (RenderAsIcon)

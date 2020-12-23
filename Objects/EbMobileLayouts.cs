@@ -40,13 +40,4 @@ namespace ExpressBase.Mobile
             return this.ControlCollection.Count <= 0;
         }
     }
-
-    public class EbMobileStackLayout : EbMobileDashBoardControl
-    {
-        public StackOrientation Orientation { set; get; }
-
-        public bool AllowScrolling { set; get; }
-
-        public List<EbMobileDashBoardControl> ChildControls { set; get; }
-    }
 }

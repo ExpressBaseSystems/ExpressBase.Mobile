@@ -1,42 +1,62 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Services.DashBoard;
 using ExpressBase.Mobile.ViewModels.BaseModels;
+using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class DashBoardRenderViewModel : DynamicBaseViewModel
     {
-        private EbMobileDashBoard DashBoard { set; get; }
+        public EbMobileDashBoard DashBoard { set; get; }
 
-        public EbDataRow LinkedDataRow { set; get; }
+        public Thickness Padding => DashBoard.Padding == null ? 5 : DashBoard.Padding.ConvertToXValue();
 
-        public DashBoardRenderViewModel() { }
+        readonly IDashBoardService dashService;
+
+        private EbDataTable _data;
+
+        public EbDataTable Data
+        {
+            get => _data;
+            set
+            {
+                _data = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public DashBoardRenderViewModel()
+        {
+            dashService = new DashBoardService();
+        }
 
         public DashBoardRenderViewModel(EbMobilePage page) : base(page)
         {
+            dashService = new DashBoardService();
+
             DashBoard = this.Page.Container as EbMobileDashBoard;
-            CreateView();
         }
 
-        public DashBoardRenderViewModel(EbMobilePage Page, EbDataRow Row)
+        public override async Task InitializeAsync()
         {
-            PageTitle = Page.DisplayName;
-            DashBoard = Page.Container as EbMobileDashBoard;
-            LinkedDataRow = Row;
-            CreateView();
-        }
-
-        private void CreateView()
-        {
-            StackLayout stack = new StackLayout();
-
-            foreach(EbMobileDashBoardControl ctrl in this.DashBoard.ChildControls)
+            try
             {
-                ctrl.InitXControl(LinkedDataRow);
-                stack.Children.Add(ctrl.XView);
+                if (this.IsOnline())
+                {
+                    Data = await dashService.GetDataAsync(DashBoard.DataSourceRefId);
+                }
+                else
+                {
+                    Data = await dashService.GetLocalDataAsync(DashBoard.OfflineQuery);
+                }
             }
-
-            XView = stack;
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
         }
     }
 }

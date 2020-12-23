@@ -52,7 +52,7 @@ namespace ExpressBase.Mobile.Helpers
                 }
                 else if (container is EbMobileDashBoard)
                 {
-                    renderer = new DashBoardRender(page, row);
+                    renderer = new DashBoardRender(page);
                 }
             }
             catch (Exception ex)
@@ -189,6 +189,55 @@ namespace ExpressBase.Mobile.Helpers
                 EbLog.Error(ex.Message);
             }
             return renderer;
+        }
+
+        public static async Task<EbPageRenderer> GetRenderer(EbMobilePage page)
+        {
+            EbPageRenderer renderor = new EbPageRenderer();
+
+            EbMobileContainer container = page.Container;
+
+            try
+            {
+                if (container is EbMobileForm mobileForm)
+                {
+                    renderor.IsReady = await ValidateFormRendering(mobileForm);
+                    renderor.Message = renderor.IsReady ? "Ready to render" : mobileForm.MessageOnFailed;
+                    renderor.Renderer = new FormRender(page);
+                }
+                else if (container is EbMobileVisualization viz)
+                {
+                    if (viz.Type == MobileVisualizationType.Dynamic)
+                        renderor.Renderer = new ListRender(page);
+                    else
+                        renderor.Renderer = new StaticListRender(page);
+                }
+                else if (container is EbMobileDashBoard)
+                {
+                    renderor.Renderer = new DashBoardRender(page);
+                }
+                else if (container is EbMobileDashBoard)
+                {
+                    renderor.Renderer = new PdfRender(page);
+                }
+                else
+                {
+                    renderor.Message = "inavlid container type";
+                    renderor.IsReady = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+
+                renderor.IsReady = false;
+                renderor.Message = "Unable to load page";
+            }
+
+            if (renderor.Renderer != null)
+                renderor.IsReady = true;
+
+            return renderor;
         }
     }
 }

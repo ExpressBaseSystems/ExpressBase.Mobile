@@ -71,7 +71,7 @@ namespace ExpressBase.Mobile.ViewModels
                     App.Settings.CurrentApplication = app;
                     App.Settings.MobilePages = app.MobilePages;
 
-                    App.RootMaster = new RootMaster(typeof(Home));
+                    App.RootMaster = new RootMaster();
                     Application.Current.MainPage = App.RootMaster;
                 }
             }

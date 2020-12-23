@@ -10,26 +10,28 @@ namespace ExpressBase.Mobile.CustomControls
     {
         private readonly EbMobileTableLayout layout;
 
-        private Dictionary<int, int> widthMap;
+        protected Dictionary<int, int> widthMap;
 
         public double XAllocated { set; get; }
+
+        public DynamicGrid() { }
 
         public DynamicGrid(EbMobileTableLayout tableLayout)
         {
             this.layout = tableLayout;
-            this.Initialize();
+            this.Initialize(layout.RowCount, layout.ColumCount);
         }
 
-        public void Initialize()
+        protected void Initialize(int rowCount, int columnCount)
         {
             InitializeWidthMap();
 
-            for (int r = 0; r < layout.RowCount; r++)
+            for (int r = 0; r < rowCount; r++)
             {
                 this.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             }
 
-            for (int i = 0; i < layout.ColumCount; i++)
+            for (int i = 0; i < columnCount; i++)
             {
                 this.ColumnDefinitions.Add(new ColumnDefinition
                 {
@@ -38,7 +40,7 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private void InitializeWidthMap()
+        protected virtual void InitializeWidthMap()
         {
             List<EbMobileTableCell> tr0 = layout.CellCollection.FindAll(tr => tr.RowIndex == 0);
             widthMap = tr0.Distinct().ToDictionary(item => item.ColIndex, item => item.Width);

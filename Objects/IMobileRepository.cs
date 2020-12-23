@@ -4,10 +4,6 @@ using System.Collections.Generic;
 
 namespace ExpressBase.Mobile
 {
-    /*
-     Namespace containing interfaces eb mobile page objects
-     */
-
     public interface INonPersistControl { }
 
     public interface ILinesEnabled
@@ -34,30 +30,32 @@ namespace ExpressBase.Mobile
         List<EbMobileDataColToControlMap> LinkFormParameters { get; set; }
     }
 
-    /// <summary>
-    /// Interface for Vertical and Horrizontal alignment
-    /// only using in mobile platform
-    /// </summary>
-    public interface IMobileAlignment
+    public interface IGridAlignment
     {
+        int RowSpan { set; get; }
+
+        int ColumnSpan { set; get; }
+
         MobileHorrizontalAlign HorrizontalAlign { set; get; }
 
         MobileVerticalAlign VerticalAlign { set; get; }
     }
 
-    /// <summary>
-    /// Interface for setting span on grid in listview (dynamic frame)
-    /// only using in mobile platform
-    /// </summary>
-    public interface IGridSpan
-    {
-        int RowSpan { set; get; }
-
-        int ColumnSpan { set; get; }
-    }
-
     public interface IFileUploadControl
     {
 
+    }
+
+    public interface IMobileUIControl
+    {
+        string BackgroundColor { set; get; }
+
+        int BorderRadius { set; get; }
+
+        string BorderColor { set; get; }
+
+        int BorderThickness { set; get; }
+
+        EbThickness Padding { set; get; }
     }
 }

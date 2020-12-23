@@ -2,7 +2,7 @@
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileDataColumn : EbMobileControl, INonPersistControl, IMobileAlignment, IGridSpan
+    public class EbMobileDataColumn : EbMobileControl, INonPersistControl, IGridAlignment, IMobileUIControl
     {
         public int ColumnIndex { get; set; }
 
@@ -15,6 +15,10 @@ namespace ExpressBase.Mobile
         public string BackgroundColor { get; set; }
 
         public int BorderRadius { get; set; }
+
+        public int BorderThickness { get; set; }
+
+        public string BorderColor { get; set; }
 
         public string TextFormat { get; set; }
 
@@ -29,6 +33,8 @@ namespace ExpressBase.Mobile
         public MobileHorrizontalAlign HorrizontalAlign { set; get; }
 
         public MobileVerticalAlign VerticalAlign { set; get; }
+
+        public EbThickness Padding { set; get; }
 
         public int Height { set; get; }
 

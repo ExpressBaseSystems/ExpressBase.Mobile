@@ -411,4 +411,13 @@ namespace ExpressBase.Mobile.Models
             Value = 0;
         }
     }
+
+    public class EbPageRenderer
+    {
+        public bool IsReady { set; get; }
+
+        public string Message { set; get; }
+
+        public Page Renderer { set; get; }
+    }
 }

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -124,6 +125,11 @@ namespace ExpressBase.Mobile
             Top = top;
             Right = right;
             Bottom = bottom;
+        }
+
+        public Thickness ConvertToXValue()
+        {
+            return new Thickness(Left, Top, Right, Bottom);
         }
     }
 

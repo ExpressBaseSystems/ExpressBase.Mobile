@@ -1,7 +1,8 @@
 ﻿using ExpressBase.Mobile.CustomControls.XControls;
 using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
@@ -84,18 +85,15 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     try
                     {
-                        View view = this.ResolveControlType(ctrl);
+                        View view = GetViewByRenderType(ctrl);
 
-                        if (view != null)
+                        if (view != null && ctrl is IGridAlignment gridAlign)
                         {
-                            IMobileAlignment algn = (IMobileAlignment)ctrl;
+                            view.SetHorrizontalAlign(gridAlign.HorrizontalAlign);
+                            view.SetVerticalAlign(gridAlign.VerticalAlign);
 
-                            SetHorrizontalAlign(algn.HorrizontalAlign, view);
-                            SetVerticalAlign(algn.VerticalAlign, view);
-
-                            IGridSpan span = (IGridSpan)ctrl;
-
-                            DynamicGrid.SetPosition(view, cell.RowIndex, cell.ColIndex, span.RowSpan, span.ColumnSpan);
+                            DynamicGrid.SetPosition(view, cell.RowIndex, cell.ColIndex, gridAlign.RowSpan, gridAlign.ColumnSpan);
+                            EvaluateExpression(ctrl, view);
                         }
                     }
                     catch (Exception ex)
@@ -107,44 +105,53 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        protected virtual View ResolveControlType(EbMobileControl ctrl)
+        private void EvaluateExpression(EbMobileControl ctrl, View view)
+        {
+            if (ctrl.HasExpression(ExprType.HideExpr))
+            {
+                string script = ctrl.HiddenExpr.GetCode();
+                EbListHelper.SetDataRow(DataRow);
+                view.IsVisible = !EbListHelper.EvaluateHideExpr(script);
+            }
+            else if (ctrl.HasExpression(ExprType.ValueExpr))
+            {
+                string script = ctrl.ValueExpr.GetCode();
+                EbListHelper.SetDataRow(DataRow);
+                EbListHelper.EvaluateValueExpr(view, script);
+            }
+        }
+
+        protected virtual View GetViewByRenderType(EbMobileControl ctrl)
         {
             View view = null;
 
             if (ctrl is EbMobileButton button)
             {
-                if (button.HideInContext && IsHeader)
-                    return null;
+                if (button.HideInContext && IsHeader) return null;
 
-                var btn = button.CreateView();
+                Button btn = button.Draw();
                 btn.Clicked += async (sender, args) => await ButtonControlClick(button);
                 view = btn;
             }
             else if (ctrl is EbMobileDataColumn dc)
             {
-                if (dc.HideInContext && IsHeader)
-                    return null;
+                if (dc.HideInContext && IsHeader) return null;
 
                 object data = this.DataRow[dc.ColumnName];
-                view = this.ResolveContentType(dc, data);
+                view = ResolveRenderType(dc, data);
             }
             else if (ctrl is EbMobileLabel label)
             {
-                EbXLabel Lb = new EbXLabel
-                {
-                    Text = label.Text,
-                    XBackgroundColor = Color.FromHex(label.BackgroundColor ?? "#ffffff"),
-                    BorderRadius = label.BorderRadius,
-                    BorderColor = Color.FromHex(label.BackgroundColor ?? "#ffffff"),
-                };
-                this.ApplyLabelStyle(Lb, label.Font);
-                view = Lb;
+                EbXLabel lbl = label.Draw();
+                lbl.SetFont(label.Font, this.IsHeader);
+                lbl.SetTextWrap(label.TextWrap);
+                view = lbl;
             }
 
             return view;
         }
 
-        private View ResolveContentType(EbMobileDataColumn dc, object value)
+        private View ResolveRenderType(EbMobileDataColumn dc, object value)
         {
             View view;
 
@@ -157,7 +164,7 @@ namespace ExpressBase.Mobile.CustomControls
                     view = this.DC2PhoneNumber(dc, value);
                     break;
                 case DataColumnRenderType.Map:
-                    view = this.DC2Map(value);
+                    view = this.DC2Map(dc, value);
                     break;
                 case DataColumnRenderType.Email:
                     view = this.DC2Email(dc, value);
@@ -166,111 +173,24 @@ namespace ExpressBase.Mobile.CustomControls
                     view = this.DC2Audio(dc, value);
                     break;
                 default:
-                    Label label = new Label { Text = dc.GetContent(value) };
-                    this.ApplyLabelStyle(label, dc.Font);
+                    EbXLabel label = new EbXLabel(dc)
+                    {
+                        Text = dc.GetContent(value)
+                    };
+                    label.SetFont(dc.Font, this.IsHeader);
+                    label.SetTextWrap(dc.TextWrap);
                     view = label;
                     break;
             }
             return view;
         }
 
-        protected void ApplyLabelStyle(Label label, EbFont font)
-        {
-            if (font != null)
-            {
-                label.FontSize = font.Size;
-                label.TextColor = Color.FromHex(font.Color);
-
-                SetFontStyle(font.Style, label);
-
-                if (font.Caps)
-                    label.Text = label.Text.ToUpper();
-
-                SetFontDecoration(font, label);
-            }
-
-            if (this.IsHeader)
-                label.TextColor = Color.White;
-        }
-
-        private void SetFontStyle(FontStyle style, Label label)
-        {
-            switch (style)
-            {
-                case FontStyle.BOLD:
-                    label.FontAttributes = FontAttributes.Bold;
-                    break;
-                case FontStyle.ITALIC:
-                    label.FontAttributes = FontAttributes.Italic;
-                    break;
-                case FontStyle.BOLDITALIC:
-                    label.FontAttributes = FontAttributes.Italic;
-                    break;
-                default:
-                    label.FontAttributes = FontAttributes.None;
-                    break;
-            }
-        }
-
-        private void SetFontDecoration(EbFont font, Label label)
-        {
-            if (font.Underline)
-                label.TextDecorations = TextDecorations.Underline;
-            else if (font.Strikethrough)
-                label.TextDecorations = TextDecorations.Strikethrough;
-            else
-                label.TextDecorations = TextDecorations.None;
-        }
-
-        private void SetHorrizontalAlign(MobileHorrizontalAlign align, View view)
-        {
-            switch (align)
-            {
-                case MobileHorrizontalAlign.Center:
-                    view.HorizontalOptions = LayoutOptions.Center;
-                    break;
-                case MobileHorrizontalAlign.Right:
-                    view.HorizontalOptions = LayoutOptions.End;
-                    break;
-                case MobileHorrizontalAlign.Left:
-                    view.HorizontalOptions = LayoutOptions.Start;
-                    break;
-                case MobileHorrizontalAlign.Fill:
-                    view.HorizontalOptions = LayoutOptions.FillAndExpand;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void SetVerticalAlign(MobileVerticalAlign align, View view)
-        {
-            switch (align)
-            {
-                case MobileVerticalAlign.Center:
-                    view.VerticalOptions = LayoutOptions.Center;
-                    break;
-                case MobileVerticalAlign.Bottom:
-                    view.VerticalOptions = LayoutOptions.End;
-                    break;
-                case MobileVerticalAlign.Top:
-                    view.VerticalOptions = LayoutOptions.Start;
-                    break;
-                case MobileVerticalAlign.Fill:
-                    view.VerticalOptions = LayoutOptions.FillAndExpand;
-                    break;
-                default:
-                    break;
-            }
-        }
-
         private View DC2Image(EbMobileDataColumn dc, object value)
         {
-            EbListViewImage image = new EbListViewImage
+            EbListViewImage image = new EbListViewImage(dc)
             {
                 Style = (Style)HelperFunctions.GetResourceValue("ListViewImage")
             };
-            image.SetDimensions(dc);
             image.SetValue(value);
 
             return image;
@@ -278,39 +198,45 @@ namespace ExpressBase.Mobile.CustomControls
 
         private View DC2PhoneNumber(EbMobileDataColumn dc, object value)
         {
-            Label label = new Label
+            EbXLabel label = new EbXLabel(dc)
             {
-                Text = dc.GetContent(value),
-                TextColor = Color.FromHex("315eff")
+                Text = dc.GetContent(value)
             };
 
-            ApplyLabelStyle(label, dc.Font);
+            label.SetFont(dc.Font, this.IsHeader);
+            label.SetTextWrap(dc.TextWrap);
 
-            var gesture = new TapGestureRecognizer();
+            TapGestureRecognizer gesture = new TapGestureRecognizer();
             gesture.Tapped += (sender, args) => NativeLauncher.OpenDialerAsync(label.Text);
             label.GestureRecognizers.Add(gesture);
 
             return label;
         }
 
-        private View DC2Map(object value)
+        private View DC2Map(EbMobileDataColumn dc, object value)
         {
-            Button mapbtn = new Button
+            EbListViewButton mapbtn = new EbListViewButton(dc);
+
+            mapbtn.Clicked += async (sender, args) =>
             {
-                Style = (Style)HelperFunctions.GetResourceValue("ListViewGoogleMap")
+                if (value == null)
+                {
+                    Utils.Toast("location info empty");
+                    return;
+                }
+                await NativeLauncher.OpenMapAsync(value?.ToString());
             };
-            mapbtn.Clicked += async (sender, args) => await NativeLauncher.OpenMapAsync(value?.ToString());
             return mapbtn;
         }
 
         private View DC2Email(EbMobileDataColumn dc, object value)
         {
-            Label label = new Label
+            EbXLabel label = new EbXLabel(dc)
             {
-                Text = dc.GetContent(value),
-                TextColor = Color.FromHex("315eff")
+                Text = dc.GetContent(value)
             };
-            ApplyLabelStyle(label, dc.Font);
+            label.SetFont(dc.Font, this.IsHeader);
+            label.SetTextWrap(dc.TextWrap);
 
             TapGestureRecognizer gesture = new TapGestureRecognizer();
             gesture.Tapped += async (sender, args) => await NativeLauncher.OpenEmailAsync(value?.ToString());
@@ -326,29 +252,28 @@ namespace ExpressBase.Mobile.CustomControls
 
         private View DC2Audio(EbMobileDataColumn dc, object value)
         {
-            Color color = dc.Font == null || string.IsNullOrEmpty(dc.Font.Color) ? Color.Green : Color.FromHex(dc.Font.Color);
-
-            EbPlayButton audioButton = new EbPlayButton
+            EbPlayButton audioButton = new EbPlayButton(dc)
             {
                 Style = (Style)HelperFunctions.GetResourceValue("ListViewAudioButton"),
-                TextColor = color,
-                FontSize = dc.Font == null || dc.Font.Size <= 0 ? 14 : dc.Font.Size,
-                IsEnabled = (value != null),
-                BackgroundColor = Color.FromHex(dc.BackgroundColor ?? "ffffff"),
-                CornerRadius = dc.BorderRadius,
+                IsEnabled = !(value == null)
             };
 
             audioButton.SetDimensions(dc);
-            if (value != null) audioButton.SetValue(value);
 
-            audioButton.Clicked += (sender, e) =>
+            if (value != null)
             {
-                Page current = App.Navigation.GetCurrentPage();
-                if (current is IListRenderer ls)
+                audioButton.SetValue(value);
+
+                audioButton.Clicked += (sender, e) =>
                 {
-                    ls.ShowAudioFiles((EbPlayButton)sender);
-                }
-            };
+                    Page current = App.Navigation.GetCurrentPage();
+                    if (current is IListRenderer ls)
+                    {
+                        ls.ShowAudioFiles((EbPlayButton)sender);
+                    }
+                };
+            }
+
             return audioButton;
         }
     }

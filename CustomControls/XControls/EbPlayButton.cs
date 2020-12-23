@@ -17,6 +17,32 @@ namespace ExpressBase.Mobile.CustomControls.XControls
 
         public List<ApiFileResponse> AudioFiles { set; get; }
 
+        public EbPlayButton() { }
+
+        public EbPlayButton(EbMobileDataColumn dc)
+        {
+            BackgroundColor = Color.FromHex(dc.BackgroundColor ?? "#ffffff00");
+            BorderColor = Color.FromHex(dc.BorderColor ?? "#ffffff00");
+            CornerRadius = dc.BorderRadius;
+            BorderWidth = dc.BorderThickness;
+
+            if(dc.Font == null)
+            {
+                FontSize = 14;
+                TextColor = Color.Green;
+            }
+            else
+            {
+                FontSize = dc.Font.Size <= 0 ? 14 : dc.Font.Size;
+                TextColor = Color.FromHex(dc.Font.Color);
+            }
+
+            Padding = dc.Padding == null ? 0 : dc.Padding.ConvertToXValue();
+
+            if (dc.Width > 0) this.WidthRequest = dc.Width;
+            if (dc.Height > 0) this.HeightRequest = dc.Height;
+        }
+
         public void SetDimensions(EbMobileDataColumn dc)
         {
             if (dc.VerticalAlign == MobileVerticalAlign.Fill)

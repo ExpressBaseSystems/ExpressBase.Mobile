@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileButton : EbMobileControl, INonPersistControl, IMobileLink, IMobileAlignment, IGridSpan
+    public class EbMobileButton : EbMobileControl, INonPersistControl, IMobileLink, IGridAlignment, IMobileUIControl
     {
         public string LinkRefId { get; set; }
 
@@ -46,6 +46,8 @@ namespace ExpressBase.Mobile
 
         public MobileVerticalAlign VerticalAlign { set; get; }
 
+        public EbThickness Padding { set; get; }
+
         public bool HideInContext { set; get; }
 
         public override void InitXControl()
@@ -57,10 +59,10 @@ namespace ExpressBase.Mobile
         {
             base.InitXControl(Mode, Network);
 
-            this.XControl = CreateView();
+            this.XControl = Draw();
         }
 
-        public Button CreateView()
+        public Button Draw()
         {
             Button btn = new Button
             {
@@ -74,8 +76,11 @@ namespace ExpressBase.Mobile
             };
 
             SetText(btn);
-            SetFontStyle(btn);
-
+            if (Font != null)
+            {
+                btn.FontSize = Font.Size;
+                btn.TextColor = Color.FromHex(Font.Color);
+            }
             return btn;
         }
 
@@ -103,15 +108,6 @@ namespace ExpressBase.Mobile
             }
             else
                 btn.Text = this.Text ?? "Button";
-        }
-
-        public void SetFontStyle(Button btn)
-        {
-            if (Font != null)
-            {
-                btn.FontSize = Font.Size;
-                btn.TextColor = Color.FromHex(Font.Color);
-            }
         }
 
         public async Task Navigate(EbDataRow row)

@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Mobile.Structures;
 using System;
-using System.Collections.Generic;
 
 namespace ExpressBase.Mobile
 {
@@ -41,16 +40,6 @@ namespace ExpressBase.Mobile
     public class EbMobileContainer : EbMobilePageBase
     {
         public NetworkMode NetworkType { set; get; }
-    }
-
-    public class EbMobileDashBoard : EbMobileContainer
-    {
-        public List<EbMobileDashBoardControl> ChildControls { get; set; }
-
-        public EbMobileDashBoard()
-        {
-            ChildControls = new List<EbMobileDashBoardControl>();
-        }
     }
 
     public class EbMobilePdf : EbMobileContainer

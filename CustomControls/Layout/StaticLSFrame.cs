@@ -15,13 +15,13 @@ namespace ExpressBase.Mobile.CustomControls.Layout
             Initialize(viz);
         }
 
-        protected override View ResolveControlType(EbMobileControl ctrl)
+        protected override View GetViewByRenderType(EbMobileControl ctrl)
         {
             View view = null;
 
             if (ctrl is EbMobileLabel label)
             {
-                EbXLabel xlabel = label.CreateXControl();
+                EbXLabel xlabel = label.Draw();
 
                 if (label.RenderAsIcon)
                 {
@@ -32,7 +32,8 @@ namespace ExpressBase.Mobile.CustomControls.Layout
                 {
                     xlabel.Text = GetStaticData(label);
                 }
-                ApplyLabelStyle(xlabel, label.Font);
+                xlabel.SetFont(label.Font);
+                xlabel.SetTextWrap(label.TextWrap);
                 view = xlabel;
             }
 

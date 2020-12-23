@@ -34,6 +34,8 @@ namespace ExpressBase.Mobile
 
         public WebFormDVModes FormMode { set; get; }
 
+        public bool RenderAsPopup { set; get; }
+
         public EbMobileDataColToControlMap FormId { set; get; }
 
         public EbScript OfflineQuery { set; get; }

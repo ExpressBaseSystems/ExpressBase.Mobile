@@ -12,17 +12,11 @@ namespace ExpressBase.Mobile
 
         public EbScript OfflineQuery { set; get; }
 
+        public string BindingTable { set; get; }
+
         private EbDataTable Data { set; get; }
 
         private EbDataRow LinkedDataRow { set; get; }
-
-        public override View XView { set; get; }
-
-        public override void InitXControl(EbDataRow DataRow)
-        {
-            LinkedDataRow = DataRow;
-            SetData();
-        }
 
         private void SetData()
         {

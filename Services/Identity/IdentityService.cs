@@ -251,7 +251,7 @@ namespace ExpressBase.Mobile.Services
                         App.Settings.CurrentApplication = appdata;
                         App.Settings.MobilePages = appdata.MobilePages;
 
-                        App.RootMaster = new RootMaster(typeof(Home));
+                        App.RootMaster = new RootMaster();
                         Application.Current.MainPage = App.RootMaster;
                     }
                     else

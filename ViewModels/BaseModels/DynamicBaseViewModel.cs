@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using ExpressBase.Mobile.Helpers;
+using System;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.BaseModels
 {

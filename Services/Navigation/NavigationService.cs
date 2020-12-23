@@ -148,7 +148,7 @@ namespace ExpressBase.Mobile.Services.Navigation
                         await NavigateAsync(new MyApplications());
                     else
                     {
-                        App.RootMaster = new RootMaster(typeof(Home));
+                        App.RootMaster = new RootMaster();
                         CurrentApplication.MainPage = App.RootMaster;
                     }
                 }

@@ -285,6 +285,8 @@ namespace ExpressBase.Mobile.Models
     {
         public EbApiMeta MenuApi { set; get; }
 
+        public string DashBoardRefId { set; get; }
+
         public bool HasMenuPreloadApi
         {
             get { return (MenuApi != null); }

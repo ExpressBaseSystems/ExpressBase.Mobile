@@ -1,13 +1,17 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.ViewModels.Dynamic;
+﻿using ExpressBase.Mobile.ViewModels.Dynamic;
+using ExpressBase.Mobile.Views.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class DashBoardRender : ContentPage
+    public partial class DashBoardRender : ContentPage, IDashBoardRenderer
     {
+        private bool isRendered;
+
+        private readonly DashBoardRenderViewModel viewModel;
+
         public DashBoardRender()
         {
             InitializeComponent();
@@ -17,17 +21,24 @@ namespace ExpressBase.Mobile.Views.Dynamic
         public DashBoardRender(EbMobilePage Page)
         {
             InitializeComponent();
-            DashBoardRenderViewModel model = new DashBoardRenderViewModel(Page);
-            BindingContext = model;
-            this.DashBoardContainer.Content = model.XView;
+            BindingContext = viewModel = new DashBoardRenderViewModel(Page);
         }
 
-        public DashBoardRender(EbMobilePage Page,EbDataRow Row)
+        protected async override void OnAppearing()
         {
-            InitializeComponent();
-            DashBoardRenderViewModel model = new DashBoardRenderViewModel(Page, Row);
-            BindingContext = model;
-            this.DashBoardContainer.Content = model.XView;
+            EbLayout.ShowLoader();
+
+            if (!isRendered)
+            {
+                await viewModel.InitializeAsync();
+                isRendered = true;
+            }
+            EbLayout.HideLoader();
+        }
+
+        public void HideToolBar()
+        {
+            EbLayout.HasToolBar = false;
         }
     }
 }

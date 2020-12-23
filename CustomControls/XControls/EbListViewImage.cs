@@ -13,21 +13,10 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
-    public class EbListViewImage : Image, IDynamicHeight
+    public class EbListViewImage : ImageButton, IDynamicHeight
     {
         public bool CalcHeight { set; get; }
-
-        public void SetDimensions(EbMobileDataColumn dc)
-        {
-            if (dc.VerticalAlign == MobileVerticalAlign.Fill)
-                this.CalcHeight = true;
-            else
-                this.HeightRequest = dc.Height;
-
-            if (dc.HorrizontalAlign != MobileHorrizontalAlign.Fill)
-                this.WidthRequest = dc.Width;
-        }
-
+        
         public async void SetValue(object value)
         {
             if (value == null)
@@ -92,6 +81,24 @@ namespace ExpressBase.Mobile.CustomControls
         private void CacheImage(string filename, byte[] fileBytea)
         {
             HelperFunctions.WriteFilesLocal(filename, fileBytea);
+        }
+
+        public EbListViewImage() { }
+
+        public EbListViewImage(EbMobileDataColumn dc)
+        {
+            this.CornerRadius = dc.BorderRadius;
+            this.BorderColor = Color.FromHex(dc.BorderColor ?? "#ffffff00");
+            this.BorderWidth = dc.BorderThickness;
+            this.Padding = 0;
+
+            if (dc.Width > 0) this.WidthRequest = dc.Width;
+            if (dc.Height > 0) this.HeightRequest = dc.Height;
+
+            if (dc.VerticalAlign == MobileVerticalAlign.Fill)
+            {
+                this.CalcHeight = true;
+            }
         }
     }
 }
