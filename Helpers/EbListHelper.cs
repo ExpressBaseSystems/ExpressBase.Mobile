@@ -55,5 +55,19 @@ namespace ExpressBase.Mobile.Helpers
                 EbLog.Error("list hide expr failure, " + ex.Message);
             }
         }
+
+        public static bool EvaluateLinkExpr(EbDataRow row, string script)
+        {
+            try
+            {
+                SetDataRow(row);
+                return Instance.evaluator.Execute<bool>(script);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("list hide expr failure, " + ex.Message);
+            }
+            return true;
+        }
     }
 }

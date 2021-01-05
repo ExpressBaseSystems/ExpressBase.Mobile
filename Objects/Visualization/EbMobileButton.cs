@@ -62,7 +62,7 @@ namespace ExpressBase.Mobile
             this.XControl = Draw();
         }
 
-        public Button Draw()
+        public virtual Button Draw()
         {
             Button btn = new Button
             {
@@ -110,7 +110,7 @@ namespace ExpressBase.Mobile
                 btn.Text = this.Text ?? "Button";
         }
 
-        public async Task Navigate(EbDataRow row)
+        public async virtual Task OnControlAction(EbDataRow row)
         {
             if (string.IsNullOrEmpty(this.LinkRefId))
                 return;

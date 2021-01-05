@@ -6,7 +6,7 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class DashBoardRender : ContentPage, IDashBoardRenderer
+    public partial class DashBoardRender : ContentPage, IDashBoardRenderer, IMasterPage
     {
         private bool isRendered;
 
@@ -36,9 +36,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EbLayout.HideLoader();
         }
 
-        public void HideToolBar()
+        public void UpdateMasterLayout()
         {
-            EbLayout.HasToolBar = false;
+            EbLayout.IsMasterPage = true;
+            EbLayout.HasBackButton = false;
         }
     }
 }

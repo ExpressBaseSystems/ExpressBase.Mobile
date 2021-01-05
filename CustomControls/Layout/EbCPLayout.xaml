@@ -56,8 +56,18 @@
                  HeightRequest="34"
                  WidthRequest="34"
                  Margin="10,0,10,0"
-                 Clicked="BackButton_Clicked">
+                 Clicked="OnBackButtonClicked">
     </ImageButton>
+
+    <Button x:Name="SideBarToggle"
+            IsVisible="False"
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="5,0,10,0"
+            Style="{StaticResource ToolBarButtonStyle}"
+            Text="&#xf0c9;"
+            Clicked="SideBarToggleClicked">
+    </Button>
 
     <Label x:Name="TitleLabel"
            Style="{StaticResource TitleLabelStyle}"
@@ -78,7 +88,7 @@
             x:Name="SecondaryToggle"
             Style="{StaticResource ToolBarButtonStyle}"
             Text="&#xf142;"
-            Clicked="SecondaryToggle_Clicked">
+            Clicked="SecondaryToggleClicked">
     </Button>
 
     <ContentView x:Name="Container"
@@ -104,7 +114,7 @@
                  Grid.RowSpan="2">
 
         <ContentView.GestureRecognizers>
-            <TapGestureRecognizer Tapped="SecondaryToolbar_Tapped"></TapGestureRecognizer>
+            <TapGestureRecognizer Tapped="SecondaryToolbarTapped"></TapGestureRecognizer>
         </ContentView.GestureRecognizers>
 
         <Frame x:Name="SecondaryToolbarContainer"
@@ -119,6 +129,14 @@
                WidthRequest="150">
         </Frame>
     </ContentView>
+
+    <controls:ConfirmBox x:Name="LogoutDialog"
+                         Title="Confirm"
+                         Grid.Row="1"
+                         Grid.ColumnSpan="4"
+                         Message="Do you want to logout?"
+                         ConfirmClicked="LogoutConfirmClicked">
+    </controls:ConfirmBox>
 
     <controls:LoaderIconed IsVisible="False"
                            Grid.Row="1"

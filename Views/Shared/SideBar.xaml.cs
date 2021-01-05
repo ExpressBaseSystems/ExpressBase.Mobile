@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels;
 using System;
 using Xamarin.Forms;
@@ -14,7 +15,7 @@ namespace ExpressBase.Mobile.Views.Shared
         public SideBar()
         {
             InitializeComponent();
-            BindingContext = viewModel = new SideBarViewModel();
+            BindingContext = viewModel = SideBarViewModel.Instance;
         }
 
         protected override void OnAppearing()
@@ -24,44 +25,43 @@ namespace ExpressBase.Mobile.Views.Shared
             viewModel.Initialize();
         }
 
-        private async void About_Tapped(object sender, EventArgs e)
+        private async void AboutTapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
             await App.Navigation.NavigateMasterAsync(new About());
         }
 
-        private async void ChangeSolution_Tapped(object sender, EventArgs e)
+        private async void ChangeSolutionTapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
             await App.Navigation.NavigateMasterAsync(new MySolutions(true));
         }
 
-        private async void ChangeApplication_Tapped(object sender, EventArgs e)
+        private async void ChangeApplicationTapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
             await App.Navigation.NavigateMasterAsync(new MyApplications(true));
         }
 
-        private async void ChangeLocation_Tapped(object sender, EventArgs e)
+        private async void ChangeLocationTapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
             await App.Navigation.NavigateMasterAsync(new MyLocations());
         }
 
-        private void Logout_Tapped(object sender, EventArgs e)
+        private void LogoutTapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
-            if (App.Navigation.GetCurrentPage() is Home current)
-                current.ShowLogoutConfirmBox();
+            EbCPLayout.ConfirmLogoutAction();
         }
 
-        private async void Setup_Tapped(object sender, EventArgs e)
+        private async void SetupTapped(object sender, EventArgs e)
         {
             App.RootMaster.IsPresented = false;
             await App.Navigation.NavigateMasterAsync(new SettingsView());
         }
 
-        private async void MyActions_Tapped(object sender, EventArgs e)
+        private async void MyActionsTapped(object sender, EventArgs e)
         {
             if (!Utils.HasInternet)
             {
@@ -71,6 +71,12 @@ namespace ExpressBase.Mobile.Views.Shared
 
             App.RootMaster.IsPresented = false;
             await App.Navigation.NavigateMasterAsync(new MyActions());
+        }
+
+        private async void LinksTapped(object sender, EventArgs e)
+        {
+            App.RootMaster.IsPresented = false;
+            await App.Navigation.NavigateMasterAsync(new Home());
         }
     }
 }

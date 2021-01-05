@@ -1,15 +1,9 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Models;
-using ExpressBase.Mobile.Services;
-using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -30,7 +24,7 @@ namespace ExpressBase.Mobile
 
         public int PageLength { set; get; } = 30;
 
-        public string MessageOnEmpty { set; get; } = "List Empty...";
+        public string MessageOnEmpty { set; get; }
 
         public WebFormDVModes FormMode { set; get; }
 
@@ -55,6 +49,8 @@ namespace ExpressBase.Mobile
         public List<EbCTCMapper> ContextToControlMap { set; get; }
 
         public bool ShowLinkIcon { set; get; }
+
+        public EbScript LinkExpr { get; set; }
 
         public bool ShowNewButton { set; get; }
 
@@ -119,93 +115,6 @@ namespace ExpressBase.Mobile
             return SearchColumns != null && SearchColumns.Any();
         }
 
-        public async Task<EbDataSet> GetData(NetworkMode network, int offset, List<DbParameter> dbparam = null, List<SortColumn> sort = null, List<Param> search = null)
-        {
-            EbDataSet ds = null;
-
-            if (network == NetworkMode.Online)
-            {
-                try
-                {
-                    dbparam ??= new List<DbParameter>();
-
-                    List<Param> param = dbparam.ToParams();
-
-                    int limit = PageLength == 0 ? 30 : PageLength;
-
-                    ds = await this.GetLiveData(limit, offset, param, sort, search);
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Error("Error at visualization getdata();");
-                    EbLog.Error(ex.Message);
-                }
-            }
-            else
-            {
-                ds = this.GetLocalData(dbparam, sort, offset);
-            }
-            return ds ?? new EbDataSet();
-        }
-
-        public EbDataSet GetLocalData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, int offset)
-        {
-            EbDataSet Data = null;
-            try
-            {
-                dbParameters ??= new List<DbParameter>();
-
-                DbParameter userParam = dbParameters.Find(item => item.ParameterName == EbKeywords.UserId);
-
-                if (userParam != null)
-                {
-                    userParam.Value = App.Settings.UserId;
-                    userParam.DbType = (int)EbDbTypes.Int32;
-                }
-
-                string sql = HelperFunctions.WrapSelectQuery(GetQuery, dbParameters);
-
-                int len = this.PageLength == 0 ? 30 : this.PageLength;
-
-                dbParameters.Add(new DbParameter { ParameterName = "@limit", Value = len, DbType = (int)EbDbTypes.Int32 });
-                dbParameters.Add(new DbParameter { ParameterName = "@offset", Value = offset, DbType = (int)EbDbTypes.Int32 });
-
-                Data = App.DataDB.DoQueries(sql, dbParameters.ToArray());
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("Failed to get local data");
-                EbLog.Error(ex.Message);
-            }
-            return Data;
-        }
-
-        public async Task<EbDataSet> GetLiveData(int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search)
-        {
-            EbDataSet Data = null;
-            try
-            {
-                if (App.Settings.CurrentLocation != null)
-                {
-                    param.Add(new Param
-                    {
-                        Name = EbKeywords.Location,
-                        Type = "11",
-                        Value = App.Settings.CurrentLocation.LocId.ToString()
-                    });
-                }
-
-                var vd = await DataService.Instance.GetDataAsync(this.DataSourceRefId, limit, offset, param, sort, search, false);
-                Data = vd?.Data;
-            }
-            catch (Exception ex)
-            {
-                EbLog.Info($"Failed to get Live data for '{DataSourceRefId}'");
-                EbLog.Error(ex.Message);
-            }
-            return Data;
-        }
-
         public List<DbParameter> GetContextParams(EbDataRow row, NetworkMode network)
         {
             return network == NetworkMode.Online ? this.GetParamLive(row) : this.GetParamLocal(row);
@@ -264,7 +173,7 @@ namespace ExpressBase.Mobile
 
         public List<Param> GetSearchParams()
         {
-            var search = new List<Param>();
+            List<Param> search = new List<Param>();
 
             foreach (var dc in this.SearchColumns)
             {

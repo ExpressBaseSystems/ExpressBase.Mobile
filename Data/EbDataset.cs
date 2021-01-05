@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,6 +25,19 @@ namespace ExpressBase.Mobile.Data
         internal EbDataSet ToDataSet()
         {
             throw new NotImplementedException();
+        }
+
+        public bool TryGetTable(int index, out EbDataTable dt)
+        {
+            dt = null;
+
+            if(Tables.HasLength(index))
+            {
+                dt = Tables[index];
+                return true;
+            }
+
+            return false;
         }
     }
 }

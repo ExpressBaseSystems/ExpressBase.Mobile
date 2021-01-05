@@ -9,7 +9,7 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class Home : EbContentPage
+    public partial class Home : EbContentPage, IMasterPage
     {
         private int backButtonCount;
 
@@ -62,11 +62,6 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        public void ShowLogoutConfirmBox()
-        {
-            LogoutDialog.Show();
-        }
-
         public override bool CanRefresh()
         {
             return viewModel.RefreshOnAppearing;
@@ -86,6 +81,12 @@ namespace ExpressBase.Mobile.Views
         private async void LocationSwitch_Clicked(object sender, EventArgs e)
         {
             await App.Navigation.NavigateMasterAsync(new MyLocations());
+        }
+
+        public void UpdateMasterLayout()
+        {
+            EbLayout.IsMasterPage = true;
+            EbLayout.HasBackButton = false;
         }
     }
 }

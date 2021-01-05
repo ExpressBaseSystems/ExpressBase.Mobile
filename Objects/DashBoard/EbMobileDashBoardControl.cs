@@ -1,6 +1,9 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
+using System;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -39,28 +42,37 @@ namespace ExpressBase.Mobile
 
         public virtual View Draw() { return null; }
 
-        public object GetBinding(EbDataRow row, string bindingParam)
+        public object GetBinding(EbDataSet dataSet, string bindingParam)
         {
-            string bindingColumn = GetBindingColumn(bindingParam);
-
-            if (!string.IsNullOrEmpty(bindingColumn))
+            try
             {
-                return row[bindingColumn];
+                string[] parts = bindingParam.Split(CharConstants.DOT);
+
+                if (parts.Length >= 2)
+                {
+                    string columnName = parts[1];
+                    string tableExpr = parts[0];
+
+                    int tableIndex = Convert.ToInt32(tableExpr.Substring(tableExpr.Length - 1));
+
+                    if (dataSet.TryGetTable(tableIndex, out EbDataTable dt))
+                    {
+                        EbDataRow dr = dt.Rows?.FirstOrDefault();
+
+                        if (dr != null)
+                        {
+                            return dr[columnName];
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("dashboard control [GetBinding] error, " + ex.Message);
             }
             return null;
         }
 
-        private string GetBindingColumn(string binding)
-        {
-            string[] parts = binding.Split(CharConstants.DOT);
-
-            if (parts.Length >= 2)
-            {
-                return parts[1];
-            }
-            return null;
-        }
-
-        public virtual void SetBindingValue(EbDataRow row) { }
+        public virtual void SetBindingValue(EbDataSet dataSet) { }
     }
 }

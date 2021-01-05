@@ -337,7 +337,7 @@ namespace ExpressBase.Mobile
                 {
                     if (string.IsNullOrEmpty(this.DataSourceRefId))
                         return;
-                    MobileVisDataResponse data = DataService.Instance.GetData(this.DataSourceRefId, 0, 0, null, null, null, false);
+                    MobileDataResponse data = DataService.Instance.GetData(this.DataSourceRefId, 0, 0, null, null, null, false);
                     if (data.Data != null && data.Data.Tables.Count >= 2)
                         dt = data.Data.Tables[1];
                 }
@@ -351,7 +351,7 @@ namespace ExpressBase.Mobile
                 {
                     if (Utils.HasInternet && !string.IsNullOrEmpty(this.DataSourceRefId))
                     {
-                        MobileVisDataResponse data = DataService.Instance.GetData(this.DataSourceRefId, 0, 0, null, null, null, false);
+                        MobileDataResponse data = DataService.Instance.GetData(this.DataSourceRefId, 0, 0, null, null, null, false);
                         if (data.Data != null && data.Data.Tables.Count >= 2)
                             dt = data.Data.Tables[1];
                     }

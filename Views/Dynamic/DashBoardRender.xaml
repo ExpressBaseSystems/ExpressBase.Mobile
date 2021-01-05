@@ -14,15 +14,16 @@
                               Title="{Binding PageTitle}">
 
             <controls:EbCPLayout.Content>
-
-                <ScrollView Padding="{Binding Padding}">
-                    <controls:DashBoardView DashBoard="{Binding DashBoard}"
-                                            Data="{Binding Data}">
-                    </controls:DashBoardView>
-                </ScrollView>
-                
+                <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                             Command="{Binding RefreshCommand}">
+                    <ScrollView Padding="{Binding Padding}">
+                        <controls:DashBoardView DashBoard="{Binding DashBoard}"
+                                                Data="{Binding Data}">
+                        </controls:DashBoardView>
+                    </ScrollView>
+                </RefreshView>
             </controls:EbCPLayout.Content>
-            
+
         </controls:EbCPLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
-    public class LinkedListViewModel : ListViewBaseVM
+    public class LinkedListViewModel : ListViewBaseViewModel
     {
         public EbMobileVisualization Context { set; get; }
 
@@ -27,7 +27,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public override async Task InitializeAsync()
         {
             ContextParams = this.Visualization.GetContextParams(ContextRecord, this.NetworkType);
-            await SetDataAsync();
+            await GetDataAsync();
         }
 
         protected override async Task NavigateToFabLink()

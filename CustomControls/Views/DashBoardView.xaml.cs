@@ -12,7 +12,7 @@ namespace ExpressBase.Mobile.CustomControls
             BindableProperty.Create(nameof(DashBoard), typeof(EbMobileDashBoard), typeof(DashBoardView), propertyChanged: OnDashBoardPropertyChanged);
 
         public static readonly BindableProperty DataProperty =
-            BindableProperty.Create(nameof(Data), typeof(EbDataTable), typeof(DashBoardView), propertyChanged: OnDataPropertyChanged);
+            BindableProperty.Create(nameof(Data), typeof(EbDataSet), typeof(DashBoardView), propertyChanged: OnDataPropertyChanged);
 
         public EbMobileDashBoard DashBoard
         {
@@ -20,9 +20,9 @@ namespace ExpressBase.Mobile.CustomControls
             set { SetValue(DashBoardProperty, value); }
         }
 
-        public EbDataTable Data
+        public EbDataSet Data
         {
-            get { return (EbDataTable)GetValue(DataProperty); }
+            get { return (EbDataSet)GetValue(DataProperty); }
             set { SetValue(DataProperty, value); }
         }
 
@@ -37,11 +37,11 @@ namespace ExpressBase.Mobile.CustomControls
         {
             DashBoardView binding = bindable as DashBoardView;
 
-            EbDataTable dt = (EbDataTable)newValue;
+            EbDataSet ds = (EbDataSet)newValue;
 
-            if (dt != null && dt.Rows.Count > 0)
+            if (ds != null)
             {
-                binding.BindValues(dt.Rows[0]);
+                binding.BindValues(ds);
             }
         }
 
@@ -76,13 +76,13 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private void BindValues(EbDataRow row)
+        private void BindValues(EbDataSet dataSet)
         {
             if (controls == null) return;
 
             foreach (EbMobileDashBoardControl ctrl in controls)
             {
-                ctrl.SetBindingValue(row);
+                ctrl.SetBindingValue(dataSet);
             }
         }
     }

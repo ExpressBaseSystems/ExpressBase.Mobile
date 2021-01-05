@@ -126,7 +126,7 @@
 
                     <control:ConfirmBox x:Name="SyncConfirmBox"
                                         Title="Confirm"
-                                        ConfirmClicked="{Binding SyncButtonCommand}"
+                                        ConfirmCommand="{Binding SyncButtonCommand}"
                                         Message="Do you really want to push your local data to cloud?">
                     </control:ConfirmBox>
 

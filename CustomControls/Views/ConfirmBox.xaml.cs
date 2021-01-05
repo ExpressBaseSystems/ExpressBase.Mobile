@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExpressBase.Mobile.Views.Base;
+using System;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -8,20 +9,22 @@ namespace ExpressBase.Mobile.CustomControls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ConfirmBox : ContentView
     {
-        public static readonly BindableProperty MessageProperty = 
+        public static readonly BindableProperty MessageProperty =
             BindableProperty.Create(propertyName: "Message", typeof(string), typeof(string), default(string));
 
-        public static readonly BindableProperty TitleProperty = 
+        public static readonly BindableProperty TitleProperty =
             BindableProperty.Create(propertyName: "Title", typeof(string), typeof(string), default(string));
 
-        public static readonly BindableProperty PositionProperty = 
+        public static readonly BindableProperty PositionProperty =
             BindableProperty.Create(propertyName: "Position", typeof(LayoutOptions), typeof(string), LayoutOptions.CenterAndExpand);
 
-        public static readonly BindableProperty CancelClickedProperty = 
+        public static readonly BindableProperty CancelCommandProperty =
             BindableProperty.Create(propertyName: "CancelClicked", typeof(ICommand), typeof(ConfirmBox));
 
-        public static readonly BindableProperty ConfirmClickedProperty = 
+        public static readonly BindableProperty ConfirmCommandProperty =
             BindableProperty.Create(propertyName: "ConfirmClicked", typeof(ICommand), typeof(ConfirmBox));
+
+        public event EbEventHandler ConfirmClicked;
 
         public string Message
         {
@@ -41,16 +44,16 @@ namespace ExpressBase.Mobile.CustomControls
             set { SetValue(PositionProperty, value); }
         }
 
-        public ICommand CancelClicked
+        public ICommand CancelCommand
         {
-            get { return (ICommand)GetValue(CancelClickedProperty); }
-            set { SetValue(CancelClickedProperty, value); }
+            get { return (ICommand)GetValue(CancelCommandProperty); }
+            set { SetValue(CancelCommandProperty, value); }
         }
 
-        public ICommand ConfirmClicked
+        public ICommand ConfirmCommand
         {
-            get { return (ICommand)GetValue(ConfirmClickedProperty); }
-            set { SetValue(ConfirmClickedProperty, value); }
+            get { return (ICommand)GetValue(ConfirmCommandProperty); }
+            set { SetValue(ConfirmCommandProperty, value); }
         }
 
         public ConfirmBox()
@@ -87,26 +90,29 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void CancelButton_Clicked(object sender, EventArgs e)
         {
-            if (CancelClicked == null)
+            if (CancelCommand == null)
                 this.Hide();
             else
             {
-                if (CancelClicked.CanExecute(null))
-                    CancelClicked.Execute(null);
+                if (CancelCommand.CanExecute(null))
+                    CancelCommand.Execute(null);
             }
         }
 
         private void ConfirmButton_Clicked(object sender, EventArgs e)
         {
-            if (ConfirmClicked == null)
-                this.Hide();
-            else
+            this.Hide();
+
+            if (ConfirmCommand != null)
             {
-                if (ConfirmClicked.CanExecute(null))
+                if (ConfirmCommand.CanExecute(null))
                 {
-                    this.IsVisible = false;
-                    ConfirmClicked.Execute(null);
+                    ConfirmCommand.Execute(null);
                 }
+            }
+            else if (ConfirmClicked != null)
+            {
+                ConfirmClicked.Invoke(null, null);
             }
         }
     }

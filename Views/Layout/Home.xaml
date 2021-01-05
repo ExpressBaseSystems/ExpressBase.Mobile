@@ -7,31 +7,12 @@
                     xmlns:control="clr-namespace:ExpressBase.Mobile.CustomControls"
                     mc:Ignorable="d"
                     x:Class="ExpressBase.Mobile.Views.Home"
+                    Style="{StaticResource ContentPageStyle}"
                     BackgroundColor="#f3f7f8">
-
-    <NavigationPage.TitleView>
-        <Grid RowSpacing="0"
-              ColumnSpacing="0"
-              Padding="0"
-              BackgroundColor="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Label Text="{Binding PageTitle}"
-                   Style="{StaticResource ToolBarLabelStyle}" />
-            <Button IsVisible="False"
-                    Text="&#xf002;"
-                    Style="{StaticResource ToolBarButtonStyle}"
-                    Grid.Column="1">
-            </Button>
-        </Grid>
-    </NavigationPage.TitleView>
 
     <ContentPage.Content>
         <control:EbCPLayout x:Name="EbLayout"
-                            HasToolBar="False"
-                            HasBackButton="False"
+                            Title="{Binding PageTitle}"
                             LoaderVisibilty="{Binding IsBusy}">
             <control:EbCPLayout.Content>
                 <Grid>
@@ -123,13 +104,7 @@
                             </StackLayout>
                         </ScrollView>
                     </RefreshView>
-                    <!--loader-->
                     
-                    <control:ConfirmBox x:Name="LogoutDialog"
-                                        Title="Confirm"
-                                        Message="Do you want to logout?"
-                                        ConfirmClicked="{Binding LogoutCommand}">
-                    </control:ConfirmBox>
                 </Grid>
             </control:EbCPLayout.Content>
         </control:EbCPLayout>

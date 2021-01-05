@@ -26,6 +26,10 @@ namespace ExpressBase.Mobile
 
         public EbFont Font { get; set; }
 
+        public MobileTextAlign HorrizontalTextAlign { set; get; }
+
+        public MobileTextAlign VerticalTextAlign { set; get; }
+
         public int RowSpan { set; get; }
 
         public int ColumnSpan { set; get; }

@@ -105,5 +105,34 @@ namespace ExpressBase.Mobile.Extensions
                     break;
             }
         }
+
+        public static void SetTextAlignment(this Label label, MobileTextAlign horriTextAlign, MobileTextAlign verticalTextAlign)
+        {
+            switch (horriTextAlign)
+            {
+                case MobileTextAlign.Center:
+                    label.HorizontalTextAlignment = TextAlignment.Center;
+                    break;
+                case MobileTextAlign.End:
+                    label.HorizontalTextAlignment = TextAlignment.End;
+                    break;
+                default:
+                    label.HorizontalTextAlignment = TextAlignment.Start;
+                    break;
+            }
+
+            switch (verticalTextAlign)
+            {
+                case MobileTextAlign.Center:
+                    label.VerticalTextAlignment = TextAlignment.Center;
+                    break;
+                case MobileTextAlign.End:
+                    label.VerticalTextAlignment = TextAlignment.End;
+                    break;
+                default:
+                    label.VerticalTextAlignment = TextAlignment.Start;
+                    break;
+            }
+        }
     }
 }

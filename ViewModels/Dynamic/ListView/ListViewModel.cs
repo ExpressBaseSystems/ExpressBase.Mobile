@@ -9,7 +9,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
-    public class ListViewModel : ListViewBaseVM
+    public class ListViewModel : ListViewBaseViewModel
     {
         public ListViewModel(EbMobilePage page) : base(page) { }
 
@@ -24,7 +24,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 ContextParams = this.Visualization.GetContextParams(ContextRecord, this.NetworkType);
             }
-            await SetDataAsync();
+            await GetDataAsync();
         }
 
         protected override async Task NavigateToFabLink()

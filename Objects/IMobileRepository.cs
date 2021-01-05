@@ -57,5 +57,9 @@ namespace ExpressBase.Mobile
         int BorderThickness { set; get; }
 
         EbThickness Padding { set; get; }
+
+        int Height { set; get; }
+
+        int Width { set; get; }
     }
 }

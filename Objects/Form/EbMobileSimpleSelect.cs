@@ -235,7 +235,7 @@ namespace ExpressBase.Mobile
                     Value = value
                 };
 
-                MobileVisDataResponse response = DataService.Instance.GetData(this.DataSourceRefId, 0, 0, new List<Param> { p }, null, null, false);
+                MobileDataResponse response = DataService.Instance.GetData(this.DataSourceRefId, 0, 0, new List<Param> { p }, null, null, false);
 
                 if (response.Data != null && response.Data.Tables.HasLength(2))
                     dt = response.Data.Tables[1];

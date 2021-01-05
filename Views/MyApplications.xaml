@@ -148,7 +148,7 @@
                                         Grid.RowSpan="3"
                                         Title="Confirm"
                                         Message="Are you sure, you want to Logout and Reset?"
-                                        ConfirmClicked="{Binding ResetConfig}">
+                                        ConfirmCommand="{Binding ResetConfig}">
                     </control:ConfirmBox>
                 </Grid>
             </control:EbCPLayout.Content>

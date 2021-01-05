@@ -1,7 +1,6 @@
-﻿using ExpressBase.Mobile.Data;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using System;
-using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -14,43 +13,25 @@ namespace ExpressBase.Mobile
 
         public string BindingTable { set; get; }
 
-        private EbDataTable Data { set; get; }
+        private EbXFrame wrapper;
 
-        private EbDataRow LinkedDataRow { set; get; }
-
-        private void SetData()
+        public override View Draw()
         {
-            try
-            {
-                string sql = HelperFunctions.WrapSelectQueryUnPaged(HelperFunctions.B64ToString(this.OfflineQuery.Code));
-                List<DbParameter> dbParams = new List<DbParameter>();
-                List<string> parameters = HelperFunctions.GetSqlParams(sql);
-                if (parameters.Count > 0)
-                    this.GetParameterValues(dbParams, parameters);
-                Data = App.DataDB.DoQuery(sql, dbParams.ToArray());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            return wrapper = GetFrame();
         }
 
-        private void GetParameterValues(List<DbParameter> dbParams, List<string> parameters)
+        public override void SetBindingValue(EbDataSet dataSet)
         {
-            try
+            if (!string.IsNullOrEmpty(BindingTable))
             {
-                foreach (string param in parameters)
+                int tableIndex = Convert.ToInt32(BindingTable.Substring(BindingTable.Length - 1));
+
+                if (dataSet.TryGetTable(tableIndex, out EbDataTable dt))
                 {
-                    dbParams.Add(new DbParameter
-                    {
-                        ParameterName = param,
-                        Value = this.LinkedDataRow[param],
-                    });
+                    EbXDataGrid xGrid = new EbXDataGrid { DataSource = dt };
+
+                    wrapper.Content = xGrid;
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
             }
         }
     }

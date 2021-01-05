@@ -16,7 +16,7 @@ namespace ExpressBase.Mobile.Views.Base
     {
         protected int PageCount { set; get; } = 1;
 
-        protected ListViewBaseVM ViewModel { set; get; }
+        protected ListViewBaseViewModel ViewModel { set; get; }
 
         protected bool HasFabLink => ViewModel.Visualization.ShowNewButton;
 

@@ -36,11 +36,11 @@ namespace ExpressBase.Mobile
             return container;
         }
 
-        public override void SetBindingValue(EbDataRow row)
+        public override void SetBindingValue(EbDataSet dataSet)
         {
             foreach (EbMobileDashBoardControl ctrl in ChildControls)
             {
-                ctrl.SetBindingValue(row);
+                ctrl.SetBindingValue(dataSet);
             }
         }
 

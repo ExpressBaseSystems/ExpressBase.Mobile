@@ -131,7 +131,7 @@
                                Margin="10,5,0,0"
                                IsVisible="{Binding HasSolutionSwitcher}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="ChangeSolution_Tapped" />
+                                <TapGestureRecognizer Tapped="ChangeSolutionTapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
@@ -150,7 +150,7 @@
                         <Frame Style="{StaticResource SideBarFrame}"
                                IsVisible="{Binding HasAppSwitcher}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="ChangeApplication_Tapped" />
+                                <TapGestureRecognizer Tapped="ChangeApplicationTapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
@@ -167,7 +167,7 @@
                         <Frame Style="{StaticResource SideBarFrame}"
                                IsVisible="{Binding HasLocationSwitcher}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="ChangeLocation_Tapped" />
+                                <TapGestureRecognizer Tapped="ChangeLocationTapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
@@ -184,7 +184,7 @@
                         <Frame Style="{StaticResource SideBarFrame}"
                                IsVisible="{Binding HasMyActions}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="MyActions_Tapped" />
+                                <TapGestureRecognizer Tapped="MyActionsTapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
@@ -198,6 +198,22 @@
                                        Style="{StaticResource LinkLabel}" />
                             </Grid>
                         </Frame>
+                        <Frame Style="{StaticResource SideBarFrame}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="LinksTapped" />
+                            </Frame.GestureRecognizers>
+                            <Grid Padding="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="&#xf009;"
+                                       Style="{StaticResource SideBarIconStyle}" />
+                                <Label Grid.Column="1"
+                                       Text="Links"
+                                       Style="{StaticResource LinkLabel}" />
+                            </Grid>
+                        </Frame>
                     </StackLayout>
                     <StackLayout VerticalOptions="End"
                                  Padding="0"
@@ -205,7 +221,7 @@
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer x:Name="Setup"
-                                                      Tapped="Setup_Tapped" />
+                                                      Tapped="SetupTapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
@@ -222,7 +238,7 @@
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer x:Name="About"
-                                                      Tapped="About_Tapped" />
+                                                      Tapped="AboutTapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>
@@ -238,7 +254,7 @@
                         </Frame>
                         <Frame Style="{StaticResource SideBarFrame}">
                             <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="Logout_Tapped" />
+                                <TapGestureRecognizer Tapped="LogoutTapped" />
                             </Frame.GestureRecognizers>
                             <Grid Padding="0,10">
                                 <Grid.ColumnDefinitions>

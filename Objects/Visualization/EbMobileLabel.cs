@@ -17,6 +17,10 @@ namespace ExpressBase.Mobile
 
         public MobileTextWrap TextWrap { set; get; }
 
+        public MobileTextAlign HorrizontalTextAlign { set; get; }
+
+        public MobileTextAlign VerticalTextAlign { set; get; }
+
         public int BorderRadius { get; set; }
 
         public string BackgroundColor { get; set; }
@@ -43,19 +47,18 @@ namespace ExpressBase.Mobile
 
         public EbXLabel Draw()
         {
-            EbXLabel label = new EbXLabel
+            EbXLabel label = new EbXLabel(this)
             {
-                Text = this.Text,
-                XBackgroundColor = Color.FromHex(BackgroundColor ?? "#ffffff"),
-                BorderRadius = BorderRadius,
-                BorderColor = Color.FromHex(BackgroundColor ?? "#ffffff"),
-                Padding = this.Padding == null ? 0 : this.Padding.ConvertToXValue(),
-                BorderThickness = BorderThickness
+                Text = this.Text
             };
 
-            if (RenderAsIcon)
+            label.SetTextWrap(TextWrap);
+            label.SetTextAlignment(HorrizontalTextAlign, VerticalTextAlign);
+
+            if (RenderAsIcon && !string.IsNullOrEmpty(Icon))
             {
                 label.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome");
+                label.Text = Icon.ToFontIcon();
             }
             return label;
         }

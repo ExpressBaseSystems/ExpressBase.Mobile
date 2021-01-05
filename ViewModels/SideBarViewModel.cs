@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.CustomControls;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
@@ -13,6 +12,10 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class SideBarViewModel : StaticBaseViewModel
     {
+        private static SideBarViewModel _instance;
+
+        public static SideBarViewModel Instance => _instance ??= new SideBarViewModel();
+
         public bool HasAppSwitcher => Utils.Applications.Count > 1;
 
         public bool HasSolutionSwitcher => App.Settings.Vendor.HasSolutionSwitcher;
@@ -45,7 +48,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command EditProfileCommand => new Command(async () => await EditProfile());
 
-        public SideBarViewModel()
+        private SideBarViewModel()
         {
             SetDisplayPicture();
         }
@@ -108,8 +111,6 @@ namespace ExpressBase.Mobile.ViewModels
 
                 try
                 {
-                    EbCPLayout.Loading(true);
-
                     MobileProfileData profileData = await DataService.Instance.GetProfileDataAsync(page.RefId, App.Settings.CurrentLocId);
 
                     if (profileData != null && profileData.RowId > 0)
@@ -127,7 +128,6 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     EbLog.Error(ex.Message);
                 }
-                EbCPLayout.Loading(false);
             }
         }
     }

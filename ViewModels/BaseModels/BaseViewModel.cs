@@ -11,8 +11,6 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        #region Bindable properties
-
         private string pageTitle;
 
         public string PageTitle
@@ -61,11 +59,7 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        #endregion
-
         public Command ResetConfig => new Command(async () => await Reset());
-
-        public Command LogoutCommand => new Command(async () => await Logout());
 
         public Command GoToHomeCommand => new Command(async () => await GoToHome());
 
@@ -90,6 +84,7 @@ namespace ExpressBase.Mobile.ViewModels
         public async Task Logout()
         {
             Store.ResetCashedSolutionData();
+
             await App.Navigation.NavigateToLogin(true);
 
             if (Utils.HasInternet && App.Settings.Vendor.AllowNotifications)

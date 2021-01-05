@@ -205,7 +205,7 @@ namespace ExpressBase.Mobile.Models
         public string Token { get; set; }
     }
 
-    public class MobileVisDataResponse
+    public class MobileDataResponse
     {
         public string Message { set; get; }
 

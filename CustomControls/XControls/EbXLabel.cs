@@ -42,16 +42,16 @@ namespace ExpressBase.Mobile.CustomControls.XControls
 
         public EbXLabel() { }
 
-        public EbXLabel(EbMobileDataColumn dc)
+        public EbXLabel(IMobileUIControl uiControl)
         {
-            XBackgroundColor = Color.FromHex(dc.BackgroundColor ?? "#ffffff00");
-            BorderColor = Color.FromHex(dc.BorderColor ?? "#ffffff00");
-            BorderRadius = dc.BorderRadius;
-            BorderThickness = dc.BorderThickness;
-            Padding = dc.Padding == null ? 0 : dc.Padding.ConvertToXValue();
+            XBackgroundColor = Color.FromHex(uiControl.BackgroundColor ?? "#ffffff00");
+            BorderColor = Color.FromHex(uiControl.BorderColor ?? "#ffffff00");
+            BorderRadius = uiControl.BorderRadius;
+            BorderThickness = uiControl.BorderThickness;
+            Padding = uiControl.Padding == null ? 0 : uiControl.Padding.ConvertToXValue();
 
-            if (dc.Width > 0) this.WidthRequest = dc.Width;
-            if (dc.Height > 0) this.HeightRequest = dc.Height;
+            if (uiControl.Width > 0) WidthRequest = uiControl.Width;
+            if (uiControl.Height > 0) HeightRequest = uiControl.Height;
         }
     }
 }

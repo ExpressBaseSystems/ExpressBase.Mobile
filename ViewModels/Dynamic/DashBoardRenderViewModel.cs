@@ -16,9 +16,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         readonly IDashBoardService dashService;
 
-        private EbDataTable _data;
+        private EbDataSet _data;
 
-        public EbDataTable Data
+        public EbDataSet Data
         {
             get => _data;
             set
@@ -27,6 +27,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 NotifyPropertyChanged();
             }
         }
+
+        public Command RefreshCommand => new Command(async () => await RefreshDataAsync());
 
         public DashBoardRenderViewModel()
         {
@@ -57,6 +59,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 EbLog.Error(ex.Message);
             }
+        }
+
+        public async Task RefreshDataAsync()
+        {
+            await InitializeAsync();
+            Device.BeginInvokeOnMainThread(() => IsRefreshing = false);
         }
     }
 }

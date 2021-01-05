@@ -50,7 +50,7 @@
     <Compile Update="Views\Dynamic\PdfRender.xaml.cs">
       <DependentUpon>PdfRender.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\Home.xaml.cs">
+    <Compile Update="Views\Layout\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\MySolutions.xaml.cs">
@@ -182,13 +182,10 @@
     <EmbeddedResource Update="Views\Dynamic\SignUp.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\TabbedHome.xaml">
+    <EmbeddedResource Update="Views\OnBoarding\WelcomeBoard.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\WelcomeBoard.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Views\WelcomPage.xaml">
+    <EmbeddedResource Update="Views\OnBoarding\WelcomPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

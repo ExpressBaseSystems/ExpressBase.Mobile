@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Threading.Tasks;
@@ -35,6 +36,9 @@ namespace ExpressBase.Mobile.CustomControls
 
         public static readonly BindableProperty HasToolBarProperty =
             BindableProperty.Create(nameof(HasToolBar), typeof(bool), typeof(EbCPLayout), defaultValue: true, propertyChanged: OnToolBarVisiblePropertyChanged);
+
+        public static readonly BindableProperty IsMasterPageProperty =
+            BindableProperty.Create(nameof(IsMasterPage), typeof(bool), typeof(EbCPLayout), propertyChanged: OnMasterPagePropertyChanged);
 
         public event OnBackButtonPressed BackButtonPressed;
 
@@ -84,6 +88,12 @@ namespace ExpressBase.Mobile.CustomControls
         {
             get { return (bool)GetValue(HasToolBarProperty); }
             set { SetValue(HasToolBarProperty, value); }
+        }
+
+        public bool IsMasterPage
+        {
+            get { return (bool)GetValue(IsMasterPageProperty); }
+            set { SetValue(IsMasterPageProperty, value); }
         }
 
         public EbCPLayout()
@@ -151,7 +161,13 @@ namespace ExpressBase.Mobile.CustomControls
                 binding.HeaderRow.Height = GridLength.Auto;
         }
 
-        private async void BackButton_Clicked(object sender, EventArgs e)
+        private static void OnMasterPagePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            EbCPLayout binding = bindable as EbCPLayout;
+            binding.SideBarToggle.IsVisible = Convert.ToBoolean(newValue);
+        }
+
+        private async void OnBackButtonClicked(object sender, EventArgs e)
         {
             if (BackButtonPressed != null)
             {
@@ -177,7 +193,7 @@ namespace ExpressBase.Mobile.CustomControls
             Loader.IsVisible = false;
         }
 
-        private void SecondaryToggle_Clicked(object sender, EventArgs e)
+        private void SecondaryToggleClicked(object sender, EventArgs e)
         {
             SecondaryToolbar.IsVisible = true;
             SecondaryToolbar.FadeTo(1, 150);
@@ -185,7 +201,7 @@ namespace ExpressBase.Mobile.CustomControls
             SecondaryToolBarFade.IsVisible = true;
         }
 
-        private void SecondaryToolbar_Tapped(object sender, EventArgs e)
+        private void SecondaryToolbarTapped(object sender, EventArgs e)
         {
             SecondaryToolBarFade.IsVisible = false;
             var fade = new Animation(v => SecondaryToolbar.Opacity = v, 1, 0);
@@ -199,16 +215,31 @@ namespace ExpressBase.Mobile.CustomControls
 
         public static void SecondaryItemClicked(string name)
         {
-            instance?.SecondaryToolbar_Tapped(null, null);
+            instance?.SecondaryToolbarTapped(null, null);
             EbLog.Info($"secondary toolbar ite clicked '{name}'");
         }
 
         public static void Loading(bool show)
         {
-            if(instance != null)
+            if (instance != null)
             {
                 instance.Loader.IsVisible = show;
             }
+        }
+
+        private void SideBarToggleClicked(object sender, EventArgs e)
+        {
+            App.RootMaster.IsPresented = true;
+        }
+
+        private async void LogoutConfirmClicked(object sender, EventArgs e)
+        {
+            await SideBarViewModel.Instance.Logout();
+        }
+
+        public static void ConfirmLogoutAction()
+        {
+            instance?.LogoutDialog.Show();
         }
     }
 }

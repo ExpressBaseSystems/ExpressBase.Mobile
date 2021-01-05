@@ -8,8 +8,8 @@ namespace ExpressBase.Mobile.Services.DashBoard
 {
     public interface IDashBoardService
     {
-        Task<EbDataTable> GetDataAsync(string refid);
+        Task<EbDataSet> GetDataAsync(string refid);
 
-        Task<EbDataTable> GetLocalDataAsync(EbScript script);
+        Task<EbDataSet> GetLocalDataAsync(EbScript script);
     }
 }

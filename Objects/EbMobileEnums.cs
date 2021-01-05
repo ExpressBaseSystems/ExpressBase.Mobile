@@ -70,4 +70,11 @@ namespace ExpressBase.Mobile
         TailTruncation = 5,
         WordWrap = 6
     }
+
+    public enum MobileTextAlign
+    {
+        Start = 1,
+        Center = 2,
+        End = 3
+    }
 }

@@ -247,7 +247,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         public async Task ButtonControlClick(EbMobileButton button)
         {
-            await button.Navigate(this.DataRow);
+            await button.OnControlAction(this.DataRow);
         }
 
         private View DC2Audio(EbMobileDataColumn dc, object value)

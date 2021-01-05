@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.CustomControls.XControls;
+﻿using ExpressBase.Mobile.CustomControls.XControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -7,7 +6,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
-    public class EbMobileDataLabel : EbMobileDashBoardControl, IGridAlignment
+    public class EbMobileDataLabel : EbMobileDashBoardControl, IGridAlignment, IMobileUIControl
     {
         public string Text { get; set; }
 
@@ -27,43 +26,51 @@ namespace ExpressBase.Mobile
 
         public MobileVerticalAlign VerticalAlign { set; get; }
 
+        public MobileTextWrap TextWrap { set; get; }
+
+        public MobileTextAlign HorrizontalTextAlign { set; get; }
+
+        public MobileTextAlign VerticalTextAlign { set; get; }
+
+        public int Height { set; get; }
+
+        public int Width { set; get; }
+
         private EbXLabel label;
 
         public override View Draw()
         {
-            label = new EbXLabel
+            label = new EbXLabel(this)
             {
-                XBackgroundColor = Color.FromHex(this.BackgroundColor),
-                BorderRadius = this.BorderRadius,
-                BorderThickness = this.BorderThickness,
-                BorderColor = Color.FromHex(this.BorderColor),
-                Text = this.Text
+                Text = Text
             };
 
-            if (this.RenderAsIcon && string.IsNullOrEmpty(Icon))
+            if (RenderAsIcon && !string.IsNullOrEmpty(Icon))
             {
                 label.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome");
-                label.Text = this.Icon.ToFontIcon();
+                label.Text = Icon.ToFontIcon();
             }
 
-            if (this.Font != null)
+            if (Font != null)
             {
-                label.SetFont(this.Font);
+                label.SetFont(Font);
             }
 
-            label.SetHorrizontalAlign(this.HorrizontalAlign);
-            label.SetVerticalAlign(this.VerticalAlign);
+            label.SetHorrizontalAlign(HorrizontalAlign);
+            label.SetVerticalAlign(VerticalAlign);
+            label.SetTextWrap(TextWrap);
+            label.SetTextAlignment(HorrizontalTextAlign, VerticalTextAlign);
 
             return label;
         }
 
-        public override void SetBindingValue(EbDataRow row)
+        public override void SetBindingValue(EbDataSet dataSet)
         {
-            if (!string.IsNullOrEmpty(this.BindingParam))
+            if (!string.IsNullOrEmpty(BindingParam))
             {
-                object value = GetBinding(row, this.BindingParam);
+                object value = GetBinding(dataSet, BindingParam);
                 label.Text = value?.ToString();
-            } 
+            }
         }
     }
 }

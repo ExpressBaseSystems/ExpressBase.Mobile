@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.Services
 
         public DataService() : base(true) { }
 
-        public MobileVisDataResponse GetData(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
+        public MobileDataResponse GetData(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
         {
             try
             {
@@ -45,16 +45,16 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
                 IRestResponse iresp = HttpClient.Execute(request);
-                return JsonConvert.DeserializeObject<MobileVisDataResponse>(iresp.Content);
+                return JsonConvert.DeserializeObject<MobileDataResponse>(iresp.Content);
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }
-            return new MobileVisDataResponse();
+            return new MobileDataResponse();
         }
 
-        public async Task<MobileVisDataResponse> GetDataAsync(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
+        public async Task<MobileDataResponse> GetDataAsync(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
         {
             try
             {
@@ -79,13 +79,43 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
                 IRestResponse iresp = await HttpClient.ExecuteAsync(request);
-                return JsonConvert.DeserializeObject<MobileVisDataResponse>(iresp.Content);
+                return JsonConvert.DeserializeObject<MobileDataResponse>(iresp.Content);
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }
-            return new MobileVisDataResponse();
+            return new MobileDataResponse();
+        }
+
+        public async Task<MobileDataResponse> GetDataAsyncV2(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search)
+        {
+            try
+            {
+                RestRequest request = base.GetRequest(ApiConstants.GET_VIS_DATA_V2, Method.GET);
+
+                request.AddParameter("refid", refid);
+
+                if (param != null) request.AddParameter("param", JsonConvert.SerializeObject(param));
+                if (sort != null) request.AddParameter("sort_order", JsonConvert.SerializeObject(sort));
+                if (search != null) request.AddParameter("search", JsonConvert.SerializeObject(search));
+
+
+                request.AddParameter("limit", limit);
+                request.AddParameter("offset", offset);
+
+                IRestResponse iresp = await HttpClient.ExecuteAsync(request);
+
+                if (iresp.IsSuccessful)
+                    return JsonConvert.DeserializeObject<MobileDataResponse>(iresp.Content);
+                else
+                    base.LogHttpResponse(iresp);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return null;
         }
 
         public async Task<MobileProfileData> GetProfileDataAsync(string refid, int loc_id)
@@ -103,6 +133,30 @@ namespace ExpressBase.Mobile.Services
                 IRestResponse iresp = await HttpClient.ExecuteAsync(request);
                 if (iresp.IsSuccessful)
                     return JsonConvert.DeserializeObject<MobileProfileData>(iresp.Content);
+                else
+                    EbLog.Error(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return null;
+        }
+
+        public async Task<MobileDataResponse> GetDataFlatAsync(string refid)
+        {
+            try
+            {
+                RestRequest request = new RestRequest(ApiConstants.GET_DATA_FLAT, Method.GET);
+
+                request.AddParameter("refid", refid);
+
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+                IRestResponse iresp = await HttpClient.ExecuteAsync(request);
+                if (iresp.IsSuccessful)
+                    return JsonConvert.DeserializeObject<MobileDataResponse>(iresp.Content);
                 else
                     EbLog.Error(iresp.Content);
             }

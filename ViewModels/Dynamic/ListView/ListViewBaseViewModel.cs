@@ -1,8 +1,11 @@
-﻿using ExpressBase.Mobile.CustomControls;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
 using System.Collections.Generic;
@@ -12,7 +15,7 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
-    public class ListViewBaseVM : DynamicBaseViewModel
+    public class ListViewBaseViewModel : DynamicBaseViewModel
     {
         public int Offset { set; get; }
 
@@ -54,6 +57,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected bool IsTapped { set; get; }
 
+        protected IDataService dataService;
+
         public Command ItemTappedCommand => new Command<DynamicFrame>(async (o) => await NavigateToLink(o));
 
         public Command AddCommand => new Command(async () => await NavigateToFabLink());
@@ -64,13 +69,86 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command SearchCommand => new Command<string>(async (query) => await SearchData(query));
 
-        public ListViewBaseVM(EbMobilePage page) : base(page)
+        public ListViewBaseViewModel(EbMobilePage page) : base(page)
         {
             this.Visualization = (EbMobileVisualization)page.Container;
             this.ListItemIndex = new IntRef();
 
             this.SortColumns = GetSortColumns();
             this.FilterControls = this.Visualization.FilterControls;
+
+            dataService = new DataService();
+        }
+
+        private async Task<EbDataSet> GetData(List<DbParameter> dbParameters, List<SortColumn> sort, List<Param> search)
+        {
+            if (this.NetworkType == NetworkMode.Online)
+            {
+                List<Param> param = dbParameters.ToParams();
+
+                return await this.GetLiveData(param, sort, search);
+            }
+            else
+            {
+                return this.GetLocalData(ContextParams, sort, search);
+            }
+        }
+
+        private EbDataSet GetLocalData(List<DbParameter> dbParameters, List<SortColumn> sortOrder, List<Param> search)
+        {
+            try
+            {
+                DbParameter userParam = dbParameters.Find(item => item.ParameterName == EbKeywords.UserId);
+
+                if (userParam != null)
+                {
+                    userParam.Value = App.Settings.UserId;
+                    userParam.DbType = (int)EbDbTypes.Int32;
+                }
+
+                string sql = HelperFunctions.WrapSelectQuery(Visualization.GetQuery, dbParameters);
+
+                int len = Visualization.PageLength == 0 ? 30 : Visualization.PageLength;
+
+                dbParameters.Add(new DbParameter { ParameterName = "@limit", Value = len, DbType = (int)EbDbTypes.Int32 });
+                dbParameters.Add(new DbParameter { ParameterName = "@offset", Value = Offset, DbType = (int)EbDbTypes.Int32 });
+
+                return App.DataDB.DoQueries(sql, dbParameters.ToArray());
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Failed to get local data");
+                EbLog.Error(ex.Message);
+            }
+            return null;
+        }
+
+        private async Task<EbDataSet> GetLiveData(List<Param> param, List<SortColumn> sort, List<Param> search)
+        {
+            try
+            {
+                int limit = Visualization.PageLength == 0 ? 30 : Visualization.PageLength;
+
+                if (App.Settings.CurrentLocation != null)
+                {
+                    param.Add(new Param
+                    {
+                        Name = EbKeywords.Location,
+                        Type = "11",
+                        Value = App.Settings.CurrentLocation.LocId.ToString()
+                    });
+                }
+
+                MobileDataResponse dataResponse = await dataService.GetDataAsyncV2(Page.RefId, limit, Offset, param, sort, search);
+
+                return dataResponse?.Data;
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info($"Failed to get Live data for '{Page.RefId}'");
+                EbLog.Error(ex.Message);
+            }
+            return null;
         }
 
         protected List<SortColumn> GetSortColumns()
@@ -81,6 +159,32 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         protected List<SortColumn> GetSortColumsActive()
         {
             return this.SortColumns.FindAll(item => item.Selected);
+        }
+
+        public async Task GetDataAsync()
+        {
+            try
+            {
+                if (!Utils.IsNetworkReady(this.NetworkType))
+                {
+                    Utils.Alert_NoInternet();
+                    throw new Exception("no internet");
+                }
+
+                ContextParams ??= new List<DbParameter>();
+
+                EbDataSet dataSet = await GetData(ContextParams, null, null);
+
+                if (dataSet != null && dataSet.Tables.HasLength(2))
+                {
+                    DataRows = dataSet.Tables[1].Rows;
+                    DataCount = Convert.ToInt32(dataSet.Tables[0].Rows[0]["count"]);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
         }
 
         public async Task RefreshDataAsync(bool isSearch = false)
@@ -95,7 +199,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 List<Param> searchCols = isSearch ? SearchColumns : null;
 
-                EbDataSet ds = await this.Visualization.GetData(this.NetworkType, Offset, filter, sort, searchCols);
+                EbDataSet ds = await GetData(filter, sort, searchCols);
 
                 if (ds != null && ds.Tables.HasLength(2))
                 {
@@ -132,44 +236,27 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        public async Task SetDataAsync()
-        {
-            try
-            {
-                if (!Utils.IsNetworkReady(this.NetworkType))
-                {
-                    Utils.Alert_NoInternet();
-                    throw new Exception("no internet");
-                }
-
-                EbDataSet ds = await this.Visualization.GetData(this.NetworkType, this.Offset, ContextParams);
-                if (ds != null && ds.Tables.HasLength(2))
-                {
-                    DataRows = ds.Tables[1].Rows;
-                    DataCount = Convert.ToInt32(ds.Tables[0].Rows[0]["count"]);
-                }
-                else
-                    throw new Exception("no internet");
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error(ex.Message);
-            }
-        }
-
         protected async Task NavigateToLink(DynamicFrame item)
         {
             if (IsTapped)
                 return;
 
-            IToast toast = DependencyService.Get<IToast>();
             try
             {
+                if (Visualization.LinkExpr != null && !Visualization.LinkExpr.IsEmpty())
+                {
+                    if (!EbListHelper.EvaluateLinkExpr(item.DataRow, Visualization.LinkExpr.GetCode()))
+                    {
+                        EbLog.Info("[LinkExpr] evaluation blocked link navigation");
+                        return;
+                    }
+                }
+
                 EbMobilePage page = EbPageHelper.GetPage(this.Visualization.LinkRefId);
 
                 if (this.NetworkType != page.NetworkMode)
                 {
-                    toast.Show("Link page Mode is different.");
+                    Utils.Toast("Link page Mode is different.");
                     return;
                 }
                 else

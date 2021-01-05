@@ -1,8 +1,8 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Views.Base;
 using ExpressBase.Mobile.Views.Dynamic;
 using ExpressBase.Mobile.Views.Shared;
-using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views
@@ -21,9 +21,11 @@ namespace ExpressBase.Mobile.Views
             InitNavigation();
         }
 
-        public void InitNavigation()
+        public async void InitNavigation()
         {
             EbMobileSettings settings = App.Settings.CurrentApplication?.AppSettings;
+
+            IMasterPage master;
 
             if (settings != null && !string.IsNullOrEmpty(settings.DashBoardRefId))
             {
@@ -31,43 +33,22 @@ namespace ExpressBase.Mobile.Views
 
                 if (page != null && page.Container is EbMobileDashBoard)
                 {
-                    DashBoardRender dashboard = new DashBoardRender(page)
-                    {
-                        Title = "Home",
-                        IconImageSource = new FontImageSource
-                        {
-                            Size = 12,
-                            FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome"),
-                            Glyph = "\uf015"
-                        }
-                    };
-                    dashboard.HideToolBar();
-
-                    Home links = new Home()
-                    {
-                        Title = "Links",
-                        IconImageSource = new FontImageSource
-                        {
-                            Size = 12,
-                            FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("FontAwesome"),
-                            Glyph = "\uf00a"
-                        }
-                    };
-
-                    List<Page> pages = new List<Page> { dashboard, links };
-
-                    Detail.Navigation.PushAsync(new TabbedHome(pages));
+                    master = new DashBoardRender(page);
                 }
                 else
                 {
                     EbLog.Info("Default application dashboard not found, check object permissions");
-                    Detail.Navigation.PushAsync(new Home());
+                    master = new Home();
                 }
             }
             else
             {
-                Detail.Navigation.PushAsync(new Home());
+                master = new Home();
             }
+
+            master.UpdateMasterLayout();
+
+            await Detail.Navigation.PushAsync((Page)master);
         }
 
         protected override bool OnBackButtonPressed()
