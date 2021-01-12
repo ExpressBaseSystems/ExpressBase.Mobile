@@ -15,9 +15,6 @@ using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
-    /*
-     Powerselect and simple select control
-     */
     public class EbMobileSimpleSelect : EbMobileControl
     {
         public override EbDbTypes EbDbType
@@ -67,10 +64,8 @@ namespace ExpressBase.Mobile
 
         private Color Background => this.ReadOnly ? Color.FromHex("eeeeee") : Color.Transparent;
 
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
+        public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            base.InitXControl(Mode, Network);
-
             TapGestureRecognizer recognizer = new TapGestureRecognizer();
             recognizer.Tapped += Icon_Tapped;
 
@@ -78,6 +73,8 @@ namespace ExpressBase.Mobile
                 InitSimpleSelect(recognizer);
             else
                 InitPowerSelect(recognizer);
+
+            return base.Draw(Mode, Network);
         }
 
         private void Icon_Tapped(object sender, EventArgs e)
@@ -105,7 +102,8 @@ namespace ExpressBase.Mobile
                 Style = (Style)HelperFunctions.GetResourceValue("PSIconLabel"),
                 GestureRecognizers = { gesture }
             };
-            this.XControl = new InputGroup(picker, icon) { XBackgroundColor = Background, HasShadow = false };
+
+            XControl = new InputGroup(picker, icon) { XBackgroundColor = Background, HasShadow = false };
         }
 
         private void InitPowerSelect(TapGestureRecognizer gesture)
@@ -122,7 +120,8 @@ namespace ExpressBase.Mobile
                 Style = (Style)HelperFunctions.GetResourceValue("SSIconLabel"),
                 GestureRecognizers = { gesture }
             };
-            this.XControl = new InputGroup(SearchBox, icon) { XBackgroundColor = Background };
+
+            XControl = new InputGroup(SearchBox, icon) { XBackgroundColor = Background };
         }
 
         private async Task OnSearchBoxFocused()

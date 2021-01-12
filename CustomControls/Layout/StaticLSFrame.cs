@@ -21,7 +21,7 @@ namespace ExpressBase.Mobile.CustomControls.Layout
 
             if (ctrl is EbMobileLabel label)
             {
-                EbXLabel xlabel = label.Draw();
+                EbXLabel xlabel = (EbXLabel)label.Draw();
 
                 if (label.RenderAsIcon)
                 {

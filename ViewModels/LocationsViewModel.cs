@@ -28,10 +28,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command ApplyLocationCommand => new Command(async () => await LocationSubmited());
 
-        public override async Task InitializeAsync()
+        public override void Initialize()
         {
-            await Task.Delay(1);
-
             Locations = Utils.Locations;
 
             foreach (EbLocation loc in Locations)
@@ -63,10 +61,8 @@ namespace ExpressBase.Mobile.ViewModels
             Locations = Utils.Locations;
         }
 
-        public async Task FilterBySearchValue(string search)
+        public void FilterBySearchValue(string search)
         {
-            await Task.Delay(1);
-
             List<EbLocation> all = Utils.Locations;
             search = search.ToLower();
 

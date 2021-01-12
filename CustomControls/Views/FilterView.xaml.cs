@@ -17,16 +17,16 @@ namespace ExpressBase.Mobile.CustomControls
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FilterView : ContentView
     {
-        public static readonly BindableProperty FilterControlsProperty 
+        public static readonly BindableProperty FilterControlsProperty
             = BindableProperty.Create("FilterControls", typeof(IEnumerable<EbMobileControl>), typeof(FilterView));
 
-        public static readonly BindableProperty SortColumnsProperty 
+        public static readonly BindableProperty SortColumnsProperty
             = BindableProperty.Create("SortColumns", typeof(IEnumerable<SortColumn>), typeof(FilterView));
 
-        public static readonly BindableProperty NetWorkTypeProperty 
+        public static readonly BindableProperty NetWorkTypeProperty
             = BindableProperty.Create("NetWorkType", typeof(NetworkMode), typeof(FilterView));
 
-        public static readonly BindableProperty ConfirmClickedProperty 
+        public static readonly BindableProperty ConfirmClickedProperty
             = BindableProperty.Create(propertyName: "ConfirmClicked", typeof(ICommand), typeof(FilterView));
 
         public event ViewOnDisAppearing OnDisAppearing;
@@ -79,12 +79,8 @@ namespace ExpressBase.Mobile.CustomControls
 
                 foreach (EbMobileControl ctrl in this.FilterControls)
                 {
-                    Label lbl = new Label { Text = ctrl.Label };
-
-                    ctrl.InitXControl(FormMode.NEW, this.NetWorkType);
-                    ctrl.XControl.Margin = new Thickness(0, 0, 0, 10);
-                    this.FilterContainer.Children.Add(lbl);
-                    this.FilterContainer.Children.Add(ctrl.XControl);
+                    View view = ctrl.Draw(FormMode.NEW, this.NetWorkType);
+                    this.FilterContainer.Children.Add(view);
                 }
             }
             catch (Exception ex)

@@ -24,10 +24,8 @@ namespace ExpressBase.Mobile
 
         private int valueBoxNumber = 0;
 
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
+        public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            base.InitXControl(Mode, Network);
-
             if (RenderType == NumericBoxTypes.ButtonType)
             {
                 Grid grid = new Grid { ColumnSpacing = 10, IsEnabled = !this.ReadOnly };
@@ -49,7 +47,7 @@ namespace ExpressBase.Mobile
 
                 grid.Children.Add(valueBox, 1, 0);
 
-                var plus = new Button
+                Button plus = new Button
                 {
                     Style = (Style)HelperFunctions.GetResourceValue("NumericBoxIncrButton"),
                     Text = "\uf067",
@@ -62,7 +60,7 @@ namespace ExpressBase.Mobile
             }
             else
             {
-                var numeric = new EbXNumericTextBox
+                EbXNumericTextBox numeric = new EbXNumericTextBox
                 {
                     IsReadOnly = this.ReadOnly,
                     XBackgroundColor = this.XBackground,
@@ -73,8 +71,10 @@ namespace ExpressBase.Mobile
                 };
 
                 numeric.Unfocused += (sender, arg) => this.ValueChanged();
-                this.XControl = numeric;
+                XControl = numeric;
             }
+
+            return base.Draw(Mode, Network);
         }
 
         private void Plus_Clicked(object sender, EventArgs e)

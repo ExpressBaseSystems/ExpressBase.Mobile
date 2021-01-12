@@ -34,9 +34,8 @@ namespace ExpressBase.Mobile
             return value.ToString();
         }
 
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
+        public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            base.InitXControl(Mode, Network);
             View control;
 
             TapGestureRecognizer gesture = new TapGestureRecognizer();
@@ -75,6 +74,8 @@ namespace ExpressBase.Mobile
             };
 
             this.XControl = new InputGroup(control, icon) { XBackgroundColor = XBackground, HasShadow = false };
+
+            return base.Draw(Mode, Network);
         }
 
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)

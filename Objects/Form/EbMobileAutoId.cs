@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Structures;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -10,15 +11,15 @@ namespace ExpressBase.Mobile
 
         public override EbDbTypes EbDbType { get { return EbDbTypes.String; } set { } }
 
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
+        public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            base.InitXControl(Mode, Network);
-
-            this.XControl = new EbXTextBox
+            XControl = new EbXTextBox
             {
                 IsReadOnly = true,
                 XBackgroundColor = EbMobileControl.ReadOnlyBackground
             };
+
+            return base.Draw(Mode, Network);
         }
 
         public override void SetValue(object value)

@@ -23,6 +23,8 @@ namespace ExpressBase.Mobile.ViewModels
         private EbStageInfo stageInfo;
         private readonly int actionId;
 
+        private readonly IFormService formService = new FormService();
+
         public EbStageActions Status
         {
             get => this.status;
@@ -111,7 +113,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                if (this.Status == null) return;
+                if (Status == null) return;
 
                 WebformData webformData = new WebformData("eb_approval_lines");
 
@@ -121,9 +123,9 @@ namespace ExpressBase.Mobile.ViewModels
                     Columns =
                     {
                         new SingleColumn{ Name = "stage_unique_id", Type = (int)EbDbTypes.String, Value = stageInfo.StageUniqueId },
-                        new SingleColumn{ Name = "action_unique_id", Type = (int)EbDbTypes.String, Value = this.Status.ActionUniqueId },
+                        new SingleColumn{ Name = "action_unique_id", Type = (int)EbDbTypes.String, Value = Status.ActionUniqueId },
                         new SingleColumn{ Name = "eb_my_actions_id", Type = (int)EbDbTypes.Int32, Value = action.Id },
-                        new SingleColumn{ Name = "comments", Type = (int)EbDbTypes.String, Value = this.Comments }
+                        new SingleColumn{ Name = "comments", Type = (int)EbDbTypes.String, Value = Comments }
                     }
                 };
 
@@ -131,7 +133,7 @@ namespace ExpressBase.Mobile.ViewModels
                 webformData.MultipleTables.Add("eb_approval_lines", st);
 
                 await SendWebFormData(webformData, action.WebFormDataId, action.WebFormRefId);
-                await App.Navigation.PopAsync(true);
+                await App.Navigation.PopByRenderer(true);
             }
             catch (Exception ex)
             {
@@ -145,7 +147,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
-                PushResponse resp = await FormDataServices.Instance.SendFormDataAsync(null, webForm, rowid, webformRefid, App.Settings.CurrentLocId);
+                PushResponse resp = await formService.SendFormDataAsync(null, webForm, rowid, webformRefid, App.Settings.CurrentLocId);
 
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
 
@@ -155,7 +157,10 @@ namespace ExpressBase.Mobile.ViewModels
                     App.Navigation.UpdateViewStack();
                 }
                 else
+                {
                     Utils.Toast("Unable to save action :( ");
+                    EbLog.Error(resp.Message + resp.MessageInt);
+                }
             }
             catch (Exception ex)
             {

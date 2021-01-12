@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile
 
         public EbMobileStaticParameter BindingParam { set; get; }
 
-        public EbXLabel Draw()
+        public override View Draw()
         {
             EbXLabel label = new EbXLabel(this)
             {

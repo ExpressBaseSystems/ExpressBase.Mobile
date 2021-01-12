@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ExpressBase.Mobile.CustomControls.Views.SideBarLink"
+             Margin="10,0,0,0">
+
+    <ContentView.GestureRecognizers>
+        <TapGestureRecognizer Tapped="OnViewTapped"></TapGestureRecognizer>
+    </ContentView.GestureRecognizers>
+
+    <ContentView.Content>
+        <Grid Padding="0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="LinkIcon"
+                   FontFamily="{StaticResource FontAwesome}"
+                   FontSize="20"
+                   VerticalOptions="Center"
+                   TextColor="#737373">
+            </Label>
+
+            <Label x:Name="LinkText"
+                   Grid.Column="1"
+                   FontFamily="{StaticResource Roboto-Regular}"
+                   FontSize="15"
+                   TextColor="#333"
+                   VerticalOptions="Center">
+            </Label>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

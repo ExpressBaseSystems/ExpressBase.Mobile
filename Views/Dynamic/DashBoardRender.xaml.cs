@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.ViewModels.Dynamic;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.ViewModels.Dynamic;
 using ExpressBase.Mobile.Views.Base;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -6,10 +7,8 @@ using Xamarin.Forms.Xaml;
 namespace ExpressBase.Mobile.Views.Dynamic
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class DashBoardRender : ContentPage, IDashBoardRenderer, IMasterPage
+    public partial class DashBoardRender : EbContentPage, IDashBoardRenderer, IMasterPage
     {
-        private bool isRendered;
-
         private readonly DashBoardRenderViewModel viewModel;
 
         public DashBoardRender()
@@ -28,10 +27,10 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             EbLayout.ShowLoader();
 
-            if (!isRendered)
+            if (!IsRendered)
             {
                 await viewModel.InitializeAsync();
-                isRendered = true;
+                IsRendered = true;
             }
             EbLayout.HideLoader();
         }
@@ -41,5 +40,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EbLayout.IsMasterPage = true;
             EbLayout.HasBackButton = false;
         }
+
+        public EbCPLayout GetCurrentLayout() => EbLayout;
+
+        public override void UpdateRenderStatus() => IsRendered = false;
+
+        public override bool CanRefresh() => true;
     }
 }

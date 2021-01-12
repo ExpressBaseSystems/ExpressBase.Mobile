@@ -129,7 +129,7 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 if (button.HideInContext && IsHeader) return null;
 
-                Button btn = button.Draw();
+                Button btn = (Button)button.Draw(DataRow);
                 btn.Clicked += async (sender, args) => await ButtonControlClick(button);
                 view = btn;
             }
@@ -142,12 +142,11 @@ namespace ExpressBase.Mobile.CustomControls
             }
             else if (ctrl is EbMobileLabel label)
             {
-                EbXLabel lbl = label.Draw();
+                EbXLabel lbl = (EbXLabel)label.Draw();
                 lbl.SetFont(label.Font, this.IsHeader);
                 lbl.SetTextWrap(label.TextWrap);
                 view = lbl;
             }
-
             return view;
         }
 

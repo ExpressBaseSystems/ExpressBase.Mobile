@@ -19,13 +19,13 @@ namespace ExpressBase.Mobile.Views.Shared
             BindingContext = viewModel = new LocationsViewModel();
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
 
             if (!isRendered)
             {
-                await viewModel.InitializeAsync();
+                viewModel.Initialize();
                 isRendered = true;
             }
         }
@@ -53,7 +53,7 @@ namespace ExpressBase.Mobile.Views.Shared
             LocSearchBox.Focus();
         }
 
-        private async void LocSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void LocSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string search = LocSearchBox.Text;
 
@@ -62,7 +62,7 @@ namespace ExpressBase.Mobile.Views.Shared
                 if (search.Length >= 3)
                 {
                     EbLayout.ShowLoader();
-                    await viewModel.FilterBySearchValue(search);
+                    viewModel.FilterBySearchValue(search);
                     EbLayout.HideLoader();
                     EmptyLabel.IsVisible = viewModel.Locations.Count <= 0;
                 }

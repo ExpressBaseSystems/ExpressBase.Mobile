@@ -50,19 +50,7 @@ namespace ExpressBase.Mobile
 
         public bool HideInContext { set; get; }
 
-        public override void InitXControl()
-        {
-            base.InitXControl();
-        }
-
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
-        {
-            base.InitXControl(Mode, Network);
-
-            this.XControl = Draw();
-        }
-
-        public virtual Button Draw()
+        public override View Draw()
         {
             Button btn = new Button
             {
@@ -76,12 +64,18 @@ namespace ExpressBase.Mobile
             };
 
             SetText(btn);
+
             if (Font != null)
             {
                 btn.FontSize = Font.Size;
                 btn.TextColor = Color.FromHex(Font.Color);
             }
             return btn;
+        }
+
+        public override View Draw(EbDataRow row)
+        {
+            return Draw();
         }
 
         public void SetText(Button btn)

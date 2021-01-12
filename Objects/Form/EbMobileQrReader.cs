@@ -14,10 +14,8 @@ namespace ExpressBase.Mobile
 
         private EbXTextBox dataHolder;
 
-        public override void InitXControl(FormMode mode, NetworkMode network)
+        public override View Draw(FormMode mode, NetworkMode network)
         {
-            base.InitXControl(mode, network);
-
             dataHolder = new EbXTextBox
             {
                 IsReadOnly = true,
@@ -56,7 +54,9 @@ namespace ExpressBase.Mobile
             grid.Children.Add(link, 0, 1);
             grid.Children.Add(clear, 1, 1);
 
-            this.XControl = grid;
+            XControl = grid;
+
+            return base.Draw(mode, network);
         }
 
         private void Clear_Clicked(object sender, EventArgs e)

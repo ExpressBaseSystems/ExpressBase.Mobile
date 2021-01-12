@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Models;
@@ -67,12 +68,16 @@ namespace ExpressBase.Mobile
 
         protected Color XBackground => this.ReadOnly ? ReadOnlyBackground : Color.Transparent;
 
-        public virtual void InitXControl() { }
+        public virtual View Draw() { return XView; }
 
-        public virtual void InitXControl(FormMode mode, NetworkMode network)
+        public virtual View Draw(EbDataRow row) { return XView; }
+
+        public virtual View Draw(FormMode mode, NetworkMode network)
         {
             this.FormRenderMode = mode;
             this.NetworkType = network;
+
+            return XView;
         }
 
         private Label validationLabel;

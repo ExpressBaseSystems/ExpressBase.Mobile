@@ -12,9 +12,7 @@ namespace ExpressBase.Mobile.ViewModels
 {
     public class SideBarViewModel : StaticBaseViewModel
     {
-        private static SideBarViewModel _instance;
-
-        public static SideBarViewModel Instance => _instance ??= new SideBarViewModel();
+        public static SideBarViewModel Instance;
 
         public bool HasAppSwitcher => Utils.Applications.Count > 1;
 
@@ -48,8 +46,10 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command EditProfileCommand => new Command(async () => await EditProfile());
 
-        private SideBarViewModel()
+        public SideBarViewModel()
         {
+            Instance = this;
+
             SetDisplayPicture();
         }
 
@@ -107,8 +107,6 @@ namespace ExpressBase.Mobile.ViewModels
 
             if (page != null && page.Container is EbMobileForm)
             {
-                App.RootMaster.IsPresented = false;
-
                 try
                 {
                     MobileProfileData profileData = await DataService.Instance.GetProfileDataAsync(page.RefId, App.Settings.CurrentLocId);

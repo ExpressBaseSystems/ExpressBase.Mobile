@@ -30,10 +30,8 @@ namespace ExpressBase.Mobile
             buttonCollection = new List<Button>();
         }
 
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
+        public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            base.InitXControl(Mode, Network);
-
             Grid grid = new Grid { ColumnSpacing = this.Spacing };
 
             for (int i = 0; i < this.MaxValue; i++)
@@ -50,7 +48,9 @@ namespace ExpressBase.Mobile
                 grid.Children.Add(btn, i, 0);
                 buttonCollection.Add(btn);
             }
-            this.XControl = grid;
+            XControl = grid;
+
+            return base.Draw(Mode, Network); ;
         }
 
         private void StarClicked(object sender, EventArgs e)

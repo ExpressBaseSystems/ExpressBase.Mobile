@@ -18,17 +18,17 @@ namespace ExpressBase.Mobile
                 return true;
         }
 
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
+        public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            base.InitXControl(Mode, Network);
-
             CheckBox check = new CheckBox
             {
                 Color = (Color)HelperFunctions.GetResourceValue("Primary_Color")
             };
 
             check.CheckedChanged += (sender, arg) => this.ValueChanged();
-            this.XControl = check;
+            XControl = check;
+
+            return base.Draw(Mode, Network);
         }
 
         public override object GetValue()

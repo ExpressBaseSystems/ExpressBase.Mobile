@@ -197,7 +197,7 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     try
                     {
-                        ApiFileResponse resp = await FormDataServices.Instance.GetFile(info.FileCategory, $"{info.FileRefId + AUDIO_TYPE}");
+                        ApiFileResponse resp = await FormService.Instance.GetFile(info.FileCategory, $"{info.FileRefId + AUDIO_TYPE}");
 
                         if (resp != null && resp.HasContent)
                         {

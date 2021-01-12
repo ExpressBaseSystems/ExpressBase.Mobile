@@ -19,10 +19,8 @@ namespace ExpressBase.Mobile
 
         public bool AutoSuggestion { get; set; }
 
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
+        public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            base.InitXControl(Mode, Network);
-
             if (TextMode == TextMode.MultiLine)
             {
                 var textarea = new EbXTextArea()
@@ -33,7 +31,7 @@ namespace ExpressBase.Mobile
                     BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
                 };
                 textarea.Unfocused += TextChanged;
-                this.XControl = textarea;
+                XControl = textarea;
             }
             else
             {
@@ -45,8 +43,10 @@ namespace ExpressBase.Mobile
                     BorderOnFocus = App.Settings.Vendor.GetPrimaryColor(),
                 };
                 textbox.Unfocused += TextChanged;
-                this.XControl = textbox;
+                XControl = textbox;
             }
+
+            return base.Draw(Mode, Network); ;
         }
 
         private void TextChanged(object sender, FocusEventArgs e)

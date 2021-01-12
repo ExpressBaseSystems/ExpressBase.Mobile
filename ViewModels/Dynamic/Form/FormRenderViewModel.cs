@@ -18,7 +18,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public FormMode Mode { set; get; }
 
-        protected IFormDataService FormDataService;
+        protected IFormService FormDataService;
 
         protected int RowId { set; get; }
 
@@ -36,7 +36,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.Form = (EbMobileForm)this.Page.Container;
             this.Controls = this.Form.ChildControls;
 
-            this.FormDataService = new FormDataServices();
+            this.FormDataService = new FormService();
             this.SubmitButtonText = this.Form.GetSubmitButtonText();
         }
 

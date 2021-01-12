@@ -71,15 +71,9 @@ namespace ExpressBase.Mobile.Views.Base
             this.ToggleDataLength();
         }
 
-        public override void UpdateRenderStatus()
-        {
-            IsRendered = false;
-        }
+        public override void UpdateRenderStatus() => IsRendered = false;
 
-        public override bool CanRefresh()
-        {
-            return true;
-        }
+        public override bool CanRefresh() => true;
 
         protected virtual void UpdatePaginationBar() { }
 

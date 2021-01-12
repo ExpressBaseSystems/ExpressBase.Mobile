@@ -18,6 +18,8 @@ namespace ExpressBase.Mobile
 
         public int ColumnSpacing { set; get; }
 
+        public int Width { set; get; }
+
         public string LinkRefId { get; set; }
 
         public List<EbMobileDataCell> CellCollection { set; get; }

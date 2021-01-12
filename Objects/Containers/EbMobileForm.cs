@@ -170,7 +170,7 @@ namespace ExpressBase.Mobile
             {
                 try
                 {
-                    List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(table.NewFiles);
+                    List<ApiFileData> resp = await FormService.Instance.SendFilesAsync(table.NewFiles);
 
                     webformdata.FillFromSendFileResp(table.NewFiles, resp);
                     webformdata.FillUploadedFileRef(table.OldFiles);
@@ -197,7 +197,7 @@ namespace ExpressBase.Mobile
 
             try
             {
-                List<ApiFileData> resp = await FormDataServices.Instance.SendFilesAsync(Files);
+                List<ApiFileData> resp = await FormService.Instance.SendFilesAsync(Files);
                 if (resp.Any())
                 {
                     MobileTableColumn column = ctrl.GetMobileTableColumn();
@@ -244,7 +244,7 @@ namespace ExpressBase.Mobile
                 int locid = App.Settings.CurrentLocId;
                 EbLog.Info($"saving record in location {locid}");
 
-                PushResponse pushResponse = await FormDataServices.Instance.SendFormDataAsync(pageRefId, webFormData, rowId, this.WebFormRefId, locid);
+                PushResponse pushResponse = await FormService.Instance.SendFormDataAsync(pageRefId, webFormData, rowId, this.WebFormRefId, locid);
 
                 this.LogPushResponse(pushResponse);
 
@@ -334,7 +334,7 @@ namespace ExpressBase.Mobile
 
             if (Files.Count > 0)
             {
-                var ApiFiles = await FormDataServices.Instance.SendFilesAsync(Files);
+                var ApiFiles = await FormService.Instance.SendFilesAsync(Files);
                 WebFormData.FillFromSendFileResp(Files, ApiFiles);
             }
         }

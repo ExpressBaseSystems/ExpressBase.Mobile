@@ -7,6 +7,7 @@ using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -20,12 +21,12 @@ namespace ExpressBase.Mobile
 
         private AudioRecorder recorder;
 
-        public override void InitXControl(FormMode mode, NetworkMode network)
+        public override View Draw(FormMode mode, NetworkMode network)
         {
-            base.InitXControl(mode, network);
-
             recorder = new AudioRecorder(this);
             this.XControl = recorder;
+
+            return base.Draw(mode, network);
         }
 
         public override MobileTableColumn GetMobileTableColumn()

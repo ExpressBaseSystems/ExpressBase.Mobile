@@ -24,17 +24,20 @@ namespace ExpressBase.Mobile
 
         public virtual bool BoxShadow { set; get; }
 
+        public virtual bool Hidden { set; get; }
+
         protected EbXFrame GetFrame()
         {
             var frame = new EbXFrame
             {
                 BackgroundColor = Color.FromHex(this.BackgroundColor),
-                HasShadow = this.BoxShadow,
-                CornerRadius = this.BorderRadius,
+                HasShadow = BoxShadow,
+                CornerRadius = BorderRadius,
                 Padding = this.Padding == null ? 0 : this.Padding.ConvertToXValue(),
                 Margin = this.Margin == null ? 0 : this.Margin.ConvertToXValue(),
-                BorderWidth = this.BorderThickness,
-                BorderColor = Color.FromHex(BorderColor)
+                BorderWidth = BorderThickness,
+                BorderColor = Color.FromHex(BorderColor),
+                IsVisible = !Hidden
             };
 
             return frame;

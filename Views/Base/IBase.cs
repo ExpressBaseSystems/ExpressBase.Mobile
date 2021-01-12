@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.CustomControls.XControls;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.CustomControls.XControls;
 using System.Collections.Generic;
 using Xamarin.Forms;
 
@@ -37,11 +38,13 @@ namespace ExpressBase.Mobile.Views.Base
 
     public interface IDashBoardRenderer
     {
-        
+
     }
 
     public interface IMasterPage
     {
         void UpdateMasterLayout();
+
+        EbCPLayout GetCurrentLayout();
     }
 }

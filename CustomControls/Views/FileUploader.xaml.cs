@@ -234,7 +234,7 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     try
                     {
-                        ApiFileResponse resp = await FormDataServices.Instance.GetFile(info.FileCategory, $"{info.FileRefId}.jpg");
+                        ApiFileResponse resp = await FormService.Instance.GetFile(info.FileCategory, $"{info.FileRefId}.jpg");
                         if (resp != null && resp.HasContent)
                         {
                             this.AppendToGallery(info.FileName, resp.Bytea);

@@ -53,10 +53,8 @@ namespace ExpressBase.Mobile
             };
         }
 
-        public override void InitXControl(FormMode mode, NetworkMode network)
+        public override View Draw(FormMode mode, NetworkMode network)
         {
-            base.InitXControl(mode, network);
-
             try
             {
                 container = new Frame
@@ -87,6 +85,8 @@ namespace ExpressBase.Mobile
             {
                 EbLog.Error(ex.Message);
             }
+
+            return base.Draw(mode, network);
         }
 
         private void CreateHeader()

@@ -234,12 +234,17 @@ namespace ExpressBase.Mobile.CustomControls
 
         private async void LogoutConfirmClicked(object sender, EventArgs e)
         {
-            await SideBarViewModel.Instance.Logout();
+            await SideBarViewModel.Instance?.Logout();
         }
 
         public static void ConfirmLogoutAction()
         {
-            instance?.LogoutDialog.Show();
+            Page currentPage = App.Navigation.GetCurrentPage();
+
+            if (currentPage is IMasterPage master)
+            {
+                master.GetCurrentLayout().LogoutDialog.Show();
+            }
         }
     }
 }

@@ -69,15 +69,15 @@ namespace ExpressBase.Mobile.CustomControls
                         {
                             foreach (EbMobileControl tbctrl in Tc.ControlCollection)
                             {
-                                tbctrl.InitXControl(this.FormMode, this.NetWorkType);
-                                FormViewContainer.Children.Add(ctrl.XView);
+                                View controlView = tbctrl.Draw(this.FormMode, this.NetWorkType);
+                                FormViewContainer.Children.Add(controlView);
                             }
                         }
                     }
                     else
                     {
-                        ctrl.InitXControl(this.FormMode, this.NetWorkType);
-                        FormViewContainer.Children.Add(ctrl.XView);
+                        View controlView = ctrl.Draw(this.FormMode, this.NetWorkType);
+                        FormViewContainer.Children.Add(controlView);
                     }
                 }
             }

@@ -19,13 +19,13 @@ namespace ExpressBase.Mobile
 
         private FileUploader XamControl;
 
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
+        public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            base.InitXControl(Mode, Network);
-
             XamControl = new FileUploader(this);
             XamControl.BindFullScreenCallback(ShowFullScreen);
-            this.XControl = XamControl;
+            XControl = XamControl;
+
+            return base.Draw(Mode, Network);
         }
 
         public void ShowFullScreen(Image image)

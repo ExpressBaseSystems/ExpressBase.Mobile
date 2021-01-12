@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public interface IFormDataService
+    public interface IFormService
     {
         Task<WebformData> GetFormLiveDataAsync(string refid, int row_id, int loc_id);
 

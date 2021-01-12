@@ -24,10 +24,8 @@ namespace ExpressBase.Mobile
 
         public EbGeoLocation Cordinates { set; get; }
 
-        public override void InitXControl(FormMode Mode, NetworkMode Network)
+        public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            base.InitXControl(Mode, Network);
-
             this.XControl = new Frame()
             {
                 Style = (Style)HelperFunctions.GetResourceValue("GeoLocFrame"),
@@ -49,7 +47,13 @@ namespace ExpressBase.Mobile
                 else
                     Utils.Alert_NoInternet();
             };
-            this.SetCordinates();
+
+            if (Mode == FormMode.NEW)
+            {
+                this.SetCordinates();
+            }
+
+            return base.Draw(Mode, Network);
         }
 
         private async Task ShowMapFullScreen()
@@ -116,7 +120,12 @@ namespace ExpressBase.Mobile
 
         public override void SetValue(object value)
         {
-            if (value == null) return;
+            if (value == null)
+            {
+                this.SetCordinates();
+                return;
+            }
+            
             try
             {
                 string[] cordinates = value.ToString().Split(CharConstants.COMMA);

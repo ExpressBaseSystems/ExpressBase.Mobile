@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Xamarin.Forms;
 
@@ -32,16 +33,7 @@ namespace ExpressBase.Mobile.Helpers.Script
 
         private void ClearVariables()
         {
-            if (Variables != null && Variables.Count > 0)
-            {
-                foreach (string key in Variables.Keys)
-                {
-                    if (!persistanceKeys.Contains(key))
-                    {
-                        Variables.Remove(key);
-                    }
-                }
-            }
+            Variables.ToList().FindAll(kvp => kvp.Value is StronglyTypedVariable).ForEach(kvp => Variables.Remove(kvp.Key));
         }
 
         public void SetVariable(string key, object value)
@@ -106,6 +98,16 @@ namespace ExpressBase.Mobile.Helpers.Script
             if (currentRow == null)
                 return null;
             return currentRow[columnName];
+        }
+
+        public void setValue(object value)
+        {
+            if (value == null) return;
+
+            if (currentView != null && currentView is EbXLabel xLabel)
+            {
+                xLabel.Text = value.ToString();
+            }
         }
 
         public void setBackground(string color)

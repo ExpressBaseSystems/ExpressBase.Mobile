@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             foreach (var ctrl in this.dataGrid.ChildControls)
             {
-                ctrl.InitXControl(this.dataGrid.FormRenderMode, this.dataGrid.NetworkType);
+                ctrl.Draw(this.dataGrid.FormRenderMode, this.dataGrid.NetworkType);
                 ctrl.Required = true;
                 ControlContainer.Children.Add(ctrl.XView);
             }

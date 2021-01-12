@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Services
 {
-    public class FormDataServices : BaseService, IFormDataService
+    public class FormService : BaseService, IFormService
     {
-        public static FormDataServices Instance { set; get; }
+        public static FormService Instance { set; get; }
 
-        public FormDataServices() : base(true)
+        public FormService() : base(true)
         {
             Instance = this;
         }

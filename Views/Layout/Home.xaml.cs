@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
 using ExpressBase.Mobile.Views.Shared;
@@ -62,15 +63,9 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        public override bool CanRefresh()
-        {
-            return viewModel.RefreshOnAppearing;
-        }
+        public override bool CanRefresh() => viewModel.RefreshOnAppearing;
 
-        public override void UpdateRenderStatus()
-        {
-            IsRendered = false;
-        }
+        public override void UpdateRenderStatus() => IsRendered = false;
 
         protected override void OnSizeAllocated(double width, double height)
         {
@@ -88,5 +83,7 @@ namespace ExpressBase.Mobile.Views
             EbLayout.IsMasterPage = true;
             EbLayout.HasBackButton = false;
         }
+
+        public EbCPLayout GetCurrentLayout() => EbLayout;
     }
 }
