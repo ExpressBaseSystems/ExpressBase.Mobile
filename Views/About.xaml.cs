@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Configuration;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views.Base;
+using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -26,23 +27,19 @@ namespace ExpressBase.Mobile.Views
 
         public void OnDynamicContentRendering()
         {
-            INativeHelper helper = DependencyService.Get<INativeHelper>();
-
-            DeviceId.Text = $"DEVICE ID : {helper.DeviceId}";
-
-            AppVersion.Text = $"Version {helper.AppVersion}";
-
-            if(EbBuildConfig.VendorName == Expressbase.VendorName)
+            try
             {
-                VendorDescription.Text = @"EXPRESSbase is a Platform on the cloud to build and run business applications 10x faster. Get the best of both worlds – stability of Ready-Made software, and flexibility of Custom software.";
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+
+                DeviceId.Text = $"DEVICE ID : {helper.DeviceId}";
+
+                AppVersion.Text = $"Version {helper.AppVersion}";
+
+                VendorDescription.Text = PageContent["Description"];
             }
-            else if(EbBuildConfig.VendorName == MoveOn.VendorName)
+            catch (Exception ex)
             {
-                VendorDescription.Text = @"Self Check-In / Self Service App for Hotel Guests";
-            }
-            else
-            {
-                VendorDescription.Text = string.Empty;
+                EbLog.Error(ex.Message + ex.StackTrace);
             }
         }
     }

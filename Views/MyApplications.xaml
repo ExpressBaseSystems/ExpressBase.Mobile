@@ -22,7 +22,7 @@
                             Text="&#xf013;"
                             Style="{StaticResource ToolBarButtonStyle}"
                             HorizontalOptions="End"
-                            Clicked="ResetButton_Clicked">
+                            Clicked="OnResetButtonClicked">
                     </Button>
                 </StackLayout>
             </control:EbCPLayout.ToolBarItems>
@@ -147,8 +147,8 @@
                     <control:ConfirmBox x:Name="ConfimReset"
                                         Grid.RowSpan="3"
                                         Title="Confirm"
-                                        Message="Are you sure, you want to Logout and Reset?"
-                                        ConfirmCommand="{Binding ResetConfig}">
+                                        Message="Are you sure, you want to Logout?"
+                                        ConfirmCommand="{Binding LogoutCommand}">
                     </control:ConfirmBox>
                 </Grid>
             </control:EbCPLayout.Content>

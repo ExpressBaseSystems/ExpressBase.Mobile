@@ -113,11 +113,43 @@
                                 <Button Grid.Row="1"
                                         x:Name="SyncButton"
                                         BackgroundColor="{DynamicResource Primary_Color}"
-                                        TextColor="White"
+                                        TextColor="{DynamicResource Primary_FontColor}"
                                         CornerRadius="6"
                                         HeightRequest="45"
                                         Text="Sync now"
                                         Clicked="SyncButtonClicked">
+                                </Button>
+
+                            </Grid>
+                        </Frame>
+
+                        <Frame Padding="10"
+                               HasShadow="False"
+                               CornerRadius="6">
+                            <Grid RowSpacing="15">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="100"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <Label FontSize="16"
+                                       FontFamily="{StaticResource Roboto-Regular}"
+                                       VerticalOptions="Center"
+                                       Text="Refresh app settings"
+                                       TextColor="#333">
+                                </Label>
+
+                                <Button Grid.Column="1"
+                                        x:Name="SolutionRefreshButton"
+                                        CornerRadius="6"
+                                        HeightRequest="45"
+                                        Text="&#xf021;"
+                                        FontSize="18"
+                                        BackgroundColor="{DynamicResource Primary_Color}"
+                                        TextColor="{DynamicResource Primary_FontColor}"
+                                        FontFamily="{StaticResource FontAwesome}"
+                                        Command="{Binding RefreshSolutionCommand}">
                                 </Button>
 
                             </Grid>

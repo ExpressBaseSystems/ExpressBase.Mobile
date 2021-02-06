@@ -93,7 +93,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
         private void SearchButton_Clicked(object sender, EventArgs e)
         {
             FilterView.Hide();
-
             SearchButton.IsVisible = false;
             SearchBox.IsVisible = true;
             SearchBox.Focus();
@@ -112,7 +111,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 SearchBox.Unfocus();
                 SearchBox.IsVisible = false;
                 SearchButton.IsVisible = true;
-
                 return false;
             }
             return true;
@@ -151,6 +149,14 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 AudioPopup.Children.Add(view);
             }
             AudioPopupView.Show();
+        }
+
+        public override void ShowFullScreenImage(ImageSource source)
+        {
+            if (source != null)
+            {
+                ImageFullScreen.SetSource(source).Show();
+            }
         }
     }
 }

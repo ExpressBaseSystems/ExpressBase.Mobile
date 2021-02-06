@@ -84,7 +84,7 @@
                                         HorizontalOptions="FillAndExpand"
                                         BackgroundColor="{DynamicResource Primary_Color}"
                                         FontFamily="{StaticResource Roboto-Regular}"
-                                        TextColor="White"
+                                        TextColor="{DynamicResource Primary_FontColor}"
                                         Command="{Binding SendOTPCommand}">
                                 </Button>
 

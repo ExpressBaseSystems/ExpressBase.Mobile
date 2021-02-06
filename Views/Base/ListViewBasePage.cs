@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using System;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Views.Base
 {
@@ -80,5 +81,7 @@ namespace ExpressBase.Mobile.Views.Base
         protected virtual void ToggleDataLength() { }
 
         public virtual void ShowAudioFiles(EbPlayButton playButton) { }
+
+        public virtual void ShowFullScreenImage(ImageSource source) { }
     }
 }

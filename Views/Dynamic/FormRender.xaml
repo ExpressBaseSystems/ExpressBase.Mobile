@@ -22,14 +22,15 @@
                             Title="{Binding PageTitle}">
             <control:EbCPLayout.ToolBarItems>
                 <StackLayout Orientation="Horizontal" Spacing="0">
-                    <Button IsVisible="False"
+                    <Button IsVisible="{Binding IsEditButtonVisible}"
                             x:Name="EditButton"
                             Text="&#xf040;"
                             Style="{StaticResource ToolBarButtonStyle}"
                             HorizontalOptions="End"
-                            Clicked="EditButton_Clicked">
+                            Clicked="OnEditButtonClicked">
                     </Button>
                     <Button Text="&#xf015;"
+                            IsVisible="{Binding IsHomeButtonVisibile}"
                             Style="{StaticResource ToolBarButtonStyle}"
                             HorizontalOptions="End"
                             Command="{Binding GoToHomeCommand}">
@@ -55,13 +56,14 @@
                     </control:FormView>
 
                     <Button x:Name="SaveButton"
+                            IsVisible="{Binding IsSaveButtonVisible}"
                             Grid.Row="1"
                             Text="{Binding SubmitButtonText}"
                             CornerRadius="0"
                             HorizontalOptions="FillAndExpand"
                             VerticalOptions="EndAndExpand"
                             BackgroundColor="{DynamicResource Primary_Color}"
-                            TextColor="White"
+                            TextColor="{DynamicResource Primary_FontColor}"
                             Command="{Binding SaveCommand}">
                     </Button>
 

@@ -24,9 +24,27 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public string SubmitButtonText { set; get; }
 
+        private bool isEditBtnVisible = false;
+
+        public bool IsSaveButtonVisible { set; get; } = true;
+
+        public bool IsEditButtonVisible
+        {
+            get => isEditBtnVisible;
+            set
+            {
+                isEditBtnVisible = value;
+                this.IsSaveButtonVisible = !value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged("IsSaveButtonVisible");
+            }
+        }
+
+        public bool IsHomeButtonVisibile => !this.Form.RenderingAsExternal;
+
         public bool HasWebFormRef => !string.IsNullOrEmpty(this.Form.WebFormRefId);
 
-        public Command SaveCommand => new Command(async () => await this.FormSubmitClicked());
+        public Command SaveCommand => new Command(async () => await FormSubmitClicked());
 
         public FormRenderViewModel() { }
 
@@ -46,7 +64,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             EbFormHelper.Initialize(this.Form, this.Mode);
 
-            if (!this.IsOnline())
+            if (!IsOnline())
             {
                 await Task.Run(() =>
                 {
@@ -54,15 +72,15 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 });
             }
             if (this.Mode == FormMode.NEW)
-                this.SetValues();
+                SetValues();
         }
 
         protected virtual void SetValues()
         {
             if (this.Mode == FormMode.NEW || this.Mode == FormMode.PREFILL || this.Mode == FormMode.REF)
-                this.InitDefaultValueExpressions();
+                InitDefaultValueExpressions();
 
-            this.InitOnLoadExpressions();
+            InitOnLoadExpressions();
         }
 
         public async Task FormSubmitClicked()
@@ -77,7 +95,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 EbLog.Info($"Form '{this.PageName}' validation success ready to submit");
                 this.Form.NetworkType = this.NetworkType;
-                await this.Submit();
+                await Submit();
             }
             else
             {

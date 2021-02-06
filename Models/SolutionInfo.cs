@@ -65,7 +65,9 @@ namespace ExpressBase.Mobile.Models
                 RootUrl = this.RootUrl,
                 LastUser = this.LastUser,
                 SolutionObject = this.SolutionObject,
-                SignUpPage = this.SignUpPage
+                SignUpPage = this.SignUpPage,
+                IsCurrent = this.IsCurrent,
+                LoginType = this.LoginType
             };
         }
 

@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -61,6 +63,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command ResetConfig => new Command(async () => await Reset());
 
+        public Command LogoutCommand => new Command(async () => await Logout());
+
         public Command GoToHomeCommand => new Command(async () => await GoToHome());
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -105,5 +109,24 @@ namespace ExpressBase.Mobile.ViewModels
         public virtual Task InitializeAsync() { return Task.FromResult(false); }
 
         public virtual Task UpdateAsync() { return Task.FromResult(false); }
+
+        protected async Task<MobileProfileData> GetProfileData(string profilePageRefId)
+        {
+            MobileProfileData profileData = null;
+            try
+            {
+                profileData = await DataService.Instance.GetProfileDataAsync(profilePageRefId, App.Settings.CurrentLocId);
+
+                if (profileData == null)
+                {
+                    EbLog.Info($"profile data null for refid : {profilePageRefId}");
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return profileData;
+        }
     }
 }

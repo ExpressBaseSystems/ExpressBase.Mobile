@@ -29,7 +29,17 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
-        public bool IsResetVisible => (App.Settings.Vendor.BuildType != AppBuildType.Embedded && IsInternal);
+        private bool isResetVisibile;
+
+        public bool IsResetVisible
+        {
+            get => isResetVisibile;
+            set
+            {
+                isResetVisibile = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public bool ShowCurrentLocation => App.Settings.Vendor.HasLocationSwitcher;
 
@@ -48,6 +58,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             Applications = appService.GetDataAsync();
             IsEmpty = IsNullOrEmpty();
+            IsResetVisible = IsEmpty;
         }
 
         public override async Task UpdateAsync()
@@ -55,6 +66,7 @@ namespace ExpressBase.Mobile.ViewModels
             Applications = await appService.UpdateDataAsync();
             IsEmpty = IsNullOrEmpty();
             IsRefreshing = false;
+            IsResetVisible = IsEmpty;
         }
 
         public async Task AppSelected(AppData app)

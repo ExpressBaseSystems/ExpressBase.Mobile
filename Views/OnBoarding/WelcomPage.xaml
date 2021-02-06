@@ -40,13 +40,13 @@
                     <Label 
                         FontFamily="{StaticResource Roboto-Regular}"
                         FontSize="25"
-                        TextColor="White"
+                           TextColor="{DynamicResource Primary_FontColor}"
                         HorizontalTextAlignment="Center"
                         Text="WELCOME">
                     </Label>
                     <Label
                         FontSize="20"
-                        TextColor="White"
+                        TextColor="{DynamicResource Primary_FontColor}"
                         Margin="0,10"
                         HorizontalTextAlignment="Center">
                         <Label.FormattedText>
@@ -60,7 +60,7 @@
                     <Label 
                         x:Name="Description"
                         FontSize="16"
-                        TextColor="#ddd"
+                        TextColor="{DynamicResource Primary_FontColor}"
                         FontFamily="{StaticResource Roboto-Light}"
                         HorizontalTextAlignment="Center">
                     </Label>

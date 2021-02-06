@@ -9,8 +9,12 @@ namespace ExpressBase.Mobile.CustomControls
 
         public EbListViewButton(EbMobileDataColumn dc)
         {
-            BackgroundColor = Color.FromHex(dc.BackgroundColor ?? "#ffffff00");
-            BorderColor = Color.FromHex(dc.BorderColor ?? "#ffffff00");
+            if (!string.IsNullOrEmpty(dc.BackgroundColor))
+                BackgroundColor = Color.FromHex(dc.BackgroundColor);
+
+            if (!string.IsNullOrEmpty(dc.BorderColor))
+                BorderColor = Color.FromHex(dc.BorderColor);
+
             CornerRadius = dc.BorderRadius;
             BorderWidth = dc.BorderThickness;
             Padding = dc.Padding == null ? 0 : dc.Padding.ConvertToXValue();

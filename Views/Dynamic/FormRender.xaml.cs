@@ -40,9 +40,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             InitializeComponent();
             BindingContext = viewModel = new FormRenderVME(page, rowId, data);
-
-            SaveButton.IsVisible = false;
-            EditButton.IsVisible = true;
         }
 
         //prefill/new mode 
@@ -66,6 +63,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             base.OnAppearing();
 
             EbLayout.ShowLoader();
+
             if (!isRendered)
             {
                 await viewModel.InitializeAsync();
@@ -80,11 +78,9 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EbLayout.HideLoader();
         }
 
-        private void EditButton_Clicked(object sender, EventArgs e)
+        private void OnEditButtonClicked(object sender, EventArgs e)
         {
-            EditButton.IsVisible = false;
-            SaveButton.IsVisible = true;
-
+            viewModel.IsEditButtonVisible = false;
             EbFormHelper.SwitchViewToEdit();
         }
 

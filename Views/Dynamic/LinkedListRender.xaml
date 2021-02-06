@@ -55,7 +55,7 @@
                                            Style="{StaticResource ListViewSearchBar}"
                                            HorizontalOptions="FillAndExpand"
                                            HideIcon="True"
-                                           CancelButtonColor="White"
+                                           CancelButtonColor="{DynamicResource Primary_FontColor}"
                                            SearchCommand="{Binding SearchCommand}"
                                            SearchCommandParameter="{Binding Text, Source={x:Reference SearchBox}}">
                 </control:ListViewSearchBar>
@@ -208,14 +208,14 @@
                         <Frame.Content>
                             <StackLayout Orientation="Horizontal"
                                          Spacing="10">
-                                <Label TextColor="White"
+                                <Label TextColor="{DynamicResource Primary_FontColor}"
                                        x:Name="FormLinkTextLabel"
                                        Text="Add"
                                        FontSize="15"
                                        LineBreakMode="TailTruncation"
                                        VerticalTextAlignment="Center">
                                 </Label>
-                                <Label TextColor="White"
+                                <Label TextColor="{DynamicResource Primary_FontColor}"
                                        Text="&#xf067;"
                                        FontSize="15"
                                        HorizontalOptions="Center"
@@ -233,7 +233,7 @@
                             Margin="0,0,10,10"
                             VerticalOptions="End"
                             HorizontalOptions="End"
-                            TextColor="White"
+                            TextColor="{DynamicResource Primary_FontColor}"
                             BackgroundColor="{DynamicResource Primary_Color}"
                             BorderColor="{DynamicResource Primary_Color}"
                             BorderWidth="2"
@@ -269,6 +269,10 @@
                             <StackLayout x:Name="AudioPopup"></StackLayout>
                         </control:PopUpView.Content>
                     </control:PopUpView>
+
+                    <control:ImagePopUp x:Name="ImageFullScreen"
+                                        Grid.RowSpan="2">
+                    </control:ImagePopUp>
 
                 </Grid>
             </control:EbCPLayout.Content>

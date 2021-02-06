@@ -25,5 +25,7 @@ namespace ExpressBase.Mobile.Services
         bool IsSolutionExist(string url);
 
         SolutionInfo GetSolution(string surl);
+
+        Task CreateEmbeddedSolution(ValidateSidResponse result, string url);
     }
 }

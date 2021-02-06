@@ -13,24 +13,20 @@
             <control:EbCPLayout.Content>
                 <StackLayout>
                     <StackLayout VerticalOptions="CenterAndExpand">
-                        <Frame HeightRequest="100"
+                        <Frame HeightRequest="150"
                                HorizontalOptions="Center"
-                               WidthRequest="100"
-                               CornerRadius="50"
+                               WidthRequest="150"
+                               CornerRadius="100"
                                Padding="0">
                             <Image x:Name="VendorLogo"></Image>
                         </Frame>
                         <Label HorizontalTextAlignment="Center"
                                Margin="0,10,0,0"
-                               FontSize="16"
-                               TextColor="White">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="&quot; "></Span>
-                                    <Span Text="Jobs"></Span>
-                                    <Span Text=" &quot;"></Span>
-                                </FormattedString>
-                            </Label.FormattedText>
+                               FontSize="20"
+                               x:Name="LogoText"
+                               FontFamily="{StaticResource Roboto-Medium}"
+                               Text="EXPRESSbase"
+                               TextColor="{DynamicResource Primary_FontColor}">
                         </Label>
                     </StackLayout>
                     <StackLayout VerticalOptions="End"
@@ -45,21 +41,25 @@
                                BackgroundColor="White"></Frame>
 
                         <Label Text="Title"
+                               x:Name="TitleText"
                                FontFamily="{StaticResource Roboto-Medium}"
                                FontSize="20"
                                Margin="0,0,0,15"
                                TextColor="#222"></Label>
-                        <Label Text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum"></Label>
+                        <Label x:Name="Description" 
+                               LineHeight="1.2"
+                               Text="Access mobile applications built using the EXPRESSbase Rapid Mobile Application Development (RMAD) platform"></Label>
 
-                        <Button Text="Let's go"
-                                BorderColor="#eee"
+                        <Button Text="Got It!"
+                                x:Name="NextButon"
                                 Margin="0,20,0,0"
-                                BorderWidth="1"
                                 Padding="0"
                                 CornerRadius="10"
-                                HeightRequest="40"
-                                TextColor="{DynamicResource Primary_Color}"
-                                BackgroundColor="White"
+                                HeightRequest="50"
+                                FontFamily="{StaticResource Roboto-Medium}"
+                                FontSize="16"
+                                TextColor="{DynamicResource Primary_FontColor}"
+                                BackgroundColor="{DynamicResource Primary_Color}"
                                 Clicked="StartApplicationClicked">
                         </Button>
 

@@ -55,30 +55,34 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
+        private void Loading(bool show)
+        {
+            Device.BeginInvokeOnMainThread(() => IsBusy = show);
+        }
+
         protected override async Task Submit()
         {
-            Device.BeginInvokeOnMainThread(() => IsBusy = true);
+            Loading(true);
 
-            FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
-
-            if (response.Status)
+            try
             {
-                createdUser = response.PushResponse.GetSignUpUserInfo();
+                FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
 
-                if (createdUser == null)
+                if (response.Status)
                 {
-                    EbLog.Info("[EbSignUpUserInfo] null, user not created due to some unknown error");
-                    Utils.Toast("unable to signup");
-                    return;
-                }
+                    createdUser = response.PushResponse.GetSignUpUserInfo();
 
-                if (createdUser.VerificationRequired)
-                {
-                    Device.BeginInvokeOnMainThread(() => OTPWindowVisibility = true);
-                }
-                else
-                {
-                    try
+                    if (createdUser == null)
+                    {
+                        EbLog.Info("[EbSignUpUserInfo] null, user not created due to some unknown error");
+                        throw new Exception("user not created");
+                    }
+
+                    if (createdUser.VerificationRequired)
+                    {
+                        Device.BeginInvokeOnMainThread(() => OTPWindowVisibility = true);
+                    }
+                    else
                     {
                         ApiAuthResponse authResponse = await IdentityService.Current.AuthenticateSSOAsync(createdUser.UserName, createdUser.AuthId, createdUser.Token);
 
@@ -87,22 +91,21 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         else
                         {
                             EbLog.Error("sso authentication failed [auth-response] null");
-                            throw new Exception("sso authentication failed [auth-response] null");
+                            throw new Exception(authResponse?.Message);
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        EbLog.Error("sso authenticate api error , EXCEPTION ::" + ex.Message);
-                        Utils.Toast("unable to signup");
-                    }
+                }
+                else
+                {
+                    throw new Exception(response?.Message);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                EbLog.Info("signup form save error , [push-response] status false, " + response.Message);
-                Utils.Toast("unable to signup");
+                EbLog.Info(ex.Message);
+                Utils.Toast(ex.Message);
             }
-            Device.BeginInvokeOnMainThread(() => IsBusy = false);
+            Loading(false);
         }
 
         private async Task AfterAuthenticationSuccess(ApiAuthResponse resp, EbSignUpUserInfo userInfo)
@@ -131,6 +134,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             catch (Exception ex)
             {
                 EbLog.Error("exception at authentication success, " + ex.Message);
+                throw ex;
             }
         }
 
@@ -156,12 +160,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         form.RenderingAsExternal = true;
                         form.RAERedirectionType = typeof(MyApplications);
 
-                        await App.Navigation.NavigateAsync(new FormRender(page));
+                        MobileProfileData profileData = await this.GetProfileData(page.RefId);
+
+                        if (profileData != null && profileData.RowId > 0)
+                            await App.Navigation.NavigateByRenderer(new FormRender(page, profileData.RowId, profileData.Data));
+                        else
+                            await App.Navigation.NavigateByRenderer(new FormRender(page));
                     }
                     else
                     {
                         throw new Exception("user type form does not exist in [solutiondata]");
-                    }
+                    } 
                 }
                 else
                 {

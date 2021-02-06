@@ -81,6 +81,20 @@ namespace ExpressBase.Mobile.Helpers
                     }
                 }
             }
+            else
+            {
+                if (mode == FormMode.NEW || mode == FormMode.EDIT || mode == FormMode.PREFILL)
+                {
+                    if (ctrl.HasExpression(ExprType.HideExpr))
+                    {
+                        Instance.EvaluateHideExpr(ctrl);
+                    }
+                    if ((mode == FormMode.NEW || mode == FormMode.PREFILL) && ctrl.HasExpression(ExprType.DisableExpr))
+                    {
+                        Instance.EvaluateDisableExpr(ctrl);
+                    }
+                }
+            }
         }
 
         public static void SetDefaultValue(string controlName)

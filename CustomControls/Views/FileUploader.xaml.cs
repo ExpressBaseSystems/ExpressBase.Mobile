@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.Views.Base;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
@@ -28,10 +29,6 @@ namespace ExpressBase.Mobile.CustomControls
         private readonly Dictionary<string, byte[]> Files = new Dictionary<string, byte[]>();
 
         private TapGestureRecognizer recognizer;
-
-        private Action<Image> bindableFS;
-
-        private Action bindableDEL;
 
         private FupControlType controlType;
 
@@ -181,7 +178,10 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void ThumbNail_Tapped(object sender, EventArgs e)
         {
-            bindableFS?.Invoke((sender as Image));
+            if (App.Navigation.GetCurrentPage() is IFormRenderer rendrer)
+            {
+                rendrer.ShowFullScreenImage((sender as Image).Source);
+            }
         }
 
         public List<FileWrapper> GetFiles(string ctrlName)
@@ -199,16 +199,6 @@ namespace ExpressBase.Mobile.CustomControls
                 });
             }
             return files;
-        }
-
-        public void BindFullScreenCallback(Action<Image> method)
-        {
-            bindableFS = method;
-        }
-
-        public void BindDeleteCallback(Action method)
-        {
-            bindableDEL = method;
         }
 
         private void ToggleGalleryBG()

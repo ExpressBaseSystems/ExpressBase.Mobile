@@ -30,7 +30,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public override void Initialize()
         {
-            Locations = Utils.Locations;
+            Locations = Utils.Locations.OrderBy(x => x.LongName).ToList();
 
             foreach (EbLocation loc in Locations)
             {

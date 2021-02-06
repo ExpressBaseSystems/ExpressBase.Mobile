@@ -152,5 +152,31 @@ namespace ExpressBase.Mobile.Services
             string sname = url.Split(CharConstants.DOT)[0];
             return Utils.Solutions.Find(item => item.SolutionName == sname && item.RootUrl == url);
         }
+
+        public async Task CreateEmbeddedSolution(ValidateSidResponse result, string url)
+        {
+            SolutionInfo sln = new SolutionInfo
+            {
+                SolutionName = url.Split(CharConstants.DOT)[0],
+                RootUrl = url,
+                IsCurrent = true,
+                SolutionObject = result.SolutionObj,
+                SignUpPage = result.SignUpPage
+            };
+            App.Settings.CurrentSolution = sln;
+
+            try
+            {
+                await Store.SetJSONAsync(AppConst.MYSOLUTIONS, new List<SolutionInfo> { sln });
+                await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, sln);
+
+                await CreateDB(sln.SolutionName);
+                await CreateDirectory();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 }

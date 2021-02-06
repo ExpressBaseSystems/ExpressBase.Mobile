@@ -5,7 +5,7 @@
       "SolutionURL": "*.expressbase.com",
       "AllowNotifications": true,
       "PrimaryColor": "0046bb",
-      "PrimaryLowerColor": "56b1cd",
+      "PrimaryFontColor": "ffffff",
       "HasOfflineFeature": true,
       "HasActions": true,
       "HasAppSwitcher": true,
@@ -27,10 +27,17 @@
           "LoginButtonText": "Login"
         },
         "About": {
-          "VendorName": "EXPRESSbase"
+          "VendorName": "EXPRESSbase",
+          "Description": "EXPRESSbase is a Platform on the cloud to build and run business applications 10x faster. Get the best of both worlds – stability of Ready-Made software, and flexibility of Custom software."
         },
         "WelcomePage": {
           "Description": "Increase the operational efficiency of '@solutionname@' with the power of the EXPRESSbase platform"
+        },
+        "WelcomeBoard": {
+          "LogoText": "EXPRESSbase",
+          "Title": "EXPRESSbase RMAD",
+          "Description": "Access mobile applications built using the EXPRESSbase Rapid Mobile Application Development (RMAD) platform",
+          "ButtonText": "Got It!"
         }
       }
     },
@@ -39,7 +46,7 @@
       "SolutionURL": "*.moveontech.com",
       "AllowNotifications": true,
       "PrimaryColor": "283b97",
-      "PrimaryLowerColor": "7184e3",
+      "PrimaryFontColor": "ffffff",
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": true,
@@ -61,10 +68,17 @@
           "LoginButtonText": "Login"
         },
         "About": {
-          "VendorName": "Move On"
+          "VendorName": "Move On",
+          "Description": "Self Check-In / Self Service App for Hotel Guests"
         },
         "WelcomePage": {
           "Description": "Wishing you a nice stay. We are at your service always."
+        },
+        "WelcomeBoard": {
+          "LogoText": "MoveOn",
+          "Title": "MoveOn Mobile App",
+          "Description": "Access MoveOn's Contactless Guest Management Solutions for the Hospitality Industry.",
+          "ButtonText": "Got It!"
         }
       }
     },
@@ -73,7 +87,7 @@
       "SolutionURL": "kudumbashree.expressbase.com",
       "AllowNotifications": false,
       "PrimaryColor": "a2217d",
-      "PrimaryLowerColor": "a2217d",
+      "PrimaryFontColor": "ffffff",
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": true,
@@ -88,10 +102,17 @@
           "LoginButtonText": "Login"
         },
         "About": {
-          "VendorName": "Kudumbashree Community Loans"
+          "VendorName": "Kudumbashree Community Loans",
+          "Description": "Manage kudumbashree community loans"
         },
         "WelcomePage": {
           "Description": "Have a nice time with the community loans mobile app!"
+        },
+        "WelcomeBoard": {
+          "LogoText": "Kudumbashree",
+          "Title": "Kudumbashree Community Loans",
+          "Description": "Have a nice time with the community loans mobile app!",
+          "ButtonText": "Got It!"
         }
       }
     },
@@ -100,7 +121,7 @@
       "SolutionURL": "tiwi.eb-test.site",
       "AllowNotifications": false,
       "PrimaryColor": "4e2c94",
-      "PrimaryLowerColor": "427f3c",
+      "PrimaryFontColor": "ffffff",
       "HasOfflineFeature": false,
       "HasActions": true,
       "HasAppSwitcher": false,
@@ -122,10 +143,58 @@
           "LoginButtonText": "Login"
         },
         "About": {
-          "VendorName": "Tiwi"
+          "VendorName": "Tiwi",
+          "Description": "Explore local Jobs"
         },
         "WelcomePage": {
           "Description": "Have a nice time with the tiwi hyperlocal jobs!"
+        },
+        "WelcomeBoard": {
+          "LogoText": "Tiwi",
+          "Title": "Tiwi Hyperlocal Jobs",
+          "Description": "Get your Jobs now!",
+          "ButtonText": "Got It!"
+        }
+      }
+    },
+    "Hairocraft": {
+      "BuildType": "Embedded",
+      "SolutionURL": "hairocraft.expressbase.com",
+      "AllowNotifications": true,
+      "PrimaryColor": "ffc22b",
+      "PrimaryFontColor": "333333",
+      "HasOfflineFeature": false,
+      "HasActions": true,
+      "HasAppSwitcher": true,
+      "HasLocationSwitcher": true,
+      "HasSolutionSwitcher": false,
+      "Logo": "icon_hoc.png",
+      "PoweredBy": "Powered by EXPRESSbase",
+      "DefaultLoginType": "CREDENTIALS",
+      "Content": {
+        "NewSolution": {
+          "WallLabel": "Add new Solution",
+          "TextBoxPlaceHolder": "Enter solution URL"
+        },
+        "MySolutions": {
+          "Title": "Solution Switcher"
+        },
+        "Login": {
+          "NewSolutionButtonText": "Add new Solution",
+          "LoginButtonText": "Login"
+        },
+        "About": {
+          "VendorName": "Hairocraft",
+          "Description": "Identify people who are in need of Hair-O-Craft's services viz. Hair transplant, skin treatments, etc."
+        },
+        "WelcomePage": {
+          "Description": "Identify people who are in need of Hair-O-Craft's services viz. Hair transplant, skin treatments, etc."
+        },
+        "WelcomeBoard": {
+          "LogoText": "Hairocraft",
+          "Title": "Hairocraft",
+          "Description": "Identify people who are in need of Hair-O-Craft's services viz. Hair transplant, skin treatments, etc.",
+          "ButtonText": "Got It!"
         }
       }
     }

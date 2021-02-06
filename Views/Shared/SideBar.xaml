@@ -36,7 +36,7 @@
 
                             <Label x:Name="UserName"
                                    Text="{Binding UserName}"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource Primary_FontColor}"
                                    Grid.Row="1"
                                    FontFamily="{StaticResource Roboto-Medium}"
                                    HorizontalTextAlignment="Center"
@@ -48,7 +48,7 @@
                                    Grid.Row="2"
                                    FontFamily="{StaticResource Roboto-Regular}"
                                    FontSize="12"
-                                   TextColor="White"
+                                   TextColor="{DynamicResource Primary_FontColor}"
                                    HorizontalTextAlignment="Center">
                             </Label>
                         </Grid>
@@ -88,7 +88,8 @@
                                              Clicked="MyActionsClicked">
                         </control:SideBarLink>
 
-                        <control:SideBarLink Icon="&#xf009;"
+                        <control:SideBarLink IsVisible="{Binding HasLinksNavigation}"
+                                             Icon="&#xf009;"
                                              Text="Links"
                                              Clicked="LinksClicked">
                         </control:SideBarLink>

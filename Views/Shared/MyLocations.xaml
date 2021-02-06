@@ -104,7 +104,7 @@
                     <Button Grid.Row="1"
                             Text="Apply"
                             BackgroundColor="{DynamicResource Primary_Color}"
-                            TextColor="White"
+                            TextColor="{DynamicResource Primary_FontColor}"
                             CornerRadius="0"
                             Command="{Binding ApplyLocationCommand}">
                     </Button>

@@ -111,7 +111,7 @@ namespace ExpressBase.Mobile.Services
                 EbBuildConfig conf = EbSerializers.DeserializeJsonFile<EbBuildConfig>("Configuration.Config.json");
                 Vendor = conf.Current;
                 HelperFunctions.SetResourceValue("Primary_Color", Vendor.GetPrimaryColor());
-                HelperFunctions.SetResourceValue("PrimaryLower_Color", Vendor.GetPrimaryLowerColor());
+                HelperFunctions.SetResourceValue("Primary_FontColor", Vendor.GetPrimaryFontColor());
             }
             catch (Exception ex)
             {

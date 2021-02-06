@@ -18,7 +18,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         public bool ShowNewSolutionLink => (App.Settings.Vendor.BuildType != AppBuildType.Embedded);
 
-        public bool IsResetVisible => App.Settings.Vendor.HasSolutionSwitcher;
+        public bool IsResetVisible => App.Settings.Vendor.HasSolutionSwitcher && ShowNewSolutionLink;
 
         public bool IsSignUpVisible => App.Settings.CurrentSolution.SignupEnabled();
 

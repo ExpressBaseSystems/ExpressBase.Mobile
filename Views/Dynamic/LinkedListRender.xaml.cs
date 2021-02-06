@@ -166,5 +166,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
             }
             AudioPopupView.Show();
         }
+
+        public override void ShowFullScreenImage(ImageSource source)
+        {
+            if (source != null)
+            {
+                ImageFullScreen.SetSource(source).Show();
+            }
+        }
     }
 }

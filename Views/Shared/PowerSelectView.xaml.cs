@@ -31,7 +31,7 @@ namespace ExpressBase.Mobile.Views.Shared
             this.powerSelect = powerSelect;
 
             recognizer = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
-            recognizer.Tapped += LabelTaped_Tapped;
+            recognizer.Tapped += OnItemSelected;
 
             SelectSearchBox.Placeholder = $"Search {powerSelect.Label}...";
             SelectSearchBox.Text = powerSelect.SearchBox.Text;
@@ -46,14 +46,14 @@ namespace ExpressBase.Mobile.Views.Shared
 
             if (powerSelect.EnablePreload)
             {
-                SearchLoader.IsVisible = true;
+                Loader.IsVisible = true;
                 EbDataTable data = await GetData(null, true);
-                await this.Render(data);
-                SearchLoader.IsVisible = false;
+                this.Render(data);
+                Loader.IsVisible = false;
             }
         }
 
-        private async void SelectSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        private async void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
             if (SelectSearchBox.Text.Length > 0)
                 ResetSearch.IsVisible = true;
@@ -66,19 +66,18 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async Task SetData()
         {
-            Device.BeginInvokeOnMainThread(() => SearchLoader.IsVisible = true);
+            Device.BeginInvokeOnMainThread(() => Loader.IsVisible = true);
 
             EbDataTable Data = await this.GetData(SelectSearchBox.Text);
-            await this.Render(Data);
+            this.Render(Data);
 
-            Device.BeginInvokeOnMainThread(() => SearchLoader.IsVisible = false);
+            Device.BeginInvokeOnMainThread(() => Loader.IsVisible = false);
         }
 
-        private async Task Render(EbDataTable Data)
+        private void Render(EbDataTable Data)
         {
             int c = 1;
             ResultList.Children.Clear();
-
             try
             {
                 foreach (EbDataRow row in Data.Rows)
@@ -86,7 +85,7 @@ namespace ExpressBase.Mobile.Views.Shared
                     ComboBoxLabel lbl = new ComboBoxLabel(c)
                     {
                         Padding = new Thickness(10),
-                        Text = row[this.powerSelect.DisplayMember.ColumnName].ToString(),
+                        Text = row[this.powerSelect.DisplayMember.ColumnName]?.ToString(),
                         Value = row[this.powerSelect.ValueMember.ColumnName],
                     };
                     lbl.GestureRecognizers.Add(recognizer);
@@ -98,24 +97,12 @@ namespace ExpressBase.Mobile.Views.Shared
             {
                 EbLog.Error("Failed to Render select ::" + ex.Message);
             }
-
-            await Task.Delay(1);
-
-            if (ResultList.Children.Count <= 0)
-            {
-                ResultList.Children.Add(new Label
-                {
-                    Text = "No result found.",
-                    VerticalOptions = LayoutOptions.CenterAndExpand,
-                    HorizontalTextAlignment = TextAlignment.Center
-                });
-            }
+            EmptyMessage.IsVisible = ResultList.Children.Count <= 0;
         }
 
-        private void LabelTaped_Tapped(object sender, EventArgs e)
+        private void OnItemSelected(object sender, EventArgs e)
         {
             powerSelect.SelectionCallback((ComboBoxLabel)sender);
-            //callback
         }
 
         private async Task<EbDataTable> GetData(string text, bool preload = false)
@@ -209,12 +196,12 @@ namespace ExpressBase.Mobile.Views.Shared
             return dt;
         }
 
-        private async void BackButton_Clicked(object sender, EventArgs e)
+        private async void OnBackButtonClicked(object sender, EventArgs e)
         {
             await App.Navigation.PopModalByRenderer(true);
         }
 
-        private void ResetSearch_Clicked(object sender, EventArgs e)
+        private void OnResetButtonClicked(object sender, EventArgs e)
         {
             SelectSearchBox.Text = string.Empty;
             ResultList.Children.Clear();

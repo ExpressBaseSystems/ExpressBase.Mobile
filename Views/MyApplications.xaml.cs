@@ -61,7 +61,7 @@ namespace ExpressBase.Mobile.Views
             EbLayout.HideLoader();
         }
 
-        private void ResetButton_Clicked(object sender, EventArgs e)
+        private void OnResetButtonClicked(object sender, EventArgs e)
         {
             ConfimReset.Show();
         }

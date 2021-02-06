@@ -22,16 +22,9 @@ namespace ExpressBase.Mobile
         public override View Draw(FormMode Mode, NetworkMode Network)
         {
             XamControl = new FileUploader(this);
-            XamControl.BindFullScreenCallback(ShowFullScreen);
             XControl = XamControl;
 
             return base.Draw(Mode, Network);
-        }
-
-        public void ShowFullScreen(Image image)
-        {
-            if (App.Navigation.GetCurrentPage() is IFormRenderer rendrer)
-                rendrer.ShowFullScreenImage(image.Source);
         }
 
         public override object GetValue()

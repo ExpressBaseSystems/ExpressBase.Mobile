@@ -34,6 +34,8 @@ namespace ExpressBase.Mobile.Views.Base
     public interface IListRenderer
     {
         void ShowAudioFiles(EbPlayButton playButton);
+
+        void ShowFullScreenImage(ImageSource source);
     }
 
     public interface IDashBoardRenderer

@@ -90,7 +90,7 @@
                             Margin="0,0,10,10"
                             VerticalOptions="End"
                             HorizontalOptions="End"
-                            TextColor="White"
+                            TextColor="{DynamicResource Primary_FontColor}"
                             BackgroundColor="{DynamicResource Primary_Color}"
                             BorderColor="{DynamicResource Primary_Color}"
                             BorderWidth="1"

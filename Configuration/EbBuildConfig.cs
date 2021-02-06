@@ -4,21 +4,21 @@ namespace ExpressBase.Mobile.Configuration
 {
     public class EbBuildConfig
     {
-        public static string VendorName = Tiwi.VendorName;
+        public static string VendorName = Hairocraft.VendorName;
 
-        public const string AppIcon = Tiwi.AppIcon;
+        public const string AppIcon = Hairocraft.AppIcon;
 
-        public const string AppLabel = Tiwi.AppLabel;
+        public const string AppLabel = Hairocraft.AppLabel;
 
-        public const string StatusBarColor = Tiwi.StatusBar;
+        public const string StatusBarColor = Hairocraft.StatusBar;
 
-        public const string SplashTheme = Tiwi.SplashTheme;
+        public const string SplashTheme = Hairocraft.SplashTheme;
 
-        public static bool NFEnabled = Tiwi.NFEnabled;
+        public static bool NFEnabled = Hairocraft.NFEnabled;
 
-        public const string GMapAndroidKey = Tiwi.GMapAndroidKey;
+        public const string GMapAndroidKey = Hairocraft.GMapAndroidKey;
 
-        public const string GMapiOSKey = Tiwi.GMapiOSKey;
+        public const string GMapiOSKey = Hairocraft.GMapiOSKey;
 
         public Dictionary<string, AppVendor> Vendors { set; get; }
 

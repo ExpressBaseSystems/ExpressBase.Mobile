@@ -94,6 +94,8 @@ namespace ExpressBase.Mobile
 
         private void Icon_Tapped(object sender, EventArgs e)
         {
+            if (this.ReadOnly) return;
+
             if (EbDateType == EbDateType.Time)
                 timePicker?.Focus();
             else

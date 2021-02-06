@@ -210,7 +210,7 @@
                     Text="Apply" 
                     BackgroundColor="{DynamicResource Primary_Color}"
                     Margin="0"
-                    TextColor="White"
+                    TextColor="{DynamicResource Primary_FontColor}"
                     CornerRadius="0"
                     BorderColor="{DynamicResource Primary_Color}" 
                     BorderWidth="1"

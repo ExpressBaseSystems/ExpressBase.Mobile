@@ -35,8 +35,7 @@
         <Setter Property="BackgroundColor" Value="{DynamicResource Primary_Color}"></Setter>
         <Setter Property="Placeholder" Value="Search"></Setter>
         <Setter Property="FontSize" Value="14"></Setter>
-        <Setter Property="TextColor" Value="White"></Setter>
-        <Setter Property="PlaceholderColor" Value="#d4d4d4"></Setter>
+        <Setter Property="TextColor" Value="{DynamicResource Primary_FontColor}"></Setter>
     </Style>
 
 </ResourceDictionary>

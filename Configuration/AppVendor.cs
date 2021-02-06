@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.Configuration
 
         public string PrimaryColor { set; get; }
 
-        public string PrimaryLowerColor { set; get; }
+        public string PrimaryFontColor { set; get; }
 
         public bool HasOfflineFeature { set; get; }
 
@@ -40,9 +40,9 @@ namespace ExpressBase.Mobile.Configuration
             return Color.FromHex(PrimaryColor);
         }
 
-        public Color GetPrimaryLowerColor()
+        public Color GetPrimaryFontColor()
         {
-            return Color.FromHex(PrimaryLowerColor);
+            return Color.FromHex(PrimaryFontColor);
         }
 
         public string GetDomain()
@@ -69,5 +69,7 @@ namespace ExpressBase.Mobile.Configuration
         public Dictionary<string, string> About { set; get; }
 
         public Dictionary<string, string> WelcomePage { set; get; }
+
+        public Dictionary<string, string> WelcomeBoard { set; get; }
     }
 }

@@ -192,6 +192,13 @@ namespace ExpressBase.Mobile.CustomControls
             };
             image.SetValue(value);
 
+            image.Clicked += (sender, args) =>
+            {
+                if (App.Navigation.GetCurrentPage() is IListRenderer rendrer)
+                {
+                    rendrer.ShowFullScreenImage(image.Source);
+                }
+            };
             return image;
         }
 

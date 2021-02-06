@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
@@ -15,6 +16,8 @@ namespace ExpressBase.Mobile.ViewModels
         public bool SyncVisibility => App.Settings.Vendor.HasOfflineFeature;
 
         public Command SyncButtonCommand => new Command(async () => await SyncLocalDataToCloud());
+
+        public Command RefreshSolutionCommand => new Command(async () => await RefreshSolution());
 
         public SettingsViewModel()
         {
@@ -45,7 +48,43 @@ namespace ExpressBase.Mobile.ViewModels
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     IsBusy = false;
-                    DependencyService.Get<IToast>().Show(response.Message);
+                    Utils.Toast(response.Message);
+                });
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Failed to sync::" + ex.Message);
+            }
+        }
+
+        private async Task RefreshSolution()
+        {
+            try
+            {
+                if (IdentityService.IsTokenExpired())
+                {
+                    await App.Navigation.NavigateToLogin(true);
+                    return;
+                }
+
+                SolutionService service = new SolutionService();
+
+                Device.BeginInvokeOnMainThread(() => { IsBusy = true; });
+
+                ValidateSidResponse response = await service.ValidateSid(App.Settings.RootUrl.Replace(ApiConstants.PROTOCOL, string.Empty));
+
+                if (response.IsValid)
+                {
+                    SolutionInfo Info = App.Settings.CurrentSolution.Clone();
+                    Info.SignUpPage = response.SignUpPage;
+                    Info.SolutionObject = response.SolutionObj;
+                    await service.SetDataAsync(Info);
+                }
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    IsBusy = false;
+                    Utils.Toast("settings updated");
                 });
             }
             catch (Exception ex)

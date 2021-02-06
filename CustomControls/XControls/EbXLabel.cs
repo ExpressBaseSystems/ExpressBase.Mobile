@@ -44,8 +44,12 @@ namespace ExpressBase.Mobile.CustomControls.XControls
 
         public EbXLabel(IMobileUIControl uiControl)
         {
-            XBackgroundColor = Color.FromHex(uiControl.BackgroundColor ?? "#ffffff00");
-            BorderColor = Color.FromHex(uiControl.BorderColor ?? "#ffffff00");
+            if(!string.IsNullOrEmpty(uiControl.BackgroundColor))
+                XBackgroundColor = Color.FromHex(uiControl.BackgroundColor);
+
+            if (!string.IsNullOrEmpty(uiControl.BorderColor))
+                BorderColor = Color.FromHex(uiControl.BorderColor);
+
             BorderRadius = uiControl.BorderRadius;
             BorderThickness = uiControl.BorderThickness;
             Padding = uiControl.Padding == null ? 0 : uiControl.Padding.ConvertToXValue();

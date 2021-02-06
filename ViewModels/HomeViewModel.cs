@@ -156,7 +156,7 @@ namespace ExpressBase.Mobile.ViewModels
             EbLog.Info($"Current solution : '{App.Settings.Sid}'");
             EbLog.Info($"Current Application :'{PageTitle}'");
             int objeCount = ObjectList == null ? 0 : ObjectList.Count;
-            EbLog.Info($"Rendering total of {objeCount} pages with location id: {App.Settings.CurrentLocation.LocId}");
+            EbLog.Info($"Rendering total of {objeCount} pages with location id: {App.Settings.CurrentLocation?.LocId}");
         }
     }
 }

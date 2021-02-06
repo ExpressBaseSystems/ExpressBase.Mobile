@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.CustomControls;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
@@ -50,6 +51,8 @@ namespace ExpressBase.Mobile
 
         public bool EnablePreload { get; set; }
 
+        public bool AutoFill { get; set; }
+
         public EbScript OfflineQuery { set; get; }
 
         public List<Param> Parameters { set; get; }
@@ -67,18 +70,22 @@ namespace ExpressBase.Mobile
         public override View Draw(FormMode Mode, NetworkMode Network)
         {
             TapGestureRecognizer recognizer = new TapGestureRecognizer();
-            recognizer.Tapped += Icon_Tapped;
+            recognizer.Tapped += OnIconClicked;
 
             if (IsSimpleSelect)
                 InitSimpleSelect(recognizer);
             else
+            {
                 InitPowerSelect(recognizer);
-
+                if (this.AutoFill) this.AutoFillValue();
+            }
             return base.Draw(Mode, Network);
         }
 
-        private void Icon_Tapped(object sender, EventArgs e)
+        private void OnIconClicked(object sender, EventArgs e)
         {
+            if (this.ReadOnly) return;
+
             if (IsSimpleSelect)
                 picker?.Focus();
             else
@@ -149,15 +156,7 @@ namespace ExpressBase.Mobile
             if (IsSimpleSelect)
                 picker.SelectedItem = this.Options.Find(i => i.Value == value.ToString());
             else
-            {
-                EbDataTable dt = this.GetDisplayFromValue(value.ToString());
-                if (dt != null && dt.Rows.Any())
-                {
-                    var display_membertext = dt.Rows[0][DisplayMember.ColumnName].ToString();
-                    selected = new ComboBoxLabel { Text = display_membertext, Value = value };
-                    SearchBox.Text = display_membertext;
-                }
-            }
+                this.SetPowerSelect(value.ToString());
         }
 
         public override void Reset()
@@ -171,10 +170,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public override bool Validate()
-        {
-            return base.Validate();
-        }
+        public override bool Validate() => base.Validate();
 
         public void SelectionCallback(ComboBoxLabel comboBox)
         {
@@ -185,66 +181,96 @@ namespace ExpressBase.Mobile
             App.Navigation.PopModalByRenderer(true);
         }
 
-        private EbDataTable GetDisplayFromValue(string value)
+        private async void SetPowerSelect(string value)
         {
             EbDataTable dt = null;
+
+            if (this.NetworkType == NetworkMode.Offline)
+            {
+                dt = GetDataFromLocal(value);
+            }
+            else if (this.NetworkType == NetworkMode.Online)
+            {
+                Param param = new Param
+                {
+                    Name = this.ValueMember.ColumnName,
+                    Type = ((int)this.ValueMember.Type).ToString(),
+                    Value = value
+                };
+                dt = await GetDataFromCloud(new List<Param> { param });
+            }
+
+            if (dt != null && dt.Rows.Any())
+            {
+                SetPowerSelectValue(dt.Rows[0]);
+            }
+        }
+
+        private void SetPowerSelectValue(EbDataRow row)
+        {
+            string displayMember = row[DisplayMember.ColumnName]?.ToString();
+            object valueMember = row[ValueMember.ColumnName];
+
+            selected = new ComboBoxLabel
+            {
+                Text = displayMember,
+                Value = valueMember
+            };
+            SearchBox.Text = displayMember;
+        }
+
+        private async void AutoFillValue()
+        {
             try
             {
-                if (this.NetworkType == NetworkMode.Offline)
-                    dt = ResolveFromLocal(value);
-                else if (this.NetworkType == NetworkMode.Online)
-                    dt = ResolveFromLive(value);
+                EbDataTable dt = await GetDataFromCloud(null);
+
+                if (dt != null && dt.Rows.Any())
+                {
+                    SetPowerSelectValue(dt.Rows[0]);
+                }
             }
             catch (Exception ex)
             {
-                EbLog.Info("Error at GetDisplayFromValue in powerselect");
-                EbLog.Error(ex.Message);
+                EbLog.Error("Error at [AutoFill] : " + ex.Message);
             }
-            return dt ?? new EbDataTable();
         }
 
-        private EbDataTable ResolveFromLocal(string value)
+        private EbDataTable GetDataFromLocal(string value)
         {
-            EbDataTable dt = null;
             try
             {
-                string sql = HelperFunctions.B64ToString(this.OfflineQuery.Code).TrimEnd(';');
+                string sql = HelperFunctions.B64ToString(this.OfflineQuery.Code).TrimEnd(CharConstants.SEMICOLON);
 
                 string WrpdQuery = $"SELECT * FROM ({sql}) AS WR WHERE WR.{this.ValueMember.ColumnName} = {value} LIMIT 1";
 
-                dt = App.DataDB.DoQuery(WrpdQuery);
+                return App.DataDB.DoQuery(WrpdQuery);
             }
             catch (Exception ex)
             {
                 EbLog.Info("power select failed to resolve display member from local");
                 EbLog.Error(ex.Message);
             }
-            return dt;
+            return null;
         }
 
-        private EbDataTable ResolveFromLive(string value)
+        private async Task<EbDataTable> GetDataFromCloud(List<Param> parameters)
         {
-            EbDataTable dt = null;
             try
             {
-                Param p = new Param
-                {
-                    Name = this.ValueMember.ColumnName,
-                    Type = ((int)this.ValueMember.Type).ToString(),
-                    Value = value
-                };
-
-                MobileDataResponse response = DataService.Instance.GetData(this.DataSourceRefId, 0, 0, new List<Param> { p }, null, null, false);
+                MobileDataResponse response = await DataService.Instance.GetDataAsync(this.DataSourceRefId, 1, 0, parameters, null, null, false);
 
                 if (response.Data != null && response.Data.Tables.HasLength(2))
-                    dt = response.Data.Tables[1];
+                {
+                    return response.Data.Tables[1];
+                }
             }
             catch (Exception ex)
             {
                 EbLog.Info("power select failed to resolve display member from live");
                 EbLog.Error(ex.Message);
             }
-            return dt;
+            return null;
         }
 
         public override void SetAsReadOnly(bool disable)

@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Constants;
-using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -25,6 +24,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.RowId = rowid;
 
             SubmitButtonText = "Save Changes";
+            this.IsEditButtonVisible = true;
         }
 
         public FormRenderVME(EbMobilePage page, int rowId, WebformData data) : base(page)
@@ -32,15 +32,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.Mode = FormMode.EDIT;
             this.RowId = rowId;
             webFormData = data;
-
-            SubmitButtonText = "Save Changes";
         }
 
         public override async Task InitializeAsync()
         {
             await base.InitializeAsync();
-            await this.InitializeFormData();
-            this.SetValues();
+            await InitializeFormData();
+            SetValues();
         }
 
         private async Task InitializeFormData()
@@ -108,7 +106,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     else
                         ctrl.SetValue(data);
 
-                    ctrl.SetAsReadOnly(true);
+                    if (this.IsEditButtonVisible)
+                    {
+                        ctrl.SetAsReadOnly(true);
+                    }
                 }
                 catch (Exception ex)
                 {

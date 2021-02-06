@@ -255,12 +255,12 @@ namespace ExpressBase.Mobile
                     response.PushResponse = pushResponse;
                 }
                 else
-                    throw new Exception("Failed to save");
+                    throw new Exception(pushResponse.Message);
             }
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = "Something went wrong :(";
+                response.Message = ex.Message;
                 EbLog.Error(ex.Message);
             }
         }

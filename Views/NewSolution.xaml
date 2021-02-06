@@ -28,7 +28,7 @@
                                            HorizontalTextAlignment="Center"
                                            FontSize="25"
                                            Text="Add new Solution"
-                                           TextColor="White">
+                                           TextColor="{DynamicResource Primary_FontColor}">
                                     </Label>
                                 </StackLayout>
                                 <Frame Margin="0,0,0,-20"
@@ -70,13 +70,13 @@
                                             <FlexLayout Direction="Row"
                                                         JustifyContent="Center"
                                                         VerticalOptions="FillAndExpand">
-                                                <Label TextColor="White"
+                                                <Label TextColor="{DynamicResource Primary_FontColor}"
                                                        Text="&#xf029;"
                                                        FontSize="18"
                                                        FontFamily="{StaticResource FontAwesome}"
                                                        VerticalTextAlignment="Center">
                                                 </Label>
-                                                <Label TextColor="White"
+                                                <Label TextColor="{DynamicResource Primary_FontColor}"
                                                        Text="Scan QR Code"
                                                        FontSize="16"
                                                        Margin="15,0,0,0"
@@ -126,7 +126,7 @@
                                                 Text="&#xf0c7;"
                                                 BackgroundColor="{DynamicResource Primary_Color}"
                                                 BorderColor="{DynamicResource Primary_Color}"
-                                                TextColor="White"
+                                                TextColor="{DynamicResource Primary_FontColor}"
                                                 CornerRadius="28"
                                                 HeightRequest="45"
                                                 WidthRequest="45"
@@ -203,7 +203,7 @@
                                             BackgroundColor="{DynamicResource Primary_Color}"
                                             BorderColor="{DynamicResource Primary_Color}"
                                             BorderWidth="1"
-                                            TextColor="White"
+                                            TextColor="{DynamicResource Primary_FontColor}"
                                             Padding="0"
                                             CornerRadius="6"
                                             Margin="15,0"

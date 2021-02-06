@@ -75,4 +75,23 @@
 
         public const string GMapiOSKey = "";
     }
+
+    public static class Hairocraft
+    {
+        public const string VendorName = "Hairocraft";
+
+        public const string AppIcon = "@mipmap/icon_hoc";
+
+        public const string AppLabel = "Hairocraft";
+
+        public const string StatusBar = "#ffc22b";
+
+        public const string SplashTheme = "@style/Theme.SplashHOC";
+
+        public const bool NFEnabled = true;
+
+        public const string GMapAndroidKey = "AIzaSyDDgTEIxUMxT71PPeZzazJAV6caQ205mds";
+
+        public const string GMapiOSKey = "";
+    }
 }

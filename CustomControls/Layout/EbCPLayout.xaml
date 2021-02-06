@@ -13,7 +13,7 @@
             <Style x:Key="TitleLabelStyle"
                    TargetType="Label">
                 <Setter Property="TextColor"
-                        Value="{DynamicResource Gray-White}" />
+                        Value="{DynamicResource Primary_FontColor}" />
                 <Setter Property="FontFamily"
                         Value="{StaticResource Roboto-Regular}" />
                 <Setter Property="FontSize"
@@ -45,26 +45,32 @@
              BackgroundColor="{DynamicResource Primary_Color}">
     </BoxView>
 
-    <ImageButton x:Name="BackButton"
-                 Grid.Row="0"
-                 Grid.Column="0"
-                 Padding="0"
-                 Source="back_btn.png"
-                 BackgroundColor="Transparent"
-                 VerticalOptions="Center"
-                 HorizontalOptions="Center"
-                 HeightRequest="34"
-                 WidthRequest="34"
-                 Margin="10,0,10,0"
-                 Clicked="OnBackButtonClicked">
-    </ImageButton>
+    <Button x:Name="BackButton"
+            Grid.Row="0"
+            Grid.Column="0"
+            Padding="0"
+            BackgroundColor="Transparent"
+            Text="&#xf053;"
+            FontSize="16"
+            TextColor="{DynamicResource Primary_FontColor}"
+            FontFamily="{StaticResource FontAwesome}"
+            HorizontalOptions="StartAndExpand"
+            WidthRequest="40"
+            Margin="10,0,0,0"
+            Clicked="OnBackButtonClicked">
+    </Button>
 
     <Button x:Name="SideBarToggle"
             IsVisible="False"
+            BackgroundColor="Transparent"
+            Padding="0"
             Grid.Row="0"
             Grid.Column="0"
-            Margin="5,0,10,0"
-            Style="{StaticResource ToolBarButtonStyle}"
+            FontSize="16"
+            Margin="10,0,0,0"
+            TextColor="{DynamicResource Primary_FontColor}"
+            FontFamily="{StaticResource FontAwesome}"
+            WidthRequest="40"
             Text="&#xf0c9;"
             Clicked="SideBarToggleClicked">
     </Button>
@@ -72,7 +78,7 @@
     <Label x:Name="TitleLabel"
            Style="{StaticResource TitleLabelStyle}"
            Grid.Row="0"
-           Margin="5,0,0,0"
+           Margin="10,0,0,0"
            Grid.Column="1">
     </Label>
 
