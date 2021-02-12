@@ -77,5 +77,7 @@ namespace ExpressBase.Mobile.Models
                 return null;
             return SolutionObject.GetUserTypeProfile()?.Find(item => item.Id == id);
         }
+
+        public string GetSolutionDisplayName() => SolutionObject?.SolutionName ?? this.SolutionName?.ToUpper();
     }
 }

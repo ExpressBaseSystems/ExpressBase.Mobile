@@ -54,65 +54,75 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <control:EbCPLayout Title="About App">
+        <control:EbCPLayout x:Name="CpLayout"
+            Title="About">
             <control:EbCPLayout.Content>
-                <ScrollView VerticalOptions="FillAndExpand">
-                    <StackLayout VerticalOptions="FillAndExpand">
+                <Grid>
+                    <ScrollView x:Name="StaticContent"
+                                VerticalOptions="FillAndExpand">
+                        <StackLayout VerticalOptions="FillAndExpand">
 
-                        <StackLayout VerticalOptions="CenterAndExpand">
-                            <!--  Product image  -->
-                            <Image Margin="0,20,0,0"
-                                   HeightRequest="150"
-                                   Source="{Binding VendorLogo}">
-                            </Image>
+                            <StackLayout VerticalOptions="CenterAndExpand">
+                                <!--  Product image  -->
+                                <Image Margin="0,20,0,0"
+                                       HeightRequest="150"
+                                       Source="{Binding VendorLogo}">
+                                </Image>
 
-                            <!--  Product version  -->
-                            <Label x:Name="AppVersion"
-                                   Margin="0,8.7,0,0"
-                                   HorizontalOptions="CenterAndExpand"
-                                   Text="Version 1.0.0"
-                                   Style="{StaticResource VersionLabelStyle}">
-                            </Label>
-
-                            <!--  Product title  -->
-                            <Label HorizontalOptions="CenterAndExpand"
-                                   Text="{Binding VendorName}"
-                                   Style="{StaticResource HeaderLabelStyle}">
-                                <Label.Margin>
-                                    <OnIdiom x:TypeArguments="Thickness"
-                                             Default="0, 32, 0, 8"
-                                             Phone="0, 16, 0, 16" />
-                                </Label.Margin>
-                            </Label>
-
-                            <!--  Product description  -->
-                            <Label x:Name="VendorDescription"
-                                   Margin="15,0,15,0"
-                                   HorizontalOptions="Center"
-                                   HorizontalTextAlignment="Center"
-                                   Style="{StaticResource DescriptionLabelStyle}">
-                            </Label>
-
-                            <Frame Margin="20,30,20,20"
-                                   CornerRadius="6"
-                                   BackgroundColor="{DynamicResource Primary_Color}">
-                                <Label FontSize="18"
-                                       HorizontalTextAlignment="Center"
-                                       TextColor="{DynamicResource Primary_FontColor}"
-                                       x:Name="DeviceId">
+                                <!--  Product version  -->
+                                <Label x:Name="AppVersion"
+                                       Margin="0,8.7,0,0"
+                                       HorizontalOptions="CenterAndExpand"
+                                       Text="Version 1.0.0"
+                                       Style="{StaticResource VersionLabelStyle}">
                                 </Label>
-                            </Frame>
+
+                                <!--  Product title  -->
+                                <Label HorizontalOptions="CenterAndExpand"
+                                       Text="{Binding VendorName}"
+                                       Style="{StaticResource HeaderLabelStyle}">
+                                    <Label.Margin>
+                                        <OnIdiom x:TypeArguments="Thickness"
+                                                 Default="0, 32, 0, 8"
+                                                 Phone="0, 16, 0, 16" />
+                                    </Label.Margin>
+                                </Label>
+
+                                <!--  Product description  -->
+                                <Label x:Name="VendorDescription"
+                                       Margin="15,0,15,0"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Style="{StaticResource DescriptionLabelStyle}">
+                                </Label>
+
+                                <Frame Margin="20,30,20,20"
+                                       CornerRadius="6"
+                                       BackgroundColor="{DynamicResource Primary_Color}">
+                                    <Label FontSize="18"
+                                           HorizontalTextAlignment="Center"
+                                           TextColor="{DynamicResource Primary_FontColor}"
+                                           x:Name="DeviceId">
+                                    </Label>
+                                </Frame>
+                            </StackLayout>
+
+                            <Label IsVisible="{Binding ShowPoweredBy}"
+                                   Margin="0,0,0,10"
+                                   Text="Powered by EXPRESSbase"
+                                   VerticalOptions="End"
+                                   HorizontalTextAlignment="Center">
+                            </Label>
+
                         </StackLayout>
+                    </ScrollView>
 
-                        <Label IsVisible="{Binding ShowPoweredBy}"
-                               Margin="0,0,0,10"
-                               Text="Powered by EXPRESSbase"
-                               VerticalOptions="End"
-                               HorizontalTextAlignment="Center">
-                        </Label>
-
-                    </StackLayout>
-                </ScrollView>
+                    <WebView x:Name="ExternalWebLink"
+                             Navigating="WebViewNavigating"
+                             Navigated="WebViewNavigated"
+                             IsVisible="False">
+                    </WebView>
+                </Grid>
             </control:EbCPLayout.Content>
         </control:EbCPLayout>
     </ContentPage.Content>

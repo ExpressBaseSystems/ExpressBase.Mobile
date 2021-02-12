@@ -29,7 +29,7 @@ namespace ExpressBase.Mobile.Views
             try
             {
                 CurrentLocation.Text = App.Settings.CurrentLocation?.LongName.ToLower();
-                CurrentSolution.Text = App.Settings.Sid.ToUpper();
+                CurrentSolution.Text = App.Settings.SolutionName;
 
                 if (!IsRendered)
                 {

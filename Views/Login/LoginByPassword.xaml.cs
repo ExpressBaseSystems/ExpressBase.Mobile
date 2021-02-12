@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.Views.Login
         {
             base.OnAppearing();
 
-            SolutionName.Text = App.Settings.Sid.ToUpper();
+            SolutionName.Text = App.Settings.SolutionName;
         }
 
         private void Email_Completed(object sender, EventArgs e)

@@ -44,6 +44,8 @@ namespace ExpressBase.Mobile.Services
 
         public string ISid => CurrentSolution?.ISolutionId;
 
+        public string SolutionName => CurrentSolution.GetSolutionDisplayName();
+
         public string RootUrl => ApiConstants.PROTOCOL + CurrentSolution?.RootUrl;
 
         public string UserName => CurrentUser?.Email;

@@ -34,7 +34,7 @@ namespace ExpressBase.Mobile.Views.Login
         {
             base.OnAppearing();
 
-            SolutionName.Text = App.Settings.Sid.ToUpper();
+            SolutionName.Text = App.Settings.SolutionName;
         }
 
         public void ShowTwoFAWindow(ApiAuthResponse auth)

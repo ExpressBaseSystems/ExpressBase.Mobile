@@ -36,11 +36,28 @@ namespace ExpressBase.Mobile.Views
                 AppVersion.Text = $"Version {helper.AppVersion}";
 
                 VendorDescription.Text = PageContent["Description"];
+
+                if (PageContent.TryGetValue("Url", out string url) && Utils.HasInternet)
+                {
+                    StaticContent.IsVisible = false;
+                    ExternalWebLink.Source = url;
+                    ExternalWebLink.IsVisible = true;
+                }
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message + ex.StackTrace);
             }
+        }
+
+        private void WebViewNavigating(object sender, WebNavigatingEventArgs e)
+        {
+            CpLayout.ShowLoader();
+        }
+
+        private void WebViewNavigated(object sender, WebNavigatedEventArgs e)
+        {
+            CpLayout.HideLoader();
         }
     }
 }
