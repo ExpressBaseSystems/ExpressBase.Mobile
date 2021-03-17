@@ -12,9 +12,13 @@ namespace ExpressBase.Mobile.Helpers.Script
 
         public Dictionary<string, ExprDependency> DependencyMap { set; get; }
 
+        public Dictionary<string, Dictionary<string, ExprDependency>> GridDependencyMap { set; get; }
+
         public ControlDependencyMap()
         {
             DependencyMap = new Dictionary<string, ExprDependency>();
+
+            GridDependencyMap = new Dictionary<string, Dictionary<string, ExprDependency>>();
         }
 
         public void Init(Dictionary<string, EbMobileControl> controls)
@@ -28,23 +32,30 @@ namespace ExpressBase.Mobile.Helpers.Script
                 bool hasDisableExpr = ctrl.HasExpression(ExprType.DisableExpr);
                 bool hasDefaultExpr = ctrl.HasExpression(ExprType.DefaultExpr);
 
+                ctrl.Parent = EbFormHelper.CTRL_PARENT_FORM;
+
+                if (ctrl is ILinesEnabled)
+                {
+                    InitLines(ctrl);
+                }
+
                 if (!hasValueExpr && !hasHideExpr && !hasDisableExpr && !hasDefaultExpr) continue;
 
                 try
                 {
                     if (hasValueExpr)
                     {
-                        this.InitializeDependency(ctrl.Name, ctrl.ValueExpr.GetCode(), ExprType.ValueExpr, allKeys);
+                        this.InitializeDependency(ctrl, ctrl.ValueExpr.GetCode(), ExprType.ValueExpr, allKeys);
                     }
 
                     if (hasHideExpr)
                     {
-                        this.InitializeDependency(ctrl.Name, ctrl.HiddenExpr.GetCode(), ExprType.HideExpr, allKeys);
+                        this.InitializeDependency(ctrl, ctrl.HiddenExpr.GetCode(), ExprType.HideExpr, allKeys);
                     }
 
                     if (hasDisableExpr)
                     {
-                        this.InitializeDependency(ctrl.Name, ctrl.DisableExpr.GetCode(), ExprType.DisableExpr, allKeys);
+                        this.InitializeDependency(ctrl, ctrl.DisableExpr.GetCode(), ExprType.DisableExpr, allKeys);
                     }
 
                     if (hasDefaultExpr)
@@ -70,16 +81,64 @@ namespace ExpressBase.Mobile.Helpers.Script
             }
         }
 
-        private void InitializeDependency(string controlName, string script, ExprType type, string[] allKeys)
+        private void InitLines(EbMobileControl control)
+        {
+            foreach (EbMobileControl ctrl in (control as ILinesEnabled).ChildControls)
+            {
+                ctrl.Parent = control.Name;
+
+                bool hasValueExpr = ctrl.HasExpression(ExprType.ValueExpr);
+                bool hasHideExpr = ctrl.HasExpression(ExprType.HideExpr);
+                bool hasDisableExpr = ctrl.HasExpression(ExprType.DisableExpr);
+                bool hasDefaultExpr = ctrl.HasExpression(ExprType.DefaultExpr);
+
+                if (hasValueExpr)
+                {
+                    this.InitializeDependency(ctrl, ctrl.ValueExpr.GetCode(), ExprType.ValueExpr, control.Name);
+                }
+
+                if (hasHideExpr)
+                {
+                    this.InitializeDependency(ctrl, ctrl.HiddenExpr.GetCode(), ExprType.HideExpr, control.Name);
+                }
+
+                if (hasDisableExpr)
+                {
+                    this.InitializeDependency(ctrl, ctrl.DisableExpr.GetCode(), ExprType.DisableExpr, control.Name);
+                }
+
+                if (hasDefaultExpr)
+                {
+
+                }
+            }
+        }
+
+        private void InitializeDependency(EbMobileControl control, string script, ExprType type, string[] allKeys)
         {
             foreach (string dependent in GetDependentNames(script))
             {
                 if (!allKeys.Contains(dependent))
-                    throw new Exception($"Unknown Control name '{dependent}' in expression type '{type}' of control '{controlName}'");
+                    throw new Exception($"Unknown Control name '{dependent}' in expression type '{type}' of control '{control.Name}'");
 
                 this.CreateKeyPair(dependent);
 
-                this.DependencyMap[dependent].Add(type, controlName);
+                this.DependencyMap[dependent].Add(type, control.Name);
+            }
+        }
+
+        private void InitializeDependency(EbMobileControl control, string script, ExprType type, string parent)
+        {
+            if (!GridDependencyMap.ContainsKey(parent))
+            {
+                GridDependencyMap.Add(parent, new Dictionary<string, ExprDependency>());
+            }
+
+            foreach (string dependent in GetDependentNames(script))
+            {
+                CreateGridKeyPair(dependent, parent);
+
+                GridDependencyMap[parent][dependent].Add(type, control.Name);
             }
         }
 
@@ -104,6 +163,14 @@ namespace ExpressBase.Mobile.Helpers.Script
             }
         }
 
+        private void CreateGridKeyPair(string controlName, string parent)
+        {
+            if (GridDependencyMap.ContainsKey(parent) && !GridDependencyMap[parent].ContainsKey(controlName))
+            {
+                GridDependencyMap[parent].Add(controlName, new ExprDependency());
+            }
+        }
+
         private List<string> GetDependentNames(string code)
         {
             var ls = new List<string>();
@@ -125,9 +192,19 @@ namespace ExpressBase.Mobile.Helpers.Script
             return DependencyMap.ContainsKey(controlName);
         }
 
+        public bool HasDependency(string controlName, string parent)
+        {
+            return GridDependencyMap.ContainsKey(parent) && GridDependencyMap[parent].ContainsKey(controlName);
+        }
+
         public ExprDependency GetDependency(string controlName)
         {
             return DependencyMap[controlName];
+        }
+
+        public ExprDependency GetDependency(string controlName, string parent)
+        {
+            return GridDependencyMap[parent][controlName];
         }
     }
 }

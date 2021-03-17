@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.Extensions
 
         public static Dictionary<string, EbMobileControl> ToControlDictionary(this List<EbMobileControl> controls)
         {
-            Dictionary<string, EbMobileControl> _dict = new Dictionary<string, EbMobileControl>();
+            Dictionary<string, EbMobileControl> controlDict = new Dictionary<string, EbMobileControl>();
             try
             {
                 foreach (EbMobileControl ctrl in controls)
@@ -30,18 +30,22 @@ namespace ExpressBase.Mobile.Extensions
                         foreach (EbMobileTableCell cell in (ctrl as EbMobileTableLayout).CellCollection)
                         {
                             foreach (EbMobileControl tctrl in cell.ControlCollection)
-                                _dict.Add(tctrl.Name, tctrl);
+                            {
+                                controlDict.Add(tctrl.Name, tctrl);
+                            }
                         }
                     }
                     else
-                        _dict.Add(ctrl.Name, ctrl);
+                    {
+                        controlDict.Add(ctrl.Name, ctrl);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
             }
-            return _dict;
+            return controlDict;
         }
 
         public static List<Param> ToParams(this List<DbParameter> parameters)

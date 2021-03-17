@@ -21,9 +21,9 @@
                                  RefreshColor="{DynamicResource Primary_Color}"
                                  Command="{Binding RefreshDataCommand}">
                         <ScrollView>
-                            <StackLayout VerticalOptions="FillAndExpand">
-                                <Frame Padding="10"
-                                       Margin="10,15"
+                            <StackLayout VerticalOptions="FillAndExpand" Padding="15" Spacing="15">
+                                <Frame IsVisible="{Binding HasBranding}" 
+                                       Padding="10"
                                        CornerRadius="8"
                                        BackgroundColor="#e8f0fe"
                                        BorderColor="#e8f0fe"

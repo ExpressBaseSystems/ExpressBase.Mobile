@@ -105,7 +105,7 @@
                         </control:SideBarLink>
 
                         <control:SideBarLink Icon="&#xf05a;"
-                                             Text="About"
+                                             Text="About Us"
                                              Clicked="AboutClicked">
                         </control:SideBarLink>
 

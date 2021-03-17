@@ -9,4 +9,6 @@ namespace ExpressBase.Mobile.Views.Base
     public delegate bool OnBackButtonPressed(object sender, EventArgs e);
 
     public delegate void EbEventHandler(object sender, EventArgs e);
+
+    public delegate void DataGridInsertHandler(string name);
 }

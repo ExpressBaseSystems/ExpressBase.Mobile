@@ -30,9 +30,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             InitializeComponent();
             BindingContext = viewModel = new FormRenderVME(page, rowId);
-
-            SaveButton.IsVisible = false;
-            EditButton.IsVisible = true;
         }
 
         //edit
@@ -81,6 +78,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
         private void OnEditButtonClicked(object sender, EventArgs e)
         {
             viewModel.IsEditButtonVisible = false;
+            viewModel.IsSaveButtonVisible = true;
             EbFormHelper.SwitchViewToEdit();
         }
 

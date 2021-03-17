@@ -27,6 +27,8 @@ namespace ExpressBase.Mobile.Configuration
 
         public bool HasSolutionSwitcher { set; get; }
 
+        public bool HasBrandingInHome { set; get; }
+
         public string Logo { set; get; }
 
         public string PoweredBy { set; get; }

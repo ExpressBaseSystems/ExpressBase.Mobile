@@ -116,6 +116,8 @@ namespace ExpressBase.Mobile
 
         public object OldValue { set; get; }
 
+        public string Parent { set; get; }
+
         public virtual object GetValue() { return null; }
 
         public virtual T GetValue<T>() { return (T)GetValue(); }
@@ -147,7 +149,7 @@ namespace ExpressBase.Mobile
             if (source != null && EbFormHelper.ContainsInValExpr(this.Name, source))
                 return;
 
-            EbFormHelper.ControlValueChanged(this.Name);
+            EbFormHelper.ControlValueChanged(this.Name, this.Parent);
         }
 
         public virtual MobileTableColumn GetMobileTableColumn()

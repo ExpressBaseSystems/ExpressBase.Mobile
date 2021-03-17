@@ -39,6 +39,8 @@ namespace ExpressBase.Mobile.ViewModels
             }
         }
 
+        public bool HasBranding => App.Settings.Vendor.HasBrandingInHome;
+
         public bool HasLocationSwitcher => App.Settings.Vendor.HasLocationSwitcher && Utils.Locations.Count > 1;
 
         public bool RefreshOnAppearing => App.Settings.CurrentApplication.HasMenuApi();

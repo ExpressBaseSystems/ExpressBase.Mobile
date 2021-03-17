@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Extensions;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System.Collections.Generic;
 using Xamarin.Forms;
@@ -28,25 +27,22 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     EbMobileDataColumn column = (EbMobileDataColumn)cell.ControlCollection[0];
 
-                    string text = string.Empty;
                     MobileTableColumn tableColumn = row[column.ColumnName];
 
                     if (tableColumn != null)
-                        text = tableColumn.Value.ToString();
-
-                    Label label = new Label
                     {
-                        Text = text,
-                        VerticalTextAlignment = TextAlignment.Center,
-                        VerticalOptions = LayoutOptions.Center
-                    };
+                        string value = tableColumn.Value?.ToString();
 
-                    if (IsHeader)
-                        label.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("Roboto-Medium");
-                    else
-                        label.SetFont(column.Font);
+                        Label label = new Label
+                        {
+                            Text = value
+                        };
 
-                    DynamicGrid.SetPosition(label, cell.RowIndex, cell.ColIndex);
+                        if (IsHeader)
+                            label.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("Roboto-Medium");
+
+                        DynamicGrid.SetPosition(label, cell.RowIndex, cell.ColIndex);
+                    }
                 }
             }
         }

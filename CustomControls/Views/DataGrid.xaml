@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ExpressBase.Mobile.CustomControls.Views.DataGrid">
+
+    <ContentView.Content>
+        <Grid x:Name="Container">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <BoxView Grid.RowSpan="2"
+                     Grid.ColumnSpan="2"
+                     CornerRadius="4"
+                     BackgroundColor="#eee">
+            </BoxView>
+
+            <Button Grid.Row="0"
+                    Grid.Column="1"
+                    Padding="0"
+                    HeightRequest="30"
+                    WidthRequest="30"
+                    VerticalOptions="Center"
+                    CornerRadius="4"
+                    BackgroundColor="#33b762"
+                    Text="&#xf055;"
+                    TextColor="White"
+                    FontFamily="{DynamicResource FontAwesome}"
+                    Margin="0,5,5,0"
+                    Clicked="AddRowButtonClicked">
+            </Button>
+
+            <StackLayout x:Name="Body"
+                         Margin="1"
+                         Spacing="1"
+                         BackgroundColor="Transparent"
+                         Grid.Row="1"
+                         Grid.ColumnSpan="2">
+            </StackLayout>
+
+            <BoxView x:Name="ReadOnlyMask"
+                     IsVisible="False"
+                     Grid.RowSpan="2"
+                     Grid.ColumnSpan="2">
+            </BoxView>
+
+        </Grid>
+    </ContentView.Content>
+</ContentView>

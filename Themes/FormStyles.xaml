@@ -110,30 +110,6 @@
     </Style>
 
     <Style TargetType="Button"
-           x:Key="DGNewRowButton">
-        <Setter Property="VerticalOptions"
-                Value="Center"></Setter>
-        <Setter Property="Padding"
-                Value="0"></Setter>
-        <Setter Property="HeightRequest"
-                Value="30"></Setter>
-        <Setter Property="WidthRequest"
-                Value="30"></Setter>
-        <Setter Property="CornerRadius"
-                Value="4"></Setter>
-        <Setter Property="BackgroundColor"
-                Value="Transparent"></Setter>
-        <Setter Property="FontFamily"
-                Value="{DynamicResource FontAwesome}"></Setter>
-        <Setter Property="Text"
-                Value="&#xf055;"></Setter>
-        <Setter Property="TextColor"
-                Value="White"></Setter>
-        <Setter Property="BackgroundColor"
-                Value="#33b762"></Setter>
-    </Style>
-
-    <Style TargetType="Button"
            x:Key="DGEditRowButton">
         <Setter Property="VerticalOptions"
                 Value="Center"></Setter>
@@ -151,18 +127,6 @@
                 Value="{DynamicResource FontAwesome}"></Setter>
         <Setter Property="Text"
                 Value="&#xf014;"></Setter>
-    </Style>
-
-    <Style TargetType="Frame"
-           x:Key="DGContainerFrame">
-        <Setter Property="BorderColor"
-                Value="#cccccc"></Setter>
-        <Setter Property="CornerRadius"
-                Value="4"></Setter>
-        <Setter Property="HasShadow"
-                Value="False"></Setter>
-        <Setter Property="Padding"
-                Value="2"></Setter>
     </Style>
 
     <Style TargetType="Label"

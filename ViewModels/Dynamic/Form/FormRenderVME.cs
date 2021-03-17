@@ -20,17 +20,18 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public FormRenderVME(EbMobilePage page, int rowid) : base(page)
         {
-            this.Mode = FormMode.EDIT;
-            this.RowId = rowid;
+            Mode = FormMode.EDIT;
+            RowId = rowid;
 
             SubmitButtonText = "Save Changes";
-            this.IsEditButtonVisible = true;
+            IsEditButtonVisible = true;
+            IsSaveButtonVisible = false;
         }
 
         public FormRenderVME(EbMobilePage page, int rowId, WebformData data) : base(page)
         {
-            this.Mode = FormMode.EDIT;
-            this.RowId = rowId;
+            Mode = FormMode.EDIT;
+            RowId = rowId;
             webFormData = data;
         }
 

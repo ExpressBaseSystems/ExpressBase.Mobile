@@ -59,6 +59,9 @@
     <Compile Update="Views\Dynamic\ListRender.xaml.cs">
       <DependentUpon>ListRender.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Shared\DataGridForm.xaml.cs">
+      <DependentUpon>DataGridForm.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Shared\GeoMapView.xaml.cs">
       <DependentUpon>GeoMapView.xaml</DependentUpon>
     </Compile>
@@ -75,6 +78,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="CustomControls\Views\DashBoardView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="CustomControls\Views\DataGrid.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="CustomControls\Views\FileUploader.xaml">
@@ -158,7 +164,7 @@
     <EmbeddedResource Update="Views\Shared\QrScanner.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\Shared\DataGridView.xaml">
+    <EmbeddedResource Update="Views\Shared\DataGridForm.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="CustomControls\Views\Loader.xaml">

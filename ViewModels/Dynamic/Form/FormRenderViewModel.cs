@@ -25,8 +25,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public string SubmitButtonText { set; get; }
 
         private bool isEditBtnVisible = false;
+        private bool isSaveBtnVisible = true;
 
-        public bool IsSaveButtonVisible { set; get; } = true;
+        public bool IsSaveButtonVisible {
+            get => isSaveBtnVisible;
+            set
+            {
+                this.isSaveBtnVisible = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public bool IsEditButtonVisible
         {
@@ -34,9 +42,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             set
             {
                 isEditBtnVisible = value;
-                this.IsSaveButtonVisible = !value;
                 NotifyPropertyChanged();
-                NotifyPropertyChanged("IsSaveButtonVisible");
             }
         }
 
@@ -50,12 +56,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public FormRenderViewModel(EbMobilePage page) : base(page)
         {
-            this.Mode = FormMode.NEW;
-            this.Form = (EbMobileForm)this.Page.Container;
-            this.Controls = this.Form.ChildControls;
+            Mode = FormMode.NEW;
+            Form = (EbMobileForm)this.Page.Container;
+            Controls = this.Form.ChildControls;
 
-            this.FormDataService = new FormService();
-            this.SubmitButtonText = this.Form.GetSubmitButtonText();
+            FormDataService = new FormService();
+            SubmitButtonText = this.Form.GetSubmitButtonText();
         }
 
         public override async Task InitializeAsync()

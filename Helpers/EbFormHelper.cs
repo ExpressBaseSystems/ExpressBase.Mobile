@@ -20,6 +20,8 @@ namespace ExpressBase.Mobile.Helpers
 
         private readonly EbSciptEvaluator evaluator;
 
+        public const string CTRL_PARENT_FORM = "form";
+
         private EbFormHelper()
         {
             evaluator = new EbSciptEvaluator
@@ -46,17 +48,27 @@ namespace ExpressBase.Mobile.Helpers
             Instance.dependencyMap.Init(form.ControlDictionary);
         }
 
-        public static void ControlValueChanged(string controlName)
+        public static void ControlValueChanged(string controlName, string parent = CTRL_PARENT_FORM)
         {
-            if (Instance.dependencyMap.HasDependency(controlName))
+            if (parent == CTRL_PARENT_FORM)
             {
-                ExprDependency exprDep = Instance.dependencyMap.GetDependency(controlName);
+                if (Instance.dependencyMap.HasDependency(controlName))
+                {
+                    ExprDependency exprDep = Instance.dependencyMap.GetDependency(controlName);
 
-                Instance.InitValueExpr(exprDep, controlName);
-                Instance.InitHideExpr(exprDep);
-                Instance.InitDisableExpr(exprDep);
+                    Instance.InitValueExpr(exprDep, controlName);
+                    Instance.InitHideExpr(exprDep);
+                    Instance.InitDisableExpr(exprDep);
+                }
+                Instance.InitValidators(controlName);
             }
-            Instance.InitValidators(controlName);
+            else
+            {
+                if (Instance.dependencyMap.HasDependency(controlName, parent))
+                {
+                    ExprDependency exprDep = Instance.dependencyMap.GetDependency(controlName, parent);
+                }
+            }
         }
 
         public static void EvaluateExprOnLoad(EbMobileControl ctrl, FormMode mode)
@@ -142,14 +154,14 @@ namespace ExpressBase.Mobile.Helpers
             return true;
         }
 
-        private void InitValueExpr(ExprDependency exprDep, string trigger_control)
+        private void InitValueExpr(ExprDependency exprDep, string trigger_control, string parent = CTRL_PARENT_FORM)
         {
             if (exprDep.HasValueDependency)
             {
                 foreach (string name in exprDep.ValueExpr)
                 {
-                    EbMobileControl ctrl = this.controls[name];
-                    this.EvaluateValueExpr(ctrl, trigger_control);
+                    EbMobileControl ctrl = GetControl(name, parent);
+                    EvaluateValueExpr(ctrl, trigger_control);
                 }
             }
         }
@@ -209,6 +221,8 @@ namespace ExpressBase.Mobile.Helpers
 
         private bool InitValidators(string controlName)
         {
+            if (!controls.ContainsKey(controlName)) return true;
+
             EbMobileControl ctrl = controls[controlName];
 
             if (ctrl.Validators == null || !ctrl.Validators.Any() || ctrl is INonPersistControl)
@@ -416,6 +430,22 @@ namespace ExpressBase.Mobile.Helpers
                 return script.Replace("this", $"form.{controlName}");
 
             return script;
+        }
+
+        private EbMobileControl GetControl(string controlName, string parent)
+        {
+            if (parent == CTRL_PARENT_FORM)
+            {
+                return this.controls[controlName];
+            }
+            else
+            {
+                if (this.controls.TryGetValue(parent, out var ctrl) && ctrl is ILinesEnabled lines)
+                {
+                    return lines.ChildControls.Find(c => c.Name == controlName);
+                }
+            }
+            return null;
         }
     }
 }
