@@ -37,7 +37,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
             DrawHeader();
 
-            if (!string.IsNullOrEmpty(dataGrid.DataSourceRefId))
+            if (!string.IsNullOrEmpty(dataGrid.DataSourceRefId) && dataGrid.FormRenderMode != FormMode.EDIT)
             {
                 AutoFill(dataGrid.DataSourceRefId);
             }
@@ -86,7 +86,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                         if (Body.Children[i].ClassId == name)
                         {
                             Body.Children.Remove(Body.Children[i]);
-                            var ig = GetRow(row);
+                            var ig = GetRow(row, name);
                             Body.Children.Insert(i, ig);
                             break;
                         }
@@ -99,16 +99,16 @@ namespace ExpressBase.Mobile.CustomControls.Views
             }
         }
 
-        private StackLayout GetRow(MobileTableRow row)
+        private View GetRow(MobileTableRow row, string name = null)
         {
-            string guid = Guid.NewGuid().ToString("N");
+            string guid = name ?? Guid.NewGuid().ToString("N");
 
-            StackLayout stack = new StackLayout()
+            StackLayout stack = new StackLayout
             {
-                Orientation = Xamarin.Forms.StackOrientation.Horizontal,
                 ClassId = guid,
+                Orientation = Xamarin.Forms.StackOrientation.Horizontal,
+                Padding = new Thickness(5, 5, 0, 5),
                 BackgroundColor = Color.White,
-                Padding = 5
             };
 
             Button rowOptions = new Button
@@ -130,13 +130,15 @@ namespace ExpressBase.Mobile.CustomControls.Views
             stack.Children.Add(dynamicFrame);
             stack.Children.Add(rowOptions);
 
-            dataDictionary[guid] = row;
+            if (name == null) dataDictionary[guid] = row;
+
             return stack;
         }
 
         private void RowDelete_Clicked(object sender, EventArgs e)
         {
             Button button = sender as Button;
+
             foreach (View el in Body.Children)
             {
                 if (el.ClassId == button.ClassId)
@@ -172,14 +174,14 @@ namespace ExpressBase.Mobile.CustomControls.Views
             foreach (EbDataRow row in dataTable.Rows)
             {
                 MobileTableRow tableRow = DR2TableRow(row);
-                StackLayout rowView = GetRow(tableRow);
+                var rowView = GetRow(tableRow);
                 Body.Children.Add(rowView);
             }
         }
 
         private MobileTableRow DR2TableRow(EbDataRow row)
         {
-            int dataId = row["id"] == null ? Convert.ToInt32(row["id"]) : 0;
+            int dataId = row["id"] != null ? Convert.ToInt32(row["id"]) : 0;
 
             MobileTableRow tableRow = new MobileTableRow(dataId);
 
@@ -188,12 +190,18 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
                     continue;
 
-                tableRow.Columns.Add(new MobileTableColumn
+                MobileTableColumn column = new MobileTableColumn
                 {
                     Name = ctrl.Name,
                     Type = ctrl.EbDbType,
                     Value = row[ctrl.Name] ?? null
-                });
+                };
+
+                if (column.Value != null && ctrl is EbMobileSimpleSelect select && !select.IsSimpleSelect)
+                {
+                    column.DisplayValue = select.GetDisplayName4DG(column.Value.ToString());
+                }
+                tableRow.Columns.Add(column);
             }
             return tableRow;
         }
@@ -207,10 +215,10 @@ namespace ExpressBase.Mobile.CustomControls.Views
         {
             MobileTable mobileTable = new MobileTable(dataGrid.TableName);
 
-            foreach (KeyValuePair<string, MobileTableRow> pair in dataDictionary)
+            foreach (MobileTableRow row in dataDictionary.Values)
             {
-                pair.Value.AppendEbColValues();
-                mobileTable.Add(pair.Value);
+                if (row.RowId <= 0) row.AppendEbColValues();
+                mobileTable.Add(row);
             }
             return mobileTable;
         }
@@ -219,14 +227,14 @@ namespace ExpressBase.Mobile.CustomControls.Views
         {
             try
             {
-                MobileDataResponse data = await DataService.Instance.GetDataAsync(dataSourceRefId, 0, 0, null, null, null,false);
+                MobileDataResponse data = await DataService.Instance.GetDataAsync(dataSourceRefId, 0, 0, null, null, null, false);
 
-                if (data != null && data.Data !=null && data.Data.Tables.HasLength(2))
+                if (data != null && data.Data != null && data.Data.Tables.HasLength(2))
                 {
                     SetValue(data.Data.Tables[1]);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Error("DataGrid autofill api error : " + ex.Message);
             }

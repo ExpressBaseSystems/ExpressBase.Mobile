@@ -280,6 +280,8 @@ namespace ExpressBase.Mobile.Models
 
         public object Value { get; set; }
 
+        public object DisplayValue { set; get; }
+
         public EbDbTypes Type { set; get; }
 
         public EbMobileControl Control { set; get; }

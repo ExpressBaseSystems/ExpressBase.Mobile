@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views.Base;
 using System;
@@ -31,6 +32,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
             InitializeComponent();
             CreateForm();
+            SetValues();
         }
 
         public DataGridForm(EbMobileDataGrid dataGrid, MobileTableRow row, string name)
@@ -49,6 +51,12 @@ namespace ExpressBase.Mobile.Views.Shared
 
             CreateForm();
             FillValue(row);
+        }
+
+        protected virtual void SetValues()
+        {
+            InitDefaultValueExpressions();
+            InitOnLoadExpressions();
         }
 
         private void CreateForm()
@@ -97,6 +105,30 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             ResetControls();
             await App.Navigation.PopMasterModalAsync(true);
+        }
+
+        protected void InitDefaultValueExpressions()
+        {
+            foreach (EbMobileControl ctrl in dataGrid.ChildControls)
+            {
+                if (!ctrl.DefaultExprEvaluated)
+                {
+                    EbScript defExp = ctrl.DefaultValueExpression;
+
+                    if (defExp != null && !defExp.IsEmpty())
+                    {
+                        EbFormHelper.SetDefaultValue(ctrl.Name);
+                    }
+                }
+            }
+        }
+
+        protected void InitOnLoadExpressions()
+        {
+            foreach (EbMobileControl ctrl in dataGrid.ChildControls)
+            {
+                EbFormHelper.EvaluateExprOnLoad(ctrl, dataGrid.FormRenderMode);
+            }
         }
     }
 }

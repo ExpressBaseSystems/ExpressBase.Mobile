@@ -36,7 +36,8 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         public LoginBaseViewModel()
         {
-            Service = IdentityService.Current;
+            Service = new IdentityService();
+
             LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
         }
 

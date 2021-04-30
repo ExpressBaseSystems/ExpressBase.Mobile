@@ -12,11 +12,6 @@ namespace ExpressBase.Mobile.Helpers.Script
 {
     public class EbSciptEvaluator : ExpressionEvaluator
     {
-        private readonly List<string> persistanceKeys = new List<string>
-        {
-            "form"
-        };
-
         public object Execute(string script)
         {
             this.ClearVariables();
@@ -48,22 +43,24 @@ namespace ExpressBase.Mobile.Helpers.Script
         }
     }
 
-    public class EbScriptExpression
-    {
-        public string Name { set; get; }
-
-        public string Method { set; get; }
-    }
-
     public class EbFormEvaluator
     {
         public string __mode { set; get; }
+
+        public Dictionary<string,EbMobileControl> Controls { set; get; }
 
         public EbFormEvaluator() { }
 
         public EbFormEvaluator(FormMode mode)
         {
             SetMode(mode);
+        }
+
+        public EbFormEvaluator(FormMode mode, Dictionary<string, EbMobileControl> controls)
+        {
+            SetMode(mode);
+
+            Controls = controls;
         }
 
         public void SetMode(FormMode mode)
@@ -149,5 +146,10 @@ namespace ExpressBase.Mobile.Helpers.Script
                 EbLog.Info("error at [setColor] in list evaluator, " + ex.Message);
             }
         }
+    }
+
+    public class EbDataGridEvaluator
+    {
+
     }
 }

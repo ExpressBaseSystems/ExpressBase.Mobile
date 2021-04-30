@@ -2,10 +2,12 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -24,12 +26,23 @@ namespace ExpressBase.Mobile
 
         private DataGrid gridView;
 
+        public DataGridRowHelper CurrentRow { set; get; }
+
+        [OnDeserialized]
+        public void OnDeserializedMethod(StreamingContext context)
+        {
+            CurrentRow = new DataGridRowHelper(ChildControls);
+        }
+
         public override View Draw(FormMode mode, NetworkMode network)
         {
+            this.FormRenderMode = mode;
+            this.NetworkType = network;
+
             gridView = new DataGrid(this);
             XControl = gridView;
 
-            return base.Draw(mode, network);
+            return base.Draw();
         }
 
         public MobileTableRow GetControlValues(bool isHeader = false)
@@ -41,12 +54,19 @@ namespace ExpressBase.Mobile
                 {
                     if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
                         continue;
-                    row.Columns.Add(new MobileTableColumn
+
+                    MobileTableColumn column = new MobileTableColumn
                     {
                         Name = ctrl.Name,
                         Type = ctrl.EbDbType,
                         Value = isHeader ? ctrl.Label : ctrl.GetValue()
-                    });
+                    };
+
+                    if(ctrl is EbMobileSimpleSelect ps)
+                    {
+                        column.DisplayValue = ps.GetDisplayValue();
+                    }
+                    row.Columns.Add(column);
                 }
             }
             catch (Exception ex)
@@ -153,6 +173,29 @@ namespace ExpressBase.Mobile
         public override void SetAsReadOnly(bool disable)
         {
             gridView?.SetAsReadOnly(disable);
+        }
+
+        public EbDataGridEvaluator GetRow()
+        {
+            return null;
+        }
+    }
+
+    public class DataGridRowHelper
+    {
+        private List<EbMobileControl> Controls { set; get; }
+
+        public DataGridRowHelper(List<EbMobileControl> controls)
+        {
+            Controls = controls;
+        }
+
+        public EbMobileControl this[string controlName]
+        {
+            get
+            {
+                return this.Controls.Find(item => item.Name == controlName);
+            }
         }
     }
 }

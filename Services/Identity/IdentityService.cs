@@ -19,11 +19,7 @@ namespace ExpressBase.Mobile.Services
 {
     public class IdentityService : BaseService, IIdentityService
     {
-        private static IdentityService _current;
-
-        public static IdentityService Current => _current ??= new IdentityService();
-
-        private IdentityService() : base(true) { }
+        public IdentityService() : base(true) { }
 
         public async Task<ApiAuthResponse> AuthenticateAsync(string username, string password, bool anonymous = false)
         {

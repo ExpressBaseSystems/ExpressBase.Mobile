@@ -119,6 +119,7 @@ namespace ExpressBase.Mobile
             {
                 IsReadOnly = this.ReadOnly,
                 Placeholder = $"Search {this.Label}...",
+                FontSize = 15,
                 BorderColor = Color.Transparent
             };
             SearchBox.Focused += async (sender, args) => await OnSearchBoxFocused(); ;
@@ -147,6 +148,15 @@ namespace ExpressBase.Mobile
             }
             else
                 return this.selected?.Value;
+        }
+
+        public object GetDisplayValue()
+        {
+            if (!IsSimpleSelect && this.selected != null)
+            {
+                return this.selected.Text;
+            }
+            return null;
         }
 
         public override void SetValue(object value)
@@ -289,6 +299,45 @@ namespace ExpressBase.Mobile
             Color border = status ? EbMobileControl.DefaultBorder : EbMobileControl.ValidationError;
 
             (this.XControl as InputGroup).BorderColor = border;
+        }
+
+        public object GetDisplayName4DG(string valueMember)
+        {
+            EbDataTable dt = null;
+
+            if (this.NetworkType == NetworkMode.Offline)
+            {
+                dt = GetDataFromLocal(valueMember);
+            }
+            else if (this.NetworkType == NetworkMode.Online)
+            {
+                Param param = new Param
+                {
+                    Name = this.ValueMember.ColumnName,
+                    Type = ((int)this.ValueMember.Type).ToString(),
+                    Value = valueMember
+                };
+                try
+                {
+                    MobileDataResponse response = DataService.Instance.GetData(this.DataSourceRefId, 1, 0, new List<Param> { param }, null, null, false);
+
+                    if (response.Data != null && response.Data.Tables.HasLength(2))
+                    {
+                        dt = response.Data.Tables[1];
+                    }
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info("power select failed to resolve display member from live");
+                    EbLog.Error(ex.Message);
+                }
+            }
+
+            if (dt != null && dt.Rows.Any())
+            {
+                return dt.Rows[0][DisplayMember.ColumnName];
+            }
+            return null;
         }
     }
 

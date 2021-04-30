@@ -32,6 +32,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private EbSignUpUserInfo createdUser;
 
+        private IIdentityService identityService;
+
         public SignUpViewModel(EbMobilePage page) : base(page)
         {
             this.LogoUrl = CommonServices.GetLogo(App.Settings.Sid);
@@ -39,13 +41,15 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public override async Task InitializeAsync()
         {
+            identityService = new IdentityService();
+
             await base.InitializeAsync();
             await AutheticateAnonymous();
         }
 
         private async Task AutheticateAnonymous()
         {
-            ApiAuthResponse authResp = await IdentityService.Current.AuthenticateAsync("NIL", "NIL", anonymous: true);
+            ApiAuthResponse authResp = await identityService.AuthenticateAsync("NIL", "NIL", anonymous: true);
 
             if (authResp != null && authResp.IsValid)
             {
@@ -84,7 +88,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     }
                     else
                     {
-                        ApiAuthResponse authResponse = await IdentityService.Current.AuthenticateSSOAsync(createdUser.UserName, createdUser.AuthId, createdUser.Token);
+                        ApiAuthResponse authResponse = await identityService.AuthenticateSSOAsync(createdUser.UserName, createdUser.AuthId, createdUser.Token);
 
                         if (authResponse != null && authResponse.IsValid)
                             await AfterAuthenticationSuccess(authResponse, createdUser);
@@ -112,8 +116,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
-                await IdentityService.Current.UpdateAuthInfo(resp, userInfo.UserName);
-                await IdentityService.Current.UpdateLastUser(userInfo.UserName, LoginType.SSO);
+                await identityService.UpdateAuthInfo(resp, userInfo.UserName);
+                await identityService.UpdateLastUser(userInfo.UserName, LoginType.SSO);
 
                 EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true, callback: status =>
                 {
@@ -128,7 +132,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     if (data.ProfilePages != null && data.ProfilePages.Count > 0)
                         await ProfileSetUp(data, userInfo);
                     else
-                        await IdentityService.Current.Navigate(data);
+                        await identityService.Navigate(data);
                 }
             }
             catch (Exception ex)
@@ -180,7 +184,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
-                await IdentityService.Current.Navigate(data);
+                await identityService.Navigate(data);
             }
         }
 
@@ -192,7 +196,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 string otp = o?.ToString();
 
-                ApiAuthResponse authResponse = await IdentityService.Current.VerifyUserByOTP(createdUser.Token, createdUser.AuthId, otp);
+                ApiAuthResponse authResponse = await identityService.VerifyUserByOTP(createdUser.Token, createdUser.AuthId, otp);
 
                 if (authResponse != null && authResponse.IsValid)
                     await AfterAuthenticationSuccess(authResponse, createdUser);

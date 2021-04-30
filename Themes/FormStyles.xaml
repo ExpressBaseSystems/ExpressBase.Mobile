@@ -113,6 +113,8 @@
            x:Key="DGEditRowButton">
         <Setter Property="VerticalOptions"
                 Value="Center"></Setter>
+        <Setter Property="HorizontalOptions"
+                Value="Center"></Setter>
         <Setter Property="Padding"
                 Value="0"></Setter>
         <Setter Property="HeightRequest"

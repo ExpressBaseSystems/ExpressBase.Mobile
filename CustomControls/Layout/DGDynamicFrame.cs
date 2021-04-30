@@ -1,4 +1,6 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls.XControls;
+using ExpressBase.Mobile.Extensions;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System.Collections.Generic;
 using Xamarin.Forms;
@@ -31,17 +33,28 @@ namespace ExpressBase.Mobile.CustomControls
 
                     if (tableColumn != null)
                     {
-                        string value = tableColumn.Value?.ToString();
+                        var value = tableColumn.DisplayValue ?? tableColumn.Value;
 
-                        Label label = new Label
+                        EbXLabel label = new EbXLabel(column)
                         {
-                            Text = value
+                            Text = value?.ToString(),
+                            VerticalOptions = LayoutOptions.FillAndExpand,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            XBackgroundColor = Color.Transparent
                         };
 
                         if (IsHeader)
+                        {
                             label.FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("Roboto-Medium");
+                            label.LineBreakMode = LineBreakMode.WordWrap;
+                        }
+                        else
+                        {
+                            label.SetFont(column.Font, this.IsHeader);
+                            label.SetTextWrap(column.TextWrap);
+                        }
 
-                        DynamicGrid.SetPosition(label, cell.RowIndex, cell.ColIndex);
+                        DynamicGrid.SetPosition(label, cell.RowIndex, cell.ColIndex, column.RowSpan, column.ColumnSpan);
                     }
                 }
             }

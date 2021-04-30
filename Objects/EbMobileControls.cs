@@ -118,6 +118,9 @@ namespace ExpressBase.Mobile
 
         public string Parent { set; get; }
 
+        //for script
+        public virtual object getValue() { return GetValue(); }
+
         public virtual object GetValue() { return null; }
 
         public virtual T GetValue<T>() { return (T)GetValue(); }
@@ -146,7 +149,7 @@ namespace ExpressBase.Mobile
 
         public virtual void ValueChanged(string source = null)
         {
-            if (source != null && EbFormHelper.ContainsInValExpr(this.Name, source))
+            if (source != null && EbFormHelper.ContainsInValExpr(this.Name, source, this.Parent))
                 return;
 
             EbFormHelper.ControlValueChanged(this.Name, this.Parent);
@@ -166,7 +169,7 @@ namespace ExpressBase.Mobile
             };
         }
 
-        protected Dictionary<string, string> ScriptMethodMap = new Dictionary<string, string>
+        public Dictionary<string, string> ScriptMethodMap = new Dictionary<string, string>
         {
             { "getValue","GetValue"}
         };
