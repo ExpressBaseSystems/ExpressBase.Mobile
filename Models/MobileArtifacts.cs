@@ -74,12 +74,14 @@ namespace ExpressBase.Mobile.Models
             StringBuilder sb = new StringBuilder();
             try
             {
-                foreach (MobileTable table in this.Tables)
-                    sb.Append(table.GetQuery(this.MasterTable, parameters, masterRowId));
+                foreach (MobileTable table in Tables)
+                {
+                    sb.Append(table.GetQuery(MasterTable, parameters, masterRowId));
+                }
             }
             catch (Exception ex)
             {
-                EbLog.Error("MobileFormData.GetQuery---" + ex.Message);
+                EbLog.Error("Error in [MobileFormData.GetQuery]" + ex.Message);
             }
             return sb.ToString();
         }
@@ -118,48 +120,53 @@ namespace ExpressBase.Mobile.Models
             StringBuilder sb = new StringBuilder();
             try
             {
-                for (int i = 0; i < this.Count; i++)
+                for (int i = 0; i < Count; i++)
                 {
                     if (this[i].IsUpdate && !this[i].IsDelete)//update
                     {
                         List<string> _colstrings = new List<string>();
+
                         foreach (MobileTableColumn col in this[i].Columns)
                         {
-                            _colstrings.Add($"{col.Name} = @{this.TableName}_{col.Name}_{i}");
+                            _colstrings.Add($"{col.Name} = @{TableName}_{col.Name}_{i}");
 
                             parameters.Add(new DbParameter
                             {
-                                ParameterName = $"@{this.TableName}_{col.Name}_{i}",
+                                ParameterName = $"@{TableName}_{col.Name}_{i}",
                                 DbType = (int)col.Type,
                                 Value = col.Value
                             });
                         }
-                        sb.AppendFormat("UPDATE {0} SET {1} WHERE id = {2};", this.TableName, string.Join(",", _colstrings), $"@{this.TableName}_rowid_{i}");
+
+                        sb.AppendFormat("UPDATE {0} SET {1} WHERE id = {2};", TableName, string.Join(",", _colstrings), $"@{TableName}_rowid_{i}");
 
                         parameters.Add(new DbParameter
                         {
-                            ParameterName = $"@{this.TableName}_rowid_{i}",
+                            ParameterName = $"@{TableName}_rowid_{i}",
                             DbType = (int)EbDbTypes.Int32,
                             Value = this[i].RowId
                         });
                     }
                     else if (this[i].IsDelete)//delete
                     {
-                        sb.AppendLine($"DELETE FROM {this.TableName} WHERE id = @{this.TableName}_deleterow_{i};");
+                        sb.AppendLine($"DELETE FROM {TableName} WHERE id = @{TableName}_deleterow_{i};");
+
                         parameters.Add(new DbParameter
                         {
-                            ParameterName = $"@{this.TableName}_deleterow_{i}",
+                            ParameterName = $"@{TableName}_deleterow_{i}",
                             DbType = (int)EbDbTypes.Int32,
                             Value = this[i].RowId
                         });
                     }
                     else//insert
                     {
-                        List<string> _cols = (this.Count > 0) ? this[i].Columns.Select(en => en.Name).ToList() : new List<string>();
+                        List<string> _cols = (Count > 0) ? this[i].Columns.Select(en => en.Name).ToList() : new List<string>();
+
                         List<string> _vals = new List<string>();
+
                         foreach (MobileTableColumn col in this[i].Columns)
                         {
-                            string _prm = $"@{this.TableName}_{col.Name}_{i}";
+                            string _prm = $"@{TableName}_{col.Name}_{i}";
 
                             _vals.Add(_prm);
 
@@ -171,7 +178,7 @@ namespace ExpressBase.Mobile.Models
                             });
                         }
 
-                        if (this.TableName != masterTable)
+                        if (TableName != masterTable)
                         {
                             _cols.Add($"{masterTable}_id");
 
@@ -187,9 +194,11 @@ namespace ExpressBase.Mobile.Models
                                 });
                             }
                             else
+                            {
                                 _vals.Add($"(SELECT MAX(id) FROM {masterTable})");
+                            }
                         }
-                        sb.AppendFormat("INSERT INTO {0}({1}) VALUES ({2});", this.TableName, string.Join(",", _cols), string.Join(",", _vals.ToArray()));
+                        sb.AppendFormat("INSERT INTO {0}({1}) VALUES ({2});", TableName, string.Join(",", _cols), string.Join(",", _vals.ToArray()));
                     }
                 }
             }

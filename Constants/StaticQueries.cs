@@ -84,7 +84,7 @@ namespace ExpressBase.Mobile.Data
         {
             get
             {
-                return "SELECT id from {0} order by id DESC limit 1;";
+                return "SELECT id FROM {0} ORDER BY id DESC LIMIT 1;";
             }
         }
     }

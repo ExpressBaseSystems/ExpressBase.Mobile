@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
@@ -14,6 +15,13 @@ namespace ExpressBase.Mobile.CustomControls
             set { SetValue(DataSourceProperty, value); }
         }
 
+        public EbXDataGrid()
+        {
+            this.BackgroundColor = Color.FromHex("cccccc");
+            this.RowSpacing = 1;
+            this.ColumnSpacing = 1;
+        }
+
         private void DrawColumns(ColumnColletion columns)
         {
             for (int i = 0; i < columns.Count; i++)
@@ -23,8 +31,11 @@ namespace ExpressBase.Mobile.CustomControls
                 Label label = new Label
                 {
                     FontAttributes = FontAttributes.Bold,
-                    HorizontalTextAlignment = TextAlignment.Center,
-                    Text = columns[i].ColumnName
+                    FontFamily = (OnPlatform<string>)HelperFunctions.GetResourceValue("Roboto-Medium"),
+                    Text = columns[i].ColumnName,
+                    VerticalTextAlignment = TextAlignment.Center,
+                    BackgroundColor = Color.FromHex("eeeeee"),
+                    Padding = new Thickness(5, 0)
                 };
 
                 this.Children.Add(label, i, 0);
@@ -37,7 +48,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             if (instance.DataSource != null)
             {
-                instance.RowDefinitions.Add(new RowDefinition());
+                instance.RowDefinitions.Add(new RowDefinition { Height = 40 });
 
                 instance.DrawColumns(instance.DataSource.Columns);
 
@@ -55,8 +66,13 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     Label label = new Label
                     {
-                        HorizontalTextAlignment = TextAlignment.Center,
-                        Text = rows[rowIndex][columnIndex]?.ToString()
+                        Padding = 5,
+                        BackgroundColor = Color.White,
+                        Text = rows[rowIndex][columnIndex]?.ToString(),
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        LineBreakMode = LineBreakMode.WordWrap,
+                        FontSize = 13
                     };
                     this.Children.Add(label, columnIndex, rowIndex + 1);
                 }

@@ -40,6 +40,8 @@ namespace ExpressBase.Mobile
 
         public string BorderColor { get; set; }
 
+        public bool Transparent { get; set; }
+
         public string BackgroundColor { get; set; }
 
         public MobileHorrizontalAlign HorrizontalAlign { set; get; }

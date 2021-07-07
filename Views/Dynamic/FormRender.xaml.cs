@@ -16,8 +16,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private readonly FormRenderViewModel viewModel;
 
-        #region constructor @overloads
-
         //new mode
         public FormRender(EbMobilePage page)
         {
@@ -52,8 +50,6 @@ namespace ExpressBase.Mobile.Views.Dynamic
             InitializeComponent();
             BindingContext = viewModel = new FormRenderVMR(page, context, contextRow);
         }
-
-        #endregion
 
         protected override async void OnAppearing()
         {

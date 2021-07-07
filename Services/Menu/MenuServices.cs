@@ -118,27 +118,5 @@ namespace ExpressBase.Mobile.Services
             }
             return pages;
         }
-
-        public async Task DeployFormTables(List<MobilePagesWraper> objlist)
-        {
-            if (objlist == null)
-                return;
-
-            await Task.Run(() =>
-            {
-                foreach (MobilePagesWraper wraper in objlist)
-                {
-                    EbMobilePage mpage = wraper.GetPage();
-
-                    if (mpage != null && mpage.Container is EbMobileForm form)
-                    {
-                        if (mpage.NetworkMode != NetworkMode.Online)
-                        {
-                            form.CreateTableSchema();
-                        }
-                    }
-                }
-            });
-        }
     }
 }

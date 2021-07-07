@@ -6,7 +6,6 @@ using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
@@ -62,12 +61,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         protected override void OnBindingContextChanged()
         {
-            base.OnBindingContextChanged();
-
-            Task.Run(() =>
-            {
-                this.AppendFilterControls();
-            });
+            AppendFilterControls();
         }
 
         private void AppendFilterControls()
@@ -75,12 +69,15 @@ namespace ExpressBase.Mobile.CustomControls
             try
             {
                 if (FilterControls.Any())
+                {
                     this.FilterContainer.Children.Clear();
+                }
 
                 foreach (EbMobileControl ctrl in this.FilterControls)
                 {
+                    ctrl.PropagateChange = false;
                     View view = ctrl.Draw(FormMode.NEW, this.NetWorkType);
-                    this.FilterContainer.Children.Add(view);
+                    FilterContainer.Children.Add(view);
                 }
             }
             catch (Exception ex)
@@ -100,7 +97,7 @@ namespace ExpressBase.Mobile.CustomControls
             OnDisAppearing?.Invoke();
         }
 
-        private void FilterButton_Tapped(object sender, EventArgs e)
+        private void OpenFilterTab(object sender, EventArgs e)
         {
             FilterTab.IsVisible = true;
             FilterSelection.IsVisible = true;
@@ -108,7 +105,7 @@ namespace ExpressBase.Mobile.CustomControls
             SortSelection.IsVisible = false;
         }
 
-        private void SortButton_Tapped(object sender, EventArgs e)
+        private void OpenSortTab(object sender, EventArgs e)
         {
             SortTab.IsVisible = true;
             FilterSelection.IsVisible = false;
@@ -116,7 +113,7 @@ namespace ExpressBase.Mobile.CustomControls
             FilterTab.IsVisible = false;
         }
 
-        private void CancelButton_Clicked(object sender, EventArgs e)
+        private void CloseFilter(object sender, EventArgs e)
         {
             this.Hide();
         }
@@ -142,7 +139,7 @@ namespace ExpressBase.Mobile.CustomControls
             return p.Any() ? p : null;
         }
 
-        private void ConfirmButton_Clicked(object sender, EventArgs e)
+        private void ApplyFilter(object sender, EventArgs e)
         {
             if (ConfirmClicked == null)
                 this.Hide();
@@ -157,14 +154,14 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        private void ClearFilter_Clicked(object sender, EventArgs e)
+        private void ClearFilter(object sender, EventArgs e)
         {
-            FilterControls.ForEach(item => item.Reset());
+            FilterControls.ForEach(control => control.Reset());
         }
 
         public void ClearFilter()
         {
-            ClearFilter_Clicked(null, null);
+            ClearFilter(null, null);
         }
     }
 }

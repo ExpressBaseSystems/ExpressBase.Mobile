@@ -55,7 +55,7 @@
                 BackgroundColor="White"
                 Padding="0">
                 <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="FilterButton_Tapped"></TapGestureRecognizer>
+                    <TapGestureRecognizer Tapped="OpenFilterTab"></TapGestureRecognizer>
                 </Frame.GestureRecognizers>
                 <Frame.Content>
                     <StackLayout>
@@ -83,7 +83,7 @@
                 BackgroundColor="White"
                 Padding="0">
                 <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="SortButton_Tapped"></TapGestureRecognizer>
+                    <TapGestureRecognizer Tapped="OpenSortTab"></TapGestureRecognizer>
                 </Frame.GestureRecognizers>
                 <Frame.Content>
                     <StackLayout>
@@ -110,13 +110,14 @@
                 Grid.ColumnSpan="2" 
                 RowSpacing="0"
                 BackgroundColor="White"
-                Padding="15,10,15,0">
+                Padding="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Label
                     Grid.Row="0"
+                    Margin="0,5,15,0"
                     Text="Clear Filter"
                     TextColor="{StaticResource Eb-Blue2}"
                     FontFamily="{StaticResource Roboto-Medium}"
@@ -129,7 +130,7 @@
                     HeightRequest="20"
                     BackgroundColor="Transparent"
                     HorizontalOptions="End"
-                    Clicked="ClearFilter_Clicked">
+                    Clicked="ClearFilter">
                 </Button>
                 <ScrollView 
                     Grid.Row="1">
@@ -204,7 +205,7 @@
                     BorderWidth="1"
                     CornerRadius="0"
                     FlexLayout.Grow="1"
-                    Clicked="CancelButton_Clicked"/>
+                    Clicked="CloseFilter"/>
                 <Button
                     x:Name="ConfirmButton"
                     Text="Apply" 
@@ -215,7 +216,7 @@
                     BorderColor="{DynamicResource Primary_Color}" 
                     BorderWidth="1"
                     FlexLayout.Grow="1"
-                    Clicked="ConfirmButton_Clicked"/>
+                    Clicked="ApplyFilter"/>
             </FlexLayout>
 
         </Grid>

@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services.LocalDB;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -158,11 +159,11 @@ namespace ExpressBase.Mobile.Services
 
         public async Task<EbMobileSolutionData> GetSolutionDataAsync(bool export, int timeout = 0, Action<ResponseStatus> callback = null)
         {
-            int to_calc = export ? ApiConstants.TIMEOUT_IMPORT : ApiConstants.TIMEOUT_STD;
+            int timeoutCalc = export ? ApiConstants.TIMEOUT_IMPORT : ApiConstants.TIMEOUT_STD;
 
             RestClient client = new RestClient(App.Settings.RootUrl)
             {
-                Timeout = timeout == 0 ? to_calc : timeout
+                Timeout = timeout == 0 ? timeoutCalc : timeout
             };
 
             RestRequest request = new RestRequest(ApiConstants.GET_SOLUTION_DATA, Method.GET);
@@ -171,57 +172,54 @@ namespace ExpressBase.Mobile.Services
             request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
-            EbMobileSolutionData solData = null;
+            EbMobileSolutionData solutionData = null;
             try
             {
                 IRestResponse response = await client.ExecuteAsync(request);
                 if (response.IsSuccessful)
                 {
-                    solData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
-                    await ImportSolutionData(solData, export);
+                    solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
+                    await ImportSolutionData(solutionData, export);
                 }
                 else
                 {
                     callback?.Invoke(response.ResponseStatus);
-                    EbLog.Info("get_solution_data api failure, callback invoked");
+                    EbLog.Info("[GetSolutionData] api failure, callback invoked");
                 }
             }
             catch (Exception ex)
             {
-                EbLog.Error("Error on get_solution_data request" + ex.Message);
+                EbLog.Error("Error on [GetSolutionData] request" + ex.Message);
             }
-            return solData;
+            return solutionData;
         }
 
-        private async Task ImportSolutionData(EbMobileSolutionData solData, bool export)
+        private async Task ImportSolutionData(EbMobileSolutionData solutionData, bool export)
         {
-            if (solData == null) return;
+            if (solutionData == null) return;
 
             if (export)
             {
-                EbDataSet offlineDs = solData.GetOfflineData();
+                EbDataSet importData = solutionData.GetOfflineData();
 
-                await Task.Run(async () =>
-                {
-                    await CommonServices.Instance.LoadLocalData(offlineDs);
-                });
+                _ = Task.Run(() => DBService.Current.ImportData(importData));
             }
 
-            await Store.SetJSONAsync(AppConst.APP_COLLECTION, solData.Applications);
-            await SetLocationInfo(solData.Locations);
-            await SetCurrentUser(solData.CurrentUser);
-            await SetSolutionObject(solData.CurrentSolution);
+            await Store.SetJSONAsync(AppConst.APP_COLLECTION, solutionData.Applications);
+            await SetLocationInfo(solutionData.Locations);
+            await SetCurrentUser(solutionData.CurrentUser);
+            await SetSolutionObject(solutionData.CurrentSolution);
 
-            if (solData.ProfilePages != null && solData.ProfilePages.Count > 0)
+            if (solutionData.ProfilePages != null && solutionData.ProfilePages.Count > 0)
             {
-                await Store.SetJSONAsync(AppConst.EXTERNAL_PAGES, solData.ProfilePages);
-                this.ExternalMobilePages = solData.ProfilePages;
+                await Store.SetJSONAsync(AppConst.EXTERNAL_PAGES, solutionData.ProfilePages);
+                ExternalMobilePages = solutionData.ProfilePages;
             }
 
-            if (this.CurrentApplication != null)
+            if (CurrentApplication != null)
             {
-                this.CurrentApplication = solData.Applications.Find(item => item.AppId == this.CurrentApplication.AppId);
-                await Store.SetJSONAsync(AppConst.CURRENT_APP, this.CurrentApplication);
+                CurrentApplication = solutionData.Applications.Find(item => item.AppId == CurrentApplication.AppId);
+                await Store.SetJSONAsync(AppConst.CURRENT_APP, CurrentApplication);
             }
         }
 

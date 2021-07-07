@@ -11,8 +11,6 @@ namespace ExpressBase.Mobile.Services
 
         Task<List<MobilePagesWraper>> UpdateDataAsync();
 
-        Task DeployFormTables(List<MobilePagesWraper> objlist);
-
         Task<List<MobilePagesWraper>> GetFromMenuPreload(EbApiMeta apimeta);
     }
 }

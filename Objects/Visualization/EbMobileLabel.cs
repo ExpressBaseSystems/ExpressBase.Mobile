@@ -23,6 +23,8 @@ namespace ExpressBase.Mobile
 
         public int BorderRadius { get; set; }
 
+        public bool Transparent { get; set; }
+
         public string BackgroundColor { get; set; }
 
         public string BorderColor { get; set; }

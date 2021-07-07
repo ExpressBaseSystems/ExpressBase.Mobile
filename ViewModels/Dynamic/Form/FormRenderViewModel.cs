@@ -25,9 +25,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public string SubmitButtonText { set; get; }
 
         private bool isEditBtnVisible = false;
+
         private bool isSaveBtnVisible = true;
 
-        public bool IsSaveButtonVisible {
+        public bool IsSaveButtonVisible
+        {
             get => isSaveBtnVisible;
             set
             {
@@ -70,15 +72,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             EbFormHelper.Initialize(this.Form, this.Mode);
 
-            if (!IsOnline())
+            if (IsOffline())
             {
-                await Task.Run(() =>
-                {
-                    this.Form.CreateTableSchema();
-                });
+                await Task.Run(() => this.Form.CreateTableSchema());
             }
-            if (this.Mode == FormMode.NEW)
-                SetValues();
+
+            if (this.Mode == FormMode.NEW) SetValues();
         }
 
         protected virtual void SetValues()

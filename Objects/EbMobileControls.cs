@@ -93,7 +93,9 @@ namespace ExpressBase.Mobile
                     var formatted = new FormattedString { Spans = { new Span { Text = this.Label } } };
 
                     if (this.Required)
+                    {
                         formatted.Spans.Add(new Span { Text = " *", FontSize = 16, TextColor = Color.Red });
+                    }
 
                     validationLabel = new Label { Style = (Style)HelperFunctions.GetResourceValue("ControlValidationLable") };
 
@@ -117,6 +119,8 @@ namespace ExpressBase.Mobile
         public object OldValue { set; get; }
 
         public string Parent { set; get; }
+
+        public bool PropagateChange { set; get; } = true;
 
         //for script
         public virtual object getValue() { return GetValue(); }
@@ -152,7 +156,10 @@ namespace ExpressBase.Mobile
             if (source != null && EbFormHelper.ContainsInValExpr(this.Name, source, this.Parent))
                 return;
 
-            EbFormHelper.ControlValueChanged(this.Name, this.Parent);
+            if (PropagateChange)
+            {
+                EbFormHelper.ControlValueChanged(this.Name, this.Parent);
+            }
         }
 
         public virtual MobileTableColumn GetMobileTableColumn()
@@ -167,31 +174,6 @@ namespace ExpressBase.Mobile
                 Type = this.EbDbType,
                 Value = value
             };
-        }
-
-        public Dictionary<string, string> ScriptMethodMap = new Dictionary<string, string>
-        {
-            { "getValue","GetValue"}
-        };
-
-        public object InvokeDynamically(string method, object[] parameters = null)
-        {
-            try
-            {
-                if (!ScriptMethodMap.TryGetValue(method, out string member))
-                {
-                    throw new Exception($"Invalid method found : '{method}()'");
-                }
-
-                MethodInfo info = this.GetType().GetMethod(member);
-                return info.Invoke(this, parameters);
-            }
-            catch (Exception ex)
-            {
-                EbLog.Info("Dynamic invokation failed in eb control : " + this.Name);
-                EbLog.Info(ex.Message);
-            }
-            return null;
         }
 
         public virtual void SetValidation(bool status, string message)

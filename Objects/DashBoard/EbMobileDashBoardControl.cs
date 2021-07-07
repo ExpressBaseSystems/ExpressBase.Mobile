@@ -20,6 +20,8 @@ namespace ExpressBase.Mobile
 
         public virtual string BorderColor { set; get; }
 
+        public bool Transparent { get; set; }
+
         public virtual string BackgroundColor { set; get; }
 
         public virtual bool BoxShadow { set; get; }

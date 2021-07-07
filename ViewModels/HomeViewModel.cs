@@ -60,13 +60,13 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                this.ObjectList = await menuServices.GetDataAsync();
-                await menuServices.DeployFormTables(ObjectList);
-                this.IsEmpty = IsObjectsEmpty();
+                ObjectList = await menuServices.GetDataAsync();
+                UpdateIsEmptyFlag();
 
                 SolutionLogo = CommonServices.GetLogo(App.Settings.Sid);
                 await HelperFunctions.CreateDirectory("FILES");
 
+                CreateFormContainersTables();
                 LogApplicationInfo();
             }
             catch (Exception ex)
@@ -85,10 +85,10 @@ namespace ExpressBase.Mobile.ViewModels
                     return;
                 }
 
-                this.ObjectList = await menuServices.UpdateDataAsync();
-                this.IsEmpty = IsObjectsEmpty();
+                ObjectList = await menuServices.UpdateDataAsync();
+                UpdateIsEmptyFlag();
 
-                await menuServices.DeployFormTables(ObjectList);
+                CreateFormContainersTables();
                 LogApplicationInfo();
             }
             catch (Exception ex)
@@ -145,12 +145,13 @@ namespace ExpressBase.Mobile.ViewModels
         public async Task LocationSwitched()
         {
             ObjectList = await menuServices.GetDataAsync();
-            await menuServices.DeployFormTables(ObjectList);
+
+            CreateFormContainersTables();
         }
 
-        public bool IsObjectsEmpty()
+        private void UpdateIsEmptyFlag()
         {
-            return !ObjectList.Any();
+            IsEmpty = ObjectList == null || !ObjectList.Any();
         }
 
         private void LogApplicationInfo()
@@ -159,6 +160,27 @@ namespace ExpressBase.Mobile.ViewModels
             EbLog.Info($"Current Application :'{PageTitle}'");
             int objeCount = ObjectList == null ? 0 : ObjectList.Count;
             EbLog.Info($"Rendering total of {objeCount} pages with location id: {App.Settings.CurrentLocation?.LocId}");
+        }
+
+        private void CreateFormContainersTables()
+        {
+            if (ObjectList == null || ObjectList.Count <= 0) return;
+
+            Task.Run(() =>
+            {
+                foreach (MobilePagesWraper wraper in ObjectList)
+                {
+                    EbMobilePage mpage = wraper.GetPage();
+
+                    if (mpage != null && mpage.Container is EbMobileForm form)
+                    {
+                        if (mpage.NetworkMode != NetworkMode.Online)
+                        {
+                            form.CreateTableSchema();
+                        }
+                    }
+                }
+            });
         }
     }
 }

@@ -129,7 +129,6 @@ namespace ExpressBase.Mobile.Services.Navigation
 
             if (App.Settings.Sid == null)
             {
-
                 if (Utils.Solutions.Any())
                     await NavigateAsync(new MySolutions());
                 else

@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
+using ExpressBase.Mobile.Services.LocalDB;
 using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
 using System;
@@ -93,6 +94,7 @@ namespace ExpressBase.Mobile
             try
             {
                 MobileFormData data = await this.GetFormData(rowId);
+
                 data.SortByMaster();
 
                 if (NetworkType == NetworkMode.Online)
@@ -113,7 +115,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Error("EbMobileForm.SaveForm::" + ex.Message);
+                EbLog.Error("Error in [EbMobileForm.Save] " + ex.Message);
             }
             return response;
         }
@@ -121,7 +123,9 @@ namespace ExpressBase.Mobile
         private async Task<MobileFormData> GetFormData(int RowId)
         {
             MobileFormData formData = new MobileFormData(this.TableName);
+
             MobileTable table = formData.CreateTable();
+
             MobileTableRow row = table.CreateRow(RowId);
 
             foreach (KeyValuePair<string, EbMobileControl> pair in this.ControlDictionary)
@@ -139,11 +143,18 @@ namespace ExpressBase.Mobile
                 else
                 {
                     MobileTableColumn Column = ctrl.GetMobileTableColumn();
-                    if (Column != null) row.Columns.Add(Column);
+
+                    if (Column != null)
+                    {
+                        row.Columns.Add(Column);
+                    }
                 }
             }
-            if (RowId <= 0) row.AppendEbColValues();
 
+            if (RowId <= 0)
+            {
+                row.AppendEbColValues();
+            };
             return formData;
         }
 
@@ -156,11 +167,6 @@ namespace ExpressBase.Mobile
             else if (ctrl is EbMobileDisplayPicture || ctrl is EbMobileAudioInput)
             {
                 await SendAndFillFupPersisant(ctrl, row);
-            }
-            else
-            {
-                EbLog.Warning("Unknown control");
-                EbLog.Warning(ctrl.ToString());
             }
         }
 
@@ -233,7 +239,9 @@ namespace ExpressBase.Mobile
                     if (table.Files.Any())
                     {
                         table.InitFilesToUpload();
+
                         bool status = await this.SendAndFillFupData(webFormData, table);
+
                         if (!status)
                         {
                             throw new Exception("Image Upload faild, breaking form save");
@@ -242,6 +250,7 @@ namespace ExpressBase.Mobile
                 }
 
                 int locid = App.Settings.CurrentLocId;
+
                 EbLog.Info($"saving record in location {locid}");
 
                 PushResponse pushResponse = await FormService.Instance.SendFormDataAsync(pageRefId, webFormData, rowId, this.WebFormRefId, locid);
@@ -269,31 +278,34 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                List<DbParameter> _params = new List<DbParameter>();
+                List<DbParameter> dbParameters = new List<DbParameter>();
 
-                string query = data.GetQuery(_params, rowId);
+                string query = data.GetQuery(dbParameters, rowId);
 
-                int rowAffected = App.DataDB.DoNonQuery(query, _params.ToArray());
+                int rowAffected = App.DataDB.DoNonQuery(query, dbParameters.ToArray());
 
-                if (this.HasFileSelect)
+                if (HasFileSelect && rowAffected > 0)
                 {
-                    object lastRowId = (rowId != 0) ? rowId : App.DataDB.DoScalar(string.Format(StaticQueries.CURRVAL, this.TableName));
-                    await this.WriteFilesToLocal(lastRowId);
+                    object lastRowId = (rowId != 0) ? rowId : App.DataDB.DoScalar($"SELECT MAX(id) FROM {TableName}");
+
+                    if (lastRowId != null)
+                    {
+                        await WriteFilesToLocal(lastRowId);
+                    }
                 }
 
-                if (rowAffected > 0)
-                {
-                    response.Status = true;
+                response.Status = rowAffected > 0;
+
+                if (response.Status)
                     response.Message = "Data stored locally :)";
-                }
                 else
-                    throw new Exception("failed to store data locally");
+                    throw new Exception("Failed to store data locally");
             }
             catch (Exception ex)
             {
-                response.Status = false;
-                response.Message = "Something went wrong :(";
-                EbLog.Error("EbMobileForm.PersistOnLocal::" + ex.Message);
+                response.Message = "Failed to store data locally";
+
+                EbLog.Error("Exception at [EbMobileForm] while [SaveToLocalDB] method : " + ex.Message);
             }
         }
 
@@ -313,7 +325,9 @@ namespace ExpressBase.Mobile
                 foreach (var pair in this.ControlDictionary)
                 {
                     if (pair.Value is EbMobileFileUpload)
+                    {
                         (pair.Value as EbMobileFileUpload).PushFilesToDir(this.TableName, rowid);
+                    }
                 }
             });
         }
@@ -321,6 +335,7 @@ namespace ExpressBase.Mobile
         public async Task UploadFiles(int RowId, WebformData WebFormData)
         {
             ControlDictionary = ChildControls.ToControlDictionary();
+
             List<FileWrapper> Files = new List<FileWrapper>();
 
             foreach (var pair in ControlDictionary)
@@ -448,7 +463,8 @@ namespace ExpressBase.Mobile
                 }
 
                 masterSchema.AppendDefault();
-                CommonServices.Instance.CreateLocalTable(schemas);
+
+                DBService.Current.CreateTables(schemas);
             }
             catch (Exception ex)
             {
