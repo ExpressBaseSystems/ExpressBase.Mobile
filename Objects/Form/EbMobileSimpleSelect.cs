@@ -224,7 +224,8 @@ namespace ExpressBase.Mobile
             selected = new ComboBoxLabel
             {
                 Text = displayMember,
-                Value = valueMember
+                Value = valueMember,
+                Row = row
             };
             SearchBox.Text = displayMember;
         }
@@ -336,6 +337,15 @@ namespace ExpressBase.Mobile
             if (dt != null && dt.Rows.Any())
             {
                 return dt.Rows[0][DisplayMember.ColumnName];
+            }
+            return null;
+        }
+
+        public object getColumn(string colname)
+        {
+            if (this.selected != null)
+            {
+                return this.selected?.Row[colname];
             }
             return null;
         }

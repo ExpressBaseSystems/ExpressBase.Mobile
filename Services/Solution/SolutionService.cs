@@ -46,6 +46,7 @@ namespace ExpressBase.Mobile.Services
             ValidateSidResponse response = null;
 
             RestClient client = new RestClient(ApiConstants.PROTOCOL + url);
+
             RestRequest request = new RestRequest(ApiConstants.VALIDATE_SOL, Method.GET);
 
             try

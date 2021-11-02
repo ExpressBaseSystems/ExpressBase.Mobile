@@ -87,6 +87,7 @@ namespace ExpressBase.Mobile.Views.Shared
                         Padding = new Thickness(10),
                         Text = row[this.powerSelect.DisplayMember.ColumnName]?.ToString(),
                         Value = row[this.powerSelect.ValueMember.ColumnName],
+                        Row = row
                     };
                     lbl.GestureRecognizers.Add(recognizer);
                     ResultList.Children.Add(lbl);

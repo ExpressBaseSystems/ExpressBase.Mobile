@@ -7,9 +7,9 @@ namespace ExpressBase.Mobile.Services.LocalDB
 {
     public class DBService : IDBService
     {
-        private static readonly DBService _current;
+        private static DBService instance;
 
-        public static DBService Current => _current ?? new DBService();
+        public static DBService Current => instance ??= new DBService();
 
         private DBService() { }
 

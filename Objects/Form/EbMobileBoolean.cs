@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
 using Xamarin.Forms;
@@ -59,6 +60,18 @@ namespace ExpressBase.Mobile
                 EbLog.Error("Boolean setvalue error");
                 EbLog.Error(ex.Message);
             }
+        }
+
+        public override MobileTableColumn GetMobileTableColumn()
+        {
+            bool value = this.GetValue<bool>();
+
+            return new MobileTableColumn
+            {
+                Name = this.Name,
+                Type = this.EbDbType,
+                Value = value.ToString().ToLower()
+            };
         }
 
         public override void Reset()

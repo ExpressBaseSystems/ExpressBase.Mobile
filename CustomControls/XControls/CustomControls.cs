@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using ExpressBase.Mobile.Data;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.CustomControls
 {
@@ -26,6 +27,8 @@ namespace ExpressBase.Mobile.CustomControls
     public class ComboBoxLabel : Label
     {
         public object Value { set; get; }
+
+        public EbDataRow Row { set; get; }
 
         public ComboBoxLabel() { }
 

@@ -28,7 +28,7 @@ namespace ExpressBase.Mobile.Services.DashBoard
 
         public async Task<EbDataSet> GetLocalDataAsync(EbScript script)
         {
-            return null;
+            return await Task.FromResult<EbDataSet>(null);
         }
     }
 }
