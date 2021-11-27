@@ -52,7 +52,8 @@
                                       NetWorkType="{Binding NetworkType}"
                                       FormMode="{Binding Mode}"
                                       Controls="{Binding Controls}"
-                                      Spacing="{Binding Form.Spacing}">
+                                      Spacing="{Binding Form.Spacing}"
+                                      Context="{Binding Context}">
                     </control:FormView>
 
                     <Button x:Name="SaveButton"

@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -15,6 +16,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public EbMobileForm Form { set; get; }
 
         public List<EbMobileControl> Controls { set; get; }
+
+        public EbDataRow Context { set; get; }
 
         public FormMode Mode { set; get; }
 

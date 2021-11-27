@@ -28,6 +28,8 @@ namespace ExpressBase.Mobile
 
         public DataGridRowHelper CurrentRow { set; get; }
 
+        public EbDataRow Context { set; get; }
+
         [OnDeserialized]
         public void OnDeserializedMethod(StreamingContext context)
         {
@@ -36,13 +38,19 @@ namespace ExpressBase.Mobile
 
         public override View Draw(FormMode mode, NetworkMode network)
         {
-            this.FormRenderMode = mode;
-            this.NetworkType = network;
+            FormRenderMode = mode;
+            NetworkType = network;
 
             gridView = new DataGrid(this);
             XControl = gridView;
 
             return base.Draw();
+        }
+
+        public override View Draw(FormMode mode, NetworkMode network, EbDataRow context = null)
+        {
+            Context = context;
+            return Draw();
         }
 
         public MobileTableRow GetControlValues(bool isHeader = false)
