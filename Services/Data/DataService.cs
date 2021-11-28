@@ -54,7 +54,7 @@ namespace ExpressBase.Mobile.Services
             return new MobileDataResponse();
         }
 
-        public async Task<MobileDataResponse> GetDataAsync(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect)
+        public async Task<MobileDataResponse> GetDataAsync(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search, bool is_powerselect, bool no_wrap = false)
         {
             try
             {
@@ -73,6 +73,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddParameter("limit", limit);
                 request.AddParameter("offset", offset);
                 request.AddParameter("is_powerselect", is_powerselect);
+                request.AddParameter("no_wrap", no_wrap);
 
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);

@@ -227,7 +227,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
         {
             try
             {
-                MobileDataResponse data = await DataService.Instance.GetDataAsync(dataSourceRefId, 0, 0, dataGrid.Context?.ConvertToParams(), null, null, false);
+                MobileDataResponse data = await DataService.Instance.GetDataAsync(dataSourceRefId, 0, 0, dataGrid.Context?.ConvertToParams(), null, null, false, true);
 
                 if (data != null && data.Data != null && data.Data.Tables.HasLength(2))
                 {

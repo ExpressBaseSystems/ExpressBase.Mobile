@@ -80,7 +80,7 @@ namespace ExpressBase.Mobile
             return XView;
         }
 
-        public virtual View Draw(FormMode mode, NetworkMode network, EbDataRow context = null)
+        public virtual View Draw(FormMode mode, NetworkMode network, EbDataRow context)
         {
             return Draw(mode, network);
         }

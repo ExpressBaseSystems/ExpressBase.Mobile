@@ -47,10 +47,10 @@ namespace ExpressBase.Mobile
             return base.Draw();
         }
 
-        public override View Draw(FormMode mode, NetworkMode network, EbDataRow context = null)
+        public override View Draw(FormMode mode, NetworkMode network, EbDataRow context)
         {
             Context = context;
-            return Draw();
+            return Draw(mode, network);
         }
 
         public MobileTableRow GetControlValues(bool isHeader = false)
@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile
                         Value = isHeader ? ctrl.Label : ctrl.GetValue()
                     };
 
-                    if(ctrl is EbMobileSimpleSelect ps)
+                    if (ctrl is EbMobileSimpleSelect ps)
                     {
                         column.DisplayValue = ps.GetDisplayValue();
                     }
@@ -91,12 +91,12 @@ namespace ExpressBase.Mobile
 
         public string GetQuery(string parentTable = null)
         {
-            List<string> colums = new List<string> { 
+            List<string> colums = new List<string> {
                 "eb_device_id",
                 "eb_appversion",
                 "eb_created_at_device",
                 "eb_loc_id",
-                "id" 
+                "id"
             };
 
             colums.Add($"{parentTable}_id");
