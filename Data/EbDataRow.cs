@@ -1,9 +1,7 @@
 ﻿using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.Data
 {
@@ -84,6 +82,22 @@ namespace ExpressBase.Mobile.Data
                 return null;
             }
             set { this[this.Rows.Table.Columns[columnname].ColumnIndex] = value; }
+        }
+
+        public List<Param> ConvertToParams()
+        {
+            List<Param> parameters = new List<Param>();
+
+            foreach(EbDataColumn column in Rows.Table.Columns)
+            {
+                parameters.Add(new Param
+                {
+                    Name = column.ColumnName,
+                    Type = ((int)column.Type).ToString(),
+                    Value = this[column.ColumnName]?.ToString()
+                });
+            }
+            return parameters;
         }
     }
 

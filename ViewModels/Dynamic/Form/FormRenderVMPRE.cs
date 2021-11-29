@@ -8,8 +8,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 {
     public class FormRenderVMPRE : FormRenderViewModel
     {
-        private readonly EbDataRow contextRow;
-
         private readonly List<EbMobileDataColToControlMap> linkFormParameters;
 
         public FormRenderVMPRE(EbMobilePage page, List<EbMobileDataColToControlMap> linkMap, EbDataRow contextrow) : base(page)
@@ -17,7 +15,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             this.Mode = FormMode.PREFILL;
 
             linkFormParameters = linkMap;
-            contextRow = contextrow;
+            Context = contextrow;
         }
 
         public override async Task InitializeAsync()
@@ -36,7 +34,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             foreach (EbMobileDataColToControlMap map in this.linkFormParameters)
             {
-                object value = contextRow[map.ColumnName];
+                object value = Context[map.ColumnName];
 
                 if (map.FormControl == null)
                 {

@@ -80,6 +80,11 @@ namespace ExpressBase.Mobile
             return XView;
         }
 
+        public virtual View Draw(FormMode mode, NetworkMode network, EbDataRow context)
+        {
+            return Draw(mode, network);
+        }
+
         private Label validationLabel;
 
         private StackLayout xview;

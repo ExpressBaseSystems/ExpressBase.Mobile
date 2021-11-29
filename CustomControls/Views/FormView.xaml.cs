@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace ExpressBase.Mobile.CustomControls
         public static readonly BindableProperty FormModeProperty = BindableProperty.Create("FormMode", typeof(FormMode), typeof(ContentView));
 
         public static readonly BindableProperty SpacingProperty = BindableProperty.Create(nameof(Spacing), typeof(int), typeof(ContentView), defaultValue: 0);
+
+        public static readonly BindableProperty ContextProperty = BindableProperty.Create(nameof(Context), typeof(EbDataRow), typeof(ContentView));
 
         public List<EbMobileControl> Controls
         {
@@ -42,6 +45,12 @@ namespace ExpressBase.Mobile.CustomControls
             set { SetValue(SpacingProperty, value); }
         }
 
+        public EbDataRow Context
+        {
+            get { return (EbDataRow)GetValue(ContextProperty); }
+            set { SetValue(ContextProperty, value); }
+        }
+
         public FormView()
         {
             InitializeComponent();
@@ -50,7 +59,7 @@ namespace ExpressBase.Mobile.CustomControls
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
-            this.Render();
+            Render();
 
             FormViewContainer.Spacing = Spacing;
         }
@@ -63,20 +72,20 @@ namespace ExpressBase.Mobile.CustomControls
 
                 foreach (EbMobileControl ctrl in Controls)
                 {
-                    if (ctrl is EbMobileTableLayout)
+                    if (ctrl is EbMobileTableLayout table)
                     {
-                        foreach (EbMobileTableCell Tc in (ctrl as EbMobileTableLayout).CellCollection)
+                        foreach (EbMobileTableCell cell in table.CellCollection)
                         {
-                            foreach (EbMobileControl tbctrl in Tc.ControlCollection)
+                            foreach (EbMobileControl tbctrl in cell.ControlCollection)
                             {
-                                View controlView = tbctrl.Draw(this.FormMode, this.NetWorkType);
+                                View controlView = tbctrl.Draw(FormMode, NetWorkType, Context);
                                 FormViewContainer.Children.Add(controlView);
                             }
                         }
                     }
                     else
                     {
-                        View controlView = ctrl.Draw(this.FormMode, this.NetWorkType);
+                        View controlView = ctrl.Draw(FormMode, NetWorkType, Context);
                         FormViewContainer.Children.Add(controlView);
                     }
                 }
