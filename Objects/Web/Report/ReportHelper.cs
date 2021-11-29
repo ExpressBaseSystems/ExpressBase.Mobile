@@ -248,4 +248,17 @@ namespace ExpressBase.Mobile
         JustifiedAll = 8,
         Undefined = -1
     }
+
+    public class ObjectBasicInfo : EbObject
+    {
+        public override string Name { get; set; }
+
+        public string ObjName { get; set; }
+
+        public string ObjDisplayName { get; set; }
+
+        public string Version { get; set; }
+
+        public string ObjRefId { get; set; }
+    }
 }
