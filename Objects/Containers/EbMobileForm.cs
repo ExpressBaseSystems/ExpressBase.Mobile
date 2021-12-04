@@ -26,6 +26,8 @@ namespace ExpressBase.Mobile
 
         public string WebFormRefId { set; get; }
 
+        public List<ObjectBasicInfo> PrintDocs { get; set; }
+
         public string RenderValidatorRefId { set; get; }
 
         public List<Param> RenderValidatorParams { get; set; }
