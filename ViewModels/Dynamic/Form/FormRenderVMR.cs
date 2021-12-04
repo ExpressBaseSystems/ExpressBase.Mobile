@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
@@ -27,13 +28,15 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected override void SetValues()
         {
-            if (context.ContextToControlMap == null)
+            List<EbCTCMapper> ebCTCMappers = this.context.UseLinkSettings ? context.ContextToControlMap : context.ContextToFabControlMap;
+
+            if (ebCTCMappers == null)
             {
                 EbLog.Warning($"column to control map empty in context visualization in page '{this.Page.DisplayName}'");
                 return;
             };
 
-            foreach (var map in context.ContextToControlMap)
+            foreach (var map in ebCTCMappers)
             {
                 object value = contextRow[map.ColumnName];
 
