@@ -112,7 +112,7 @@ namespace ExpressBase.Mobile.Views.Shared
             try
             {
                 if (powerSelect.DisplayMember == null)
-                    throw new Exception();
+                    throw new Exception("Display member is null: " + powerSelect.Name);
 
                 if (powerSelect.NetworkType == NetworkMode.Online)
                     dt = await this.GetLiveData(text, preload);
@@ -166,28 +166,26 @@ namespace ExpressBase.Mobile.Views.Shared
                 {
                     throw new Exception("Display member cannot be null");
                 }
+                List<Param> search_params = new List<Param>();
 
-                List<Param> parameters = null;
-
-                if (!preload)
+                if (!string.IsNullOrWhiteSpace(search))
                 {
-                    parameters = new List<Param>();
-
-                    Param p = new Param
+                    search_params.Add(new Param()
                     {
-                        Name = powerSelect.DisplayMember.ColumnName,
+                        Name = powerSelect.DisplayMember.Name,
                         Type = ((int)powerSelect.DisplayMember.Type).ToString(),
                         Value = search
-                    };
-                    parameters.Add(p);
+                    });
                 }
 
-                var response = await DataService.Instance.GetDataAsync(powerSelect.DataSourceRefId, 100, 0, parameters, null, null, true);
+                List<Param> parameters = EbFormHelper.Instance.GetPsParams(powerSelect.Parameters);
+
+                var response = await DataService.Instance.GetDataAsyncPs(powerSelect.DataSourceRefId, 100, 0, parameters, search_params);
 
                 if (response.Data != null && response.Data.Tables.HasLength(2))
                     dt = response.Data.Tables[1];
                 else
-                    throw new Exception();
+                    throw new Exception("response.Data is invalid");
             }
             catch (Exception ex)
             {

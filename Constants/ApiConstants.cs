@@ -18,6 +18,7 @@
         public const string GET_VIS_DATA_V2 = "api/v2/data/visualization";
         public const string GET_PROFILE_DATA = "api/get_profile";
         public const string GET_DATA_FLAT = "api/get_data_flat";
+        public const string GET_DATA_PS = "api/get_data_ps";
 
 
         public const string AUTHETICATE = "api/auth";

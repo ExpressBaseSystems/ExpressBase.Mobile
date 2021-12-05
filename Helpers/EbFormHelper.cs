@@ -144,6 +144,21 @@ namespace ExpressBase.Mobile.Helpers
             return true;
         }
 
+        public List<Param> GetPsParams(List<Param> Params)
+        {
+            List<Param> parameters = new List<Param>();
+            foreach (Param p in Params)
+            {
+                parameters.Add(new Param
+                {
+                    Name = p.Name,
+                    Type = p.Type,
+                    Value = controls[p.Name].getValue()?.ToString()
+                });
+            }
+            return parameters;
+        }
+
         private void InitValueExpr(ExprDependency exprDep, string trigger_control, string parent = CTRL_PARENT_FORM)
         {
             if (exprDep.HasValueDependency)

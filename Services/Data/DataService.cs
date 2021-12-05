@@ -89,6 +89,35 @@ namespace ExpressBase.Mobile.Services
             return new MobileDataResponse();
         }
 
+        public async Task<MobileDataResponse> GetDataAsyncPs(string refid, int limit, int offset, List<Param> param, List<Param> search)
+        {
+            try
+            {
+                RestRequest req = new RestRequest(ApiConstants.GET_DATA_PS, Method.POST);
+                req.AddParameter("refid", refid);
+
+                if (param != null && param.Count > 0)
+                    req.AddParameter("param", JsonConvert.SerializeObject(param));
+                if (search != null && search.Count > 0)
+                    req.AddParameter("search", JsonConvert.SerializeObject(search));
+
+                req.AddParameter("limit", limit);
+                req.AddParameter("offset", offset);
+
+                // auth Headers for api
+                req.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                req.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+                IRestResponse iresp = await HttpClient.ExecuteAsync(req);
+                return JsonConvert.DeserializeObject<MobileDataResponse>(iresp.Content);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return new MobileDataResponse();
+        }
+
         public async Task<MobileDataResponse> GetDataAsyncV2(string refid, int limit, int offset, List<Param> param, List<SortColumn> sort, List<Param> search)
         {
             try
