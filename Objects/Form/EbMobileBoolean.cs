@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile
             {
                 Name = this.Name,
                 Type = this.EbDbType,
-                Value = value.ToString().ToLower()
+                Value = value
             };
         }
 
