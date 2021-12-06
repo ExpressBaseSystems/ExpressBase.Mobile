@@ -111,6 +111,8 @@ namespace ExpressBase.Mobile
 
         public override string VersionNumber { get; set; }
 
+        public string OfflineQuery { get; set; }
+
         public bool HideInMenu { get; set; }
 
         public override string Status { get; set; }
@@ -217,9 +219,6 @@ namespace ExpressBase.Mobile
 
 
         public User ReadingUser { get; set; }
-
-
-        public User RenderingUser { get; set; }
 
         public CultureInfo CultureInfo { get; set; }
 
@@ -361,7 +360,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-       // public EbBaseService ReportService { get; set; }
+        // public EbBaseService ReportService { get; set; }
 
         //public EbStaticFileClient FileClient { get; set; }
 
@@ -867,12 +866,12 @@ namespace ExpressBase.Mobile
         {
             string timestamp = String.Format("{0:" + CultureInfo.DateTimeFormat.FullDateTimePattern + "}", CurrentTimestamp);
             ColumnText ct = new ColumnText(Canvas);
-            Phrase phrase = new Phrase("page:" + PageNumber.ToString() + ", " + RenderingUser?.FullName ?? "Machine User" + ", " + timestamp);
+            Phrase phrase = new Phrase("page:" + PageNumber.ToString() + ", " + App.Settings.CurrentUser?.FullName ?? "Machine User" + ", " + timestamp);
             phrase.Font.Size = 6;
             phrase.Font.Color = Color.GRAY;
             ct.SetSimpleColumn(phrase, 5, 2 + Margin.Bottom, (WidthPt - 20 - Margin.Left) - 20, 20 + Margin.Bottom, 15, Element.ALIGN_RIGHT);
             ct.Go();
-        }        
+        }
 
         public EbReport()
         {
@@ -889,7 +888,7 @@ namespace ExpressBase.Mobile
             ReportGroups = new List<EbReportGroup>();
         }
 
-       // public static EbOperations Operations = ReportOperations.Instance;
+        // public static EbOperations Operations = ReportOperations.Instance;
 
         //public byte[] GetImage(int refId)
         //{

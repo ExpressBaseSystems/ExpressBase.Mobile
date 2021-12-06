@@ -297,7 +297,7 @@ namespace ExpressBase.Mobile
             float lly = Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop + Rep.RowHeight);
 
             ColumnText ct = new ColumnText(Rep.Canvas);
-            Phrase phrase = GetFormattedPhrase(this.Font, Rep.Font, Rep.RenderingUser?.FullName ?? "Machine User");
+            Phrase phrase = GetFormattedPhrase(this.Font, Rep.Font, App.Settings.CurrentUser?.FullName ?? "Machine User");
             ct.SetSimpleColumn(phrase, Llx, lly, Urx, ury, Leading, (int)TextAlign);
             ct.Go();
         }
@@ -404,7 +404,7 @@ namespace ExpressBase.Mobile
 
     public class EbParamBoolean : EbReportField
     {
-        
+
         public override string Title { set; get; }
 
         public override void DrawMe(float printingTop, EbReport Rep, List<Param> Linkparams, int slno)
@@ -435,7 +435,7 @@ namespace ExpressBase.Mobile
         public string Code { get; set; }
 
         public int Type { get; set; }
-                
+
         public bool GuardBars { get; set; }
 
         public float BaseLine { get; set; }
@@ -445,7 +445,7 @@ namespace ExpressBase.Mobile
             int tableIndex = Convert.ToInt32(Code.Split('.')[0].Substring(1));
             string column_name = Code.Split('.')[1];
             string column_val = Rep.GetDataFieldValue(column_name, slno, tableIndex);
-          
+
             iTextSharp.text.Image imageEAN = null;
             try
             {

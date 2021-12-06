@@ -37,6 +37,8 @@ namespace ExpressBase.Mobile.Services
 
         public List<MobilePagesWraper> MobilePages { set; get; }
 
+        public List<WebObjectsWraper> WebObjects { set; get; }
+
         public List<MobilePagesWraper> ExternalMobilePages { set; get; }
 
         public AppVendor Vendor { set; get; }
@@ -95,6 +97,7 @@ namespace ExpressBase.Mobile.Services
                 if (CurrentApplication != null)
                 {
                     MobilePages = CurrentApplication.MobilePages;
+                    WebObjects = CurrentApplication.WebObjects;
                 }
 
                 CurrentUser = this.GetUser();

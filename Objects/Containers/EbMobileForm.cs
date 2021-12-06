@@ -9,8 +9,11 @@ using ExpressBase.Mobile.Structures;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -119,6 +122,49 @@ namespace ExpressBase.Mobile
             {
                 EbLog.Error("Error in [EbMobileForm.Save] " + ex.Message);
             }
+
+            try
+            {
+                if (this.PrintDocs?.Count > 0 && response.Status)
+                {
+                    PdfService PdfService = new PdfService();
+                    List<Param> param = new List<Param>{new Param
+                    {
+                        Name = "id",
+                        Type = ((int)(EbDbTypes.Int32)).ToString(),
+                        Value = response.PushResponse.RowId.ToString()
+                    } };
+
+                    ReportRenderResponse r = null;
+
+                    if (NetworkType == NetworkMode.Online)
+                    {
+                        r = await PdfService.GetPdfOnline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
+                    }
+                    //else if (NetworkType == NetworkMode.Offline)
+                    //{
+                    //    r = PdfService.GetPdfOffline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
+                    //}
+
+                    if (r?.ReportBytea != null)
+                    {
+                        INativeHelper helper = DependencyService.Get<INativeHelper>();
+                        string root = App.Settings.AppDirectory;
+                        string path = helper.NativeRoot + $"/{root}/{App.Settings.CurrentSolution.SolutionName}/print.pdf";
+                        File.WriteAllBytes(path, r.ReportBytea);
+
+                        await Launcher.OpenAsync(new OpenFileRequest
+                        {
+                            File = new ReadOnlyFile(path)
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Error in [EbMobileForm.Print] " + ex.Message);
+            }
+
             return response;
         }
 

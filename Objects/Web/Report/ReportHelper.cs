@@ -261,4 +261,10 @@ namespace ExpressBase.Mobile
 
         public string ObjRefId { get; set; }
     }
+
+    public class ObjectBasicReport : ObjectBasicInfo
+    {
+        public string Title { get; set; }
+    }
+
 }

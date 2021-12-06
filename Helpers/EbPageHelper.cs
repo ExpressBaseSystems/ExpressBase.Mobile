@@ -93,6 +93,21 @@ namespace ExpressBase.Mobile.Helpers
             }
             return null;
         }
+        public static EbObject GetWebObjects(string Refid)
+        {
+            if (string.IsNullOrEmpty(Refid))
+                return null;
+            try
+            {
+                WebObjectsWraper wrpr = App.Settings.WebObjects?.Find(item => item.RefId == Refid);
+                return wrpr?.GetObject();
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("external page not found, " + ex.Message);
+            }
+            return null;
+        }
 
         public static List<EbMobileForm> GetOfflineForms()
         {

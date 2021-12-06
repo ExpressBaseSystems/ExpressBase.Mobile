@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
+using ExpressBase.Mobile.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -171,6 +172,28 @@ namespace ExpressBase.Mobile.Models
         public string Json { set; get; }
 
         public int ObjectType { set; get; }
+
+        public EbObject GetObject()
+        {
+            return DeserializeJsonObject();
+        }
+
+        private EbObject DeserializeJsonObject()
+        {
+            EbObject obj = null;
+            try
+            {
+                string regexed = EbSerializers.JsonToNETSTD(this.Json);
+                obj = EbSerializers.Json_Deserialize<EbObject>(regexed);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info("DeserializeJsonPage error inside pagewrapper");
+                EbLog.Error(ex.Message);
+            }
+            return obj;
+        }
+
     }
 
     public class ValidateSidResponse
@@ -311,5 +334,14 @@ namespace ExpressBase.Mobile.Models
         public string Version { set; get; }
 
         public ApiMessage Message { get; set; }
+    }
+
+    public class ReportRenderResponse  
+    {  
+        public String ReportName { get; set; }
+         
+        public byte[] ReportBytea { get; set; }
+         
+        public DateTime CurrentTimestamp { get; set; }
     }
 }
