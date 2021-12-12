@@ -19,6 +19,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public EbDataRow Context { set; get; }
 
+        public EbDataRow PrefillData { set; get; }
+
         public FormMode Mode { set; get; }
 
         protected IFormService FormDataService;
@@ -80,11 +82,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 await Task.Run(() => this.Form.CreateTableSchema());
             }
 
+            if (this.Mode == FormMode.NEW || this.Mode == FormMode.PREFILL || this.Mode == FormMode.REF)
+                await ExpandContextIfConfigured();
+
             if (this.Mode == FormMode.NEW) SetValues();
         }
 
         protected virtual void SetValues()
         {
+            if (this.Mode == FormMode.NEW)
+                this.SetValuesFormContext();
+
             if (this.Mode == FormMode.NEW || this.Mode == FormMode.PREFILL || this.Mode == FormMode.REF)
                 InitDefaultValueExpressions();
 
@@ -170,6 +178,53 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             foreach (EbMobileControl ctrl in this.Form.ControlDictionary.Values)
             {
                 EbFormHelper.EvaluateExprOnLoad(ctrl, this.Mode);
+            }
+        }
+
+        private async Task ExpandContextIfConfigured()
+        {
+            if (this.Form.ContextToFormControlMap?.Count > 0)
+            {
+                if (this.Page.NetworkMode == NetworkMode.Online && !string.IsNullOrWhiteSpace(this.Form.ContextOnlineData))
+                {
+                    List<Param> cParams = new List<Param>();
+
+                    cParams.Add(new Param
+                    {
+                        Name = "eb_loc_id",
+                        Type = "11",
+                        Value = App.Settings.CurrentLocation.LocId.ToString()
+                    });
+
+                    MobileDataResponse data = await DataService.Instance.GetDataAsync(this.Form.ContextOnlineData, 0, 0, cParams, null, null, false);
+
+                    if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
+                    {
+                        this.PrefillData = row;
+                        EbLog.Info("ContextOnlineData api returned valid data");
+                    }
+                    else
+                        EbLog.Info("ContextOnlineData api returned empty row collection");
+                }
+            }
+        }
+
+        protected void SetValuesFormContext()
+        {
+            if (this.PrefillData != null && this.Form.ContextToFormControlMap?.Count > 0)
+            {
+                foreach (var map in this.Form.ContextToFormControlMap)
+                {
+                    object value = this.PrefillData[map.ColumnName];
+
+                    if (this.Form.ControlDictionary.TryGetValue(map.ControlName, out EbMobileControl ctrl))
+                    {
+                        if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
+                            continue;
+                        else
+                            ctrl.SetValue(value);
+                    }
+                }
             }
         }
     }

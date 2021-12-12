@@ -39,6 +39,12 @@ namespace ExpressBase.Mobile
 
         public string SubmitButtonText { set; get; }
 
+        public List<EbCTCMapper> ContextToFormControlMap { set; get; }
+
+        public string ContextOnlineData { set; get; }
+
+        public EbScript ContextOfflineData { set; get; }
+
         public int Spacing { set; get; }
 
         public Dictionary<string, EbMobileControl> ControlDictionary { set; get; }
