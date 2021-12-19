@@ -57,7 +57,15 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public bool HasWebFormRef => !string.IsNullOrEmpty(this.Form.WebFormRefId);
 
-        public Command SaveCommand => new Command(async () => await FormSubmitClicked());
+        public Command SaveCommand => new Command(async () => await FormSubmitClicked(false));
+
+        public Command PrintCommand => new Command(async () =>
+        {
+            if (this.RowId > 0)
+                await this.Form.Print(this.RowId);
+            else
+                await FormSubmitClicked(true);
+        });
 
         public FormRenderViewModel() { }
 
@@ -99,7 +107,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             InitOnLoadExpressions();
         }
 
-        public async Task FormSubmitClicked()
+        public async Task FormSubmitClicked(bool Print)
         {
             if (!Utils.IsNetworkReady(this.NetworkType))
             {
@@ -111,7 +119,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 EbLog.Info($"Form '{this.PageName}' validation success ready to submit");
                 this.Form.NetworkType = this.NetworkType;
-                await Submit();
+                await Submit(Print);
             }
             else
             {
@@ -120,13 +128,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        protected virtual async Task Submit()
+        protected virtual async Task Submit(bool Print)
         {
             try
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
                 FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
+
+                if (response.Status && Print)
+                    await this.Form.Print(response.PushResponse.RowId);
 
                 Device.BeginInvokeOnMainThread(async () =>
                 {

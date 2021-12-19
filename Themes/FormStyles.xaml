@@ -230,7 +230,7 @@
         <Setter Property="BackgroundColor"
                 Value="Transparent"></Setter>
         <Setter Property="Text"
-                Value="&#xf029;"></Setter>
+                Value="&#xf005;"></Setter>
         <Setter Property="Padding"
                 Value="0"></Setter>
         <Setter Property="FontFamily"

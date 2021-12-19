@@ -128,17 +128,21 @@ namespace ExpressBase.Mobile
             {
                 EbLog.Error("Error in [EbMobileForm.Save] " + ex.Message);
             }
+            return response;
+        }
 
+        public async Task Print(int rowId)
+        {
             try
             {
-                if (this.PrintDocs?.Count > 0 && response.Status)
+                if (this.PrintDocs?.Count > 0)
                 {
                     PdfService PdfService = new PdfService();
                     List<Param> param = new List<Param>{new Param
                     {
                         Name = "id",
                         Type = ((int)(EbDbTypes.Int32)).ToString(),
-                        Value = response.PushResponse.RowId.ToString()
+                        Value = rowId.ToString()
                     } };
 
                     ReportRenderResponse r = null;
@@ -170,8 +174,6 @@ namespace ExpressBase.Mobile
             {
                 EbLog.Error("Error in [EbMobileForm.Print] " + ex.Message);
             }
-
-            return response;
         }
 
         private async Task<MobileFormData> GetFormData(int RowId)
