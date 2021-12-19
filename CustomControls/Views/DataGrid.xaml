@@ -22,7 +22,8 @@
                      BackgroundColor="#eee">
             </BoxView>
 
-            <Button Grid.Row="0"
+            <Button x:Name="AddRowButton"
+                    Grid.Row="0"
                     Grid.Column="1"
                     Padding="0"
                     HeightRequest="30"

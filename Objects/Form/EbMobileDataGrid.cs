@@ -24,6 +24,12 @@ namespace ExpressBase.Mobile
 
         public EbScript OfflineQuery { set; get; }
 
+        public bool DisableAdd { set; get; }
+
+        public bool DisableDelete { set; get; }
+
+        public bool DisableEdit { set; get; }
+
         private DataGrid gridView;
 
         public DataGridRowHelper CurrentRow { set; get; }
