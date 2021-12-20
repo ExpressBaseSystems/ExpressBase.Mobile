@@ -25,7 +25,7 @@ namespace ExpressBase.Mobile.Services
             ReportRenderResponse resp = null;
             try
             {
-                RestRequest request = new RestRequest("api/get_pdf", Method.GET);
+                RestRequest request = new RestRequest(ApiConstants.GET_PDF, Method.GET);
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
@@ -82,13 +82,13 @@ namespace ExpressBase.Mobile.Services
                     //}
                     //Report.FileClient = FileClient;
                     //Report.Solution = GetSolutionObject(request.SolnId);
-                   // Report.CultureInfo = CultureHelper.GetSerializedCultureInfo(App.Settings.CurrentUser?.Preference.Locale ?? "en-US").GetCultureInfo();
+                    // Report.CultureInfo = CultureHelper.GetSerializedCultureInfo(App.Settings.CurrentUser?.Preference.Locale ?? "en-US").GetCultureInfo();
                     Report.Parameters = JsonConvert.DeserializeObject<List<Param>>(param);
-                    Report.Ms1 = new MemoryStream(); 
+                    Report.Ms1 = new MemoryStream();
                     if (Report.DataSourceRefId != string.Empty)
                     {
                         //Groupings = new List<string>();
-                       // Report.DataSet = App.DataDB.DoQueries(Report.OfflineQuery, Report.Parameters.ToArray());                       
+                        // Report.DataSet = App.DataDB.DoQueries(Report.OfflineQuery, Report.Parameters.ToArray());                       
                     }
                     float _width = Report.WidthPt - Report.Margin.Left;// - Report.Margin.Right;
                     float _height = Report.HeightPt - Report.Margin.Top - Report.Margin.Bottom;

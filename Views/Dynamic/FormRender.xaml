@@ -82,7 +82,7 @@
                                 IsVisible="false"
                                 Grid.Column="1"
                                 HorizontalOptions="FillAndExpand"
-                                Text="Print"
+                                Text="{Binding PrintButtonText}"
                                 TextColor="#333333"
                                 Command="{Binding PrintCommand}"
                                 CornerRadius="4"

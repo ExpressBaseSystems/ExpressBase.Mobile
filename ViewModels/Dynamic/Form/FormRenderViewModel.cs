@@ -29,6 +29,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public string SubmitButtonText { set; get; }
 
+        public string PrintButtonText { set; get; }
+
         private bool isEditBtnVisible = false;
 
         private bool isSaveBtnVisible = true;
@@ -61,8 +63,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command PrintCommand => new Command(async () =>
         {
-            if (this.RowId > 0)
+            if (this.RowId > 0 || this.Form.RenderAsFilterDialog)
+            {
+                Device.BeginInvokeOnMainThread(() => IsBusy = true);
                 await this.Form.Print(this.RowId);
+                Device.BeginInvokeOnMainThread(() => IsBusy = false);
+            }
             else
                 await FormSubmitClicked(true);
         });
@@ -77,6 +83,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             FormDataService = new FormService();
             SubmitButtonText = this.Form.GetSubmitButtonText();
+            PrintButtonText = this.Form.GetPrintButtonText();
         }
 
         public override async Task InitializeAsync()
@@ -136,7 +143,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
 
-                if (response.Status && Print)
+                if (response.Status && Print && !this.Form.RenderAsFilterDialog)
                     await this.Form.Print(response.PushResponse.RowId);
 
                 Device.BeginInvokeOnMainThread(async () =>

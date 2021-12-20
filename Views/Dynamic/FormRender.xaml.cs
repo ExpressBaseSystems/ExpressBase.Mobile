@@ -76,9 +76,19 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             if (viewModel.Form.PrintDocs?.Count > 0)
             {
-                ButtonGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
-                ButtonGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
-                (ButtonGrid.Children[1] as Button).IsVisible = true;
+                if (viewModel.Form.RenderAsFilterDialog)
+                {
+                    ButtonGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+                    (ButtonGrid.Children[0] as Button).IsVisible = false;
+                    (ButtonGrid.Children[1] as Button).IsVisible = true;
+                    Loader.Message = "Loading...";
+                }
+                else
+                {
+                    ButtonGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
+                    ButtonGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+                    (ButtonGrid.Children[1] as Button).IsVisible = true;
+                }
             }
         }
 

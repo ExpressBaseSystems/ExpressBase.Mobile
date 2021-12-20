@@ -39,6 +39,10 @@ namespace ExpressBase.Mobile
 
         public string SubmitButtonText { set; get; }
 
+        public string PrintButtonText { set; get; }
+
+        public bool RenderAsFilterDialog { set; get; }
+
         public List<EbCTCMapper> ContextToFormControlMap { set; get; }
 
         public string ContextOnlineData { set; get; }
@@ -138,12 +142,31 @@ namespace ExpressBase.Mobile
                 if (this.PrintDocs?.Count > 0)
                 {
                     PdfService PdfService = new PdfService();
-                    List<Param> param = new List<Param>{new Param
+                    List<Param> param = new List<Param>();
+                    if (this.RenderAsFilterDialog)
                     {
-                        Name = "id",
-                        Type = ((int)(EbDbTypes.Int32)).ToString(),
-                        Value = rowId.ToString()
-                    } };
+                        foreach (KeyValuePair<string, EbMobileControl> pair in this.ControlDictionary)
+                        {
+                            EbMobileControl ctrl = pair.Value;
+                            if (ctrl is IFileUploadControl || ctrl is EbMobileDataGrid)
+                                continue;
+                            param.Add(new Param
+                            {
+                                Name = ctrl.Name,
+                                Type = ((int)ctrl.EbDbType).ToString(),
+                                Value = Convert.ToString(ctrl.GetValue())
+                            });
+                        }
+                    }
+                    else
+                    {
+                        param.Add(new Param
+                        {
+                            Name = "id",
+                            Type = ((int)EbDbTypes.Int32).ToString(),
+                            Value = rowId.ToString()
+                        });
+                    }
 
                     ReportRenderResponse r = null;
 
@@ -554,6 +577,11 @@ namespace ExpressBase.Mobile
         public string GetSubmitButtonText()
         {
             return string.IsNullOrEmpty(this.SubmitButtonText) ? "Save" : this.SubmitButtonText;
+        }
+
+        public string GetPrintButtonText()
+        {
+            return string.IsNullOrEmpty(this.PrintButtonText) ? "Print" : this.PrintButtonText;
         }
     }
 }
