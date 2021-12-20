@@ -232,6 +232,22 @@ namespace ExpressBase.Mobile.Models
             this.Add(row);
             return row;
         }
+
+        public List<T> GetColumnValues<T>(string columnName)
+        {
+            List<T> values = new List<T>();
+
+            foreach(MobileTableRow row in this)
+            {
+                MobileTableColumn column = row[columnName];
+
+                if(column != null)
+                {
+                    values.Add((T)column.Value);
+                }
+            }
+            return values;
+        }
     }
 
     public class MobileTableRow

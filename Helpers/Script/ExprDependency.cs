@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace ExpressBase.Mobile.Helpers.Script
 {
-    public enum ExprType
+    public enum ExpressionType
     {
-        ValueExpr,
-        HideExpr,
-        DisableExpr,
-        DefaultExpr
+        ValueExpression,
+        HideExpression,
+        DisableExpression,
+        DefaultExpression
     }
 
     public class ExprDependency
@@ -37,20 +37,20 @@ namespace ExpressBase.Mobile.Helpers.Script
             DefaultValueExpr = new List<string>();
         }
 
-        public void Add(ExprType type, string dependent)
+        public void Add(ExpressionType type, string dependent)
         {
             switch (type)
             {
-                case ExprType.ValueExpr:
+                case ExpressionType.ValueExpression:
                     AddValueDependent(dependent);
                     break;
-                case ExprType.HideExpr:
+                case ExpressionType.HideExpression:
                     AddHideDependent(dependent);
                     break;
-                case ExprType.DisableExpr:
+                case ExpressionType.DisableExpression:
                     AddDisableDependent(dependent);
                     break;
-                case ExprType.DefaultExpr:
+                case ExpressionType.DefaultExpression:
                     AddDefaultDependent(dependent);
                     break;
             }

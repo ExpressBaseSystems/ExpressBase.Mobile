@@ -4,9 +4,7 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
-using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -95,7 +93,7 @@ namespace ExpressBase.Mobile
             {
                 if (xview == null)
                 {
-                    var formatted = new FormattedString { Spans = { new Span { Text = this.Label } } };
+                    FormattedString formatted = new FormattedString { Spans = { new Span { Text = this.Label } } };
 
                     if (this.Required)
                     {
@@ -189,18 +187,36 @@ namespace ExpressBase.Mobile
             validationLabel.IsVisible = !status;
         }
 
-        public bool HasExpression(ExprType type)
+        public bool HasExpression(ExpressionType type)
         {
-            if (type == ExprType.ValueExpr)
+            if (type == ExpressionType.ValueExpression)
                 return ValueExpr != null && !ValueExpr.IsEmpty();
-            else if (type == ExprType.HideExpr)
+            else if (type == ExpressionType.HideExpression)
                 return HiddenExpr != null && !HiddenExpr.IsEmpty();
-            else if (type == ExprType.DisableExpr)
+            else if (type == ExpressionType.DisableExpression)
                 return DisableExpr != null && !DisableExpr.IsEmpty();
-            else if (type == ExprType.HideExpr)
+            else if (type == ExpressionType.HideExpression)
                 return DefaultValueExpression != null && !DefaultValueExpression.IsEmpty();
             else
                 return false;
+        }
+
+        public bool HasExpression(ExpressionType type, out string script)
+        {
+            EbScript obj = null;
+
+            if (type == ExpressionType.ValueExpression)
+                obj = ValueExpr;
+            else if (type == ExpressionType.HideExpression)
+                obj = HiddenExpr;
+            else if (type == ExpressionType.DisableExpression)
+                obj = DisableExpr;
+            else if (type == ExpressionType.HideExpression)
+                obj = DefaultValueExpression;
+
+            script = obj?.GetCode();
+
+            return obj != null && !obj.IsEmpty();
         }
     }
 }

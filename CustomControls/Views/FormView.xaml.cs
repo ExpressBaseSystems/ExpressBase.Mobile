@@ -73,6 +73,8 @@ namespace ExpressBase.Mobile.CustomControls
 
                 foreach (EbMobileControl ctrl in Controls)
                 {
+                    ctrl.Parent = "form";
+
                     if (ctrl is EbMobileTableLayout table)
                     {
                         Grid grid = new Grid() { ColumnSpacing = 0 };

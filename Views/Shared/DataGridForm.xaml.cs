@@ -63,6 +63,8 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             foreach (EbMobileControl ctrl in dataGrid.ChildControls)
             {
+                ctrl.Parent = dataGrid.Name;
+
                 View view = ctrl.XControl == null ? ctrl.Draw(dataGrid.FormRenderMode, dataGrid.NetworkType) : ctrl.XView;
 
                 ControlContainer.Children.Add(view);

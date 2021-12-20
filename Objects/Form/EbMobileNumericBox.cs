@@ -22,7 +22,7 @@ namespace ExpressBase.Mobile
 
         private EbXTextBox valueBox;
 
-        private int valueBoxNumber = 0;
+        private decimal valueBoxNumber = 0;
 
         public override View Draw(FormMode Mode, NetworkMode Network)
         {
@@ -93,7 +93,7 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
-            int value = 0;
+            decimal value = 0;
             try
             {
                 if (RenderType == NumericBoxTypes.ButtonType)
@@ -101,7 +101,7 @@ namespace ExpressBase.Mobile
                 else
                 {
                     var text = (this.XControl as EbXNumericTextBox).Text;
-                    value = Convert.ToInt32(text);
+                    value = Convert.ToDecimal(text);
                 }
             }
             catch (Exception ex)
@@ -118,7 +118,7 @@ namespace ExpressBase.Mobile
             {
                 if (RenderType == NumericBoxTypes.ButtonType)
                 {
-                    valueBoxNumber = Convert.ToInt32(value);
+                    valueBoxNumber = Convert.ToDecimal(value);
                     valueBox.Text = valueBoxNumber.ToString();
                 }
                 else
@@ -153,7 +153,7 @@ namespace ExpressBase.Mobile
         {
             var value = this.GetValue();
 
-            if (this.Required && Convert.ToInt32(value) <= 0)
+            if (this.Required && Convert.ToDecimal(value) <= 0)
                 return false;
 
             return true;
