@@ -107,13 +107,13 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void EvaluateExpression(EbMobileControl ctrl, View view)
         {
-            if (ctrl.HasExpression(ExprType.HideExpr))
+            if (ctrl.HasExpression(ExpressionType.HideExpression))
             {
                 string script = ctrl.HiddenExpr.GetCode();
                 EbListHelper.SetDataRow(DataRow);
                 view.IsVisible = !EbListHelper.EvaluateHideExpr(script);
             }
-            else if (ctrl.HasExpression(ExprType.ValueExpr))
+            else if (ctrl.HasExpression(ExpressionType.ValueExpression))
             {
                 string script = ctrl.ValueExpr.GetCode();
                 EbListHelper.SetDataRow(DataRow);

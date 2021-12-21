@@ -19,7 +19,9 @@
         public const string GET_PROFILE_DATA = "api/get_profile";
         public const string GET_DATA_FLAT = "api/get_data_flat";
         public const string GET_DATA_PS = "api/get_data_ps";
+        public const string GET_PDF = "api/get_pdf";
 
+        public const string PUSH_DATA = "api/push_data";
 
         public const string AUTHETICATE = "api/auth";
         public const string AUTHETICATE_SSO = "api/auth/sso";

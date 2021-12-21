@@ -56,17 +56,39 @@
                                       Context="{Binding Context}">
                     </control:FormView>
 
-                    <Button x:Name="SaveButton"
-                            IsVisible="{Binding IsSaveButtonVisible}"
-                            Grid.Row="1"
-                            Text="{Binding SubmitButtonText}"
-                            CornerRadius="0"
-                            HorizontalOptions="FillAndExpand"
-                            VerticalOptions="EndAndExpand"
-                            BackgroundColor="{DynamicResource Primary_Color}"
-                            TextColor="{DynamicResource Primary_FontColor}"
-                            Command="{Binding SaveCommand}">
-                    </Button>
+                    <StackLayout 
+                        x:Name="ButtonContainer"
+                        Grid.Row="1"
+                        Padding="15,5">
+                        <Grid 
+                            x:Name="ButtonGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                                <ColumnDefinition Width="0*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button 
+                                x:Name="SaveButton"
+                                IsVisible="{Binding IsSaveButtonVisible}"
+                                Grid.Column="0"
+                                Text="{Binding SubmitButtonText}"
+                                HorizontalOptions="FillAndExpand"
+                                BackgroundColor="{DynamicResource Primary_Color}"
+                                TextColor="{DynamicResource Primary_FontColor}"
+                                Command="{Binding SaveCommand}"
+                                CornerRadius="4"
+                                VerticalOptions="EndAndExpand" />
+                            <Button 
+                                x:Name="SaveAndPrint"
+                                IsVisible="false"
+                                Grid.Column="1"
+                                HorizontalOptions="FillAndExpand"
+                                Text="{Binding PrintButtonText}"
+                                TextColor="#333333"
+                                Command="{Binding PrintCommand}"
+                                CornerRadius="4"
+                                VerticalOptions="EndAndExpand" />
+                        </Grid>
+                    </StackLayout>
 
                     <control:ImagePopUp x:Name="ImageFullScreen"
                                         Grid.RowSpan="2">

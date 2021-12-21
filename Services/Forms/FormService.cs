@@ -82,7 +82,7 @@ namespace ExpressBase.Mobile.Services
         {
             try
             {
-                RestRequest request = new RestRequest("api/push_data", Method.POST);
+                RestRequest request = new RestRequest(ApiConstants.PUSH_DATA, Method.POST);
                 request.AddParameter("webform_data", JsonConvert.SerializeObject(WebFormData));
                 request.AddParameter("rowid", RowId);
                 request.AddParameter("refid", WebFormRefId);

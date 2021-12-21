@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers.Script;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,7 @@ namespace ExpressBase.Mobile.Helpers
 {
     public class EbFormHelper
     {
-        private static EbFormHelper instance;
-
-        public static EbFormHelper Instance => instance ??= new EbFormHelper();
+        public static EbFormHelper Instance { set; get; }
 
         private Dictionary<string, EbMobileControl> controls;
 
@@ -28,18 +27,12 @@ namespace ExpressBase.Mobile.Helpers
             };
         }
 
-        private void Dispose()
-        {
-            controls = null;
-            dependencyMap = null;
-            evaluator.RemoveVariable("form");
-        }
-
         public static void Initialize(EbMobileForm form, FormMode mode)
         {
-            Instance.Dispose();
-
-            Instance.controls = form.ControlDictionary;
+            Instance = new EbFormHelper
+            {
+                controls = form.ControlDictionary
+            };
             Instance.evaluator.SetVariable("form", new EbFormEvaluator(mode, form.ControlDictionary));
 
             Instance.dependencyMap = new ControlDependencyMap();
@@ -48,13 +41,11 @@ namespace ExpressBase.Mobile.Helpers
 
         public static void ControlValueChanged(string controlName, string parent = CTRL_PARENT_FORM)
         {
-            if (Instance.dependencyMap.HasDependency(controlName, parent))
+            if (Instance.dependencyMap.HasDependency(controlName, parent, out ExprDependency dependency))
             {
-                ExprDependency exprDep = Instance.dependencyMap.GetDependency(controlName, parent);
-
-                Instance.InitValueExpr(exprDep, controlName, parent);
-                Instance.InitHideExpr(exprDep, parent: parent);
-                Instance.InitDisableExpr(exprDep, parent: parent);
+                Instance.InitValueExpr(dependency, controlName, parent);
+                Instance.InitHideExpr(dependency, parent: parent);
+                Instance.InitDisableExpr(dependency, parent: parent);
             }
             Instance.InitValidators(controlName, parent);
         }
@@ -63,9 +54,9 @@ namespace ExpressBase.Mobile.Helpers
         {
             string parent = ctrl.Parent;
 
-            if (Instance.dependencyMap.HasDependency(ctrl.Name, parent))
+            if (Instance.dependencyMap.HasDependency($"{parent}.{ctrl.Name}"))
             {
-                ExprDependency exprDep = Instance.dependencyMap.GetDependency(ctrl.Name, parent);
+                ExprDependency exprDep = Instance.dependencyMap.GetDependency($"{parent}.{ctrl.Name}");
 
                 if (mode == FormMode.NEW || mode == FormMode.EDIT || mode == FormMode.PREFILL)
                 {
@@ -87,11 +78,11 @@ namespace ExpressBase.Mobile.Helpers
             {
                 if (mode == FormMode.NEW || mode == FormMode.EDIT || mode == FormMode.PREFILL)
                 {
-                    if (ctrl.HasExpression(ExprType.HideExpr))
+                    if (ctrl.HasExpression(ExpressionType.HideExpression))
                     {
                         Instance.EvaluateHideExpr(ctrl, parent);
                     }
-                    if ((mode == FormMode.NEW || mode == FormMode.PREFILL) && ctrl.HasExpression(ExprType.DisableExpr))
+                    if ((mode == FormMode.NEW || mode == FormMode.PREFILL) && ctrl.HasExpression(ExpressionType.DisableExpression))
                     {
                         Instance.EvaluateDisableExpr(ctrl, parent);
                     }
@@ -106,10 +97,10 @@ namespace ExpressBase.Mobile.Helpers
 
         public static bool ContainsInValExpr(string dependencySource, string dependency, string parent = CTRL_PARENT_FORM)
         {
-            if (!Instance.dependencyMap.HasDependency(dependencySource, parent))
+            if (!Instance.dependencyMap.HasDependency($"{parent}.{dependencySource}"))
                 return false;
 
-            ExprDependency map = Instance.dependencyMap.GetDependency(dependencySource, parent);
+            ExprDependency map = Instance.dependencyMap.GetDependency($"{parent}.{dependencySource}");
 
             return map.ValueExpr.Contains(dependency);
         }
@@ -120,9 +111,9 @@ namespace ExpressBase.Mobile.Helpers
             {
                 if (!ctrl.ReadOnly) ctrl.SetAsReadOnly(false);
 
-                if (Instance.dependencyMap.HasDependency(ctrl.Name, ctrl.Parent))
+                if (Instance.dependencyMap.HasDependency($"{ctrl.Parent}.{ctrl.Name}"))
                 {
-                    ExprDependency exprDep = Instance.dependencyMap.GetDependency(ctrl.Name, ctrl.Parent);
+                    ExprDependency exprDep = Instance.dependencyMap.GetDependency($"{ctrl.Parent}.{ctrl.Name}");
 
                     if (ctrl.DoNotPersist)
                         Instance.InitValueExpr(exprDep, ctrl.Name, ctrl.Parent);
@@ -147,13 +138,16 @@ namespace ExpressBase.Mobile.Helpers
         public List<Param> GetPsParams(List<Param> Params)
         {
             List<Param> parameters = new List<Param>();
+
             foreach (Param p in Params)
             {
+                string value = this.GetControlByName(p.Name)?.getValue()?.ToString();
+
                 parameters.Add(new Param
                 {
                     Name = p.Name,
                     Type = p.Type,
-                    Value = controls[p.Name].getValue()?.ToString()
+                    Value = value
                 });
             }
             return parameters;
@@ -165,7 +159,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 foreach (string name in exprDep.ValueExpr)
                 {
-                    EbMobileControl ctrl = GetControl(name, parent);
+                    EbMobileControl ctrl = GetControl(name);
                     EvaluateValueExpr(ctrl, trigger_control, parent);
                 }
             }
@@ -177,7 +171,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 foreach (var name in exprDep.HideExpr)
                 {
-                    EbMobileControl ctrl = GetControl(name, parent);
+                    EbMobileControl ctrl = GetControl(name);
                     this.EvaluateHideExpr(ctrl, parent);
                 }
             }
@@ -193,7 +187,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 foreach (var name in exprDep.DisableExpr)
                 {
-                    EbMobileControl ctrl = GetControl(name, parent);
+                    EbMobileControl ctrl = GetControl(name);
                     this.EvaluateDisableExpr(ctrl, parent);
                 }
             }
@@ -205,9 +199,9 @@ namespace ExpressBase.Mobile.Helpers
 
         private void SetDefaultValueInternal(string controlName, string parent = CTRL_PARENT_FORM)
         {
-            if (this.dependencyMap.HasDependency(controlName, parent))
+            if (this.dependencyMap.HasDependency($"{parent}.{controlName}"))
             {
-                ExprDependency exprDep = this.dependencyMap.GetDependency(controlName, parent);
+                ExprDependency exprDep = this.dependencyMap.GetDependency($"{parent}.{controlName}");
 
                 if (exprDep.HasDefaultDependency)
                 {
@@ -216,7 +210,7 @@ namespace ExpressBase.Mobile.Helpers
                 }
             }
 
-            EbMobileControl ctrl = GetControl(controlName, parent);
+            EbMobileControl ctrl = GetControl($"{parent}.{controlName}");
 
             if (ctrl.DefaultValueExpression != null && !ctrl.DefaultValueExpression.IsEmpty())
             {
@@ -226,7 +220,7 @@ namespace ExpressBase.Mobile.Helpers
 
         private bool InitValidators(string controlName, string parent = CTRL_PARENT_FORM)
         {
-            EbMobileControl ctrl = GetControl(controlName, parent);
+            EbMobileControl ctrl = GetControl($"{parent}.{controlName}");
 
             if (ctrl.Validators == null || !ctrl.Validators.Any() || ctrl is INonPersistControl)
                 return true;
@@ -249,19 +243,18 @@ namespace ExpressBase.Mobile.Helpers
         {
             string expr = ctrl.ValueExpr.GetCode();
 
-            if (this.GetComputedExpr(ctrl.Name, expr, parent, out string computed))
+            string computed = GetComputedExpression(expr, ctrl.Name, parent);
+
+            try
             {
-                try
-                {
-                    object value = evaluator.Execute(computed);
-                    ctrl.SetValue(value);
-                    ctrl.ValueChanged(trigger_control);
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Info($"Value script evaluation error in control '{ctrl.Name}'");
-                    EbLog.Error(ex.Message);
-                }
+                object value = evaluator.Execute(computed);
+                ctrl.SetValue(value);
+                ctrl.ValueChanged(trigger_control);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info($"Value script evaluation error in control '{ctrl.Name}'");
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -269,20 +262,19 @@ namespace ExpressBase.Mobile.Helpers
         {
             string expr = ctrl.HiddenExpr.GetCode();
 
-            if (this.GetComputedExpr(ctrl.Name, expr, parent, out string computed))
-            {
-                try
-                {
-                    bool value = evaluator.Execute<bool>(computed);
-                    ctrl.SetVisibilty(!value);
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Info($"hide script evaluation error in control '{ctrl.Name}', considering as false");
-                    EbLog.Error(ex.Message);
+            string computed = GetComputedExpression(expr, ctrl.Name, parent);
 
-                    ctrl.SetVisibilty(true);
-                }
+            try
+            {
+                bool value = evaluator.Execute<bool>(computed);
+                ctrl.SetVisibilty(!value);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info($"hide script evaluation error in control '{ctrl.Name}', considering as false");
+                EbLog.Error(ex.Message);
+
+                ctrl.SetVisibilty(true);
             }
         }
 
@@ -290,20 +282,19 @@ namespace ExpressBase.Mobile.Helpers
         {
             string expr = ctrl.DisableExpr.GetCode();
 
-            if (this.GetComputedExpr(ctrl.Name, expr, parent, out string computed))
-            {
-                try
-                {
-                    bool value = evaluator.Execute<bool>(computed);
-                    ctrl.SetAsReadOnly(value);
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Info($"Disable script evaluation error in control '{ctrl.Name}', considering as false");
-                    EbLog.Error(ex.Message);
+            string computed = GetComputedExpression(expr, ctrl.Name, parent);
 
-                    ctrl.SetAsReadOnly(false);
-                }
+            try
+            {
+                bool value = evaluator.Execute<bool>(computed);
+                ctrl.SetAsReadOnly(value);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info($"Disable script evaluation error in control '{ctrl.Name}', considering as false");
+                EbLog.Error(ex.Message);
+
+                ctrl.SetAsReadOnly(false);
             }
         }
 
@@ -311,19 +302,18 @@ namespace ExpressBase.Mobile.Helpers
         {
             string expr = ctrl.DefaultValueExpression.GetCode();
 
-            if (this.GetComputedExpr(ctrl.Name, expr, parent, out string computed))
+            string computed = GetComputedExpression(expr, ctrl.Name, parent);
+
+            try
             {
-                try
-                {
-                    object value = evaluator.Execute(computed);
-                    ctrl.SetValue(value);
-                    ctrl.DefaultExprEvaluated = true;
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Info($"Default script evaluation error in control '{ctrl.Name}'");
-                    EbLog.Error(ex.Message);
-                }
+                object value = evaluator.Execute(computed);
+                ctrl.SetValue(value);
+                ctrl.DefaultExprEvaluated = true;
+            }
+            catch (Exception ex)
+            {
+                EbLog.Info($"Default script evaluation error in control '{ctrl.Name}'");
+                EbLog.Error(ex.Message);
             }
         }
 
@@ -331,77 +321,94 @@ namespace ExpressBase.Mobile.Helpers
         {
             string expr = validator.Script.GetCode();
 
-            if (this.GetComputedExpr(controlName, expr, parent, out string computed))
-            {
-                try
-                {
-                    return evaluator.Execute<bool>(computed);
-                }
-                catch (Exception ex)
-                {
-                    EbLog.Info($"validator script evaluation error in control '{controlName}'");
-                    EbLog.Error(ex.Message);
-                }
-            }
-            return false;
-        }
-
-        private bool GetComputedExpr(string controlName, string expr, string parent, out string computedResult)
-        {
-            computedResult = string.Empty;
+            string computed = GetComputedExpression(expr, controlName, parent);
 
             try
             {
-                List<string> dependentNames = dependencyMap.GetNames(parent);
-
-                if (expr.Contains("this"))
-                {
-                    expr = expr.Replace("this", $"{CTRL_PARENT_FORM}.{controlName}");
-                }
-
-                if (expr.Contains($"{CTRL_PARENT_FORM}.{controlName}"))
-                {
-                    expr = expr.Replace($"{CTRL_PARENT_FORM}.{controlName}", $"{CTRL_PARENT_FORM}.Controls[\"{controlName}\"]");
-                }
-
-                if (parent != CTRL_PARENT_FORM && expr.Contains($"{CTRL_PARENT_FORM}.{parent}"))
-                {
-                    expr = expr.Replace($"{CTRL_PARENT_FORM}.{parent}", $"{CTRL_PARENT_FORM}.Controls[\"{parent}\"]");
-                }
-
-                if (dependentNames != null)
-                {
-                    foreach (string name in dependentNames)
-                    {
-                        if (expr.Contains($"{CTRL_PARENT_FORM}.{name}"))
-                        {
-                            expr = expr.Replace($"{CTRL_PARENT_FORM}.{name}", $"{CTRL_PARENT_FORM}.Controls[\"{name}\"]");
-                        }
-                    }
-                }
-                computedResult = expr;
-
-                return true;
+                return evaluator.Execute<bool>(computed);
             }
             catch (Exception ex)
             {
-                EbLog.Info("Error in computation");
+                EbLog.Info($"validator script evaluation error in control '{controlName}'");
                 EbLog.Error(ex.Message);
             }
             return false;
         }
 
-        private EbMobileControl GetControl(string controlName, string parent)
+        private string GetComputedExpression(string expression, string control, string parent)
         {
+            string computed = expression;
+
+            if (computed.Contains("this"))
+            {
+                computed = computed.Replace("this", CTRL_PARENT_FORM);
+            }
+
+            List<string> dependentNames = dependencyMap.GetControlNames();
+
+            foreach (string name in dependentNames)
+            {
+                string[] parts = name.Split(CharConstants.DOT);
+
+                string dependentParent = parts[0];
+                string dependentControl = parts[1];
+
+                if (computed.Contains($"{CTRL_PARENT_FORM}.{dependentControl}"))
+                {
+                    computed = computed.Replace($"{CTRL_PARENT_FORM}.{dependentControl}", $"{CTRL_PARENT_FORM}.Controls[\"{dependentControl}\"]");
+                }
+
+                if (parent != CTRL_PARENT_FORM && computed.Contains($"{CTRL_PARENT_FORM}.{dependentParent}"))
+                {
+                    computed = computed.Replace($"{CTRL_PARENT_FORM}.{dependentParent}", $"{CTRL_PARENT_FORM}.Controls[\"{dependentParent}\"]");
+                }
+
+                if (computed.Contains($"currentRow[\"{dependentControl}\"]"))
+                {
+                    computed = computed.Replace($"currentRow[\"{dependentControl}\"]", $"GetControl(\"{dependentControl}\")");
+                }
+
+                if (computed.Contains($"sum(\"{dependentControl}\")"))
+                {
+                    computed = computed.Replace($"sum(\"{dependentControl}\")", $"Sum(\"{dependentControl}\")");
+                }
+            }
+            return computed;
+        }
+
+        private EbMobileControl GetControl(string nameExpression)
+        {
+            string[] nameParts = nameExpression.Split(CharConstants.DOT);
+
+            string parent = nameParts[0];
+            string control = nameParts[1];
+
             if (parent == CTRL_PARENT_FORM)
             {
-                return this.controls[controlName];
+                return this.controls[control];
             }
             else
             {
-                if (this.controls.TryGetValue(parent, out var ctrl) && ctrl is ILinesEnabled lines)
+                if (this.controls.TryGetValue(parent, out var childctrl) && childctrl is ILinesEnabled lines)
                 {
-                    return lines.ChildControls.Find(c => c.Name == controlName);
+                    return lines.ChildControls.Find(c => c.Name == control);
+                }
+            }
+            return null;
+        }
+
+        private EbMobileControl GetControlByName(string controlName)
+        {
+            foreach(EbMobileControl ctrl in this.controls.Values)
+            {
+                if (ctrl.Name == controlName) return ctrl;
+
+                if(ctrl is ILinesEnabled lines)
+                {
+                    foreach(var linectrl in lines.ChildControls)
+                    {
+                        if (linectrl.Name == controlName) return linectrl;
+                    }
                 }
             }
             return null;

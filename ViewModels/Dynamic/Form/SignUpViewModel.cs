@@ -64,7 +64,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             Device.BeginInvokeOnMainThread(() => IsBusy = show);
         }
 
-        protected override async Task Submit()
+        protected override async Task Submit(bool Print)
         {
             Loading(true);
 
@@ -174,7 +174,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     else
                     {
                         throw new Exception("user type form does not exist in [solutiondata]");
-                    } 
+                    }
                 }
                 else
                 {

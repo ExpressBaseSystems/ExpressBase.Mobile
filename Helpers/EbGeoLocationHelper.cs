@@ -58,7 +58,7 @@ namespace ExpressBase.Mobile.Helpers
             EbLog.Error(_Exception.Message);
 
             if (_Exception is FeatureNotSupportedException)
-                toast.Show("Feature not supproted");
+                toast.Show("Feature not supported");
             else if (_Exception is FeatureNotEnabledException)
                 toast.Show("Feature not enabled");
             else if (_Exception is PermissionException)

@@ -39,6 +39,16 @@ namespace ExpressBase.Mobile
 
         public string SubmitButtonText { set; get; }
 
+        public string PrintButtonText { set; get; }
+
+        public bool RenderAsFilterDialog { set; get; }
+
+        public List<EbCTCMapper> ContextToFormControlMap { set; get; }
+
+        public string ContextOnlineData { set; get; }
+
+        public EbScript ContextOfflineData { set; get; }
+
         public int Spacing { set; get; }
 
         public Dictionary<string, EbMobileControl> ControlDictionary { set; get; }
@@ -122,18 +132,41 @@ namespace ExpressBase.Mobile
             {
                 EbLog.Error("Error in [EbMobileForm.Save] " + ex.Message);
             }
+            return response;
+        }
 
+        public async Task Print(int rowId)
+        {
             try
             {
-                if (this.PrintDocs?.Count > 0 && response.Status)
+                if (this.PrintDocs?.Count > 0)
                 {
                     PdfService PdfService = new PdfService();
-                    List<Param> param = new List<Param>{new Param
+                    List<Param> param = new List<Param>();
+                    if (this.RenderAsFilterDialog)
                     {
-                        Name = "id",
-                        Type = ((int)(EbDbTypes.Int32)).ToString(),
-                        Value = response.PushResponse.RowId.ToString()
-                    } };
+                        foreach (KeyValuePair<string, EbMobileControl> pair in this.ControlDictionary)
+                        {
+                            EbMobileControl ctrl = pair.Value;
+                            if (ctrl is IFileUploadControl || ctrl is EbMobileDataGrid)
+                                continue;
+                            param.Add(new Param
+                            {
+                                Name = ctrl.Name,
+                                Type = ((int)ctrl.EbDbType).ToString(),
+                                Value = Convert.ToString(ctrl.GetValue())
+                            });
+                        }
+                    }
+                    else
+                    {
+                        param.Add(new Param
+                        {
+                            Name = "id",
+                            Type = ((int)EbDbTypes.Int32).ToString(),
+                            Value = rowId.ToString()
+                        });
+                    }
 
                     ReportRenderResponse r = null;
 
@@ -164,8 +197,6 @@ namespace ExpressBase.Mobile
             {
                 EbLog.Error("Error in [EbMobileForm.Print] " + ex.Message);
             }
-
-            return response;
         }
 
         private async Task<MobileFormData> GetFormData(int RowId)
@@ -546,6 +577,11 @@ namespace ExpressBase.Mobile
         public string GetSubmitButtonText()
         {
             return string.IsNullOrEmpty(this.SubmitButtonText) ? "Save" : this.SubmitButtonText;
+        }
+
+        public string GetPrintButtonText()
+        {
+            return string.IsNullOrEmpty(this.PrintButtonText) ? "Print" : this.PrintButtonText;
         }
     }
 }

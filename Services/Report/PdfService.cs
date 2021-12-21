@@ -28,7 +28,7 @@ namespace ExpressBase.Mobile.Services
             ReportRenderResponse resp = null;
             try
             {
-                RestRequest request = new RestRequest("api/get_pdf", Method.GET);
+                RestRequest request = new RestRequest(ApiConstants.GET_PDF, Method.GET);
                 // auth Headers for api
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);

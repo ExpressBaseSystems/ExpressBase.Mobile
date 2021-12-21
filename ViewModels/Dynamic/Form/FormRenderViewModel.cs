@@ -19,6 +19,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public EbDataRow Context { set; get; }
 
+        public EbDataRow PrefillData { set; get; }
+
         public FormMode Mode { set; get; }
 
         protected IFormService FormDataService;
@@ -26,6 +28,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         protected int RowId { set; get; }
 
         public string SubmitButtonText { set; get; }
+
+        public string PrintButtonText { set; get; }
 
         private bool isEditBtnVisible = false;
 
@@ -55,7 +59,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public bool HasWebFormRef => !string.IsNullOrEmpty(this.Form.WebFormRefId);
 
-        public Command SaveCommand => new Command(async () => await FormSubmitClicked());
+        public Command SaveCommand => new Command(async () => await FormSubmitClicked(false));
+
+        public Command PrintCommand => new Command(async () =>
+        {
+            if (this.RowId > 0 || this.Form.RenderAsFilterDialog)
+            {
+                Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                await this.Form.Print(this.RowId);
+                Device.BeginInvokeOnMainThread(() => IsBusy = false);
+            }
+            else
+                await FormSubmitClicked(true);
+        });
 
         public FormRenderViewModel() { }
 
@@ -67,6 +83,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             FormDataService = new FormService();
             SubmitButtonText = this.Form.GetSubmitButtonText();
+            PrintButtonText = this.Form.GetPrintButtonText();
         }
 
         public override async Task InitializeAsync()
@@ -80,18 +97,24 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 await Task.Run(() => this.Form.CreateTableSchema());
             }
 
+            if (this.Mode == FormMode.NEW || this.Mode == FormMode.PREFILL || this.Mode == FormMode.REF)
+                await ExpandContextIfConfigured();
+
             if (this.Mode == FormMode.NEW) SetValues();
         }
 
         protected virtual void SetValues()
         {
+            if (this.Mode == FormMode.NEW)
+                this.SetValuesFormContext();
+
             if (this.Mode == FormMode.NEW || this.Mode == FormMode.PREFILL || this.Mode == FormMode.REF)
                 InitDefaultValueExpressions();
 
             InitOnLoadExpressions();
         }
 
-        public async Task FormSubmitClicked()
+        public async Task FormSubmitClicked(bool Print)
         {
             if (!Utils.IsNetworkReady(this.NetworkType))
             {
@@ -103,7 +126,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 EbLog.Info($"Form '{this.PageName}' validation success ready to submit");
                 this.Form.NetworkType = this.NetworkType;
-                await Submit();
+                await Submit(Print);
             }
             else
             {
@@ -112,13 +135,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
         }
 
-        protected virtual async Task Submit()
+        protected virtual async Task Submit(bool Print)
         {
             try
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
 
                 FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
+
+                if (response.Status && Print && !this.Form.RenderAsFilterDialog)
+                    await this.Form.Print(response.PushResponse.RowId);
 
                 Device.BeginInvokeOnMainThread(async () =>
                 {
@@ -170,6 +196,53 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             foreach (EbMobileControl ctrl in this.Form.ControlDictionary.Values)
             {
                 EbFormHelper.EvaluateExprOnLoad(ctrl, this.Mode);
+            }
+        }
+
+        private async Task ExpandContextIfConfigured()
+        {
+            if (this.Form.ContextToFormControlMap?.Count > 0)
+            {
+                if (this.Page.NetworkMode == NetworkMode.Online && !string.IsNullOrWhiteSpace(this.Form.ContextOnlineData))
+                {
+                    List<Param> cParams = new List<Param>();
+
+                    cParams.Add(new Param
+                    {
+                        Name = "eb_loc_id",
+                        Type = "11",
+                        Value = App.Settings.CurrentLocation.LocId.ToString()
+                    });
+
+                    MobileDataResponse data = await DataService.Instance.GetDataAsync(this.Form.ContextOnlineData, 0, 0, cParams, null, null, false);
+
+                    if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
+                    {
+                        this.PrefillData = row;
+                        EbLog.Info("ContextOnlineData api returned valid data");
+                    }
+                    else
+                        EbLog.Info("ContextOnlineData api returned empty row collection");
+                }
+            }
+        }
+
+        protected void SetValuesFormContext()
+        {
+            if (this.PrefillData != null && this.Form.ContextToFormControlMap?.Count > 0)
+            {
+                foreach (var map in this.Form.ContextToFormControlMap)
+                {
+                    object value = this.PrefillData[map.ColumnName];
+
+                    if (this.Form.ControlDictionary.TryGetValue(map.ControlName, out EbMobileControl ctrl))
+                    {
+                        if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
+                            continue;
+                        else
+                            ctrl.SetValue(value);
+                    }
+                }
             }
         }
     }

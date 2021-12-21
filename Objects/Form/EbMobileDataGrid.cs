@@ -2,12 +2,11 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
-using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -24,17 +23,15 @@ namespace ExpressBase.Mobile
 
         public EbScript OfflineQuery { set; get; }
 
+        public bool DisableAdd { set; get; }
+
+        public bool DisableDelete { set; get; }
+
+        public bool DisableEdit { set; get; }
+
         private DataGrid gridView;
 
-        public DataGridRowHelper CurrentRow { set; get; }
-
         public EbDataRow Context { set; get; }
-
-        [OnDeserialized]
-        public void OnDeserializedMethod(StreamingContext context)
-        {
-            CurrentRow = new DataGridRowHelper(ChildControls);
-        }
 
         public override View Draw(FormMode mode, NetworkMode network)
         {
@@ -183,9 +180,18 @@ namespace ExpressBase.Mobile
             gridView?.SetAsReadOnly(disable);
         }
 
-        public EbDataGridEvaluator GetRow()
+        public EbMobileControl GetControl(string controlName)
         {
-            return null;
+            return this.ChildControls.Find(ctrl => ctrl.Name == controlName);
+        }
+
+        public decimal Sum(string controlName)
+        {
+            MobileTable gridTable = gridView.GetValue();
+
+            List<decimal> values = gridTable.GetColumnValues<decimal>(controlName);
+
+            return values.Sum();
         }
     }
 

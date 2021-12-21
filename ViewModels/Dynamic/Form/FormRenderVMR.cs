@@ -28,6 +28,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected override void SetValues()
         {
+            this.SetValuesFormContext();
+
             List<EbCTCMapper> ebCTCMappers = this.context.UseLinkSettings ? context.ContextToControlMap : context.ContextToFabControlMap;
 
             if (ebCTCMappers == null)

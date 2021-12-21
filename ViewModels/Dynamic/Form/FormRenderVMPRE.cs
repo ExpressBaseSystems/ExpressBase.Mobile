@@ -26,6 +26,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected override void SetValues()
         {
+            this.SetValuesFormContext();
+
             if (this.linkFormParameters == null)
             {
                 EbLog.Info($"linkFormParameters empty in '{this.Page.DisplayName}'");

@@ -33,7 +33,8 @@ namespace ExpressBase.Mobile.CustomControls.Views
             dataGrid = dg;
             dataDictionary = new Dictionary<string, MobileTableRow>();
             tapRecognizer = new TapGestureRecognizer();
-            tapRecognizer.Tapped += OpenGridFormOnEdit;
+            if (!dataGrid.DisableEdit)
+                tapRecognizer.Tapped += OpenGridFormOnEdit;
 
             DrawHeader();
 
@@ -52,6 +53,9 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 Padding = 0
             };
             Container.Children.Add(frame, 0, 0);
+
+            if (dataGrid.DisableAdd)
+                Container.Children.Remove(AddRowButton);
         }
 
         private void AddRowButtonClicked(object sender, EventArgs e)
@@ -111,13 +115,6 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 BackgroundColor = Color.White,
             };
 
-            Button rowOptions = new Button
-            {
-                ClassId = guid,
-                Style = (Style)HelperFunctions.GetResourceValue("DGEditRowButton")
-            };
-            rowOptions.Clicked += RowDelete_Clicked;
-
             DGDynamicFrame dynamicFrame = new DGDynamicFrame(row, dataGrid.DataLayout)
             {
                 ClassId = guid,
@@ -128,8 +125,17 @@ namespace ExpressBase.Mobile.CustomControls.Views
             };
 
             stack.Children.Add(dynamicFrame);
-            stack.Children.Add(rowOptions);
 
+            if (!dataGrid.DisableDelete)
+            {
+                Button rowOptions = new Button
+                {
+                    ClassId = guid,
+                    Style = (Style)HelperFunctions.GetResourceValue("DGEditRowButton")
+                };
+                rowOptions.Clicked += RowDelete_Clicked;
+                stack.Children.Add(rowOptions);
+            }
             if (name == null) dataDictionary[guid] = row;
 
             return stack;

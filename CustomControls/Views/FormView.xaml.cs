@@ -3,6 +3,7 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -72,16 +73,52 @@ namespace ExpressBase.Mobile.CustomControls
 
                 foreach (EbMobileControl ctrl in Controls)
                 {
+                    ctrl.Parent = "form";
+
                     if (ctrl is EbMobileTableLayout table)
                     {
-                        foreach (EbMobileTableCell cell in table.CellCollection)
+                        Grid grid = new Grid() { ColumnSpacing = 0 };
+
+                        List<EbMobileTableCell> tr0 = table.CellCollection.FindAll(tr => tr.RowIndex == 0);
+                        Dictionary<int, int> widthMap = tr0.Distinct().ToDictionary(item => item.ColIndex, item => item.Width);
+
+                        for (int r = 0; r < table.RowCount; r++)
                         {
-                            foreach (EbMobileControl tbctrl in cell.ControlCollection)
+                            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                        }
+
+                        for (int i = 0; i < table.ColumCount; i++)
+                        {
+                            grid.ColumnDefinitions.Add(new ColumnDefinition
                             {
+                                Width = new GridLength(widthMap[i], GridUnitType.Star)
+                            });
+                        }
+
+                        for (int i = 0; i < table.CellCollection.Count; i++)
+                        {
+                            EbMobileTableCell cell = table.CellCollection[i];
+
+                            if (cell.ControlCollection.Count > 0)
+                            {
+                                EbMobileControl tbctrl = cell.ControlCollection[0];
                                 View controlView = tbctrl.Draw(FormMode, NetWorkType, Context);
-                                FormViewContainer.Children.Add(controlView);
+
+                                grid.Children.Add(controlView, i % table.ColumCount, i / table.ColumCount);
                             }
                         }
+
+                        FormViewContainer.Children.Add(grid);
+
+                        //foreach (EbMobileTableCell cell in table.CellCollection)
+                        //{
+                        //    foreach (EbMobileControl tbctrl in cell.ControlCollection)
+                        //    {
+                        //        View controlView = tbctrl.Draw(FormMode, NetWorkType, Context);
+                        //        FormViewContainer.Children.Add(controlView);
+                        //    }
+                        //}
+
                     }
                     else
                     {
