@@ -15,17 +15,24 @@ namespace ExpressBase.Mobile
 
         public List<EbMobileRGOption> Options { get; set; }
 
+        public bool HorizontalAlign { get; set; }
+
         public EbMobileRadioGroup() { }
 
         public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            StackLayout layout = new StackLayout();
+            dynamic layout;
+            if (HorizontalAlign)
+                layout = new FlexLayout();
+            else
+                layout = new StackLayout();
             string gpname = "rgopt_" + Guid.NewGuid().ToString("N");
             foreach (EbMobileRGOption opt in this.Options)
             {
                 StackLayout inner = new StackLayout()
                 {
-                    Orientation = Xamarin.Forms.StackOrientation.Horizontal
+                    Orientation = Xamarin.Forms.StackOrientation.Horizontal,
+                    Padding = new Thickness(0, 0, 10, 0)
                 };
                 RadioButton btn = new RadioButton()
                 {
