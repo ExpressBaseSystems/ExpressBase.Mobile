@@ -21,11 +21,18 @@ namespace ExpressBase.Mobile
 
         public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            dynamic layout;
-            if (HorizontalAlign)
-                layout = new FlexLayout();
+            IList<View> children;
+            if (this.HorizontalAlign)
+            {
+                XControl = new FlexLayout();
+                children = (XControl as FlexLayout).Children;
+            }
             else
-                layout = new StackLayout();
+            {
+                XControl = new StackLayout();
+                children = (XControl as StackLayout).Children;
+            }
+
             string gpname = "rgopt_" + Guid.NewGuid().ToString("N");
             foreach (EbMobileRGOption opt in this.Options)
             {
@@ -52,10 +59,8 @@ namespace ExpressBase.Mobile
                 opt.XButton = btn;
                 inner.Children.Add(btn);
                 inner.Children.Add(label);
-                layout.Children.Add(inner);
+                children.Add(inner);
             }
-            XControl = layout;
-
             return base.Draw(Mode, Network);
         }
 
