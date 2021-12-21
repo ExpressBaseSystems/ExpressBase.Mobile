@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using iTextSharp.text;
@@ -7,7 +8,9 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -82,25 +85,26 @@ namespace ExpressBase.Mobile.Services
                     //}
                     //Report.FileClient = FileClient;
                     //Report.Solution = GetSolutionObject(request.SolnId);
-                   // Report.CultureInfo = CultureHelper.GetSerializedCultureInfo(App.Settings.CurrentUser?.Preference.Locale ?? "en-US").GetCultureInfo();
+                    Report.CultureInfo = new CultureInfo("en-IN", false);
+                    // NumberFormat, DateTimeFormat?.LongTimePattern DateTimeFormat?.LongTimePattern
+                    //Report.CultureInfo = CultureHelper.GetSerializedCultureInfo(App.Settings.CurrentUser?.Preference.Locale ?? "en-US").GetCultureInfo();
                     Report.Parameters = JsonConvert.DeserializeObject<List<Param>>(param);
-                    Report.Ms1 = new MemoryStream(); 
-                    if (Report.DataSourceRefId != string.Empty)
+                    Report.Ms1 = new MemoryStream();
+                    if (Report?.OfflineQuery.Code != string.Empty)
                     {
-                        //Groupings = new List<string>();
-                       // Report.DataSet = App.DataDB.DoQueries(Report.OfflineQuery, Report.Parameters.ToArray());                       
+                        Report.DataSet = App.DataDB.DoQueries(HelperFunctions.B64ToString(Report.OfflineQuery.Code), Report.Parameters.ToDbParams().ToArray());
                     }
                     float _width = Report.WidthPt - Report.Margin.Left;// - Report.Margin.Right;
                     float _height = Report.HeightPt - Report.Margin.Top - Report.Margin.Bottom;
                     Report.HeightPt = _height;
-                    //iTextSharp.text.Rectangle rec =new iTextSharp.text.Rectangle(Report.WidthPt, Report.HeightPt);
+
                     iTextSharp.text.Rectangle rec = new iTextSharp.text.Rectangle(_width, _height);
                     Report.Doc = new Document(rec);
                     Report.Doc.SetMargins(Report.Margin.Left, Report.Margin.Right, Report.Margin.Top, Report.Margin.Bottom);
                     Report.Writer = PdfWriter.GetInstance(Report.Doc, Report.Ms1);
                     Report.Writer.Open();
                     Report.Doc.Open();
-                    Report.Doc.AddTitle(Report.DisplayName);
+                    Report.Doc.AddTitle(Report.DocumentName);
                     Report.Writer.PageEvent = new HeaderFooter(Report);
                     Report.Writer.CloseStream = true;//important
                     Report.Canvas = Report.Writer.DirectContent;
@@ -109,35 +113,46 @@ namespace ExpressBase.Mobile.Services
                     FillingCollections(Report);
                     Report.Doc.NewPage();
                     Report.DrawReportHeader();
-                    if (Report?.DataSet?.Tables[Report.DetailTableIndex]?.Rows.Count > 0)
+
+                    if (Report?.DataSet?.Tables.Count > 0 && Report?.DataSet?.Tables[Report.DetailTableIndex]?.Rows.Count > 0)
                     {
                         Report.DrawDetail();
                     }
                     else
                     {
                         Report.DrawPageHeader();
+                        Report.detailEnd += 30;
                         Report.DrawPageFooter();
+                        Report.DrawReportFooter();
                         throw new Exception("Dataset is null, refid " + Report.DataSourceRefId);
                     }
+
                     Report.DrawReportFooter();
                 }
                 catch (Exception e)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Exception-reportService " + e.Message + e.StackTrace);
-                    Console.ForegroundColor = ConsoleColor.White;
-
                     ColumnText ct = new ColumnText(Report.Canvas);
-                    Phrase phrase = new Phrase("No Data available. Please check the parameters or contact admin");
+                    Phrase phrase;
+                    if (Report?.DataSet?.Tables[Report.DetailTableIndex]?.Rows.Count > 0)
+                    {
+                        phrase = new Phrase("Something went wrong. Please check the parameters or contact admin");
+                    }
+                    else
+                    {
+                        phrase = new Phrase("No Data available. Please check the parameters or contact admin");
+                    }
                     phrase.Font.Size = 10;
-                    ct.SetSimpleColumn(phrase, Report.LeftPt + 30, Report.HeightPt - 80, Report.WidthPt - 30, Report.HeightPt - 40, 15, Element.ALIGN_CENTER);
+                    float y = Report.HeightPt - (Report.ReportHeaderHeight + Report.Margin.Top + Report.PageHeaderHeight);
+                    ct.SetSimpleColumn(phrase, Report.LeftPt + 30, y - 30, Report.WidthPt - 30, y, 15, Element.ALIGN_CENTER);
                     ct.Go();
                 }
 
                 Report.Doc.Close();
                 if (Report.UserPassword != string.Empty || Report.OwnerPassword != string.Empty)
                     Report.SetPassword();
-                Report.Ms1.Position = 0;//important
+
+                string name = Report.DocumentName;
+
                 if (Report.DataSourceRefId != string.Empty)
                 {
                     Report.DataSet.Tables.Clear();
@@ -146,7 +161,7 @@ namespace ExpressBase.Mobile.Services
 
                 return new ReportRenderResponse
                 {
-                    ReportName = Report.DisplayName,
+                    ReportName = name,
                     ReportBytea = Report.Ms1.ToArray(),
                     CurrentTimestamp = Report.CurrentTimestamp
                 };
@@ -209,44 +224,103 @@ namespace ExpressBase.Mobile.Services
 
         private void Fill(EbReport Report, List<EbReportField> fields, EbReportSectionType section_typ)
         {
-            //foreach (EbReportField field in fields)
-            //{
-            //    if (!String.IsNullOrEmpty(field.HideExpression?.Code))
-            //    {
-            //        ExecuteHideExpression(Report, field);
-            //    }
-            //    if (!field.IsHidden && !String.IsNullOrEmpty(field.LayoutExpression?.Code))
-            //    {
-            //        ExecuteLayoutExpression(Report, field);
-            //    }
-            //    if (field is EbDataField)
-            //    {
-            //        EbDataField field_org = field as EbDataField;
-            //        if (!string.IsNullOrEmpty(field_org.LinkRefId) && !Report.LinkCollection.ContainsKey(field_org.LinkRefId))
-            //            FindControls(Report, field_org);//Finding the link's parameter controls
+            foreach (EbReportField field in fields)
+            {
+                if (!String.IsNullOrEmpty(field.HideExpression?.Code))
+                {
+                    //  ExecuteHideExpression(Report, field);
+                }
+                if (!field.IsHidden && !String.IsNullOrEmpty(field.LayoutExpression?.Code))
+                {
+                    // ExecuteLayoutExpression(Report, field);
+                }
+                if (field is EbDataField)
+                {
+                    EbDataField field_org = field as EbDataField;
+                    //if (!string.IsNullOrEmpty(field_org.LinkRefId) && !Report.LinkCollection.ContainsKey(field_org.LinkRefId))
+                    //    FindControls(Report, field_org);//Finding the link's parameter controls
 
-            //        if (section_typ == EbReportSectionType.Detail)
-            //            FindLargerDataTable(Report, field_org);// finding the table of highest rowcount from dataset
+                    if (section_typ == EbReportSectionType.Detail)
+                        FindLargerDataTable(Report, field_org);// finding the table of highest rowcount from dataset
 
-            //        if (field is IEbDataFieldSummary)
-            //            FillSummaryCollection(Report, field_org, section_typ);
+                    if (field is IEbDataFieldSummary)
+                        FillSummaryCollection(Report, field_org, section_typ);
 
-            //        if (field is EbCalcField && !Report.ValueScriptCollection.ContainsKey(field.Name) && !string.IsNullOrEmpty((field_org as EbCalcField).ValExpression?.Code))
-            //        {
-            //            Script valscript = CompileScript((field as EbCalcField).ValExpression.Code);
-            //            Report.ValueScriptCollection.Add(field.Name, valscript);
-            //        }
+                    //if (field is EbCalcField && !Report.ValueScriptCollection.ContainsKey(field.Name) && !string.IsNullOrEmpty((field_org as EbCalcField).ValExpression?.Code))
+                    //{
+                    //    Script valscript = CompileScript((field as EbCalcField).ValExpression.Code);
+                    //    Report.ValueScriptCollection.Add(field.Name, valscript);
+                    //}
 
-            //        if (!field.IsHidden && !Report.AppearanceScriptCollection.ContainsKey(field.Name) && !string.IsNullOrEmpty(field_org.AppearExpression?.Code))
-            //        {
-            //            Script appearscript = CompileScript(field_org.AppearExpression.Code);
-            //            Report.AppearanceScriptCollection.Add(field.Name, appearscript);
-            //        }
-            //    }
-            //}
+                    //if (!field.IsHidden && !Report.AppearanceScriptCollection.ContainsKey(field.Name) && !string.IsNullOrEmpty(field_org.AppearExpression?.Code))
+                    //{
+                    //    Script appearscript = CompileScript(field_org.AppearExpression.Code);
+                    //    Report.AppearanceScriptCollection.Add(field.Name, appearscript);
+                    //}
+                }
+            }
+        }
+        public void FindLargerDataTable(EbReport Report, EbDataField field)
+        {
+            if (!Report.HasRows || field.TableIndex != Report.DetailTableIndex)
+            {
+                if (Report.DataSet?.Tables.Count > 0)
+                {
+                    if (Report.DataSet.Tables[field.TableIndex].Rows != null)
+                    {
+                        Report.HasRows = true;
+                        int r_count = Report.DataSet.Tables[field.TableIndex].Rows.Count;
+                        Report.DetailTableIndex = (r_count > Report.MaxRowCount) ? field.TableIndex : Report.DetailTableIndex;
+                        Report.MaxRowCount = (r_count > Report.MaxRowCount) ? r_count : Report.MaxRowCount;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Report.DataSet.Tables[field.TableIndex].Rows is null");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Report.DataSet.Tables.Count is 0");
+                }
+            }
         }
 
-
+        public void FillSummaryCollection(EbReport report, EbDataField field, EbReportSectionType section_typ)
+        {
+            if (section_typ == EbReportSectionType.ReportGroups)
+            {
+                if (!report.GroupSummaryFields.ContainsKey(field.SummaryOf))
+                {
+                    report.GroupSummaryFields.Add(field.SummaryOf, new List<EbDataField> { field });
+                }
+                else
+                {
+                    report.GroupSummaryFields[field.SummaryOf].Add(field);
+                }
+            }
+            if (section_typ == EbReportSectionType.PageFooter)
+            {
+                if (!report.PageSummaryFields.ContainsKey(field.SummaryOf))
+                {
+                    report.PageSummaryFields.Add(field.SummaryOf, new List<EbDataField> { field });
+                }
+                else
+                {
+                    report.PageSummaryFields[field.SummaryOf].Add(field);
+                }
+            }
+            if (section_typ == EbReportSectionType.ReportFooter)
+            {
+                if (!report.ReportSummaryFields.ContainsKey(field.SummaryOf))
+                {
+                    report.ReportSummaryFields.Add(field.SummaryOf, new List<EbDataField> { field });
+                }
+                else
+                {
+                    report.ReportSummaryFields[field.SummaryOf].Add(field);
+                }
+            }
+        }
     }
 
     public partial class HeaderFooter : PdfPageEventHelper

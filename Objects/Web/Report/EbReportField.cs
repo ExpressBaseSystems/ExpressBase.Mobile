@@ -6,6 +6,7 @@ using ExpressBase.Mobile.Enums;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using QRCoder;
+using Xamarin.Essentials;
 
 namespace ExpressBase.Mobile
 {
@@ -52,8 +53,7 @@ namespace ExpressBase.Mobile
 
         public iTextSharp.text.Color GetColor(string Color)
         {
-            int colr = ColorTranslator.FromHtml(Color).ToArgb();
-            return new iTextSharp.text.Color(colr);
+            return new iTextSharp.text.Color(ColorConverters.FromHex(Color));
         }
 
         public Phrase GetFormattedPhrase(EbFont Font, EbFont _reportFont, string text)
@@ -103,25 +103,33 @@ namespace ExpressBase.Mobile
         public string FormatDate(string column_val, DateFormatReport format, EbReport Rep)
         {
             DateTime dt = Convert.ToDateTime(column_val);
-            if (format == DateFormatReport.dddd_MMMM_d_yyyy)
-                return String.Format("{0:dddd, MMMM d, yyyy}", dt);
-            else if (format == DateFormatReport.M_d_yyyy)
-                return String.Format("{0:M/d/yyyy}", dt);
-            else if (format == DateFormatReport.ddd_MMM_d_yyyy)
-                return String.Format("{0:ddd, MMM d, yyyy}", dt);
-            else if (format == DateFormatReport.MM_dd_yy)
-                return String.Format("{0:MM/dd/yy}", dt);
-            else if (format == DateFormatReport.MM_dd_yyyy)
-                return String.Format("{0:MM/dd/yyyy}", dt);
-            else if (format == DateFormatReport.dd_MM_yyyy)
-                return String.Format("{0:dd-MM-yyyy}", dt);
-            else if (format == DateFormatReport.dd_MM_yyyy_slashed)
-                return string.Format("{0:dd/MM/yyyy}", dt);
-            else if (format == DateFormatReport.from_culture)
-                return dt.ToString(Rep.CultureInfo.DateTimeFormat.ShortDatePattern + " " + Rep.CultureInfo.DateTimeFormat.LongTimePattern, CultureInfo.InvariantCulture);
-            else if (format == DateFormatReport.dd_MMMM_yyyy)
-                return string.Format("{0:dd MMMM yyyy}", dt);
-            return column_val;
+            if (dt > DateTime.MinValue)
+            {
+                if (format == DateFormatReport.dddd_MMMM_d_yyyy)
+                    return String.Format("{0:dddd, MMMM d, yyyy}", dt);
+                else if (format == DateFormatReport.M_d_yyyy)
+                    return String.Format("{0:M/d/yyyy}", dt);
+                else if (format == DateFormatReport.ddd_MMM_d_yyyy)
+                    return String.Format("{0:ddd, MMM d, yyyy}", dt);
+                else if (format == DateFormatReport.MM_dd_yy)
+                    return String.Format("{0:MM/dd/yy}", dt);
+                else if (format == DateFormatReport.MM_dd_yyyy)
+                    return String.Format("{0:MM/dd/yyyy}", dt);
+                else if (format == DateFormatReport.dd_MM_yyyy)
+                    return String.Format("{0:dd-MM-yyyy}", dt);
+                else if (format == DateFormatReport.dd_MM_yyyy_slashed)
+                    return string.Format("{0:dd/MM/yyyy}", dt);
+                else if (format == DateFormatReport.from_culture)
+                    return dt.ToString(Rep.CultureInfo?.DateTimeFormat?.ShortDatePattern + " " + Rep.CultureInfo?.DateTimeFormat?.LongTimePattern, CultureInfo.InvariantCulture);
+                else if (format == DateFormatReport.dd_MMMM_yyyy)
+                    return string.Format("{0:dd MMMM yyyy}", dt);
+                return column_val;
+            }
+            else
+            {
+                return string.Empty;
+            }
+
         }
 
         public void SetValuesFromGlobals(PdfGReportField field)
@@ -244,10 +252,13 @@ namespace ExpressBase.Mobile
             float ury = Rep.HeightPt - (printingTop + TopPt + Rep.detailprintingtop);
             float lly = Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop);
             string column_val = FormatDate(Rep.CurrentTimestamp.ToString(), Format, Rep);
-            Phrase phrase = GetFormattedPhrase(this.Font, Rep.Font, column_val);
-            ColumnText ct = new ColumnText(Rep.Canvas);
-            ct.SetSimpleColumn(phrase, Llx, lly, Urx, ury, Leading, (int)TextAlign);
-            ct.Go();
+            if (column_val != string.Empty)
+            {
+                Phrase phrase = GetFormattedPhrase(this.Font, Rep.Font, column_val);
+                ColumnText ct = new ColumnText(Rep.Canvas);
+                ct.SetSimpleColumn(phrase, Llx, lly, Urx, ury, Leading, (int)TextAlign);
+                ct.Go();
+            }
         }
     }
 
@@ -391,12 +402,15 @@ namespace ExpressBase.Mobile
                 if (p.Name == Title)
                     column_val = p.Value;
             column_val = FormatDate(column_val, Format, Rep);
-            float ury = Rep.HeightPt - (printingTop + TopPt + Rep.detailprintingtop);
-            float lly = Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop);
-            Phrase phrase = GetFormattedPhrase(this.Font, Rep.Font, column_val);
-            ColumnText ct = new ColumnText(Rep.Canvas);
-            ct.SetSimpleColumn(phrase, Llx, lly, Urx, ury, Leading, (int)TextAlign);
-            ct.Go();
+            if (column_val != string.Empty)
+            {
+                float ury = Rep.HeightPt - (printingTop + TopPt + Rep.detailprintingtop);
+                float lly = Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop);
+                Phrase phrase = GetFormattedPhrase(this.Font, Rep.Font, column_val);
+                ColumnText ct = new ColumnText(Rep.Canvas);
+                ct.SetSimpleColumn(phrase, Llx, lly, Urx, ury, Leading, (int)TextAlign);
+                ct.Go();
+            }
         }
 
     }

@@ -139,7 +139,7 @@ namespace ExpressBase.Mobile
             return anchor;
         }
 
-        public string FormatDecimals(string column_val, bool _inWords, int _decimalPlaces,  NumberFormatInfo _numberFormat, bool formatUsingCulture)
+        public string FormatDecimals(string column_val, bool _inWords, int _decimalPlaces, NumberFormatInfo _numberFormat, bool formatUsingCulture)
         {
             if (_inWords)
             {
@@ -204,7 +204,7 @@ namespace ExpressBase.Mobile
             {
                 using (StringReader sr = new StringReader(column_val))
                 {
-                    var elements =HTMLWorker.ParseToList(sr, null);
+                    var elements = HTMLWorker.ParseToList(sr, null);
                     foreach (IElement e in elements)
                     {
                         ct.AddElement(e);
@@ -238,27 +238,30 @@ namespace ExpressBase.Mobile
             ColumnText ct = new ColumnText(Rep.Canvas);
             string column_val = Rep.GetDataFieldValue(ColumnName, slno, TableIndex);
             column_val = FormatDate(column_val, Format, Rep);
-            if (Prefix != "" || Suffix != "")
-                column_val = Prefix + " " + column_val + " " + Suffix;
-            Phrase phrase = GetPhrase(column_val, (DbType)DbType, Rep.Font);
-            if (!string.IsNullOrEmpty(LinkRefId))
+            if (column_val != string.Empty)
             {
-                Anchor a = CreateLink(phrase, LinkRefId, Rep.Doc, Params);
-                Paragraph p = new Paragraph
+                if (Prefix != "" || Suffix != "")
+                    column_val = Prefix + " " + column_val + " " + Suffix;
+                Phrase phrase = GetPhrase(column_val, (DbType)DbType, Rep.Font);
+                if (!string.IsNullOrEmpty(LinkRefId))
+                {
+                    Anchor a = CreateLink(phrase, LinkRefId, Rep.Doc, Params);
+                    Paragraph p = new Paragraph
                 {
                     a
                 };
-                p.Font = GetItextFont(this.Font, Rep.Font);
-                ct.AddText(p);
+                    p.Font = GetItextFont(this.Font, Rep.Font);
+                    ct.AddText(p);
+                }
+                else
+                {
+                    ct.AddText(phrase);
+                }
+                float ury = Rep.HeightPt - (printingTop + TopPt + Rep.detailprintingtop);
+                float lly = Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop);
+                ct.SetSimpleColumn(Llx, lly, Urx, ury, Leading, (int)TextAlign);
+                ct.Go();
             }
-            else
-            {
-                ct.AddText(phrase);
-            }
-            float ury = Rep.HeightPt - (printingTop + TopPt + Rep.detailprintingtop);
-            float lly = Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop);
-            ct.SetSimpleColumn(Llx, lly, Urx, ury, Leading, (int)TextAlign);
-            ct.Go();
         }
     }
 
@@ -289,7 +292,7 @@ namespace ExpressBase.Mobile
     }
 
     public class EbDataFieldNumeric : EbDataField
-    {       
+    {
         public bool AmountInWords { get; set; }
 
         public bool SuppressIfZero { get; set; }
@@ -310,7 +313,7 @@ namespace ExpressBase.Mobile
                 column_val = String.Empty;
             else
             {
-                column_val = FormatDecimals(column_val, AmountInWords, DecimalPlaces, Rep.CultureInfo.NumberFormat, FormatUsingCulture);
+                column_val = FormatDecimals(column_val, AmountInWords, DecimalPlaces, Rep.CultureInfo?.NumberFormat, FormatUsingCulture);
                 if (Prefix != "" || Suffix != "")
                     column_val = Prefix + " " + column_val + " " + Suffix;
             }
@@ -416,14 +419,14 @@ namespace ExpressBase.Mobile
             if (status && ResetOnNewPage)
                 Sum = 0;
         }
-        
+
         public override void DrawMe(float printingTop, EbReport Rep, List<Param> Params, int slno)
         {
             float ury = Rep.HeightPt - (printingTop + TopPt + Rep.detailprintingtop);
             float lly = Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop);
             string column_val = SummarizedValue.ToString();
             ResetSummary();
-            column_val = FormatDecimals(column_val, AmountInWords, DecimalPlaces, Rep.CultureInfo.NumberFormat, FormatUsingCulture);
+            column_val = FormatDecimals(column_val, AmountInWords, DecimalPlaces, Rep.CultureInfo?.NumberFormat, FormatUsingCulture);
 
             if (Rep.SummaryValInRow.ContainsKey(Title))
                 Rep.SummaryValInRow[Title] = new PdfNTV { Name = Title.Replace(".", "_"), Type = PdfEbDbTypes.Int32, Value = column_val };
@@ -563,21 +566,24 @@ namespace ExpressBase.Mobile
             else if (Function == SummaryFunctionsDateTime.Min)
                 Min = DateTime.MinValue;
         }
-       
+
         public override void DrawMe(float printingTop, EbReport Rep, List<Param> Params, int slno)
         {
             ColumnText ct = new ColumnText(Rep.Canvas);
             string column_val = FormatDate(SummarizedValue.ToString(), Format, Rep);
             ResetSummary();
-            if (Prefix != "" || Suffix != "")
-                column_val = Prefix + " " + column_val + " " + Suffix;
-            Phrase phrase = GetPhrase(column_val, (DbType)DbType, Rep.Font);
+            if (column_val != string.Empty)
+            {
+                if (Prefix != "" || Suffix != "")
+                    column_val = Prefix + " " + column_val + " " + Suffix;
+                Phrase phrase = GetPhrase(column_val, (DbType)DbType, Rep.Font);
 
-            ct.AddText(phrase);
-            float ury = Rep.HeightPt - (printingTop + TopPt + Rep.detailprintingtop);
-            float lly = Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop);
-            ct.SetSimpleColumn(Llx, lly, Urx, ury, Leading, (int)TextAlign);
-            ct.Go();
+                ct.AddText(phrase);
+                float ury = Rep.HeightPt - (printingTop + TopPt + Rep.detailprintingtop);
+                float lly = Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop);
+                ct.SetSimpleColumn(Llx, lly, Urx, ury, Leading, (int)TextAlign);
+                ct.Go();
+            }
         }
     }
 
@@ -609,7 +615,7 @@ namespace ExpressBase.Mobile
             if (Function == SummaryFunctionsBoolean.Count)
                 Count = 0;
         }
-       
+
 
         public override void DrawMe(float printingTop, EbReport Rep, List<Param> Params, int slno)
         {
@@ -674,7 +680,7 @@ namespace ExpressBase.Mobile
                 return _dataFieldsUsed;
             }
         }
-        
+
         public override void DrawMe(float printingTop, EbReport Rep, List<Param> Params, int slno)
         {
             ColumnText ct = new ColumnText(Rep.Canvas);
@@ -717,7 +723,7 @@ namespace ExpressBase.Mobile
             else
             {
                 if (dbtype == EbDbTypes.Decimal)
-                    column_val = FormatDecimals(column_val, AmountInWords, DecimalPlaces, Rep.CultureInfo.NumberFormat, FormatUsingCulture);
+                    column_val = FormatDecimals(column_val, AmountInWords, DecimalPlaces, Rep.CultureInfo?.NumberFormat, FormatUsingCulture);
                 if (Prefix != "" || Suffix != "")
                 {
                     column_val = Prefix + " " + column_val + " " + Suffix;
@@ -753,7 +759,7 @@ namespace ExpressBase.Mobile
                 int tableindex = Convert.ToInt32(TName.Substring(1));
                 globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)DataSet.Tables[tableindex].Columns[fName].Type, Value = DataSet.Tables[tableindex].Rows[serialnumber][fName] });
             }
-           // value = (Rep.ValueScriptCollection[this.Name].RunAsync(globals)).Result.ReturnValue.ToString();
+            // value = (Rep.ValueScriptCollection[this.Name].RunAsync(globals)).Result.ReturnValue.ToString();
             return value;
         }
     }
@@ -836,7 +842,7 @@ namespace ExpressBase.Mobile
             if (status && ResetOnNewPage)
                 Sum = 0;
         }
-        
+
         public override void DrawMe(float printingTop, EbReport Rep, List<Param> Params, int slno)
         {
             float ury = Rep.HeightPt - (printingTop + TopPt + Rep.detailprintingtop);
@@ -847,7 +853,7 @@ namespace ExpressBase.Mobile
             if (SuppressIfZero && !(Convert.ToDecimal(column_val) > 0))
                 column_val = string.Empty;
             else
-                column_val = FormatDecimals(column_val, AmountInWords, DecimalPlaces, Rep.CultureInfo.NumberFormat, FormatUsingCulture);
+                column_val = FormatDecimals(column_val, AmountInWords, DecimalPlaces, Rep.CultureInfo?.NumberFormat, FormatUsingCulture);
 
             if (Rep.SummaryValInRow.ContainsKey(Title))
                 Rep.SummaryValInRow[Title] = new PdfNTV { Name = Title.Replace(".", "_"), Type = PdfEbDbTypes.Int32, Value = column_val };

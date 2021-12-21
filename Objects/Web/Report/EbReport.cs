@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using static ExpressBase.Mobile.PdfGEbFont;
 using RowColletion = ExpressBase.Mobile.Data.RowColletion;
 
@@ -111,7 +112,7 @@ namespace ExpressBase.Mobile
 
         public override string VersionNumber { get; set; }
 
-        public string OfflineQuery { get; set; }
+        public EbScript OfflineQuery { set; get; }
 
         public bool HideInMenu { get; set; }
 
@@ -130,6 +131,37 @@ namespace ExpressBase.Mobile
         public string UserPassword { get; set; }
 
         public string OwnerPassword { get; set; }
+
+        private string _docName = null;
+
+        public string DocumentName
+        {
+            get
+            {
+                if (DocumentNameString != string.Empty && _docName == null)
+                {
+                    _docName = DocumentNameString;
+                    string pattern = @"\{{(.*?)\}}";
+                    IEnumerable<string> matches = Regex.Matches(DocumentNameString, pattern).OfType<Match>().Select(m => m.Groups[0].Value).Distinct();
+                    foreach (string _col in matches)
+                    {
+                        string str = _col.Replace("{{", "").Replace("}}", "");
+                        int tbl = Convert.ToInt32(str.Split('.')[0].Replace("T", ""));
+                        string colval = string.Empty;
+                        if (DataSet?.Tables[tbl]?.Rows.Count > 0)
+                            colval = DataSet?.Tables[tbl]?.Rows[0][str.Split('.')[1]].ToString();
+                        _docName = _docName.Replace(_col, colval);
+                    }
+                }
+                else if (_docName == null)
+                {
+                    _docName = DisplayName;
+                }
+                return _docName;
+            }
+        }
+
+        public string DocumentNameString { get; set; }
 
         public override string Width { get; set; }
 

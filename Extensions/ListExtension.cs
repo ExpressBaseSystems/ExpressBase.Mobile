@@ -70,6 +70,27 @@ namespace ExpressBase.Mobile.Extensions
             return p;
         }
 
+        public static List<DbParameter> ToDbParams(this List<Param> parameters)
+        {
+            List<DbParameter> dbp = new List<DbParameter>();
+            try
+            {
+                foreach (Param p in parameters)
+                {
+                    dbp.Add(new DbParameter
+                    {
+                        ParameterName = p.Name,
+                        DbType = Convert.ToInt16(p.Type),
+                        Value = p.Value
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                EbLog.Error(e.Message);
+            }
+            return dbp;
+        }
         public static void AddRange<T>(this ICollection<T> collection, ICollection<T> enumerable)
         {
             foreach (T item in enumerable)
