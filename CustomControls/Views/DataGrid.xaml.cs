@@ -157,6 +157,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                     }
                     else
                         dataDictionary.Remove(el.ClassId);
+                    EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
                     break;
                 }
             }

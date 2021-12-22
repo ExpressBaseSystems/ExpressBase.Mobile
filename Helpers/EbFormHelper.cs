@@ -153,6 +153,39 @@ namespace ExpressBase.Mobile.Helpers
             return parameters;
         }
 
+        public static void ExecDGOuterDependency(string dgname)
+        {
+            if (Instance.dependencyMap.DGDependencyMapColl.TryGetValue(dgname, out ExprDependency exprDep))
+            {
+                if (exprDep.HasValueDependency)
+                {
+                    foreach (string name in exprDep.ValueExpr)
+                    {
+                        EbMobileControl ctrl = Instance.GetControl(name);
+                        Instance.EvaluateValueExpr(ctrl, name, CTRL_PARENT_FORM);
+                    }
+                }
+
+                if (exprDep.HasHideDependency)
+                {
+                    foreach (string name in exprDep.HideExpr)
+                    {
+                        EbMobileControl ctrl = Instance.GetControl(name);
+                        Instance.EvaluateHideExpr(ctrl, CTRL_PARENT_FORM);
+                    }
+                }
+
+                if (exprDep.HasDisableDependency)
+                {
+                    foreach (string name in exprDep.DisableExpr)
+                    {
+                        EbMobileControl ctrl = Instance.GetControl(name);
+                        Instance.EvaluateDisableExpr(ctrl, CTRL_PARENT_FORM);
+                    }
+                }
+            }
+        }
+
         private void InitValueExpr(ExprDependency exprDep, string trigger_control, string parent = CTRL_PARENT_FORM)
         {
             if (exprDep.HasValueDependency)
@@ -399,13 +432,13 @@ namespace ExpressBase.Mobile.Helpers
 
         private EbMobileControl GetControlByName(string controlName)
         {
-            foreach(EbMobileControl ctrl in this.controls.Values)
+            foreach (EbMobileControl ctrl in this.controls.Values)
             {
                 if (ctrl.Name == controlName) return ctrl;
 
-                if(ctrl is ILinesEnabled lines)
+                if (ctrl is ILinesEnabled lines)
                 {
-                    foreach(var linectrl in lines.ChildControls)
+                    foreach (var linectrl in lines.ChildControls)
                     {
                         if (linectrl.Name == controlName) return linectrl;
                     }

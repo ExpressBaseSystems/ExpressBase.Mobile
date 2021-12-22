@@ -89,12 +89,14 @@ namespace ExpressBase.Mobile.Views.Shared
             OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
             Utils.Toast("1 row added.");
             ResetControls();
+            EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
         }
 
         private async void OnSaveAndCloseClicked(object sender, EventArgs e)
         {
             OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
             ResetControls();
+            EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
             await App.Navigation.PopMasterModalAsync(true);
         }
 

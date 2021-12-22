@@ -46,6 +46,8 @@ namespace ExpressBase.Mobile
                     GroupName = gpname,
                     TextColor = (Color)HelperFunctions.GetResourceValue("Primary_Color")
                 };
+                btn.CheckedChanged += (sender, arg) => { if (arg.Value) this.ValueChanged(); };
+
                 TapGestureRecognizer recognizer = new TapGestureRecognizer();
                 recognizer.Tapped += OnLabelClicked;
                 Label label = new Label()
