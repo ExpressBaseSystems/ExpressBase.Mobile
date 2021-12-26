@@ -7,6 +7,7 @@ using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -32,6 +33,8 @@ namespace ExpressBase.Mobile
         private DataGrid gridView;
 
         public EbDataRow Context { set; get; }
+
+        private bool isTaped { get; set; }
 
         public override View Draw(FormMode mode, NetworkMode network)
         {
@@ -193,6 +196,20 @@ namespace ExpressBase.Mobile
 
             return values.Sum();
         }
+
+        public bool IsTaped()
+        {
+            if (this.isTaped)
+                return true;
+            this.isTaped = true;
+            Task task = Task.Run(async () =>
+            {
+                await Task.Delay(2000);
+                this.isTaped = false;
+            });
+            return false;
+        }
+
     }
 
     public class DataGridRowHelper

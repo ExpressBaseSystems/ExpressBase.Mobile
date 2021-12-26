@@ -208,7 +208,7 @@ namespace ExpressBase.Mobile.Helpers
                     this.EvaluateHideExpr(ctrl, parent);
                 }
             }
-            else if (currentControl != null)
+            else if (currentControl != null && currentControl.HiddenExpr?.IsEmpty() == false)
             {
                 this.EvaluateHideExpr(currentControl, parent);
             }
@@ -224,7 +224,7 @@ namespace ExpressBase.Mobile.Helpers
                     this.EvaluateDisableExpr(ctrl, parent);
                 }
             }
-            else if (currentControl != null)
+            else if (currentControl != null && currentControl.DisableExpr?.IsEmpty() == false)
             {
                 this.EvaluateDisableExpr(currentControl, parent);
             }

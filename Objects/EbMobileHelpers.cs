@@ -23,7 +23,7 @@ namespace ExpressBase.Mobile
 
         public bool IsEmpty()
         {
-            return string.IsNullOrEmpty(Code);
+            return string.IsNullOrWhiteSpace(Code);
         }
     }
 

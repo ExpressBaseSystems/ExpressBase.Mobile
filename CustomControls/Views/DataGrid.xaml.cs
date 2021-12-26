@@ -60,6 +60,8 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         private void AddRowButtonClicked(object sender, EventArgs e)
         {
+            if (dataGrid.IsTaped())
+                return;
             DataGridForm gridview = new DataGridForm(dataGrid);
             gridview.OnInserted += (name) =>
             {
@@ -165,6 +167,8 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         private async void OpenGridFormOnEdit(object sender, EventArgs e)
         {
+            if (dataGrid.IsTaped())
+                return;
             string classId = (sender as DynamicFrame).ClassId;
 
             DataGridForm gridview = new DataGridForm(dataGrid, dataDictionary[classId], classId);

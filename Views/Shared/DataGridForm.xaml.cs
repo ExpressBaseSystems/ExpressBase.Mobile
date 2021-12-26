@@ -86,6 +86,8 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private void OnSaveAndContinueClicked(object sender, EventArgs e)
         {
+            if (this.dataGrid.IsTaped())
+                return;
             OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
             Utils.Toast("1 row added.");
             ResetControls();
@@ -94,6 +96,8 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void OnSaveAndCloseClicked(object sender, EventArgs e)
         {
+            if (this.dataGrid.IsTaped())
+                return;
             OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
             ResetControls();
             EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
