@@ -104,4 +104,9 @@ namespace ExpressBase.Mobile.Helpers
     {
         void OpenSettings();
     }
+
+    public interface IAppHandler
+    {
+        Task<string> PrintPdfFile(string filePath);
+    }
 }

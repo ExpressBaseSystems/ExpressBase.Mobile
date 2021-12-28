@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Models;
@@ -116,18 +117,30 @@ namespace ExpressBase.Mobile.Helpers
                         helper.Create($"{root}/{sid}", SysContentType.Directory);
 
                         if (FolderName != null)
-                            return helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
+                            helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
                     }
                     else
                     {
                         if (FolderName != null)
-                            return helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
+                            helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
+                    }
+
+                    if (!helper.Exist($"{root}/{AppConst.SHARED_MEDIA}", SysContentType.Directory))
+                    {
+                        helper.Create($"{root}/{AppConst.SHARED_MEDIA}", SysContentType.Directory);
+                        helper.Create($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
+                    }
+                    else if (!helper.Exist($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory))
+                    {
+                        helper.Create($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
                     }
                 }
                 else
                 {
                     helper.Create(root, SysContentType.Directory);
                     helper.Create($"{root}/{sid}", SysContentType.Directory);
+                    helper.Create($"{root}/{AppConst.SHARED_MEDIA}", SysContentType.Directory);
+                    helper.Create($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
 
                     if (FolderName != null)
                         return helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);

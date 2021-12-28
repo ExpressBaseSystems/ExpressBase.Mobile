@@ -35,6 +35,8 @@ namespace ExpressBase.Mobile.Constants
         public const string IS_FRESH_START = "is_fresh_start";
 
         public const string FIRST_RUN = "first_run";
+
+        public const string SHARED_MEDIA = "SHAREDMEDIA";
     }
 
     public static class RegexConstants
