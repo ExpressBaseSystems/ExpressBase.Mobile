@@ -58,16 +58,20 @@ namespace ExpressBase.Mobile.Views.Shared
             InitDefaultValueExpressions();
             InitOnLoadExpressions();
         }
-
         private void CreateForm()
         {
             foreach (EbMobileControl ctrl in dataGrid.ChildControls)
             {
                 ctrl.Parent = dataGrid.Name;
-
-                View view = ctrl.XControl == null ? ctrl.Draw(dataGrid.FormRenderMode, dataGrid.NetworkType) : ctrl.XView;
-
-                ControlContainer.Children.Add(view);
+                if (ctrl is EbMobileTableLayout table)
+                {
+                    ControlContainer.Children.Add(table.GetGridObject(dataGrid.Name, dataGrid.FormRenderMode, dataGrid.NetworkType, null));
+                }
+                else
+                {
+                    View view = ctrl.XControl == null ? ctrl.Draw(dataGrid.FormRenderMode, dataGrid.NetworkType) : ctrl.XView;
+                    ControlContainer.Children.Add(view);
+                }
             }
         }
 
