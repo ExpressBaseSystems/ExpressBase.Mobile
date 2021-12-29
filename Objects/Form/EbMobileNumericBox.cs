@@ -114,6 +114,7 @@ namespace ExpressBase.Mobile
                 return;
 
             SetValue(arg.NewTextValue);
+            ValueChanged();
         }
 
         private void IncrBtn_Clicked(object sender, EventArgs e)
@@ -122,6 +123,7 @@ namespace ExpressBase.Mobile
             int val = Convert.ToInt32(btn.BindingContext);
             decimal value = val + Convert.ToDecimal(XValueBox.Text);
             SetValue(value);
+            ValueChanged();
         }
 
         public override object GetValue()
@@ -158,8 +160,6 @@ namespace ExpressBase.Mobile
                 XValueBox.Text = strval;
             else
                 (XControl as EbXNumericTextBox).Text = strval;
-
-            ValueChanged();
         }
 
         public override void SetAsReadOnly(bool disable)
