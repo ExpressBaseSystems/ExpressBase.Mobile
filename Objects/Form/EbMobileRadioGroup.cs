@@ -55,7 +55,8 @@ namespace ExpressBase.Mobile
                     Text = opt.DisplayName,
                     VerticalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center },
                     GestureRecognizers = { recognizer },
-                    BindingContext = btn
+                    BindingContext = btn,
+                    Padding = new Thickness(0, 10, 10, 10)
                 };
 
                 opt.XButton = btn;

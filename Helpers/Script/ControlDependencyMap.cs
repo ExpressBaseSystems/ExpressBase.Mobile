@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile.Helpers.Script
                     foreach (string dependent in GetDependentNames(script))
                     {
                         string dparent = dependent.Split(CharConstants.DOT)[0];
-                        if (dparent != CTRL_PARENT_FORM && parent == CTRL_PARENT_FORM)
+                        if (dparent != CTRL_PARENT_FORM && parent == CTRL_PARENT_FORM)// grid to form dependency
                         {
                             if (!DGDependencyMapColl.ContainsKey(dparent))
                             {
@@ -78,7 +78,7 @@ namespace ExpressBase.Mobile.Helpers.Script
                             }
                             DGDependencyMapColl[dparent].Add((ExpressionType)value, $"{parent}.{control.Name}");
                         }
-                        else
+                        else if (parent == dparent)// avoid form to grid dependency
                         {
                             if (!DependencyMapCollection.ContainsKey(dependent))
                             {

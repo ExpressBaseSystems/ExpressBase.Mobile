@@ -25,14 +25,14 @@ namespace ExpressBase.Mobile
 
         public Grid GetGridObject(string parent, FormMode FormMode, NetworkMode NetWorkType, EbDataRow Context)
         {
-            Grid grid = new Grid() { ColumnSpacing = 0 };
+            Grid grid = new Grid() { ColumnSpacing = 0, RowSpacing = 0 };
 
             List<EbMobileTableCell> tr0 = this.CellCollection.FindAll(tr => tr.RowIndex == 0);
             Dictionary<int, int> widthMap = tr0.Distinct().ToDictionary(item => item.ColIndex, item => item.Width);
 
             for (int r = 0; r < this.RowCount; r++)
             {
-                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                grid.RowDefinitions.Add(new RowDefinition());
             }
 
             for (int i = 0; i < this.ColumCount; i++)
@@ -56,6 +56,9 @@ namespace ExpressBase.Mobile
                         controlView = tbctrl.Draw(FormMode, NetWorkType);
                     else
                         controlView = tbctrl.Draw(FormMode, NetWorkType, Context);
+
+                    if (i % this.ColumCount > 0 && controlView is StackLayout layout)
+                        layout.Padding = new Thickness(0, layout.Padding.Top, layout.Padding.Right, layout.Padding.Bottom);
 
                     grid.Children.Add(controlView, i % this.ColumCount, i / this.ColumCount);
                 }

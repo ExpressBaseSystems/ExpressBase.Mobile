@@ -93,21 +93,25 @@ namespace ExpressBase.Mobile
             {
                 if (xview == null)
                 {
-                    FormattedString formatted = new FormattedString { Spans = { new Span { Text = this.Label } } };
-
-                    if (this.Required)
-                    {
-                        formatted.Spans.Add(new Span { Text = " *", FontSize = 16, TextColor = Color.Red });
-                    }
-
                     validationLabel = new Label { Style = (Style)HelperFunctions.GetResourceValue("ControlValidationLable") };
 
                     xview = new StackLayout
                     {
                         Padding = new Thickness(15, 10, 15, 10),
-                        IsVisible = !(this.Hidden),
-                        Children = { new Label { FormattedText = formatted }, XControl, validationLabel }
+                        IsVisible = !this.Hidden
                     };
+
+                    if (!string.IsNullOrWhiteSpace(this.Label) || this.Required)
+                    {
+                        FormattedString formatted = new FormattedString { Spans = { new Span { Text = this.Label } } };
+                        if (this.Required)
+                        {
+                            formatted.Spans.Add(new Span { Text = " *", FontSize = 16, TextColor = Color.Red });
+                        }
+                        xview.Children.Add(new Label { FormattedText = formatted });
+                    }
+                    xview.Children.Add(XControl);
+                    xview.Children.Add(validationLabel);
                 }
                 return xview;
             }
