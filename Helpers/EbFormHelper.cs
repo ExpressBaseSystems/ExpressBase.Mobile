@@ -1,9 +1,11 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers.Script;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
 {
@@ -183,6 +185,55 @@ namespace ExpressBase.Mobile.Helpers
                         Instance.EvaluateDisableExpr(ctrl, CTRL_PARENT_FORM);
                     }
                 }
+            }
+        }
+
+        public static void AddAllControlViews(StackLayout FormViewContainer, List<EbMobileControl> Controls,
+            FormMode FormMode, NetworkMode NetWorkType, EbDataRow Context, string Parent, bool IsGrid)
+        {
+            if (Controls.Count == 0)
+                return;
+
+            Grid grid = new Grid();
+            grid.RowDefinitions.Add(new RowDefinition());
+            FormViewContainer.Children.Add(grid);
+
+            int cur_totwidth = 0;
+            View CtrlView;
+            int columIndex = 0;
+
+            foreach (EbMobileControl ctrl in Controls)
+            {
+                ctrl.Parent = Parent;
+
+                if (ctrl.Width <= 0 || ctrl.Width > 100)
+                    ctrl.Width = 100;
+
+                if (ctrl is EbMobileTableLayout table)
+                    CtrlView = table.GetGridObject(Parent, FormMode, NetWorkType, Context);
+                else if (IsGrid)
+                    CtrlView = ctrl.XControl == null ? ctrl.Draw(FormMode, NetWorkType) : ctrl.XView;
+                else
+                    CtrlView = ctrl.Draw(FormMode, NetWorkType, Context);
+
+                if (cur_totwidth + ctrl.Width > 100)
+                {
+                    grid = new Grid();
+                    grid.RowDefinitions.Add(new RowDefinition());
+                    FormViewContainer.Children.Add(grid);
+                    cur_totwidth = 0;
+                    columIndex = 0;
+                }
+
+                if (columIndex > 0 && CtrlView is StackLayout layout)
+                    layout.Padding = new Thickness(0, layout.Padding.Top, layout.Padding.Right, layout.Padding.Bottom);
+
+                grid.ColumnDefinitions.Add(new ColumnDefinition
+                {
+                    Width = new GridLength(ctrl.Width, GridUnitType.Star)
+                });
+                grid.Children.Add(CtrlView, columIndex++, 0);
+                cur_totwidth += ctrl.Width;
             }
         }
 

@@ -41,6 +41,8 @@ namespace ExpressBase.Mobile
 
         public virtual List<EbMobileValidator> Validators { get; set; }
 
+        public virtual int Width { set; get; }
+
         public string SQLiteType
         {
             get

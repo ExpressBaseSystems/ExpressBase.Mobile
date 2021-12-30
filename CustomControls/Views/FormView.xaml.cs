@@ -69,21 +69,7 @@ namespace ExpressBase.Mobile.CustomControls
             try
             {
                 FormViewContainer.Children.Clear();
-
-                foreach (EbMobileControl ctrl in Controls)
-                {
-                    ctrl.Parent = "form";
-
-                    if (ctrl is EbMobileTableLayout table)
-                    {
-                        FormViewContainer.Children.Add(table.GetGridObject("form", FormMode, NetWorkType, Context));
-                    }
-                    else
-                    {
-                        View controlView = ctrl.Draw(FormMode, NetWorkType, Context);
-                        FormViewContainer.Children.Add(controlView);
-                    }
-                }
+                EbFormHelper.AddAllControlViews(FormViewContainer, Controls, FormMode, NetWorkType, Context, "form", false);
             }
             catch (Exception ex)
             {
