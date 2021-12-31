@@ -37,7 +37,7 @@ namespace ExpressBase.Mobile
             Params = new PdfNTVDict();
             Calc = new PdfNTVDict();
             Summary = new PdfNTVDict();
-            CurrentField = new PdfGReportField();
+            CurrentField = new PdfNTVDict();
         }
 
         public dynamic this[string tableIndex]
@@ -70,6 +70,8 @@ namespace ExpressBase.Mobile
                     return this.Calc;
                 else if (tableIndex == "Summary")
                     return this.Summary;
+                else if (tableIndex == "CurrentField")
+                    return this.CurrentField;
                 else
                     return this.T0;
             }
@@ -88,9 +90,9 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        public object GetValue(string name)
         {
-            string name = binder.Name;
+            object result = null;
 
             dictionary.TryGetValue(name, out object x);
             if (x != null)
@@ -113,10 +115,8 @@ namespace ExpressBase.Mobile
                     result = Convert.ToBoolean((x as PdfNTV).Value);
                 else
                     result = (x as PdfNTV).Value.ToString();
-                return true;
             }
-            result = null;
-            return false;
+            return result;
         }
 
         public void Add(string name, PdfNTV value)

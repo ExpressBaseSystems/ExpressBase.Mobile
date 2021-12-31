@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using iTextSharp.text;
@@ -25,6 +26,7 @@ namespace ExpressBase.Mobile
         ReportFooter,
         ReportGroups
     }
+
     public enum PaperSize
     {
         A2,
@@ -34,12 +36,14 @@ namespace ExpressBase.Mobile
         Letter,
         Custom
     }
+
     public enum SummaryFunctionsText
     {
         Count,
         Max,
         Min
     }
+
     public enum EbTextAlign
     {
         Left = 0,
@@ -78,12 +82,14 @@ namespace ExpressBase.Mobile
         Min,
         Sum
     }
+
     public enum SummaryFunctionsDateTime
     {
         Count,
         Max,
         Min
     }
+
     public enum SummaryFunctionsBoolean
     {
         Count
@@ -100,7 +106,7 @@ namespace ExpressBase.Mobile
         public float Bottom { get; set; }
     }
 
-    public class EbReport : EbReportObject/*, IEBRootObject*/
+    public class EbReport : EbReportObject
     {
         public override string RefId { get; set; }
 
@@ -197,8 +203,6 @@ namespace ExpressBase.Mobile
 
         public List<EbReportGroup> ReportGroups { set; get; }
 
-        //public EbDataReader EbDataSource { get; set; }
-
         public string DataSourceRefId { get; set; }
 
         public EbFont Font { get; set; }
@@ -220,6 +224,12 @@ namespace ExpressBase.Mobile
         public Dictionary<int, byte[]> WatermarkImages { get; set; }
 
         public List<object> WaterMarkList { get; set; }
+
+
+        public EbSciptEvaluator evaluator = new EbSciptEvaluator
+        {
+            OptionScriptNeedSemicolonAtTheEndOfLastExpression = false
+        };
 
         public Dictionary<string, string> ValueScriptCollection { get; set; }
 
@@ -248,7 +258,6 @@ namespace ExpressBase.Mobile
                 return _currentTimeStamp;
             }
         }
-
 
         public User ReadingUser { get; set; }
 
@@ -654,7 +663,7 @@ namespace ExpressBase.Mobile
                     EbDataField field = SortedList[iSortPos];
                     if (field is EbCalcField)
                     {
-                        globals.CurrentField = field;
+                        //globals.CurrentField = field;
                         column_val = (field as EbCalcField).GetCalcFieldValue(globals, DataSet, serialnumber, this);
                         EbDbTypes dbtype = (EbDbTypes)((field as EbCalcField).CalcFieldIntType);
 
@@ -814,10 +823,13 @@ namespace ExpressBase.Mobile
                 Style = (PdfGFontStyle)(int)field.Font.Style,
                 Underline = field.Font.Underline
             };
-            EbPdfGlobals globals = new EbPdfGlobals
+            EbPdfGlobals globals = new EbPdfGlobals();
+            globals["CurrentField"].Add("CurrentField", new PdfNTV
             {
-                CurrentField = new PdfGReportField(field.LeftPt, field.WidthPt, field.TopPt, field.HeightPt, field.BackColor, field.ForeColor, field.IsHidden, pg_font)
-            };
+                Name = "CurrentField",
+                Type = PdfEbDbTypes.Object,
+                Value = new PdfGReportField(field.LeftPt, field.WidthPt, field.TopPt, field.HeightPt, field.BackColor, field.ForeColor, field.IsHidden, pg_font)
+            });
 
             AddParamsNCalcsInGlobal(globals);
 
@@ -828,7 +840,8 @@ namespace ExpressBase.Mobile
                 string fName = calcfd.Split('.')[1];
                 globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)DataSet.Tables[TableIndex].Columns[fName].Type, Value = DataSet.Tables[TableIndex].Rows[slno][fName] });
             }
-            //AppearanceScriptCollection[field.Name].RunAsync(globals);
+            object value =  ExecuteExpression( AppearanceScriptCollection[this.Name], slno, globals, field.DataFieldsUsedAppearance); 
+           
             field.SetValuesFromGlobals(globals.CurrentField);
         }
 
@@ -964,8 +977,108 @@ namespace ExpressBase.Mobile
                     globals["Summary"].Add(key.Replace(".", "_"), SummaryValInRow[key]);
                 }
         }
-    }
 
+        public string[] GetDataFieldsUsed(string code)
+        {
+            int i = 0;
+            IEnumerable<string> matches = Regex.Matches(code, @"T[0-9]{1}.\w+").OfType<Match>()
+                         .Select(m => m.Groups[0].Value)
+                         .Distinct();
+            string[] _dataFieldsUsed = new string[matches.Count()];
+            foreach (string match in matches)
+                _dataFieldsUsed[i++] = match;
+            return _dataFieldsUsed;
+        }
+
+        public string GetProcessedCodeForScriptCollection(string code)
+        {
+            string[] _dataFieldsUsed = GetDataFieldsUsed(code);
+            return GetProcessedCode(code, _dataFieldsUsed);
+        }
+
+        public string GetProcessedCode(string code, string[] _dataFieldsUsed)
+        {
+            String processedCode = code;
+
+            foreach (string calcfd in _dataFieldsUsed)
+            {
+                string fName = calcfd.Split('.')[1];
+                processedCode = processedCode.Replace("." + fName, ".GetValue(\"" + fName + "\")");
+            } 
+
+            return processedCode;
+        }
+
+        public object ExecuteExpression(string code, int irow, EbPdfGlobals globals, string[] _dataFieldsUsed)
+        {
+            string processedCode = GetProcessedCode(code, _dataFieldsUsed);
+            foreach (string calcfd in _dataFieldsUsed)
+            {
+                string TName = calcfd.Split('.')[0];
+                string fName = calcfd.Split('.')[1];
+                int tableIndex = Convert.ToInt32(TName.Substring(1));
+                int RowIndex = (tableIndex == this.DetailTableIndex) ? irow : 0;
+                globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)this.DataSet.Tables[tableIndex].Columns[fName].Type, Value = this.DataSet.Tables[tableIndex].Rows[irow][fName] });
+            }
+            object value = null;
+            AddParamsNCalcsInGlobal(globals);
+            SetVariable(globals);
+            try
+            {
+                value = evaluator.Execute(processedCode);
+            }
+            catch (Exception e)
+            {
+                string s = e.Message + e.StackTrace;
+            }
+            return value;
+        }
+
+        public void SetVariable(EbPdfGlobals globals)
+        {
+            Dictionary<string, object> dict = new Dictionary<string, object>
+            {
+                {"T0", globals["T0"]},
+                {"T1", globals["T1"]},
+                {"T2", globals["T2"]},
+                {"T3", globals["T3"]},
+                {"T4", globals["T4"]},
+                {"T5", globals["T5"]},
+                {"T6", globals["T6"]},
+                {"T7", globals["T7"]},
+                {"T8", globals["T8"]},
+                {"T9", globals["T9"]},
+                {"Params", globals["Params"]},
+                {"Calc", globals["Calc"]},
+                {"Summary", globals["Summary"]},
+                { "CurrentField", globals["CurrentField"] }
+            };
+            evaluator.SetVariable(dict);
+        }
+
+        public void ExecuteHideExpression(EbReport Report, EbReportField field)
+        {
+            EbPdfGlobals globals = new EbPdfGlobals();
+
+            string[] _dataFieldsUsed = GetDataFieldsUsed(field.HideExpression.GetCode());
+            object value = ExecuteExpression(field.HideExpression.GetCode(), 0, globals, _dataFieldsUsed);
+
+            if (value != null)
+                field.IsHidden = (bool)value;
+        }
+
+        public void ExecuteLayoutExpression(EbReport Report, EbReportField field)
+        {
+            EbPdfGlobals globals = new EbPdfGlobals
+            {
+                CurrentField = new PdfGReportField(field.LeftPt, field.WidthPt, field.TopPt, field.HeightPt, field.BackColor, field.ForeColor, field.IsHidden, null)
+            };
+            string[] _dataFieldsUsed = GetDataFieldsUsed(field.LayoutExpression.GetCode());
+            object value = ExecuteExpression(field.LayoutExpression.GetCode(), 0, globals, _dataFieldsUsed);
+
+            field.SetValuesFromGlobals(globals.CurrentField);
+        }
+    }
 
     public class EbTableLayoutCell : EbReportObject
     {
@@ -1021,7 +1134,6 @@ namespace ExpressBase.Mobile
         }
     }
 
-
     public class EbReportHeader : EbReportSection
     {
     }
@@ -1034,7 +1146,6 @@ namespace ExpressBase.Mobile
     {
     }
 
-
     public class EbPageFooter : EbReportSection
     {
     }
@@ -1042,7 +1153,6 @@ namespace ExpressBase.Mobile
     public class EbReportFooter : EbReportSection
     {
     }
-
 
     public class EbReportGroup : EbReportObject
     {
@@ -1082,6 +1192,7 @@ namespace ExpressBase.Mobile
     {
         public int Order { set; get; }
     }
+
     public class ReportGroupItem
     {
         public EbDataField field;

@@ -67,6 +67,7 @@ namespace ExpressBase.Mobile.Services
                 if (data != null)
                 {
                     App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
+                    App.Settings.WebObjects = App.Settings.CurrentApplication.WebObjects;
                     collection = await this.GetDataAsync();
                     Utils.Toast("Refreshed");
                 }
