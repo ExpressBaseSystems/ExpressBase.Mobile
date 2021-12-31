@@ -183,13 +183,18 @@ namespace ExpressBase.Mobile
                     {
                         INativeHelper helper = DependencyService.Get<INativeHelper>();
                         string root = App.Settings.AppDirectory;
-                        string path = helper.NativeRoot + $"/{root}/{App.Settings.CurrentSolution.SolutionName}/print.pdf";
+                        string path = helper.NativeRoot + $"/{root}/{AppConst.SHARED_MEDIA}/{App.Settings.CurrentSolution.SolutionName}/print.pdf";
                         File.WriteAllBytes(path, r.ReportBytea);
 
-                        await Launcher.OpenAsync(new OpenFileRequest
+                        IAppHandler handler = DependencyService.Get<IAppHandler>();
+                        string res = await handler.PrintPdfFile(path);
+                        if (res != "success")
                         {
-                            File = new ReadOnlyFile(path)
-                        });
+                            await Launcher.OpenAsync(new OpenFileRequest
+                            {
+                                File = new ReadOnlyFile(path)
+                            });
+                        }
                     }
                 }
             }

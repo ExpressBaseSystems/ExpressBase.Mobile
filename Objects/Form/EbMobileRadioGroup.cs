@@ -15,23 +15,39 @@ namespace ExpressBase.Mobile
 
         public List<EbMobileRGOption> Options { get; set; }
 
+        public bool HorizontalAlign { get; set; }
+
         public EbMobileRadioGroup() { }
 
         public override View Draw(FormMode Mode, NetworkMode Network)
         {
-            StackLayout layout = new StackLayout();
+            IList<View> children;
+            if (this.HorizontalAlign)
+            {
+                XControl = new FlexLayout();
+                children = (XControl as FlexLayout).Children;
+            }
+            else
+            {
+                XControl = new StackLayout();
+                children = (XControl as StackLayout).Children;
+            }
+
             string gpname = "rgopt_" + Guid.NewGuid().ToString("N");
             foreach (EbMobileRGOption opt in this.Options)
             {
                 StackLayout inner = new StackLayout()
                 {
-                    Orientation = Xamarin.Forms.StackOrientation.Horizontal
+                    Orientation = Xamarin.Forms.StackOrientation.Horizontal,
+                    Padding = new Thickness(0, 0, 10, 0)
                 };
                 RadioButton btn = new RadioButton()
                 {
                     GroupName = gpname,
                     TextColor = (Color)HelperFunctions.GetResourceValue("Primary_Color")
                 };
+                btn.CheckedChanged += (sender, arg) => { if (arg.Value) this.ValueChanged(); };
+
                 TapGestureRecognizer recognizer = new TapGestureRecognizer();
                 recognizer.Tapped += OnLabelClicked;
                 Label label = new Label()
@@ -39,16 +55,15 @@ namespace ExpressBase.Mobile
                     Text = opt.DisplayName,
                     VerticalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center },
                     GestureRecognizers = { recognizer },
-                    BindingContext = btn
+                    BindingContext = btn,
+                    Padding = new Thickness(0, 10, 10, 10)
                 };
 
                 opt.XButton = btn;
                 inner.Children.Add(btn);
                 inner.Children.Add(label);
-                layout.Children.Add(inner);
+                children.Add(inner);
             }
-            XControl = layout;
-
             return base.Draw(Mode, Network);
         }
 

@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Xamarin.Essentials;
@@ -236,14 +237,26 @@ namespace ExpressBase.Mobile.Models
         public List<T> GetColumnValues<T>(string columnName)
         {
             List<T> values = new List<T>();
+            var converter = TypeDescriptor.GetConverter(typeof(T));
 
-            foreach(MobileTableRow row in this)
+            foreach (MobileTableRow row in this)
             {
                 MobileTableColumn column = row[columnName];
 
-                if(column != null)
+                if (column != null)
                 {
-                    values.Add((T)column.Value);
+                    try
+                    {
+                        string st = Convert.ToString(column.Value);
+                        if (string.IsNullOrWhiteSpace(st))
+                            values.Add(default(T));
+                        else
+                            values.Add((T)converter.ConvertFromString(st));
+                    }
+                    catch (Exception ex)
+                    {
+                        EbLog.Error("GetColumnValues error : " + ex.Message);
+                    }
                 }
             }
             return values;

@@ -66,6 +66,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             if (this.RowId > 0 || this.Form.RenderAsFilterDialog)
             {
                 Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                this.Form.NetworkType = this.NetworkType;//
                 await this.Form.Print(this.RowId);
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
             }

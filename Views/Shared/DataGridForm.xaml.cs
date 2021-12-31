@@ -1,5 +1,4 @@
-﻿using ExpressBase.Mobile.Enums;
-using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views.Base;
 using System;
@@ -58,17 +57,9 @@ namespace ExpressBase.Mobile.Views.Shared
             InitDefaultValueExpressions();
             InitOnLoadExpressions();
         }
-
         private void CreateForm()
         {
-            foreach (EbMobileControl ctrl in dataGrid.ChildControls)
-            {
-                ctrl.Parent = dataGrid.Name;
-
-                View view = ctrl.XControl == null ? ctrl.Draw(dataGrid.FormRenderMode, dataGrid.NetworkType) : ctrl.XView;
-
-                ControlContainer.Children.Add(view);
-            }
+            EbFormHelper.AddAllControlViews(ControlContainer, dataGrid.ChildControls, dataGrid.FormRenderMode, dataGrid.NetworkType, null, dataGrid.Name, true);
         }
 
         private void FillValue(MobileTableRow row)
@@ -86,15 +77,21 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private void OnSaveAndContinueClicked(object sender, EventArgs e)
         {
+            if (this.dataGrid.IsTaped())
+                return;
             OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
             Utils.Toast("1 row added.");
             ResetControls();
+            EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
         }
 
         private async void OnSaveAndCloseClicked(object sender, EventArgs e)
         {
+            if (this.dataGrid.IsTaped())
+                return;
             OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
             ResetControls();
+            EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
             await App.Navigation.PopMasterModalAsync(true);
         }
 

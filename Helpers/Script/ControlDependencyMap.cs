@@ -11,11 +11,15 @@ namespace ExpressBase.Mobile.Helpers.Script
 
         public Dictionary<string, ExprDependency> DependencyMapCollection { set; get; }
 
+        public Dictionary<string, ExprDependency> DGDependencyMapColl { set; get; }
+
         public const string CTRL_PARENT_FORM = "form";
 
         public ControlDependencyMap()
         {
             DependencyMapCollection = new Dictionary<string, ExprDependency>();
+
+            DGDependencyMapColl = new Dictionary<string, ExprDependency>();
 
             NameCollection = new List<string>();
         }
@@ -65,11 +69,23 @@ namespace ExpressBase.Mobile.Helpers.Script
                 {
                     foreach (string dependent in GetDependentNames(script))
                     {
-                        if (!DependencyMapCollection.ContainsKey(dependent))
+                        string dparent = dependent.Split(CharConstants.DOT)[0];
+                        if (dparent != CTRL_PARENT_FORM && parent == CTRL_PARENT_FORM)// grid to form dependency
                         {
-                            DependencyMapCollection[dependent] = new ExprDependency();
+                            if (!DGDependencyMapColl.ContainsKey(dparent))
+                            {
+                                DGDependencyMapColl[dparent] = new ExprDependency();
+                            }
+                            DGDependencyMapColl[dparent].Add((ExpressionType)value, $"{parent}.{control.Name}");
                         }
-                        DependencyMapCollection[dependent].Add((ExpressionType)value, $"{parent}.{control.Name}");
+                        else if (parent == dparent)// avoid form to grid dependency
+                        {
+                            if (!DependencyMapCollection.ContainsKey(dependent))
+                            {
+                                DependencyMapCollection[dependent] = new ExprDependency();
+                            }
+                            DependencyMapCollection[dependent].Add((ExpressionType)value, $"{parent}.{control.Name}");
+                        }
                     }
                 }
             }
@@ -99,7 +115,7 @@ namespace ExpressBase.Mobile.Helpers.Script
 
             if (parent.Equals(CTRL_PARENT_FORM))
             {
-                return new List<string> 
+                return new List<string>
                 {
                     $"{parent}.{control}"
                 };

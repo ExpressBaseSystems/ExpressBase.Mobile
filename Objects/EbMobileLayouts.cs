@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
+using System.Collections.Generic;
+using System.Linq;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
 {
@@ -17,6 +21,49 @@ namespace ExpressBase.Mobile
         public EbMobileTableLayout()
         {
             this.CellCollection = new List<EbMobileTableCell>();
+        }
+
+        public Grid GetGridObject(string parent, FormMode FormMode, NetworkMode NetWorkType, EbDataRow Context)
+        {
+            Grid grid = new Grid() { ColumnSpacing = 0, RowSpacing = 0 };
+
+            List<EbMobileTableCell> tr0 = this.CellCollection.FindAll(tr => tr.RowIndex == 0);
+            Dictionary<int, int> widthMap = tr0.Distinct().ToDictionary(item => item.ColIndex, item => item.Width);
+
+            for (int r = 0; r < this.RowCount; r++)
+            {
+                grid.RowDefinitions.Add(new RowDefinition());
+            }
+
+            for (int i = 0; i < this.ColumCount; i++)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition
+                {
+                    Width = new GridLength(widthMap[i], GridUnitType.Star)
+                });
+            }
+
+            for (int i = 0; i < this.CellCollection.Count; i++)
+            {
+                EbMobileTableCell cell = this.CellCollection[i];
+
+                if (cell.ControlCollection.Count > 0)
+                {
+                    EbMobileControl tbctrl = cell.ControlCollection[0];
+                    tbctrl.Parent = parent;
+                    View controlView;
+                    if (Context == null)
+                        controlView = tbctrl.Draw(FormMode, NetWorkType);
+                    else
+                        controlView = tbctrl.Draw(FormMode, NetWorkType, Context);
+
+                    if (i % this.ColumCount > 0 && controlView is StackLayout layout)
+                        layout.Padding = new Thickness(0, layout.Padding.Top, layout.Padding.Right, layout.Padding.Bottom);
+
+                    grid.Children.Add(controlView, i % this.ColumCount, i / this.ColumCount);
+                }
+            }
+            return grid;
         }
     }
 

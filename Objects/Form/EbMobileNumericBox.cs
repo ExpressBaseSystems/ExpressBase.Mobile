@@ -4,6 +4,8 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -20,41 +22,54 @@ namespace ExpressBase.Mobile
 
         public NumericBoxTypes RenderType { get; set; }
 
-        private EbXTextBox valueBox;
+        public bool AllowNegative { get; set; }
 
-        private decimal valueBoxNumber = 0;
+        public List<EbMobileNumBoxButtons> IncrementButtons { get; set; }
+
+        private EbXTextBox XValueBox;
+
+        private string decimalPadding;
 
         public override View Draw(FormMode Mode, NetworkMode Network)
         {
+            decimalPadding = this.DecimalPlaces > 0 ? ".".PadRight(this.DecimalPlaces + 1, '0') : string.Empty;
             if (RenderType == NumericBoxTypes.ButtonType)
             {
                 Grid grid = new Grid { ColumnSpacing = 10, IsEnabled = !this.ReadOnly };
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                if (this.IncrementButtons == null || this.IncrementButtons.Count == 0)
+                    this.IncrementButtons = new List<EbMobileNumBoxButtons>() { new EbMobileNumBoxButtons() { Value = -1 }, new EbMobileNumBoxButtons() { Value = 1 } };
+
+                this.IncrementButtons = this.IncrementButtons.OrderBy(e => e.Value).ToList();
+                Int16 index = 0;
+
+                foreach (EbMobileNumBoxButtons btn in this.IncrementButtons)
+                {
+                    if (btn.Value > 0)
+                        break;
+                    this.AddIncrButton(grid, btn.Value, index++, "- ");
+                }
+
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-                var minus = new Button
+                XValueBox = new EbXTextBox
                 {
-                    Style = (Style)HelperFunctions.GetResourceValue("NumericBoxIncrButton"),
-                    Text = "\uf068",
-                    IsEnabled = !this.ReadOnly
+                    Text = "0" + decimalPadding,
+                    Keyboard = Keyboard.Numeric,
+                    HorizontalTextAlignment = TextAlignment.End,
+                    IsReadOnly = this.ReadOnly,
+                    XBackgroundColor = this.XBackground,
+                    EnableFocus = true,
+                    BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
                 };
-                minus.Clicked += Minus_Clicked;
-                grid.Children.Add(minus, 0, 0);
+                XValueBox.TextChanged += this.NumericValueChanged;
 
-                valueBox = new EbXTextBox { Text = valueBoxNumber.ToString(), IsReadOnly = true };
-                valueBox.TextChanged += (sender, arg) => this.ValueChanged();
-
-                grid.Children.Add(valueBox, 1, 0);
-
-                Button plus = new Button
+                grid.Children.Add(XValueBox, index++, 0);
+                foreach (EbMobileNumBoxButtons btn in this.IncrementButtons)
                 {
-                    Style = (Style)HelperFunctions.GetResourceValue("NumericBoxIncrButton"),
-                    Text = "\uf067",
-                    IsEnabled = !this.ReadOnly
-                };
-                plus.Clicked += Plus_Clicked;
-                grid.Children.Add(plus, 2, 0);
+                    if (btn.Value < 0)
+                        continue;
+                    this.AddIncrButton(grid, btn.Value, index++, "+ ");
+                }
 
                 this.XControl = grid;
             }
@@ -62,33 +77,53 @@ namespace ExpressBase.Mobile
             {
                 EbXNumericTextBox numeric = new EbXNumericTextBox
                 {
+                    Text = "0" + decimalPadding,
                     IsReadOnly = this.ReadOnly,
                     XBackgroundColor = this.XBackground,
                     Keyboard = Keyboard.Numeric,
                     Behaviors = { new NumericBoxBehavior() },
                     EnableFocus = true,
-                    BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
+                    BorderOnFocus = App.Settings.Vendor.GetPrimaryColor(),
+                    HorizontalTextAlignment = TextAlignment.End
                 };
 
-                numeric.Unfocused += (sender, arg) => this.ValueChanged();
-                XControl = numeric;
+                numeric.TextChanged += this.NumericValueChanged;
+                this.XControl = numeric;
             }
 
             return base.Draw(Mode, Network);
         }
 
-        private void Plus_Clicked(object sender, EventArgs e)
+        private void AddIncrButton(Grid grid, int val, int i, string prefix)
         {
-            valueBoxNumber++;
-            valueBox.Text = valueBoxNumber.ToString();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            Button btn = new Button
+            {
+                Style = (Style)HelperFunctions.GetResourceValue("NumericBoxIncrButton"),
+                Text = prefix + Math.Abs(val),
+                IsEnabled = !this.ReadOnly
+            };
+            btn.BindingContext = val;
+            btn.Clicked += IncrBtn_Clicked;
+            grid.Children.Add(btn, i++, 0);
         }
 
-        private void Minus_Clicked(object sender, EventArgs e)
+        private void NumericValueChanged(object sender, TextChangedEventArgs arg)
         {
-            if (valueBoxNumber == 0) return;
+            if (arg.OldTextValue == arg.NewTextValue)
+                return;
 
-            valueBoxNumber--;
-            valueBox.Text = valueBoxNumber.ToString();
+            SetValue(arg.NewTextValue);
+            ValueChanged();
+        }
+
+        private void IncrBtn_Clicked(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            int val = Convert.ToInt32(btn.BindingContext);
+            decimal value = val + Convert.ToDecimal(XValueBox.Text);
+            SetValue(value);
+            ValueChanged();
         }
 
         public override object GetValue()
@@ -97,11 +132,12 @@ namespace ExpressBase.Mobile
             try
             {
                 if (RenderType == NumericBoxTypes.ButtonType)
-                    value = valueBoxNumber;
+                {
+                    value = Convert.ToDecimal(XValueBox.Text);
+                }
                 else
                 {
-                    var text = (this.XControl as EbXNumericTextBox).Text;
-                    value = Convert.ToDecimal(text);
+                    value = Convert.ToDecimal((XControl as EbXNumericTextBox).Text);
                 }
             }
             catch (Exception ex)
@@ -114,16 +150,16 @@ namespace ExpressBase.Mobile
 
         public override void SetValue(object value)
         {
-            if (value != null)
-            {
-                if (RenderType == NumericBoxTypes.ButtonType)
-                {
-                    valueBoxNumber = Convert.ToDecimal(value);
-                    valueBox.Text = valueBoxNumber.ToString();
-                }
-                else
-                    (this.XControl as EbXNumericTextBox).Text = value.ToString();
-            }
+            double _t;
+            double.TryParse(Convert.ToString(value), out _t);
+            if (!AllowNegative && _t < 0)
+                return;
+            string strval = string.Format("{0:0" + decimalPadding + "}", _t);
+
+            if (RenderType == NumericBoxTypes.ButtonType)
+                XValueBox.Text = strval;
+            else
+                (XControl as EbXNumericTextBox).Text = strval;
         }
 
         public override void SetAsReadOnly(bool disable)
@@ -135,16 +171,13 @@ namespace ExpressBase.Mobile
             if (RenderType == NumericBoxTypes.TextType)
                 (this.XControl as EbXNumericTextBox).XBackgroundColor = bg;
             else
-                valueBox.XBackgroundColor = bg;
+                XValueBox.XBackgroundColor = bg;
         }
 
         public override void Reset()
         {
             if (RenderType == NumericBoxTypes.ButtonType)
-            {
-                valueBox.ClearValue(EbXTextBox.TextProperty);
-                valueBoxNumber = 0;
-            }
+                XValueBox.ClearValue(EbXTextBox.TextProperty);
             else
                 (this.XControl as EbXNumericTextBox).ClearValue(EbXNumericTextBox.TextProperty);
         }
@@ -166,9 +199,16 @@ namespace ExpressBase.Mobile
             Color border = status ? EbMobileControl.DefaultBorder : EbMobileControl.ValidationError;
 
             if (RenderType == NumericBoxTypes.TextType)
-                (this.XControl as EbXNumericTextBox).BorderColor = border;
+                (XControl as EbXNumericTextBox).BorderColor = border;
             else
-                valueBox.BorderColor = border;
+                XValueBox.BorderColor = border;
         }
+    }
+
+    public class EbMobileNumBoxButtons : EbMobilePageBase
+    {
+        public string EbSid { get; set; }
+
+        public int Value { set; get; }
     }
 }
