@@ -37,6 +37,11 @@ namespace ExpressBase.Mobile.Helpers.Script
             Variables.Add(key, value);
         }
 
+        public void SetVariable(Dictionary<string, object> dict)
+        {
+            Variables = dict;
+        }
+
         public void RemoveVariable(string key)
         {
             if (Variables.ContainsKey(key))

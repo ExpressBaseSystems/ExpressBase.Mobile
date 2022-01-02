@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Models;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -10,10 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -22,6 +20,7 @@ namespace ExpressBase.Mobile.Services
         public PdfService() : base(true)
         {
         }
+
 
         public async Task<ReportRenderResponse> GetPdfOnline(string refid, string param)
         {
@@ -55,17 +54,8 @@ namespace ExpressBase.Mobile.Services
                 EbReport Report = null;
                 try
                 {
-                    //List<string> Groupings = null;
-                    //  EbObjectService myObjectservice = base.ResolveService<EbObjectService>();
-                    //  myObjectservice.EbConnectionFactory = this.EbConnectionFactory;
-                    //  DataSourceService myDataSourceservice = base.ResolveService<DataSourceService>();
-                    // myDataSourceservice.EbConnectionFactory = this.EbConnectionFactory;
-
-                    // EbObjectParticularVersionResponse resultlist = myObjectservice.Get(new EbObjectParticularVersionRequest { RefId = request.Refid }) as EbObjectParticularVersionResponse;
                     Report = (EbReport)EbPageHelper.GetWebObjects(refid);
 
-                    //Report.ReportService = this;
-                    //Report.SolutionId = request.SolnId;
                     Report.IsLastpage = false;
                     Report.WatermarkImages = new Dictionary<int, byte[]>();
                     Report.WaterMarkList = new List<object>();
@@ -77,22 +67,14 @@ namespace ExpressBase.Mobile.Services
                     Report.ReportSummaryFields = new Dictionary<string, List<EbDataField>>();
                     Report.GroupFooters = new Dictionary<string, ReportGroupItem>();
                     Report.Groupheaders = new Dictionary<string, ReportGroupItem>();
-                    //Report.FileClient = new EbStaticFileClient();
-                    //if (string.IsNullOrEmpty(FileClient.BearerToken) && !string.IsNullOrEmpty(request.BToken))
-                    //{
-                    //    FileClient.BearerToken = request.BToken;
-                    //    FileClient.RefreshToken = request.RToken;
-                    //}
-                    //Report.FileClient = FileClient;
-                    //Report.Solution = GetSolutionObject(request.SolnId);
+
                     Report.CultureInfo = new CultureInfo("en-IN", false);
-                    // NumberFormat, DateTimeFormat?.LongTimePattern DateTimeFormat?.LongTimePattern
-                    //Report.CultureInfo = CultureHelper.GetSerializedCultureInfo(App.Settings.CurrentUser?.Preference.Locale ?? "en-US").GetCultureInfo();
                     Report.Parameters = JsonConvert.DeserializeObject<List<Param>>(param);
                     Report.Ms1 = new MemoryStream();
                     if (Report?.OfflineQuery.Code != string.Empty)
                     {
-                        Report.DataSet = App.DataDB.DoQueries(HelperFunctions.B64ToString(Report.OfflineQuery.Code), Report.Parameters.ToDbParams().ToArray());
+                        string query = Report.OfflineQuery.GetCode();
+                        Report.DataSet = App.DataDB.DoQueries(query, Report.Parameters.ToDbParams().ToArray());
                     }
                     float _width = Report.WidthPt - Report.Margin.Left;// - Report.Margin.Right;
                     float _height = Report.HeightPt - Report.Margin.Top - Report.Margin.Bottom;
@@ -109,7 +91,6 @@ namespace ExpressBase.Mobile.Services
                     Report.Writer.CloseStream = true;//important
                     Report.Canvas = Report.Writer.DirectContent;
                     Report.PageNumber = Report.Writer.PageNumber;
-                    //Report.GetWatermarkImages();
                     FillingCollections(Report);
                     Report.Doc.NewPage();
                     Report.DrawReportHeader();
@@ -226,40 +207,41 @@ namespace ExpressBase.Mobile.Services
         {
             foreach (EbReportField field in fields)
             {
-                if (!String.IsNullOrEmpty(field.HideExpression?.Code))
+                if (!String.IsNullOrEmpty(field.HideExpression?.GetCode()))
                 {
-                    //  ExecuteHideExpression(Report, field);
+                    Report.ExecuteHideExpression(Report, field);
                 }
-                if (!field.IsHidden && !String.IsNullOrEmpty(field.LayoutExpression?.Code))
+                if (!field.IsHidden && !String.IsNullOrEmpty(field.LayoutExpression?.GetCode()))
                 {
-                    // ExecuteLayoutExpression(Report, field);
+                    Report.ExecuteLayoutExpression(Report, field);
                 }
                 if (field is EbDataField)
                 {
                     EbDataField field_org = field as EbDataField;
-                    //if (!string.IsNullOrEmpty(field_org.LinkRefId) && !Report.LinkCollection.ContainsKey(field_org.LinkRefId))
-                    //    FindControls(Report, field_org);//Finding the link's parameter controls
 
                     if (section_typ == EbReportSectionType.Detail)
-                        FindLargerDataTable(Report, field_org);// finding the table of highest rowcount from dataset
+                        FindLargerDataTable(Report, field_org);
 
                     if (field is IEbDataFieldSummary)
                         FillSummaryCollection(Report, field_org, section_typ);
 
-                    //if (field is EbCalcField && !Report.ValueScriptCollection.ContainsKey(field.Name) && !string.IsNullOrEmpty((field_org as EbCalcField).ValExpression?.Code))
-                    //{
-                    //    Script valscript = CompileScript((field as EbCalcField).ValExpression.Code);
-                    //    Report.ValueScriptCollection.Add(field.Name, valscript);
-                    //}
+                    if (field is EbCalcField && !Report.ValueScriptCollection.ContainsKey(field.Name) && !string.IsNullOrEmpty((field_org as EbCalcField).ValExpression?.Code))
+                    {
+                        string processedCode = Report.GetProcessedCodeForScriptCollection((field as EbCalcField).ValExpression.GetCode());
+                        Report.ValueScriptCollection.Add(field.Name, processedCode);
+                    }
 
-                    //if (!field.IsHidden && !Report.AppearanceScriptCollection.ContainsKey(field.Name) && !string.IsNullOrEmpty(field_org.AppearExpression?.Code))
-                    //{
-                    //    Script appearscript = CompileScript(field_org.AppearExpression.Code);
-                    //    Report.AppearanceScriptCollection.Add(field.Name, appearscript);
-                    //}
+                    if (!field.IsHidden && !Report.AppearanceScriptCollection.ContainsKey(field.Name) && !string.IsNullOrEmpty(field_org.AppearExpression?.Code))
+                    {
+                        string processedCode = Report.GetProcessedCodeForScriptCollection(field_org.AppearExpression.GetCode());
+                        Report.AppearanceScriptCollection.Add(field.Name, processedCode);
+                    }
                 }
             }
         }
+
+
+
         public void FindLargerDataTable(EbReport Report, EbDataField field)
         {
             if (!Report.HasRows || field.TableIndex != Report.DetailTableIndex)

@@ -46,7 +46,7 @@ namespace ExpressBase.Mobile
                 {
                     if (this.AppearExpression != null && this.AppearExpression.Code != null)
                     {
-                        IEnumerable<string> matches = Regex.Matches(this.AppearExpression.Code, @"T[0-9]{1}\.\w+").OfType<Match>()
+                        IEnumerable<string> matches = Regex.Matches(this.AppearExpression.GetCode(), @"T[0-9]{1}\.\w+").OfType<Match>()
                                .Select(m => m.Groups[0].Value)
                                .Distinct();
 
@@ -667,7 +667,7 @@ namespace ExpressBase.Mobile
                 if (_dataFieldsUsed == null)
                     if (ValExpression?.Code != null)
                     {
-                        IEnumerable<string> matches = Regex.Matches(ValExpression.Code, @"T[0-9]{1}\.\w+").OfType<Match>()
+                        IEnumerable<string> matches = Regex.Matches(ValExpression.GetCode(), @"T[0-9]{1}\.\w+").OfType<Match>()
                              .Select(m => m.Groups[0].Value)
                              .Distinct();
 
@@ -686,10 +686,7 @@ namespace ExpressBase.Mobile
             ColumnText ct = new ColumnText(Rep.Canvas);
             string column_val = string.Empty;
             EbDbTypes dbtype = EbDbTypes.String;
-            EbPdfGlobals globals = new EbPdfGlobals
-            {
-                //CurrentField = this
-            };
+            EbPdfGlobals globals = new EbPdfGlobals();
 
             Rep.AddParamsNCalcsInGlobal(globals);
             try
@@ -703,7 +700,7 @@ namespace ExpressBase.Mobile
                         int RowIndex = (TableIndex == Rep.DetailTableIndex) ? slno : 0;
                         globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)Rep.DataSet.Tables[TableIndex].Columns[fName].Type, Value = Rep.DataSet.Tables[TableIndex].Rows[RowIndex][fName] });
                     }
-                //column_val = (Rep.ValueScriptCollection[Name].RunAsync(globals)).Result.ReturnValue.ToString();
+                column_val = Rep.ExecuteExpression(Rep.ValueScriptCollection[Name], slno, globals, DataFieldsUsedInCalc).ToString();
 
                 dbtype = (EbDbTypes)CalcFieldIntType;
 
@@ -759,7 +756,7 @@ namespace ExpressBase.Mobile
                 int tableindex = Convert.ToInt32(TName.Substring(1));
                 globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)DataSet.Tables[tableindex].Columns[fName].Type, Value = DataSet.Tables[tableindex].Rows[serialnumber][fName] });
             }
-            // value = (Rep.ValueScriptCollection[this.Name].RunAsync(globals)).Result.ReturnValue.ToString();
+            value = Rep.ExecuteExpression(Rep.ValueScriptCollection[this.Name], serialnumber, globals, DataFieldsUsedInCalc);
             return value;
         }
     }
