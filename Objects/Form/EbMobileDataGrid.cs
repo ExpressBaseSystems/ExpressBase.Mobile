@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
@@ -30,16 +31,21 @@ namespace ExpressBase.Mobile
 
         public bool DisableEdit { set; get; }
 
-        private DataGrid gridView;
-
         public EbDataRow Context { set; get; }
 
+        public EbScript RowColorExpr { get; set; }
+
+        private DataGrid gridView;
+
         private bool isTaped { get; set; }
+
+        public DataGridRowHelper RowHelper { get; set; }
 
         public override View Draw(FormMode mode, NetworkMode network)
         {
             FormRenderMode = mode;
             NetworkType = network;
+            RowHelper = new DataGridRowHelper(this);
 
             gridView = new DataGrid(this);
             XControl = gridView;
@@ -204,7 +210,7 @@ namespace ExpressBase.Mobile
             this.isTaped = true;
             Task task = Task.Run(async () =>
             {
-                await Task.Delay(2000);
+                await Task.Delay(1000);
                 this.isTaped = false;
             });
             return false;
@@ -214,19 +220,84 @@ namespace ExpressBase.Mobile
 
     public class DataGridRowHelper
     {
-        private List<EbMobileControl> Controls { set; get; }
+        private EbMobileDataGrid DataGrid;
 
-        public DataGridRowHelper(List<EbMobileControl> controls)
+        private string RowColorExprCode;
+
+        private readonly EbSciptEvaluator evaluator;
+
+        private Dictionary<string, MobileTableColumn> ColumnDictionary;
+
+        public DataGridRowHelper(EbMobileDataGrid dataGrid)
         {
-            Controls = controls;
+            if (!string.IsNullOrWhiteSpace(dataGrid?.RowColorExpr?.Code))
+            {
+                DataGrid = dataGrid;
+                string script = dataGrid.RowColorExpr.GetCode();
+                RowColorExprCode = GetComputedExpression(script);
+
+                evaluator = new EbSciptEvaluator
+                {
+                    OptionScriptNeedSemicolonAtTheEndOfLastExpression = false
+                };
+
+                ColumnDictionary = new Dictionary<string, MobileTableColumn>();
+                foreach (EbMobileControl ctrl in DataGrid.ChildControls)
+                {
+                    ColumnDictionary.Add(ctrl.Name, new MobileTableColumn(ctrl.Name, ctrl.EbDbType, null));
+                }
+                evaluator.SetVariable("form", new EbDataGridEvaluator(ColumnDictionary));
+            }
         }
 
-        public EbMobileControl this[string controlName]
+        public Color GetBackGroundColor(MobileTableRow row)
         {
-            get
+            Color color = Color.White;
+            if (RowColorExprCode != null)
             {
-                return this.Controls.Find(item => item.Name == controlName);
+                try
+                {
+                    SetRowData(row);
+                    string hexcolur = evaluator.Execute<string>(RowColorExprCode);
+                    if (!string.IsNullOrWhiteSpace(hexcolur))
+                        color = Color.FromHex(hexcolur);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
+
+            return color;
+        }
+
+        private void SetRowData(MobileTableRow row)
+        {
+            foreach (MobileTableColumn Column in row.Columns)
+            {
+                if (ColumnDictionary.ContainsKey(Column.Name))
+                {
+                    if (Column.Type == EbDbTypes.Decimal)
+                    {
+                        decimal.TryParse(Column.Value?.ToString(), out decimal val);
+                        ColumnDictionary[Column.Name].Value = val;
+                    }
+                    else
+                    {
+                        ColumnDictionary[Column.Name].Value = Column.Value;
+                    }
+                }
+            }
+        }
+
+        private string GetComputedExpression(string expression)
+        {
+            foreach (EbMobileControl ctrl in DataGrid.ChildControls)
+            {
+                if (expression.Contains($"{DataGrid.Name}.currentRow[\"{ctrl.Name}\"]"))
+                    expression = expression.Replace($"{DataGrid.Name}.currentRow[\"{ctrl.Name}\"]", $"GetTableColumn(\"{ctrl.Name}\")");
+            }
+            return expression;
         }
     }
 }

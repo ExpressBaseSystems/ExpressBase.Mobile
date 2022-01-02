@@ -70,7 +70,9 @@ namespace ExpressBase.Mobile.Views.Shared
 
                 if (col != null)
                 {
+                    ctrl.DoNotPropagateChange = true;
                     ctrl.SetValue(col.Value);
+                    ctrl.DoNotPropagateChange = false;
                 }
             }
         }
@@ -97,11 +99,18 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private void ResetControls()
         {
-            foreach (EbMobileControl ctrl in dataGrid.ChildControls) ctrl.Reset();
+            foreach (EbMobileControl ctrl in dataGrid.ChildControls)
+            {
+                ctrl.DoNotPropagateChange = true;
+                ctrl.Reset();
+                ctrl.DoNotPropagateChange = false;
+            }
         }
 
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
+            if (this.dataGrid.IsTaped())
+                return;
             ResetControls();
             await App.Navigation.PopMasterModalAsync(true);
         }

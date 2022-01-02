@@ -110,7 +110,7 @@ namespace ExpressBase.Mobile
 
         private void NumericValueChanged(object sender, TextChangedEventArgs arg)
         {
-            if (arg.OldTextValue == arg.NewTextValue)
+            if (arg.OldTextValue == arg.NewTextValue || DoNotPropagateChange)
                 return;
 
             SetValue(arg.NewTextValue);
@@ -202,6 +202,16 @@ namespace ExpressBase.Mobile
                 (XControl as EbXNumericTextBox).BorderColor = border;
             else
                 XValueBox.BorderColor = border;
+        }
+
+        public override string GetDisplayName4DG(object valueMember)
+        {
+            double _t;
+            if (decimalPadding == null)
+                decimalPadding = DecimalPlaces > 0 ? ".".PadRight(DecimalPlaces + 1, '0') : string.Empty;
+            double.TryParse(Convert.ToString(valueMember), out _t);
+            string strval = string.Format("{0:0" + decimalPadding + "}", _t);
+            return strval;
         }
     }
 

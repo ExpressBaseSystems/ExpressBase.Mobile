@@ -42,6 +42,7 @@ namespace ExpressBase.Mobile.CustomControls
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             XBackgroundColor = Color.Transparent
                         };
+                        XViewExtensions.SetTextAlignment(label, column.HorrizontalTextAlign, column.VerticalTextAlign);
 
                         if (IsHeader)
                         {

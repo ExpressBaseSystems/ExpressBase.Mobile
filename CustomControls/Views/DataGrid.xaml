@@ -13,7 +13,7 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="35" x:Name="AddColumnDefinition"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <BoxView Grid.RowSpan="2"

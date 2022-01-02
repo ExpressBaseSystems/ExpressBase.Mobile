@@ -2,6 +2,7 @@
 using ExpressBase.Mobile.CustomControls.XControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace ExpressBase.Mobile.Helpers.Script
     {
         public string __mode { set; get; }
 
-        public Dictionary<string,EbMobileControl> Controls { set; get; }
+        public Dictionary<string, EbMobileControl> Controls { set; get; }
 
         public EbFormEvaluator() { }
 
@@ -150,6 +151,18 @@ namespace ExpressBase.Mobile.Helpers.Script
 
     public class EbDataGridEvaluator
     {
+        private Dictionary<string, MobileTableColumn> ColumnDictionary;
 
+        public EbDataGridEvaluator(Dictionary<string, MobileTableColumn> _dict)
+        {
+            ColumnDictionary = _dict;
+        }
+
+        public MobileTableColumn GetTableColumn(string Name)
+        {
+            if (ColumnDictionary != null && ColumnDictionary.ContainsKey(Name))
+                return ColumnDictionary[Name];
+            return null;
+        }
     }
 }
