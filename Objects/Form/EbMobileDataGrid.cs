@@ -267,7 +267,6 @@ namespace ExpressBase.Mobile
 
                 }
             }
-
             return color;
         }
 
