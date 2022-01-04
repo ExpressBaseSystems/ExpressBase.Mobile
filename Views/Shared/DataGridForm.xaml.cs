@@ -43,10 +43,10 @@ namespace ExpressBase.Mobile.Views.Shared
             this.dataGrid = dataGrid;
 
             SaveAndContinue.IsVisible = false;
-            SaveAndClose.Text = "Save Changes";
             Grid.SetColumn(SaveAndClose, 0);
-            SaveAndClose.BackgroundColor = Color.FromHex("0046bb");
-            SaveAndClose.TextColor = Color.White;
+            Grid.SetColumnSpan(SaveAndClose, 3);
+            Grid.SetColumn(CancelAndClose, 3);
+            Grid.SetColumnSpan(CancelAndClose, 3);
 
             CreateForm();
             FillValue(row);
