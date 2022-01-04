@@ -700,7 +700,7 @@ namespace ExpressBase.Mobile
                         int RowIndex = (TableIndex == Rep.DetailTableIndex) ? slno : 0;
                         globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)Rep.DataSet.Tables[TableIndex].Columns[fName].Type, Value = Rep.DataSet.Tables[TableIndex].Rows[RowIndex][fName] });
                     }
-                column_val = Rep.ExecuteExpression(Rep.ValueScriptCollection[Name], slno, globals, DataFieldsUsedInCalc).ToString();
+                column_val = Rep.ExecuteExpression(Rep.ValueScriptCollection[Name], slno, globals, DataFieldsUsedInCalc, true).ToString();
 
                 dbtype = (EbDbTypes)CalcFieldIntType;
 
@@ -756,7 +756,7 @@ namespace ExpressBase.Mobile
                 int tableindex = Convert.ToInt32(TName.Substring(1));
                 globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)DataSet.Tables[tableindex].Columns[fName].Type, Value = DataSet.Tables[tableindex].Rows[serialnumber][fName] });
             }
-            value = Rep.ExecuteExpression(Rep.ValueScriptCollection[this.Name], serialnumber, globals, DataFieldsUsedInCalc);
+            value = Rep.ExecuteExpression(Rep.ValueScriptCollection[this.Name], serialnumber, globals, DataFieldsUsedInCalc,true);
             return value;
         }
     }

@@ -174,10 +174,10 @@ namespace ExpressBase.Mobile
                     {
                         r = await PdfService.GetPdfOnline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
                     }
-                    //else if (NetworkType == NetworkMode.Offline)
-                    //{
-                    //    r = PdfService.GetPdfOffline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
-                    //}
+                    else if (NetworkType == NetworkMode.Offline)
+                    {
+                        r = PdfService.GetPdfOffline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
+                    }
 
                     if (r?.ReportBytea != null)
                     {

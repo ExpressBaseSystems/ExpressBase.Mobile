@@ -437,7 +437,7 @@ namespace ExpressBase.Mobile
         {
             dynamic value = null;
             int index;
-            if (DataSet != null && DataSet.Tables.Count > 0 && DataSet.Tables[tableIndex].Rows != null)
+            if (DataSet != null && DataSet.Tables.Count > 0 && DataSet.Tables[tableIndex].Rows?.Count > 0)
             {
                 index = (DataSet.Tables[tableIndex].Rows.Count > 1) ? i : 0;
                 EbDbTypes type = (DataSet.Tables[tableIndex].Columns[column_name].Type);
@@ -840,8 +840,8 @@ namespace ExpressBase.Mobile
                 string fName = calcfd.Split('.')[1];
                 globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)DataSet.Tables[TableIndex].Columns[fName].Type, Value = DataSet.Tables[TableIndex].Rows[slno][fName] });
             }
-            object value =  ExecuteExpression( AppearanceScriptCollection[this.Name], slno, globals, field.DataFieldsUsedAppearance); 
-           
+            object value = ExecuteExpression(AppearanceScriptCollection[this.Name], slno, globals, field.DataFieldsUsedAppearance, true);
+
             field.SetValuesFromGlobals(globals.CurrentField);
         }
 
@@ -981,7 +981,30 @@ namespace ExpressBase.Mobile
         public string[] GetDataFieldsUsed(string code)
         {
             int i = 0;
-            IEnumerable<string> matches = Regex.Matches(code, @"T[0-9]{1}.\w+").OfType<Match>()
+            IEnumerable<string> matches = Regex.Matches(code, @"T[0-9]{1}\.\w+").OfType<Match>()
+                         .Select(m => m.Groups[0].Value)
+                         .Distinct();
+            string[] _dataFieldsUsed = new string[matches.Count()];
+            foreach (string match in matches)
+                _dataFieldsUsed[i++] = match;
+            return _dataFieldsUsed;
+        }
+
+        public string[] GetOtherGlobalFieldsUsed(string code)
+        {
+            if (code.Contains("Summary.GetValue"))
+            {
+                int q = 1;
+            }
+            if (code.Contains("Summary"))
+            {
+                int q = 1;
+            }
+            int i = 0;
+            //IEnumerable<string> matches = Regex.Matches(code, @"^(?!.*Summary\.GetValue).*Summary.*$|^(?!.*Params\.GetValue).*Params.*$|^(?!.*Calc\.GetValue).*Calc.*$").OfType<Match>()
+            //             .Select(m => m.Groups[0].Value)
+            //             .Distinct();  
+            IEnumerable<string> matches = Regex.Matches(code, @"Summary.\w+|Params.\w+|Calc.\w+").OfType<Match>()
                          .Select(m => m.Groups[0].Value)
                          .Distinct();
             string[] _dataFieldsUsed = new string[matches.Count()];
@@ -993,38 +1016,43 @@ namespace ExpressBase.Mobile
         public string GetProcessedCodeForScriptCollection(string code)
         {
             string[] _dataFieldsUsed = GetDataFieldsUsed(code);
-            return GetProcessedCode(code, _dataFieldsUsed);
+            return GetProcessedCode(code, _dataFieldsUsed, false);
         }
 
-        public string GetProcessedCode(string code, string[] _dataFieldsUsed)
+        public string GetProcessedCode(string code, string[] _dataFieldsUsed, bool a)
         {
+            string[] others = new string[0];
             String processedCode = code;
-
+            if (a)
+                others = GetOtherGlobalFieldsUsed(code);
+            _dataFieldsUsed = _dataFieldsUsed.Concat(others).ToArray();
+            _dataFieldsUsed = _dataFieldsUsed.OrderByDescending(c => c).ToArray();
             foreach (string calcfd in _dataFieldsUsed)
             {
-                string fName = calcfd.Split('.')[1];
+                string fName = (calcfd.Split('.')[1]).Replace(";", "");
                 processedCode = processedCode.Replace("." + fName, ".GetValue(\"" + fName + "\")");
-            } 
+            }
 
             return processedCode;
         }
 
-        public object ExecuteExpression(string code, int irow, EbPdfGlobals globals, string[] _dataFieldsUsed)
+        public object ExecuteExpression(string code, int irow, EbPdfGlobals globals, string[] _dataFieldsUsed, bool a)
         {
-            string processedCode = GetProcessedCode(code, _dataFieldsUsed);
-            foreach (string calcfd in _dataFieldsUsed)
-            {
-                string TName = calcfd.Split('.')[0];
-                string fName = calcfd.Split('.')[1];
-                int tableIndex = Convert.ToInt32(TName.Substring(1));
-                int RowIndex = (tableIndex == this.DetailTableIndex) ? irow : 0;
-                globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)this.DataSet.Tables[tableIndex].Columns[fName].Type, Value = this.DataSet.Tables[tableIndex].Rows[irow][fName] });
-            }
             object value = null;
-            AddParamsNCalcsInGlobal(globals);
-            SetVariable(globals);
             try
             {
+                string processedCode = GetProcessedCode(code, _dataFieldsUsed, a);
+                foreach (string calcfd in _dataFieldsUsed)
+                {
+                    string TName = calcfd.Split('.')[0];
+                    string fName = calcfd.Split('.')[1];
+                    int tableIndex = Convert.ToInt32(TName.Substring(1));
+                    int RowIndex = (tableIndex == this.DetailTableIndex) ? irow : 0;
+                    globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)this.DataSet.Tables[tableIndex].Columns[fName].Type, Value = this.DataSet.Tables[tableIndex].Rows[irow][fName] });
+                }
+                AddParamsNCalcsInGlobal(globals);
+                SetVariable(globals);
+
                 value = evaluator.Execute(processedCode);
             }
             catch (Exception e)
@@ -1061,7 +1089,7 @@ namespace ExpressBase.Mobile
             EbPdfGlobals globals = new EbPdfGlobals();
 
             string[] _dataFieldsUsed = GetDataFieldsUsed(field.HideExpression.GetCode());
-            object value = ExecuteExpression(field.HideExpression.GetCode(), 0, globals, _dataFieldsUsed);
+            object value = ExecuteExpression(field.HideExpression.GetCode(), 0, globals, _dataFieldsUsed, false);
 
             if (value != null)
                 field.IsHidden = (bool)value;
@@ -1074,7 +1102,7 @@ namespace ExpressBase.Mobile
                 CurrentField = new PdfGReportField(field.LeftPt, field.WidthPt, field.TopPt, field.HeightPt, field.BackColor, field.ForeColor, field.IsHidden, null)
             };
             string[] _dataFieldsUsed = GetDataFieldsUsed(field.LayoutExpression.GetCode());
-            object value = ExecuteExpression(field.LayoutExpression.GetCode(), 0, globals, _dataFieldsUsed);
+            object value = ExecuteExpression(field.LayoutExpression.GetCode(), 0, globals, _dataFieldsUsed, false);
 
             field.SetValuesFromGlobals(globals.CurrentField);
         }
