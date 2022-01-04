@@ -332,6 +332,11 @@ namespace ExpressBase.Mobile.Models
             Type = type;
             Value = value;
         }
+
+        public object getValue() //for script
+        {
+            return Value;
+        }
     }
 
     public class FileWrapper

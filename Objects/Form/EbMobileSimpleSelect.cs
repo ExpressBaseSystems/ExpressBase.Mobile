@@ -302,13 +302,16 @@ namespace ExpressBase.Mobile
             (this.XControl as InputGroup).BorderColor = border;
         }
 
-        public object GetDisplayName4DG(string valueMember)
+        public override string GetDisplayName4DG(object valueMember)
         {
+            if (IsSimpleSelect || valueMember == null)
+                return null;
+            string strValue = valueMember?.ToString();
             EbDataTable dt = null;
 
             if (this.NetworkType == NetworkMode.Offline)
             {
-                dt = GetDataFromLocal(valueMember);
+                dt = GetDataFromLocal(strValue);
             }
             else if (this.NetworkType == NetworkMode.Online)
             {
@@ -316,7 +319,7 @@ namespace ExpressBase.Mobile
                 {
                     Name = this.ValueMember.ColumnName,
                     Type = ((int)this.ValueMember.Type).ToString(),
-                    Value = valueMember
+                    Value = strValue
                 };
                 try
                 {
@@ -336,7 +339,7 @@ namespace ExpressBase.Mobile
 
             if (dt != null && dt.Rows.Any())
             {
-                return dt.Rows[0][DisplayMember.ColumnName];
+                return Convert.ToString(dt.Rows[0][DisplayMember.ColumnName]);
             }
             return null;
         }

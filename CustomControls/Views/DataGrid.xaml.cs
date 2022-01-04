@@ -55,7 +55,10 @@ namespace ExpressBase.Mobile.CustomControls.Views
             Container.Children.Add(frame, 0, 0);
 
             if (dataGrid.DisableAdd)
+            {
                 Container.Children.Remove(AddRowButton);
+                AddColumnDefinition.Width = 0;
+            }
         }
 
         private void AddRowButtonClicked(object sender, EventArgs e)
@@ -113,9 +116,9 @@ namespace ExpressBase.Mobile.CustomControls.Views
             {
                 ClassId = guid,
                 Orientation = Xamarin.Forms.StackOrientation.Horizontal,
-                Padding = new Thickness(5, 5, 0, 5),
-                BackgroundColor = Color.White,
+                Padding = new Thickness(5, 5, 0, 5)
             };
+            stack.BackgroundColor = dataGrid.RowHelper.GetBackGroundColor(row);
 
             DGDynamicFrame dynamicFrame = new DGDynamicFrame(row, dataGrid.DataLayout)
             {
@@ -145,6 +148,8 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         private void RowDelete_Clicked(object sender, EventArgs e)
         {
+            if (dataGrid.IsTaped())
+                return;
             Button button = sender as Button;
 
             foreach (View el in Body.Children)
@@ -208,10 +213,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                     Value = row[ctrl.Name] ?? null
                 };
 
-                if (column.Value != null && ctrl is EbMobileSimpleSelect select && !select.IsSimpleSelect)
-                {
-                    column.DisplayValue = select.GetDisplayName4DG(column.Value.ToString());
-                }
+                column.DisplayValue = ctrl.GetDisplayName4DG(column.Value);
                 tableRow.Columns.Add(column);
             }
             return tableRow;

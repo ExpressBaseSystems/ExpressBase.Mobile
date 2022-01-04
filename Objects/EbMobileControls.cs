@@ -43,6 +43,8 @@ namespace ExpressBase.Mobile
 
         public virtual int Width { set; get; }
 
+        public virtual bool DoNotPropagateChange { set; get; }
+
         public string SQLiteType
         {
             get
@@ -223,6 +225,11 @@ namespace ExpressBase.Mobile
             script = obj?.GetCode();
 
             return obj != null && !obj.IsEmpty();
+        }
+
+        public virtual string GetDisplayName4DG(object valueMember)
+        {
+            return valueMember?.ToString();
         }
     }
 }

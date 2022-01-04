@@ -7,10 +7,13 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Structures;
 using ExpressBase.Mobile.ViewModels.BaseModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.ViewModels.Dynamic
@@ -252,21 +255,28 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     }
                 }
 
-                EbMobilePage page = EbPageHelper.GetPage(this.Visualization.LinkRefId);
-
-                if (this.NetworkType != page.NetworkMode)
+                if (this.Visualization.LinkRefId.Split('-')[2] == "3")
                 {
-                    Utils.Toast("Link page Mode is different.");
-                    return;
+                    await RenderReport(item.DataRow);
                 }
                 else
                 {
-                    IsTapped = true;
+                    EbMobilePage page = EbPageHelper.GetPage(this.Visualization.LinkRefId);
 
-                    ContentPage renderer = EbPageHelper.ResolveByContext(this.Visualization, item.DataRow, page);
+                    if (this.NetworkType != page.NetworkMode)
+                    {
+                        Utils.Toast("Link page Mode is different.");
+                        return;
+                    }
+                    else
+                    {
+                        IsTapped = true;
 
-                    if (renderer != null)
-                        await App.Navigation.NavigateMasterAsync(renderer);
+                        ContentPage renderer = EbPageHelper.ResolveByContext(this.Visualization, item.DataRow, page);
+
+                        if (renderer != null)
+                            await App.Navigation.NavigateMasterAsync(renderer);
+                    }
                 }
             }
             catch (Exception ex)
@@ -290,6 +300,56 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         protected virtual List<DbParameter> GetFilterParameters()
         {
             return new List<DbParameter>();
+        }
+
+        private async Task RenderReport(EbDataRow Row)
+        {
+            if (Visualization.ContextToControlMap?.Count > 0)
+            {
+                if (!Utils.IsNetworkReady(this.NetworkType))
+                {
+                    Utils.Alert_NoInternet();
+                    return;
+                }
+                List<Param> param = new List<Param>();
+                foreach (EbCTCMapper map in Visualization.ContextToControlMap)
+                {
+                    param.Add(new Param
+                    {
+                        Name = map.ControlName,
+                        Type = ((int)EbDbTypes.Int32).ToString(),
+                        Value = Row[map.ColumnName]?.ToString()
+                    });
+                }
+
+                Device.BeginInvokeOnMainThread(() => IsBusy = true);
+
+                PdfService PdfService = new PdfService();
+                ReportRenderResponse r = null;
+                if (NetworkType == NetworkMode.Online)
+                {
+                    r = await PdfService.GetPdfOnline(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
+                }
+                if (r?.ReportBytea != null)
+                {
+                    INativeHelper helper = DependencyService.Get<INativeHelper>();
+                    string root = App.Settings.AppDirectory;
+                    string path = helper.NativeRoot + $"/{root}/{AppConst.SHARED_MEDIA}/{App.Settings.CurrentSolution.SolutionName}/print.pdf";
+                    File.WriteAllBytes(path, r.ReportBytea);
+
+                    IAppHandler handler = DependencyService.Get<IAppHandler>();
+                    string res = await handler.PrintPdfFile(path);
+                    if (res != "success")
+                    {
+                        await Launcher.OpenAsync(new OpenFileRequest
+                        {
+                            File = new ReadOnlyFile(path)
+                        });
+                    }
+                }
+
+                Device.BeginInvokeOnMainThread(() => IsBusy = false);
+            }
         }
     }
 }

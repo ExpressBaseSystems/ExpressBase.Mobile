@@ -204,6 +204,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (this.Form.ContextToFormControlMap?.Count > 0)
             {
+                if (!Utils.IsNetworkReady(this.NetworkType))
+                {
+                    Utils.Alert_NoInternet();
+                    return;
+                }
+
                 if (this.Page.NetworkMode == NetworkMode.Online && !string.IsNullOrWhiteSpace(this.Form.ContextOnlineData))
                 {
                     List<Param> cParams = new List<Param>();
