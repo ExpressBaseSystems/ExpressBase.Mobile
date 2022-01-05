@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
@@ -37,11 +38,12 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 tapRecognizer.Tapped += OpenGridFormOnEdit;
 
             DrawHeader();
-
-            if (!string.IsNullOrEmpty(dataGrid.DataSourceRefId) && dataGrid.FormRenderMode != FormMode.EDIT)
+            foreach (EbMobileControl ctrl in dataGrid.ChildControls)
             {
-                AutoFill(dataGrid.DataSourceRefId);
+                ctrl.FormRenderMode = dataGrid.FormRenderMode;
+                ctrl.NetworkType = dataGrid.NetworkType;
             }
+            AutoFill();
         }
 
         private void DrawHeader()
@@ -236,20 +238,44 @@ namespace ExpressBase.Mobile.CustomControls.Views
             return mobileTable;
         }
 
-        public async void AutoFill(string dataSourceRefId)
+        public async void AutoFill()
         {
-            try
-            {
-                MobileDataResponse data = await DataService.Instance.GetDataAsync(dataSourceRefId, 0, 0, dataGrid.Context?.ConvertToParams(), null, null, false, true);
+            if (dataGrid.FormRenderMode == FormMode.EDIT)
+                return;
 
-                if (data != null && data.Data != null && data.Data.Tables.HasLength(2))
+            if (dataGrid.NetworkType == NetworkMode.Online && !string.IsNullOrEmpty(dataGrid.DataSourceRefId))
+            {
+                try
                 {
-                    SetValue(data.Data.Tables[1]);
+                    MobileDataResponse data = await DataService.Instance.GetDataAsync(dataGrid.DataSourceRefId, 0, 0, dataGrid.Context?.ConvertToParams(), null, null, false, true);
+
+                    if (data != null && data.Data != null && data.Data.Tables.HasLength(2))
+                    {
+                        SetValue(data.Data.Tables[1]);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Error("DataGrid autofill api error : " + ex.Message);
                 }
             }
-            catch (Exception ex)
+            else if (dataGrid.NetworkType == NetworkMode.Offline && !string.IsNullOrWhiteSpace(dataGrid.OfflineQuery?.Code))
             {
-                EbLog.Error("DataGrid autofill api error : " + ex.Message);
+                try
+                {
+                    string sql = HelperFunctions.B64ToString(dataGrid.OfflineQuery.Code).TrimEnd(CharConstants.SEMICOLON);
+                    List<Param> Param = dataGrid.Context?.ConvertToParams() ?? new List<Param>();
+                    List<DbParameter> dbParameters = new List<DbParameter>();
+                    foreach (Param _p in Param)
+                        dbParameters.Add(new DbParameter { ParameterName = _p.Name, Value = _p.Value, DbType = Convert.ToInt32(_p.Type) });
+                    EbDataTable dt = App.DataDB.DoQuery(sql, dbParameters.ToArray());
+                    if (dt.Rows.Count > 0)
+                        SetValue(dt);
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Error("DataGrid autofill offline query error : " + ex.Message);
+                }
             }
         }
     }

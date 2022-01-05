@@ -124,7 +124,9 @@ namespace ExpressBase.Mobile.Services.LocalDB
                 {
                     name_type.Add(string.Format("{0} {1}", schema.ColumnName, schema.ColumnType));
                 }
-                string alter_query = string.Format(StaticQueries.ALTER_TABLE, tableName, string.Join(",", name_type.ToArray()));
+                string alter_query = string.Empty;
+                foreach (string str in name_type)
+                    alter_query += string.Format(StaticQueries.ALTER_TABLE, tableName, str);
 
                 int status = App.DataDB.DoNonQuery(alter_query);
             }

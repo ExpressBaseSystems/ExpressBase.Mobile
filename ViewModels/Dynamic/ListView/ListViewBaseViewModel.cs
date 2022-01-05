@@ -101,6 +101,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
+                dbParameters = dbParameters.ConvertAll(e => new DbParameter()
+                {
+                    ParameterName = e.ParameterName,
+                    DbType = e.DbType,
+                    Value = e.Value
+                });
+
                 DbParameter userParam = dbParameters.Find(item => item.ParameterName == EbKeywords.UserId);
 
                 if (userParam != null)
@@ -255,7 +262,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     }
                 }
 
-                if (this.Visualization.LinkRefId.Split('-')[2] == "3")
+                if (this.Visualization.LinkRefId.Split(CharConstants.DASH)[2] == "3")
                 {
                     await RenderReport(item.DataRow);
                 }
@@ -306,7 +313,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (Visualization.ContextToControlMap?.Count > 0)
             {
-                if (!Utils.IsNetworkReady(this.NetworkType))
+                if (NetworkType == NetworkMode.Online && !Utils.IsNetworkReady(this.NetworkType))
                 {
                     Utils.Alert_NoInternet();
                     return;
@@ -326,10 +333,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 PdfService PdfService = new PdfService();
                 ReportRenderResponse r = null;
+
                 if (NetworkType == NetworkMode.Online)
-                {
                     r = await PdfService.GetPdfOnline(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
-                }
+                else
+                    r = PdfService.GetPdfOffline(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
+
                 if (r?.ReportBytea != null)
                 {
                     INativeHelper helper = DependencyService.Get<INativeHelper>();
