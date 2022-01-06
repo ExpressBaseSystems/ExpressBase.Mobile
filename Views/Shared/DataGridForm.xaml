@@ -48,26 +48,42 @@
                 Padding="15,5">
                 <Grid x:Name="ButtonContainer">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50*"></ColumnDefinition>
-                        <ColumnDefinition Width="50*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Button 
                         x:Name="SaveAndContinue"
                         Grid.Column="0"
+                        Grid.ColumnSpan="2"
                         CornerRadius="4"
                         HorizontalOptions="FillAndExpand"
-                        BackgroundColor="{DynamicResource Primary_Color}"
-                        Text="Save &amp; Continue"
+                        BackgroundColor="#33b762"
+                        Text="+ More"
                         TextColor="White"
                         Clicked="OnSaveAndContinueClicked"/>
                     <Button 
                         x:Name="SaveAndClose"
-                        Grid.Column="1"
+                        Grid.Column="2"                        
+                        Grid.ColumnSpan="2"
                         CornerRadius="4"
                         HorizontalOptions="FillAndExpand"
-                        Text="Save &amp; Close"
-                        TextColor="#333333"
+                        BackgroundColor="{DynamicResource Primary_Color}"
+                        Text="Ok"
+                        TextColor="White"
                         Clicked="OnSaveAndCloseClicked"/>
+                    <Button 
+                        x:Name="CancelAndClose"
+                        Grid.Column="4"
+                        Grid.ColumnSpan="2"
+                        CornerRadius="4"
+                        HorizontalOptions="FillAndExpand"
+                        Text="Cancel"
+                        TextColor="#333333"
+                        Clicked="OnBackButtonClicked"/>
                 </Grid>
             </StackLayout>
         </Grid>
