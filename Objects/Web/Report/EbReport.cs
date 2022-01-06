@@ -1023,7 +1023,7 @@ namespace ExpressBase.Mobile
         {
             string[] others = new string[0];
             String processedCode = code;
-            if (a)
+            if (!a)
                 others = GetOtherGlobalFieldsUsed(code);
             _dataFieldsUsed = _dataFieldsUsed.Concat(others).ToArray();
             _dataFieldsUsed = _dataFieldsUsed.OrderByDescending(c => c).ToArray();
