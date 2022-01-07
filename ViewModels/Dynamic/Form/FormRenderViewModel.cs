@@ -99,7 +99,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
 
             if (this.Mode == FormMode.NEW || this.Mode == FormMode.PREFILL || this.Mode == FormMode.REF)
+            {
                 await ExpandContextIfConfigured();
+                InitAutoId();
+            }
 
             if (this.Mode == FormMode.NEW) SetValues();
         }
@@ -232,6 +235,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         EbLog.Info("ContextOnlineData api returned empty row collection");
                 }
             }
+        }
+
+        private void InitAutoId()
+        {
+            EbMobileAutoId ctrl = (EbMobileAutoId)Controls.Find(e => e is EbMobileAutoId);
+            if (ctrl != null)
+                ctrl.InitAutoId(Form.TableName);
         }
 
         protected void SetValuesFormContext()

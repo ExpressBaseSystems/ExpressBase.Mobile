@@ -372,15 +372,13 @@ namespace ExpressBase.Mobile
                 string query = data.GetQuery(dbParameters, rowId);
 
                 int rowAffected = App.DataDB.DoNonQuery(query, dbParameters.ToArray());
+                int lastRowId = (rowId != 0) ? rowId : Convert.ToInt32(App.DataDB.DoScalar($"SELECT MAX(id) FROM {TableName}"));
+                response.PushResponse = new PushResponse() { RowId = lastRowId };
 
                 if (HasFileSelect && rowAffected > 0)
                 {
-                    object lastRowId = (rowId != 0) ? rowId : App.DataDB.DoScalar($"SELECT MAX(id) FROM {TableName}");
-
-                    if (lastRowId != null)
-                    {
+                    if (lastRowId > 0)
                         await WriteFilesToLocal(lastRowId);
-                    }
                 }
 
                 response.Status = rowAffected > 0;

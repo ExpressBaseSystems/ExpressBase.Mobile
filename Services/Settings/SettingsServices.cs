@@ -209,6 +209,7 @@ namespace ExpressBase.Mobile.Services
             }
 
             await Store.SetJSONAsync(AppConst.APP_COLLECTION, solutionData.Applications);
+            await GetLatestAutoId(solutionData.Applications);
             await SetLocationInfo(solutionData.Locations);
             await SetCurrentUser(solutionData.CurrentUser);
             await SetSolutionObject(solutionData.CurrentSolution);
@@ -223,6 +224,65 @@ namespace ExpressBase.Mobile.Services
             {
                 CurrentApplication = solutionData.Applications.Find(item => item.AppId == CurrentApplication.AppId);
                 await Store.SetJSONAsync(AppConst.CURRENT_APP, CurrentApplication);
+            }
+        }
+
+        private async Task GetLatestAutoId(List<AppData> Applications)
+        {
+            try
+            {
+                List<EbMobileAutoIdData> autoIdData = new List<EbMobileAutoIdData>();
+                foreach (AppData app in Applications)
+                {
+                    foreach (MobilePagesWraper mobPageWrap in app.MobilePages)
+                    {
+                        EbMobilePage page = mobPageWrap.GetPage();
+                        if (page.Container is EbMobileForm form)
+                        {
+                            EbMobileAutoId autoId = (EbMobileAutoId)form.ChildControls.Find(e => e is EbMobileAutoId);
+                            if (autoId != null && !string.IsNullOrWhiteSpace(form.TableName))
+                            {
+                                string query = autoId.PrefixExpr?.GetCode();
+                                if (!string.IsNullOrWhiteSpace(query) && page.NetworkMode == NetworkMode.Offline)
+                                {
+                                    EbDataTable dt = App.DataDB.DoQuery(query);
+                                    if (dt.Rows.Count > 0)
+                                    {
+                                        autoIdData.Add(new EbMobileAutoIdData()
+                                        {
+                                            Table = form.TableName,
+                                            Column = autoId.Name,
+                                            Prefix = dt.Rows[0][0]?.ToString()
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (autoIdData.Count > 0)
+                {
+                    RestRequest request = new RestRequest(ApiConstants.PULL_LATEST_AUTOID, Method.POST);
+                    RestClient client = new RestClient(App.Settings.RootUrl)
+                    {
+                        Timeout = 10000
+                    };
+                    request.AddParameter("data", JsonConvert.SerializeObject(autoIdData));
+                    request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                    request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+                    IRestResponse response = await client.ExecuteAsync(request);
+                    if (response.IsSuccessful)
+                    {
+                        EbDataSet ds = new EbDataSet();
+                        EbMobileAutoIdDataResponse resp = JsonConvert.DeserializeObject<EbMobileAutoIdDataResponse>(response.Content);
+                        ds.Tables.Add(resp.OfflineData);
+                        DBService.Current.ImportData(ds);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Error in GetLatestAutoId: " + ex.Message);
             }
         }
 

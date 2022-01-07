@@ -333,30 +333,35 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 PdfService PdfService = new PdfService();
                 ReportRenderResponse r = null;
-
-                if (NetworkType == NetworkMode.Online)
-                    r = await PdfService.GetPdfOnline(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
-                else
-                    r = PdfService.GetPdfOffline(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
-
-                if (r?.ReportBytea != null)
+                try
                 {
-                    INativeHelper helper = DependencyService.Get<INativeHelper>();
-                    string root = App.Settings.AppDirectory;
-                    string path = helper.NativeRoot + $"/{root}/{AppConst.SHARED_MEDIA}/{App.Settings.CurrentSolution.SolutionName}/print.pdf";
-                    File.WriteAllBytes(path, r.ReportBytea);
+                    if (NetworkType == NetworkMode.Online)
+                        r = await PdfService.GetPdfOnline(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
+                    else
+                        r = PdfService.GetPdfOffline(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
 
-                    IAppHandler handler = DependencyService.Get<IAppHandler>();
-                    string res = await handler.PrintPdfFile(path);
-                    if (res != "success")
+                    if (r?.ReportBytea != null)
                     {
-                        await Launcher.OpenAsync(new OpenFileRequest
+                        INativeHelper helper = DependencyService.Get<INativeHelper>();
+                        string root = App.Settings.AppDirectory;
+                        string path = helper.NativeRoot + $"/{root}/{AppConst.SHARED_MEDIA}/{App.Settings.CurrentSolution.SolutionName}/print.pdf";
+                        File.WriteAllBytes(path, r.ReportBytea);
+
+                        IAppHandler handler = DependencyService.Get<IAppHandler>();
+                        string res = await handler.PrintPdfFile(path);
+                        if (res != "success")
                         {
-                            File = new ReadOnlyFile(path)
-                        });
+                            await Launcher.OpenAsync(new OpenFileRequest
+                            {
+                                File = new ReadOnlyFile(path)
+                            });
+                        }
                     }
                 }
-
+                catch (Exception ex)
+                {
+                    EbLog.Error("ListBaseViewModel.RenderReport---" + ex.Message);
+                }
                 Device.BeginInvokeOnMainThread(() => IsBusy = false);
             }
         }

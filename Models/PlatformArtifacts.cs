@@ -83,6 +83,20 @@ namespace ExpressBase.Mobile.Models
         }
     }
 
+    public class EbMobileAutoIdData
+    {
+        public string Table { get; set; }
+
+        public string Column { get; set; }
+
+        public string Prefix { get; set; }
+    }
+
+    public class EbMobileAutoIdDataResponse
+    {
+        public EbDataTable OfflineData { set; get; }
+    }
+
     public class EbStageInfo
     {
         public string StageUniqueId { set; get; }
@@ -336,12 +350,12 @@ namespace ExpressBase.Mobile.Models
         public ApiMessage Message { get; set; }
     }
 
-    public class ReportRenderResponse  
-    {  
+    public class ReportRenderResponse
+    {
         public String ReportName { get; set; }
-         
+
         public byte[] ReportBytea { get; set; }
-         
+
         public DateTime CurrentTimestamp { get; set; }
     }
 }

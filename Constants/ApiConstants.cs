@@ -20,6 +20,7 @@
         public const string GET_DATA_FLAT = "api/get_data_flat";
         public const string GET_DATA_PS = "api/get_data_ps";
         public const string GET_PDF = "api/get_pdf";
+        public const string PULL_LATEST_AUTOID = "api/pull_latest_autoid";
 
         public const string PUSH_DATA = "api/push_data";
 
