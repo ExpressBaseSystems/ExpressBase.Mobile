@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile
                     return "REAL";
                 else if (this.EbDbType == EbDbTypes.Date || this.EbDbType == EbDbTypes.DateTime)
                     return "DATETIME";
-                else if (this.EbDbType == EbDbTypes.Boolean)
+                else if (this.EbDbType == EbDbTypes.Boolean || EbDbType == EbDbTypes.BooleanOriginal)
                     return "INT";
                 else
                     return "TEXT";
@@ -65,6 +65,8 @@ namespace ExpressBase.Mobile
         }
 
         public virtual object SQLiteToActual(object value) { return value; }
+
+        public virtual object ActualToSQLite(object value) { return value; }
 
         public View XControl { set; get; }
 
@@ -183,7 +185,8 @@ namespace ExpressBase.Mobile
             {
                 Name = this.Name,
                 Type = this.EbDbType,
-                Value = value
+                Value = value,
+                Control = this
             };
         }
 

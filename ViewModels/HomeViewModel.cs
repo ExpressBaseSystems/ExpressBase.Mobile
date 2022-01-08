@@ -82,6 +82,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (!Utils.HasInternet)
                 {
                     Utils.Alert_NoInternet();
+                    IsRefreshing = false;
                     return;
                 }
 

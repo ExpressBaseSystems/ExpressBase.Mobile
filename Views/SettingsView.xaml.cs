@@ -81,6 +81,12 @@ namespace ExpressBase.Mobile.Views
 
         private void SyncButtonClicked(object sender, EventArgs e)
         {
+            if (!Utils.IsNetworkReady(NetworkMode.Online))
+            {
+                Utils.Alert_NoInternet();
+                return;
+            }
+
             SyncConfirmBox.Show();
         }
     }

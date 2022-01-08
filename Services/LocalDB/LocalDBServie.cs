@@ -46,7 +46,7 @@ namespace ExpressBase.Mobile.Services
                     }
                 }
                 response.Status = true;
-                response.Message = "Sync complted";
+                response.Message = "Sync completed";
             }
             catch (Exception ex)
             {
@@ -73,7 +73,8 @@ namespace ExpressBase.Mobile.Services
                 await Form.UploadFiles(localid, webdata);
 
                 this.GetLinesEnabledData(localid, Form, webdata);
-
+                if (FormService.Instance == null)
+                    new FormService();
                 response = await FormService.Instance.SendFormDataAsync(null, webdata, 0, Form.WebFormRefId, row.LocId);
                 response.LocalRowId = localid;
             }

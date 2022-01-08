@@ -34,7 +34,8 @@ namespace ExpressBase.Mobile
             return new MobileTableColumn
             {
                 Name = this.Name,
-                Type = this.EbDbType
+                Type = this.EbDbType,
+                Control = this
             };
         }
 

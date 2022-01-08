@@ -61,6 +61,12 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
+                if (!Utils.IsNetworkReady(NetworkMode.Online))
+                {
+                    Utils.Alert_NoInternet();
+                    return;
+                }
+
                 if (IdentityService.IsTokenExpired())
                 {
                     await App.Navigation.NavigateToLogin(true);
@@ -84,7 +90,7 @@ namespace ExpressBase.Mobile.ViewModels
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     IsBusy = false;
-                    Utils.Toast("settings updated");
+                    Utils.Toast("Settings updated");
                 });
             }
             catch (Exception ex)

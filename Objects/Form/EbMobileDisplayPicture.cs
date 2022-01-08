@@ -36,7 +36,8 @@ namespace ExpressBase.Mobile
             return new MobileTableColumn
             {
                 Name = this.Name,
-                Type = this.EbDbType
+                Type = this.EbDbType,
+                Control = this
             };
         }
 
@@ -57,7 +58,7 @@ namespace ExpressBase.Mobile
                         XamControl.SetValue(this.NetworkType, fupMeta, this.Name);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     EbLog.Error("[DisplayPicture] setvalue error, " + ex.Message);
                 }

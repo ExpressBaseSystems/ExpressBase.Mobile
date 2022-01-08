@@ -139,15 +139,21 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
+            string val = null;
             if (IsSimpleSelect)
             {
                 if (picker.SelectedItem != null)
-                    return (picker.SelectedItem as EbMobileSSOption).Value;
-                else
-                    return null;
+                    val = (picker.SelectedItem as EbMobileSSOption).Value;
             }
             else
-                return this.selected?.Value;
+                val = this.selected?.Value?.ToString();
+
+            if (this.EbDbType == EbDbTypes.Int32)
+            {
+                int.TryParse(val, out int t);
+                return t;
+            }
+            return val;
         }
 
         public object GetDisplayValue()

@@ -175,7 +175,7 @@ namespace ExpressBase.Mobile.Models
                             {
                                 ParameterName = _prm,
                                 DbType = (int)col.Type,
-                                Value = col.Value
+                                Value = col.Control?.ActualToSQLite(col.Value) ?? col.Value
                             });
                         }
 
@@ -284,10 +284,12 @@ namespace ExpressBase.Mobile.Models
             Columns = new List<MobileTableColumn>();
         }
 
-        public void AppendEbColValues()
+        public void AppendEbColValues(bool addCreatedAt)
         {
             this.Columns.Add(new MobileTableColumn { Name = "eb_loc_id", Type = EbDbTypes.Int32, Value = App.Settings.CurrentLocId });
-            this.Columns.Add(new MobileTableColumn { Name = "eb_created_at_device", Type = EbDbTypes.DateTime, Value = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") });
+
+            if (addCreatedAt)
+                this.Columns.Add(new MobileTableColumn { Name = "eb_created_at_device", Type = EbDbTypes.DateTime, Value = DateTime.UtcNow });
 
             INativeHelper helper = DependencyService.Get<INativeHelper>();
 

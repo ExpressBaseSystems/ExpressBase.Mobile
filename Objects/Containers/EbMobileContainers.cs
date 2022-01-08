@@ -14,10 +14,10 @@ namespace ExpressBase.Mobile
             set { _value = value; }
             get
             {
-                if (Type == EbDbTypes.DateTime)
+                if (Type == EbDbTypes.Date)
                     return Convert.ToDateTime(_value).ToString("yyyy-MM-dd");
-                else if (Type == EbDbTypes.Date)
-                    return Convert.ToDateTime(_value).ToString("yyyy-MM-dd");
+                else if (Type == EbDbTypes.DateTime)
+                    return Convert.ToDateTime(_value).ToString("yyyy-MM-dd HH:mm:ss");
                 else
                     return _value;
             }

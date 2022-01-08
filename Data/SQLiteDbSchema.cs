@@ -31,10 +31,33 @@ namespace ExpressBase.Mobile.Data
                 return "REAL";
             else if (EbDbType == EbDbTypes.Date || EbDbType == EbDbTypes.DateTime)
                 return "DATETIME";
-            else if (EbDbType == EbDbTypes.Boolean)
+            else if (EbDbType == EbDbTypes.Boolean || EbDbType == EbDbTypes.BooleanOriginal)
                 return "INT";
             else
                 return "TEXT";
+        }
+
+        public static object SQLiteTypeValue(EbDbTypes EbDbType, object Value)
+        {
+            if (EbDbType == EbDbTypes.String)
+                return Value?.ToString();
+            else if (EbDbType == EbDbTypes.Int16 || EbDbType == EbDbTypes.Int32)
+            {
+                int.TryParse(Value?.ToString(), out int i);
+                return i;
+            }
+            else if (EbDbType == EbDbTypes.Decimal || EbDbType == EbDbTypes.Double)
+            {
+                double.TryParse(Value?.ToString(), out double i);
+                return i;
+            }
+            else if (EbDbType == EbDbTypes.Boolean || EbDbType == EbDbTypes.BooleanOriginal)
+            {
+                bool.TryParse(Value?.ToString(), out bool i);
+                return i ? 1 : 0;
+            }
+            else
+                return Value;
         }
 
         public void AppendDefault()

@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile
@@ -32,6 +33,22 @@ namespace ExpressBase.Mobile
                 return Convert.ToDateTime(value).Date.ToString("yyyy-MM-dd HH:mm:ss");
 
             return value.ToString();
+        }
+
+        public override object ActualToSQLite(object value)
+        {
+            try
+            {
+                if (this.EbDbType == EbDbTypes.Date)
+                    return DateTime.ParseExact(value?.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                else if (this.EbDbType == EbDbTypes.DateTime)
+                    return DateTime.ParseExact(value?.ToString(), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return value;
         }
 
         public override View Draw(FormMode Mode, NetworkMode Network)

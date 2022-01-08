@@ -73,7 +73,8 @@ namespace ExpressBase.Mobile
                     {
                         Name = ctrl.Name,
                         Type = ctrl.EbDbType,
-                        Value = isHeader ? ctrl.Label : ctrl.GetValue()
+                        Value = isHeader ? ctrl.Label : ctrl.GetValue(),
+                        Control = ctrl
                     };
 
                     if (ctrl is EbMobileSimpleSelect ps)
@@ -92,7 +93,7 @@ namespace ExpressBase.Mobile
 
         public override object GetValue()
         {
-            return gridView.GetValue();
+            return gridView.GetValue(true);
         }
 
         public string GetQuery(string parentTable = null)
@@ -196,7 +197,7 @@ namespace ExpressBase.Mobile
 
         public decimal Sum(string controlName)
         {
-            MobileTable gridTable = gridView.GetValue();
+            MobileTable gridTable = gridView.GetValue(false);
 
             List<decimal> values = gridTable.GetColumnValues<decimal>(controlName);
 

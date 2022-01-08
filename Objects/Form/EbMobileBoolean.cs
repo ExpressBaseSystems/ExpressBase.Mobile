@@ -13,10 +13,18 @@ namespace ExpressBase.Mobile
 
         public override object SQLiteToActual(object value)
         {
-            if (Convert.ToInt32(value) == 0)
-                return false;
-            else
+            if (int.TryParse(value?.ToString(), out int t) && t == 1)
                 return true;
+            else
+                return false;
+        }
+
+        public override object ActualToSQLite(object value)
+        {
+            if (bool.TryParse(value?.ToString(), out bool t) && t)
+                return 1;
+            else
+                return 0;
         }
 
         public override View Draw(FormMode Mode, NetworkMode Network)
@@ -70,7 +78,8 @@ namespace ExpressBase.Mobile
             {
                 Name = this.Name,
                 Type = this.EbDbType,
-                Value = value
+                Value = value,
+                Control = this
             };
         }
 

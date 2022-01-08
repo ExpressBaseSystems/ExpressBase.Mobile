@@ -75,7 +75,7 @@ namespace ExpressBase.Mobile
         {
             List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_loc_id", "id" };
 
-            if (!ControlDictionary.Any())
+            if (ControlDictionary == null || !ControlDictionary.Any())
                 ControlDictionary = ChildControls.ToControlDictionary();
 
             foreach (var pair in ControlDictionary)
@@ -242,7 +242,7 @@ namespace ExpressBase.Mobile
 
             if (RowId <= 0)
             {
-                row.AppendEbColValues();
+                row.AppendEbColValues(NetworkType == NetworkMode.Offline);
             };
             return formData;
         }
@@ -473,9 +473,9 @@ namespace ExpressBase.Mobile
             }
             else
             {
-                if (type == EbDbTypes.Date)
+                if (TV.Type == EbDbTypes.Date)
                     TV.Value = Convert.ToDateTime(value).ToString("yyyy-MM-dd");
-                else if (type == EbDbTypes.DateTime)
+                else if (TV.Type == EbDbTypes.DateTime)
                     TV.Value = Convert.ToDateTime(value).ToString("yyyy-MM-dd HH:mm:ss");
             }
             return TV;

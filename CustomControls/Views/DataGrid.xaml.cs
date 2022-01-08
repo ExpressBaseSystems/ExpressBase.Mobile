@@ -212,7 +212,8 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 {
                     Name = ctrl.Name,
                     Type = ctrl.EbDbType,
-                    Value = row[ctrl.Name] ?? null
+                    Value = row[ctrl.Name] ?? null,
+                    Control = ctrl
                 };
 
                 column.DisplayValue = ctrl.GetDisplayName4DG(column.Value);
@@ -226,13 +227,15 @@ namespace ExpressBase.Mobile.CustomControls.Views
             ReadOnlyMask.IsVisible = flag;
         }
 
-        public MobileTable GetValue()
+        public MobileTable GetValue(bool isAppendEbCol)
         {
             MobileTable mobileTable = new MobileTable(dataGrid.TableName);
 
             foreach (MobileTableRow row in dataDictionary.Values)
             {
-                if (row.RowId <= 0) row.AppendEbColValues();
+                if (row.RowId <= 0 && isAppendEbCol)
+                    row.AppendEbColValues(dataGrid.NetworkType == NetworkMode.Offline);
+
                 mobileTable.Add(row);
             }
             return mobileTable;
