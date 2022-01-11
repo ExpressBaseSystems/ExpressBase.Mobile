@@ -104,10 +104,19 @@
                             </StackLayout>
                         </ScrollView>
                     </RefreshView>
-                    
+
+                    <control:Loader 
+                        x:Name="Loader"
+                        IsVisible="false"
+                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                        AbsoluteLayout.LayoutFlags="All"
+                        Position="CenterAndExpand"
+                        Message="Loading...">
+                    </control:Loader>
+
                 </Grid>
             </control:EbCPLayout.Content>
         </control:EbCPLayout>
-        
+
     </ContentPage.Content>
 </base:EbContentPage>

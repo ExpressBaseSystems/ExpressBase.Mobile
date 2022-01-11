@@ -194,10 +194,10 @@ namespace ExpressBase.Mobile.Helpers
             if (Controls.Count == 0)
                 return;
 
+            List<View> views = new List<View>();
             Grid grid = new Grid();
             grid.RowDefinitions.Add(new RowDefinition());
-            FormViewContainer.Children.Add(grid);
-
+            views.Add(grid);
             int cur_totwidth = 0;
             View CtrlView;
             int columIndex = 0;
@@ -220,7 +220,7 @@ namespace ExpressBase.Mobile.Helpers
                 {
                     grid = new Grid();
                     grid.RowDefinitions.Add(new RowDefinition());
-                    FormViewContainer.Children.Add(grid);
+                    views.Add(grid);
                     cur_totwidth = 0;
                     columIndex = 0;
                 }
@@ -235,6 +235,8 @@ namespace ExpressBase.Mobile.Helpers
                 grid.Children.Add(CtrlView, columIndex++, 0);
                 cur_totwidth += ctrl.Width;
             }
+            foreach (View v in views)
+                FormViewContainer.Children.Add(v);
         }
 
         private void InitValueExpr(ExprDependency exprDep, string trigger_control, string parent = CTRL_PARENT_FORM)

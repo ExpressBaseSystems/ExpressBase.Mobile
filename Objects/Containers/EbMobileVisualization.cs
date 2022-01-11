@@ -52,6 +52,8 @@ namespace ExpressBase.Mobile
 
         public EbScript LinkExpr { get; set; }
 
+        public string LinkExprFailMsg { get; set; }
+
         public bool ShowNewButton { set; get; }
 
         public string NewButtonText { set; get; }
