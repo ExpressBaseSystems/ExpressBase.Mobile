@@ -688,27 +688,15 @@ namespace ExpressBase.Mobile
             EbDbTypes dbtype = EbDbTypes.String;
             EbPdfGlobals globals = new EbPdfGlobals();
 
-            Rep.AddParamsNCalcsInGlobal(globals);
             try
             {
-                if (DataFieldsUsedInCalc != null && DataFieldsUsedInCalc.Count() > 0)
-                    foreach (string datafd in DataFieldsUsedInCalc)
-                    {
-                        string TName = datafd.Split('.')[0];
-                        int TableIndex = Convert.ToInt32(TName.Substring(1));
-                        string fName = datafd.Split('.')[1];
-                        int RowIndex = (TableIndex == Rep.DetailTableIndex) ? slno : 0;
-                        globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)Rep.DataSet.Tables[TableIndex].Columns[fName].Type, Value = Rep.DataSet.Tables[TableIndex].Rows[RowIndex][fName] });
-                    }
                 column_val = Rep.ExecuteExpression(Rep.ValueScriptCollection[Name], slno, globals, DataFieldsUsedInCalc, true).ToString();
-
                 dbtype = (EbDbTypes)CalcFieldIntType;
 
                 if (Rep.CalcValInRow.ContainsKey(Title))
                     Rep.CalcValInRow[Title] = new PdfNTV { Name = Title, Type = (PdfEbDbTypes)(int)dbtype, Value = column_val };
                 else
                     Rep.CalcValInRow.Add(Title, new PdfNTV { Name = Title, Type = (PdfEbDbTypes)(int)dbtype, Value = column_val });
-                Rep.AddParamsNCalcsInGlobal(globals);
             }
             catch (Exception e)
             {
@@ -748,16 +736,7 @@ namespace ExpressBase.Mobile
 
         public dynamic GetCalcFieldValue(EbPdfGlobals globals, EbDataSet DataSet, int serialnumber, EbReport Rep)
         {
-            dynamic value = null;
-            foreach (string calcfd in this.DataFieldsUsedInCalc)
-            {
-                string TName = calcfd.Split('.')[0];
-                string fName = calcfd.Split('.')[1];
-                int tableindex = Convert.ToInt32(TName.Substring(1));
-                globals[TName].Add(fName, new PdfNTV { Name = fName, Type = (PdfEbDbTypes)(int)DataSet.Tables[tableindex].Columns[fName].Type, Value = DataSet.Tables[tableindex].Rows[serialnumber][fName] });
-            }
-            value = Rep.ExecuteExpression(Rep.ValueScriptCollection[this.Name], serialnumber, globals, DataFieldsUsedInCalc,true);
-            return value;
+            return Rep.ExecuteExpression(Rep.ValueScriptCollection[this.Name], serialnumber, globals, DataFieldsUsedInCalc, true);            ;
         }
     }
 
