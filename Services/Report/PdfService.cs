@@ -73,7 +73,7 @@ namespace ExpressBase.Mobile.Services
                     Report.Ms1 = new MemoryStream();
                     if (Report?.OfflineQuery.Code != string.Empty)
                     {
-                        string query = Report.OfflineQuery.GetCode();                       
+                        string query = Report.OfflineQuery.GetCode();
                         Report.DataSet = App.DataDB.DoQueries(query, Report.Parameters.ToDbParams().ToArray());
                     }
                     float _width = Report.WidthPt - Report.Margin.Left;// - Report.Margin.Right;
@@ -209,11 +209,11 @@ namespace ExpressBase.Mobile.Services
             {
                 if (!String.IsNullOrEmpty(field.HideExpression?.GetCode()))
                 {
-                    Report.ExecuteHideExpression(Report, field);
+                    Report.ExecuteHideExpression(field);
                 }
                 if (!field.IsHidden && !String.IsNullOrEmpty(field.LayoutExpression?.GetCode()))
                 {
-                    Report.ExecuteLayoutExpression(Report, field);
+                    Report.ExecuteLayoutExpression(field);
                 }
                 if (field is EbDataField)
                 {
