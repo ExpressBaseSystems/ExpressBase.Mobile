@@ -257,6 +257,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     if (!EbListHelper.EvaluateLinkExpr(item.DataRow, Visualization.LinkExpr.GetCode()))
                     {
+                        if (string.IsNullOrWhiteSpace(Visualization.LinkExprFailMsg))
+                            Utils.Toast("Link Blocked");
+                        else
+                            Utils.Toast(Visualization.LinkExprFailMsg);
                         EbLog.Info("[LinkExpr] evaluation blocked link navigation");
                         return;
                     }

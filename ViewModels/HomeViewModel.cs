@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
@@ -148,6 +149,39 @@ namespace ExpressBase.Mobile.ViewModels
             ObjectList = await menuServices.GetDataAsync();
 
             CreateFormContainersTables();
+        }
+
+        public async void SyncData(Loader loader)
+        {
+            try
+            {
+                if (IdentityService.IsTokenExpired())
+                {
+                    await App.Navigation.NavigateToLogin(true);
+                    return;
+                }
+
+                LocalDBServie service = new LocalDBServie();
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    loader.IsVisible = true;
+                    loader.Message = "Sync started...";
+                });
+
+                SyncResponse response = await service.PushDataToCloud(loader);
+
+                if (response.Status)
+                {
+                    Utils.Toast(response.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Failed to sync::" + ex.Message);
+            }
+
+            Device.BeginInvokeOnMainThread(() => { loader.IsVisible = false; });
         }
 
         private void UpdateIsEmptyFlag()

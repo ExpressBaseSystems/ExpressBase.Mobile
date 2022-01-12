@@ -163,7 +163,8 @@ namespace ExpressBase.Mobile.Services
         public async Task<EbMobileSolutionData> GetSolutionDataAsync(bool export, int timeout = 0, Action<ResponseStatus> callback = null)
         {
             int timeoutCalc = export ? ApiConstants.TIMEOUT_IMPORT : ApiConstants.TIMEOUT_STD;
-
+            //export = true;////////////
+            //timeout = 20000;/////////////
             RestClient client = new RestClient(App.Settings.RootUrl)
             {
                 Timeout = timeout == 0 ? timeoutCalc : timeout
@@ -205,7 +206,7 @@ namespace ExpressBase.Mobile.Services
             {
                 EbDataSet importData = solutionData.GetOfflineData();
 
-                _ = Task.Run(() => DBService.Current.ImportData(importData));
+                DBService.Current.ImportData(importData);
             }
 
             await Store.SetJSONAsync(AppConst.APP_COLLECTION, solutionData.Applications);

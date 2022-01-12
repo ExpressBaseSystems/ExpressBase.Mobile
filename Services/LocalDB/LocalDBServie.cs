@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -6,12 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
     public class LocalDBServie : ILocalDBService
     {
-        public async Task<SyncResponse> PushDataToCloud()
+        public async Task<SyncResponse> PushDataToCloud(Loader loader = null)
         {
             SyncResponse response = new SyncResponse();
             try
@@ -32,9 +34,13 @@ namespace ExpressBase.Mobile.Services
                         depT.Add(DependencyForm.TableName);
 
                     EbDataTable SourceData = Form.GetLocalData();
+                    string msg = $"Pushing {Form.DisplayName} {{0}} of {SourceData.Rows.Count}...";
 
                     for (int i = 0; i < SourceData.Rows.Count; i++)
                     {
+                        if (loader != null)
+                            Device.BeginInvokeOnMainThread(() => { loader.Message = string.Format(msg, i + 1); });
+
                         PushResponse resp = await SendRecord(webdata, Form, SourceData, SourceData.Rows[i], i);
 
                         if (resp.RowAffected <= 0)

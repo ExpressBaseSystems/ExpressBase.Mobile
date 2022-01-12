@@ -70,5 +70,15 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             await App.Navigation.NavigateMasterAsync(new Home());
         }
+
+        private async void SyncDataClicked(object sender, EventArgs e)
+        {
+            if (!Utils.HasInternet)
+            {
+                Utils.Alert_NoInternet();
+                return;
+            }
+            await App.Navigation.NavigateMasterAsync(new Home(true));
+        }
     }
 }

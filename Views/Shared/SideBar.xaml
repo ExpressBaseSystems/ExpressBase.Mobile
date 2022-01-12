@@ -94,6 +94,12 @@
                                              Clicked="LinksClicked">
                         </control:SideBarLink>
 
+                        <control:SideBarLink IsVisible="true"
+                                             Icon="&#xf021;"
+                                             Text="Sync Data"
+                                             Clicked="SyncDataClicked">
+                        </control:SideBarLink>
+
                     </StackLayout>
                     <StackLayout VerticalOptions="End"
                                  Padding="0"

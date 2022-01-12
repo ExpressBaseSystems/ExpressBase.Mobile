@@ -93,10 +93,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             EbFormHelper.Initialize(this.Form, this.Mode);
 
-            if (IsOffline())
-            {
-                await Task.Run(() => this.Form.CreateTableSchema());
-            }
+            //if (IsOffline())
+            //{
+            //    await Task.Run(() => this.Form.CreateTableSchema());
+            //}
 
             if (this.Mode == FormMode.NEW || this.Mode == FormMode.PREFILL || this.Mode == FormMode.REF)
             {

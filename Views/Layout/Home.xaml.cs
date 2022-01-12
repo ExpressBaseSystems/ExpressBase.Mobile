@@ -16,11 +16,14 @@ namespace ExpressBase.Mobile.Views
 
         private readonly HomeViewModel viewModel;
 
-        public Home()
+        private bool _syncData;
+
+        public Home(bool syncData = false)
         {
             InitializeComponent();
             BindingContext = viewModel = new HomeViewModel();
             EbLayout.ShowLoader();
+            _syncData = syncData;
         }
 
         protected override async void OnAppearing()
@@ -42,6 +45,8 @@ namespace ExpressBase.Mobile.Views
                 EbLog.Error(ex.Message);
             }
             EbLayout.HideLoader();
+            if (_syncData)
+                viewModel.SyncData(Loader);
         }
 
         protected override bool OnBackButtonPressed()
