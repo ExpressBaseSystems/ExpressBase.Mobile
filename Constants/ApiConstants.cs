@@ -14,6 +14,7 @@
         public const string GET_ACTION_INFO = "api/get_action_info";
 
         public const string GET_SOLUTION_DATA = "api/get_solution_data";
+        public const string GET_SOLUTION_DATAv2 = "api/get_solution_datav2";
         public const string GET_VIS_DATA = "api/get_data";
         public const string GET_VIS_DATA_V2 = "api/v2/data/visualization";
         public const string GET_PROFILE_DATA = "api/get_profile";

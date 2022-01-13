@@ -87,7 +87,7 @@ namespace ExpressBase.Mobile.ViewModels
                     return;
                 }
 
-                ObjectList = await menuServices.UpdateDataAsync();
+                //ObjectList = await menuServices.UpdateDataAsync();
                 UpdateIsEmptyFlag();
 
                 CreateFormContainersTables();
@@ -173,11 +173,23 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (response.Status)
                 {
-                    Utils.Toast(response.Message);
+                    Device.BeginInvokeOnMainThread(() => { loader.Message = "Fetching data from server..."; });
+
+                    if (await App.Settings.GetSolutionDataAsync(loader))
+                    {
+                        Utils.Toast("Sync completed");
+                        ObjectList = await menuServices.GetDataAsync();
+                        UpdateIsEmptyFlag();
+                    }
+                    else
+                        Utils.Toast("Sync failed");
                 }
+                else
+                    Utils.Toast(response.Message);
             }
             catch (Exception ex)
             {
+                Utils.Toast("Failed to sync: " + ex.Message);
                 EbLog.Error("Failed to sync::" + ex.Message);
             }
 

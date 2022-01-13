@@ -16,14 +16,11 @@ namespace ExpressBase.Mobile.Views
 
         private readonly HomeViewModel viewModel;
 
-        private bool _syncData;
-
-        public Home(bool syncData = false)
+        public Home()
         {
             InitializeComponent();
             BindingContext = viewModel = new HomeViewModel();
             EbLayout.ShowLoader();
-            _syncData = syncData;
         }
 
         protected override async void OnAppearing()
@@ -45,8 +42,6 @@ namespace ExpressBase.Mobile.Views
                 EbLog.Error(ex.Message);
             }
             EbLayout.HideLoader();
-            if (_syncData)
-                viewModel.SyncData(Loader);
         }
 
         protected override bool OnBackButtonPressed()
@@ -67,6 +62,8 @@ namespace ExpressBase.Mobile.Views
                 return true;
             }
         }
+
+        public void SyncDataClicked() => viewModel.SyncData(EbLayout.GetMessageLoader());
 
         public override bool CanRefresh() => viewModel.RefreshOnAppearing;
 

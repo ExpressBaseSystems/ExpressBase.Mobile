@@ -16,6 +16,8 @@ namespace ExpressBase.Mobile.Constants
 
         public const string APP_COLLECTION = "app_collection";
 
+        public const string LAST_SYNC_INFO = "last_sync_info";
+
         public const string EXTERNAL_PAGES = "external_pages";
 
         public const string CURRENT_APP = "current_app";

@@ -1,5 +1,7 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
 using ExpressBase.Mobile.Views.Base;
 using System;
@@ -56,7 +58,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
             base.OnAppearing();
 
             EbLayout.ShowLoader();
-
+            viewModel.MsgLoader = EbLayout.GetMessageLoader();
+            viewModel.MsgLoader.Message = "Saving record...";
             if (!isRendered)
             {
                 await viewModel.InitializeAsync();
@@ -81,13 +84,26 @@ namespace ExpressBase.Mobile.Views.Dynamic
                     ButtonGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
                     (ButtonGrid.Children[0] as Button).IsVisible = false;
                     (ButtonGrid.Children[1] as Button).IsVisible = true;
-                    Loader.Message = "Loading...";
+                    viewModel.MsgLoader.Message = "Loading...";
                 }
                 else
                 {
                     ButtonGrid.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
                     ButtonGrid.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
                     (ButtonGrid.Children[1] as Button).IsVisible = true;
+                }
+            }
+
+            if (viewModel.NetworkType == NetworkMode.Offline)
+            {
+                LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
+                if (syncInfo == null || !syncInfo.PullSuccess)
+                {
+                    (ButtonGrid.Children[0] as Button).IsVisible = false;
+                    (ButtonGrid.Children[1] as Button).IsVisible = false;
+                    SaveButton.IsEnabled = false;
+                    App.Navigation.PopByRenderer(true);
+                    Utils.Toast("Sync data required");
                 }
             }
         }

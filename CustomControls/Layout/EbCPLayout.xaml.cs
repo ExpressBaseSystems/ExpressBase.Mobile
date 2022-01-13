@@ -193,6 +193,11 @@ namespace ExpressBase.Mobile.CustomControls
             Loader.IsVisible = false;
         }
 
+        public Loader GetMessageLoader()
+        {
+            return MessageLoader;
+        }
+
         private void SecondaryToggleClicked(object sender, EventArgs e)
         {
             SecondaryToolbar.IsVisible = true;

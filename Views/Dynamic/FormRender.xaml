@@ -94,14 +94,6 @@
                                         Grid.RowSpan="2">
                     </control:ImagePopUp>
 
-                    <control:Loader Grid.RowSpan="2"
-                                    x:Name="Loader"
-                                    IsVisible="{Binding IsBusy}"
-                                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                                    AbsoluteLayout.LayoutFlags="All"
-                                    Position="EndAndExpand"
-                                    Message="Saving record...">
-                    </control:Loader>
                 </Grid>
             </control:EbCPLayout.Content>
         </control:EbCPLayout>

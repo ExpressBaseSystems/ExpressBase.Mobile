@@ -145,9 +145,22 @@
     </controls:ConfirmBox>
 
     <controls:LoaderIconed IsVisible="False"
-                           Grid.Row="1"
+                           Grid.Row="0"
+                           Grid.RowSpan="2"
                            Grid.ColumnSpan="4"
                            x:Name="Loader">
     </controls:LoaderIconed>
+
+    <controls:Loader 
+        x:Name="MessageLoader"
+        IsVisible="False"
+        Grid.Row="0"
+        Grid.RowSpan="2"
+        Grid.ColumnSpan="4"
+        AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+        AbsoluteLayout.LayoutFlags="All"
+        Position="EndAndExpand"
+        Message="Loading...">
+    </controls:Loader>
 
 </Grid>

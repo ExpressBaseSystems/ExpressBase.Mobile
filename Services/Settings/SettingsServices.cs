@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Configuration;
 using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
@@ -10,6 +11,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Services
 {
@@ -160,6 +162,104 @@ namespace ExpressBase.Mobile.Services
 
         private List<MobilePagesWraper> GetExternalPages() => Store.GetJSON<List<MobilePagesWraper>>(AppConst.EXTERNAL_PAGES);
 
+        //version 2
+        public async Task<bool> GetSolutionDataAsync(Loader loader)
+        {
+            bool success = false;
+            RestClient client = new RestClient(App.Settings.RootUrl)
+            {
+                Timeout = ApiConstants.TIMEOUT_IMPORT
+            };
+            RestRequest request = new RestRequest(ApiConstants.GET_SOLUTION_DATAv2, Method.POST);
+
+            request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+            request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+
+            Dictionary<string, object> metaDict = new Dictionary<string, object>();
+            LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
+            if (syncInfo == null)
+                syncInfo = new LastSyncInfo();
+            syncInfo.PullSuccess = false;
+
+            if (syncInfo.LastSyncTs != DateTime.MinValue)
+            {
+                metaDict.Add("last_sync_ts", syncInfo.LastSyncTs);
+            }
+            request.AddParameter("metadata", JsonConvert.SerializeObject(metaDict));
+
+            EbMobileSolutionData solutionData = null;
+            try
+            {
+                IRestResponse response = await client.ExecuteAsync(request);
+                if (response.IsSuccessful)
+                {
+                    Device.BeginInvokeOnMainThread(() => { loader.Message = "Processing pulled data..."; });
+                    solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
+
+                    List<AppData> oldAppData = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
+                    MergeObjectsInSolutionData(solutionData, oldAppData);
+                    await ImportSolutionData(solutionData, true);
+                    Device.BeginInvokeOnMainThread(() => { loader.Message = "Importing latest document ids..."; });
+                    if (await GetLatestAutoId(solutionData.Applications))
+                    {
+                        success = true;
+                        syncInfo.LastSyncTs = solutionData.last_sync_ts;
+                        syncInfo.PullSuccess = true;
+                    }
+                }
+                else
+                {
+                    //callback?.Invoke(response.ResponseStatus);
+                    EbLog.Info("[GetSolutionData] api failure, callback invoked");
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Error on [GetSolutionData] request" + ex.Message);
+            }
+            await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+            return success;
+        }
+
+        private void MergeObjectsInSolutionData(EbMobileSolutionData New, List<AppData> OldApps)
+        {
+            if (OldApps == null)
+                return;
+            foreach (AppData app in New.Applications)
+            {
+                foreach (MobilePagesWraper wraper in app.MobilePages)
+                {
+                    if (string.IsNullOrEmpty(wraper.Json))
+                    {
+                        foreach (AppData _app in OldApps)
+                        {
+                            MobilePagesWraper _w = _app.MobilePages.Find(e => e.RefId == wraper.RefId);
+                            if (_w != null)
+                            {
+                                wraper.Json = _w.Json;
+                                break;
+                            }
+                        }
+                    }
+                }
+                foreach (WebObjectsWraper wraper in app.WebObjects)
+                {
+                    if (string.IsNullOrEmpty(wraper.Json))
+                    {
+                        foreach (AppData _app in OldApps)
+                        {
+                            WebObjectsWraper _w = _app.WebObjects.Find(e => e.RefId == wraper.RefId);
+                            if (_w != null)
+                            {
+                                wraper.Json = _w.Json;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public async Task<EbMobileSolutionData> GetSolutionDataAsync(bool export, int timeout = 0, Action<ResponseStatus> callback = null)
         {
             int timeoutCalc = export ? ApiConstants.TIMEOUT_IMPORT : ApiConstants.TIMEOUT_STD;
@@ -184,6 +284,7 @@ namespace ExpressBase.Mobile.Services
                 {
                     solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
                     await ImportSolutionData(solutionData, export);
+                    await GetLatestAutoId(solutionData.Applications);
                 }
                 else
                 {
@@ -210,7 +311,6 @@ namespace ExpressBase.Mobile.Services
             }
 
             await Store.SetJSONAsync(AppConst.APP_COLLECTION, solutionData.Applications);
-            await GetLatestAutoId(solutionData.Applications);
             await SetLocationInfo(solutionData.Locations);
             await SetCurrentUser(solutionData.CurrentUser);
             await SetSolutionObject(solutionData.CurrentSolution);
@@ -228,11 +328,11 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
-        private async Task GetLatestAutoId(List<AppData> Applications)
+        private async Task<bool> GetLatestAutoId(List<AppData> Applications)
         {
+            List<EbMobileAutoIdData> autoIdData = new List<EbMobileAutoIdData>();
             try
             {
-                List<EbMobileAutoIdData> autoIdData = new List<EbMobileAutoIdData>();
                 foreach (AppData app in Applications)
                 {
                     foreach (MobilePagesWraper mobPageWrap in app.MobilePages)
@@ -278,6 +378,7 @@ namespace ExpressBase.Mobile.Services
                         EbMobileAutoIdDataResponse resp = JsonConvert.DeserializeObject<EbMobileAutoIdDataResponse>(response.Content);
                         ds.Tables.Add(resp.OfflineData);
                         DBService.Current.ImportData(ds);
+                        return true;
                     }
                 }
             }
@@ -285,6 +386,7 @@ namespace ExpressBase.Mobile.Services
             {
                 EbLog.Error("Error in GetLatestAutoId: " + ex.Message);
             }
+            return autoIdData.Count > 0 ? false : true;
         }
 
         private async Task SetLocationInfo(List<EbLocation> locations)

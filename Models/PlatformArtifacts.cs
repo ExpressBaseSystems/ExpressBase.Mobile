@@ -28,6 +28,8 @@ namespace ExpressBase.Mobile.Models
 
         public Eb_Solution CurrentSolution { set; get; }
 
+        public DateTime last_sync_ts { set; get; }
+
         public EbDataSet GetOfflineData()
         {
             EbDataSet ds = new EbDataSet();
@@ -95,6 +97,13 @@ namespace ExpressBase.Mobile.Models
     public class EbMobileAutoIdDataResponse
     {
         public EbDataTable OfflineData { set; get; }
+    }
+
+    public class LastSyncInfo
+    {
+        public bool PullSuccess { get; set; }
+
+        public DateTime LastSyncTs { get; set; }
     }
 
     public class EbStageInfo

@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -28,6 +29,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         protected int RowId { set; get; }
 
         public string SubmitButtonText { set; get; }
+
+        public Loader MsgLoader { get; set; }
 
         public string PrintButtonText { set; get; }
 
@@ -65,10 +68,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (this.RowId > 0 || this.Form.RenderAsFilterDialog)
             {
-                Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                Device.BeginInvokeOnMainThread(() => MsgLoader.IsVisible = true);
                 this.Form.NetworkType = this.NetworkType;//
                 await this.Form.Print(this.RowId);
-                Device.BeginInvokeOnMainThread(() => IsBusy = false);
+                Device.BeginInvokeOnMainThread(() => MsgLoader.IsVisible = false);
             }
             else
                 await FormSubmitClicked(true);
@@ -143,7 +146,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
-                Device.BeginInvokeOnMainThread(() => IsBusy = true);
+                Device.BeginInvokeOnMainThread(() => MsgLoader.IsVisible = true);
 
                 FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
 
@@ -176,7 +179,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 EbLog.Info($"Submit() raised some error");
                 EbLog.Error(ex.Message);
             }
-            Device.BeginInvokeOnMainThread(() => IsBusy = false);
+            Device.BeginInvokeOnMainThread(() => MsgLoader.IsVisible = false);
         }
 
         protected void InitDefaultValueExpressions()

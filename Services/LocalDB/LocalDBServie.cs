@@ -15,7 +15,8 @@ namespace ExpressBase.Mobile.Services
     {
         public async Task<SyncResponse> PushDataToCloud(Loader loader = null)
         {
-            SyncResponse response = new SyncResponse();
+            SyncResponse response = new SyncResponse() { Status = true };
+            int totalRecords = 0, failedCount = 0;
             try
             {
                 List<EbMobileForm> FormCollection = EbPageHelper.GetOfflineForms();
@@ -34,6 +35,7 @@ namespace ExpressBase.Mobile.Services
                         depT.Add(DependencyForm.TableName);
 
                     EbDataTable SourceData = Form.GetLocalData();
+                    totalRecords += SourceData.Rows.Count;
                     string msg = $"Pushing {Form.DisplayName} {{0}} of {SourceData.Rows.Count}...";
 
                     for (int i = 0; i < SourceData.Rows.Count; i++)
@@ -44,20 +46,27 @@ namespace ExpressBase.Mobile.Services
                         PushResponse resp = await SendRecord(webdata, Form, SourceData, SourceData.Rows[i], i);
 
                         if (resp.RowAffected <= 0)
-                            continue;
-
-                        Form.FlagLocalRow(resp, resp.LocalRowId);
-                        if (DependencyForm != null)
-                            await PushDependencyData(webdata, Form, DependencyForm, resp.RowId, resp.LocalRowId);
+                        {
+                            response.Status = false;
+                            failedCount++;
+                        }
+                        else
+                        {
+                            Form.FlagLocalRow(resp, resp.LocalRowId);
+                            if (DependencyForm != null)
+                                await PushDependencyData(webdata, Form, DependencyForm, resp.RowId, resp.LocalRowId);
+                        }
                     }
                 }
-                response.Status = true;
-                response.Message = "Sync completed";
+                if (response.Status)
+                    response.Message = "Push completed";
+                else if (failedCount > 0)
+                    response.Message = $"{failedCount} of {totalRecords} failed to push";
             }
             catch (Exception ex)
             {
                 response.Status = false;
-                response.Message = "Sync failed";
+                response.Message = "Push failed: " + ex.Message;
                 EbLog.Error(ex.Message);
             }
             return response;
