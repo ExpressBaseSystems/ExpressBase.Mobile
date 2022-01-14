@@ -36,7 +36,7 @@ namespace ExpressBase.Mobile.Services
 
                     EbDataTable SourceData = Form.GetLocalData();
                     totalRecords += SourceData.Rows.Count;
-                    string msg = $"Pushing {Form.DisplayName} {{0}} of {SourceData.Rows.Count}...";
+                    string msg = $"Pushing {Form.DisplayName} {{0}} of {SourceData.Rows.Count}";
 
                     for (int i = 0; i < SourceData.Rows.Count; i++)
                     {

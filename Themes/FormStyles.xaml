@@ -14,7 +14,7 @@
         <Setter Property="WidthRequest"
                 Value="40"></Setter>
         <Setter Property="CornerRadius"
-                Value="20"></Setter>
+                Value="4"></Setter>
         <Setter Property="BorderColor"
                 Value="#cccccc"></Setter>
         <Setter Property="BackgroundColor"

@@ -174,15 +174,15 @@ namespace ExpressBase.Mobile.ViewModels
                 if (response.Status)
                 {
                     Device.BeginInvokeOnMainThread(() => { loader.Message = "Fetching data from server..."; });
-
-                    if (await App.Settings.GetSolutionDataAsync(loader))
+                    response = await App.Settings.GetSolutionDataAsync(loader);
+                    if (response.Status)
                     {
                         Utils.Toast("Sync completed");
                         ObjectList = await menuServices.GetDataAsync();
                         UpdateIsEmptyFlag();
                     }
                     else
-                        Utils.Toast("Sync failed");
+                        Utils.Toast(response.Message ?? "Sync failed");
                 }
                 else
                     Utils.Toast(response.Message);

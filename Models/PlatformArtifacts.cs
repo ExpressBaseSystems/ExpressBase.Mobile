@@ -104,6 +104,8 @@ namespace ExpressBase.Mobile.Models
         public bool PullSuccess { get; set; }
 
         public DateTime LastSyncTs { get; set; }
+
+        public DateTime LastOfflineSaveTs { get; set; }
     }
 
     public class EbStageInfo

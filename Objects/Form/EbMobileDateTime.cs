@@ -73,11 +73,11 @@ namespace ExpressBase.Mobile
                 datePicker = new EbXDatePicker
                 {
                     IsEnabled = !this.ReadOnly,
-                    Date = DateTime.UtcNow,
+                    Date = DateTime.Now,
                     BorderColor = Color.Transparent
                 };
-                if (this.BlockBackDatedEntry) datePicker.MinimumDate = DateTime.UtcNow;
-                if (this.BlockFutureDatedEntry) datePicker.MaximumDate = DateTime.UtcNow;
+                if (this.BlockBackDatedEntry) datePicker.MinimumDate = DateTime.Now;
+                if (this.BlockFutureDatedEntry) datePicker.MaximumDate = DateTime.Now;
 
                 datePicker.PropertyChanged += PropertyChanged;
                 control = datePicker;

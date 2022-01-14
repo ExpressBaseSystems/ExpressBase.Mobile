@@ -123,6 +123,7 @@ namespace ExpressBase.Mobile.Helpers
                 {
                     if (string.IsNullOrEmpty(form.WebFormRefId))
                         continue;
+                    form.DisplayName = mpage.DisplayName;
                     if (mpage.NetworkMode == NetworkMode.Offline || mpage.NetworkMode == NetworkMode.Mixed)
                     {
                         ls.Add(form);

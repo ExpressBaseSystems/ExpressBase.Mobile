@@ -163,9 +163,9 @@ namespace ExpressBase.Mobile.Services
         private List<MobilePagesWraper> GetExternalPages() => Store.GetJSON<List<MobilePagesWraper>>(AppConst.EXTERNAL_PAGES);
 
         //version 2
-        public async Task<bool> GetSolutionDataAsync(Loader loader)
+        public async Task<SyncResponse> GetSolutionDataAsync(Loader loader)
         {
-            bool success = false;
+            SyncResponse resp = new SyncResponse();
             RestClient client = new RestClient(App.Settings.RootUrl)
             {
                 Timeout = ApiConstants.TIMEOUT_IMPORT
@@ -196,15 +196,24 @@ namespace ExpressBase.Mobile.Services
                     Device.BeginInvokeOnMainThread(() => { loader.Message = "Processing pulled data..."; });
                     solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
 
-                    List<AppData> oldAppData = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
-                    MergeObjectsInSolutionData(solutionData, oldAppData);
-                    await ImportSolutionData(solutionData, true);
-                    Device.BeginInvokeOnMainThread(() => { loader.Message = "Importing latest document ids..."; });
-                    if (await GetLatestAutoId(solutionData.Applications))
+                    if (!(solutionData.last_sync_ts > DateTime.Now.Subtract(new TimeSpan(0, 2, 0)) &&
+                        solutionData.last_sync_ts < DateTime.Now.Add(new TimeSpan(0, 2, 0))))
                     {
-                        success = true;
-                        syncInfo.LastSyncTs = solutionData.last_sync_ts;
-                        syncInfo.PullSuccess = true;
+                        resp.Message = "Device date time is incorrect";
+                    }
+                    else
+                    {
+                        List<AppData> oldAppData = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
+                        MergeObjectsInSolutionData(solutionData, oldAppData);
+                        await ImportSolutionData(solutionData, true);
+                        Device.BeginInvokeOnMainThread(() => { loader.Message = "Importing latest document ids..."; });
+                        if (await GetLatestAutoId(solutionData.Applications))
+                        {
+                            resp.Status = true;
+                            syncInfo.LastSyncTs = solutionData.last_sync_ts;
+                            syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
+                            syncInfo.PullSuccess = true;
+                        }
                     }
                 }
                 else
@@ -218,7 +227,7 @@ namespace ExpressBase.Mobile.Services
                 EbLog.Error("Error on [GetSolutionData] request" + ex.Message);
             }
             await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
-            return success;
+            return resp;
         }
 
         private void MergeObjectsInSolutionData(EbMobileSolutionData New, List<AppData> OldApps)

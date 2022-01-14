@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile
             decimalPadding = this.DecimalPlaces > 0 ? ".".PadRight(this.DecimalPlaces + 1, '0') : string.Empty;
             if (RenderType == NumericBoxTypes.ButtonType)
             {
-                Grid grid = new Grid { ColumnSpacing = 10, IsEnabled = !this.ReadOnly };
+                Grid grid = new Grid { ColumnSpacing = 4, IsEnabled = !this.ReadOnly };
 
                 if (this.IncrementButtons == null || this.IncrementButtons.Count == 0)
                     this.IncrementButtons = new List<EbMobileNumBoxButtons>() { new EbMobileNumBoxButtons() { Value = -1 }, new EbMobileNumBoxButtons() { Value = 1 } };

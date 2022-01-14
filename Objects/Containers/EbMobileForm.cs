@@ -367,26 +367,38 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                List<DbParameter> dbParameters = new List<DbParameter>();
-
-                string query = data.GetQuery(dbParameters, rowId);
-
-                int rowAffected = App.DataDB.DoNonQuery(query, dbParameters.ToArray());
-                int lastRowId = (rowId != 0) ? rowId : Convert.ToInt32(App.DataDB.DoScalar($"SELECT MAX(id) FROM {TableName}"));
-                response.PushResponse = new PushResponse() { RowId = lastRowId };
-
-                if (HasFileSelect && rowAffected > 0)
+                LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
+                if (syncInfo.LastOfflineSaveTs > DateTime.Now)
                 {
-                    if (lastRowId > 0)
-                        await WriteFilesToLocal(lastRowId);
+                    response.Message = "Device date time is incorrect";
                 }
-
-                response.Status = rowAffected > 0;
-
-                if (response.Status)
-                    response.Message = "Data stored locally :)";
                 else
-                    throw new Exception("Failed to store data locally");
+                {
+                    List<DbParameter> dbParameters = new List<DbParameter>();
+
+                    string query = data.GetQuery(dbParameters, rowId);
+
+                    int rowAffected = App.DataDB.DoNonQuery(query, dbParameters.ToArray());
+                    int lastRowId = (rowId != 0) ? rowId : Convert.ToInt32(App.DataDB.DoScalar($"SELECT MAX(id) FROM {TableName}"));
+                    response.PushResponse = new PushResponse() { RowId = lastRowId };
+
+                    if (HasFileSelect && rowAffected > 0)
+                    {
+                        if (lastRowId > 0)
+                            await WriteFilesToLocal(lastRowId);
+                    }
+
+                    response.Status = rowAffected > 0;
+
+                    if (response.Status)
+                    {
+                        response.Message = "Data stored locally :)";
+                        syncInfo.LastOfflineSaveTs = DateTime.Now;
+                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+                    }
+                    else
+                        throw new Exception("Failed to store data locally");
+                }
             }
             catch (Exception ex)
             {
