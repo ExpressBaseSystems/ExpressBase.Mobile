@@ -4,6 +4,7 @@ using ExpressBase.Mobile.ViewModels.Login;
 using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -29,6 +30,8 @@ namespace ExpressBase.Mobile.Views.Login
         {
             LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
             SubmitButton.Text = PageContent["LoginButtonText"];
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+            DeviceIdButton.Text = helper.DeviceId;
         }
 
         protected override void OnAppearing()
@@ -41,6 +44,13 @@ namespace ExpressBase.Mobile.Views.Login
         private void Email_Completed(object sender, EventArgs e)
         {
             PassWord.Focus();
+        }
+
+        private async void DeviceId_Clicked(object sender, EventArgs e)
+        {
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+            await Clipboard.SetTextAsync(helper.DeviceId);
+            Utils.Toast("Copied to clipboard");
         }
 
         private void ShowPassword_Clicked(object sender, EventArgs e)

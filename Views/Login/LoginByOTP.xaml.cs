@@ -4,6 +4,7 @@ using ExpressBase.Mobile.ViewModels.Login;
 using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -28,6 +29,8 @@ namespace ExpressBase.Mobile.Views.Login
         public void OnDynamicContentRendering()
         {
             LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+            DeviceIdButton.Text = helper.DeviceId;
         }
 
         protected override void OnAppearing()
@@ -35,6 +38,13 @@ namespace ExpressBase.Mobile.Views.Login
             base.OnAppearing();
 
             SolutionName.Text = App.Settings.SolutionName;
+        }
+
+        private async void DeviceId_Clicked(object sender, EventArgs e)
+        {
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+            await Clipboard.SetTextAsync(helper.DeviceId);
+            Utils.Toast("Copied to clipboard");
         }
 
         public void ShowTwoFAWindow(ApiAuthResponse auth)

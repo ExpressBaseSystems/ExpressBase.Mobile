@@ -30,6 +30,8 @@ namespace ExpressBase.Mobile.Services
 
                 request.AddParameter("username", username.Trim());
                 request.AddParameter("password", string.Concat(password, username).ToMD5());
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                request.AddParameter("deviceid", helper.DeviceId);
 
                 if (anonymous) request.AddParameter("anonymous", true);
 
