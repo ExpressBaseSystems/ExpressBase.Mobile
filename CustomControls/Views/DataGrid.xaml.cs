@@ -233,6 +233,9 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
             foreach (MobileTableRow row in dataDictionary.Values)
             {
+                if (isAppendEbCol && !dataGrid.RowHelper.CanRowPersist(row))
+                    continue;
+
                 if (row.RowId <= 0 && isAppendEbCol)
                     row.AppendEbColValues(dataGrid.NetworkType == NetworkMode.Offline);
 

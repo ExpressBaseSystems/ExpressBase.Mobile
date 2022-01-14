@@ -25,6 +25,8 @@ namespace ExpressBase.Mobile
 
         public EbScript OfflineQuery { set; get; }
 
+        public EbScript PersistRowOnlyIf { get; set; }
+
         public bool DisableAdd { set; get; }
 
         public bool DisableDelete { set; get; }
@@ -225,18 +227,32 @@ namespace ExpressBase.Mobile
 
         private string RowColorExprCode;
 
+        private string PersistRowExprCode;
+
         private readonly EbSciptEvaluator evaluator;
 
         private Dictionary<string, MobileTableColumn> ColumnDictionary;
 
         public DataGridRowHelper(EbMobileDataGrid dataGrid)
         {
-            if (!string.IsNullOrWhiteSpace(dataGrid?.RowColorExpr?.Code))
-            {
-                DataGrid = dataGrid;
-                string script = dataGrid.RowColorExpr.GetCode();
-                RowColorExprCode = GetComputedExpression(script);
+            bool initEvaluator = false;
+            DataGrid = dataGrid;
 
+            if (!string.IsNullOrWhiteSpace(DataGrid?.RowColorExpr?.Code))
+            {
+                string script = DataGrid.RowColorExpr.GetCode();
+                RowColorExprCode = GetComputedExpression(script);
+                initEvaluator = true;
+            }
+            if (!string.IsNullOrWhiteSpace(DataGrid?.PersistRowOnlyIf?.Code))
+            {
+                string script = DataGrid.PersistRowOnlyIf.GetCode();
+                PersistRowExprCode = GetComputedExpression(script);
+                initEvaluator = true;
+            }
+
+            if (initEvaluator)
+            {
                 evaluator = new EbSciptEvaluator
                 {
                     OptionScriptNeedSemicolonAtTheEndOfLastExpression = false
@@ -269,6 +285,30 @@ namespace ExpressBase.Mobile
                 }
             }
             return color;
+        }
+
+        public bool CanRowPersist(MobileTableRow row)
+        {
+            if (PersistRowExprCode != null)
+            {
+                try
+                {
+                    SetRowData(row);
+                    bool status = evaluator.Execute<bool>(PersistRowExprCode);
+                    if (!status)
+                    {
+                        if (row.RowId <= 0)
+                            return false;
+                        else
+                            row.IsDelete = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            return true;
         }
 
         private void SetRowData(MobileTableRow row)

@@ -178,8 +178,15 @@ namespace ExpressBase.Mobile.ViewModels
                     if (response.Status)
                     {
                         Utils.Toast("Sync completed");
+
+                        App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
+                        App.Settings.WebObjects = App.Settings.CurrentApplication.WebObjects;
+
                         ObjectList = await menuServices.GetDataAsync();
+
                         UpdateIsEmptyFlag();
+                        CreateFormContainersTables();
+                        LogApplicationInfo();
                     }
                     else
                         Utils.Toast(response.Message ?? "Sync failed");
