@@ -1,5 +1,7 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,12 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
             BindingContext = new SettingsViewModel();
+
+            LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
+            if (syncInfo == null)
+                LastSyncAtLbl.Text = "Sync required";
+            else
+                LastSyncAtLbl.Text = "Last sync at: " + syncInfo.LastSyncTs.ToString();
         }
 
         private async void ShareLog_Clicked(object sender, EventArgs e)
@@ -79,15 +87,5 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        private void SyncButtonClicked(object sender, EventArgs e)
-        {
-            if (!Utils.IsNetworkReady(NetworkMode.Online))
-            {
-                Utils.Alert_NoInternet();
-                return;
-            }
-
-            SyncConfirmBox.Show();
-        }
     }
 }

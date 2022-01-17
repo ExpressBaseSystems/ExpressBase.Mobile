@@ -103,6 +103,21 @@ namespace ExpressBase.Mobile
             return dt;
         }
 
+        public string GetDeleteQuery()
+        {
+            string query = string.Empty;
+
+            if (ControlDictionary == null || !ControlDictionary.Any())
+                ControlDictionary = ChildControls.ToControlDictionary();
+            foreach (var pair in ControlDictionary)
+            {
+                if (pair.Value is ILinesEnabled grid)
+                    query += $"DELETE FROM {grid.TableName} WHERE {this.TableName}_id = (SELECT id FROM {this.TableName} WHERE eb_created_at_device > @date AND eb_synced <> 0);";
+            }
+
+            return query + $"DELETE FROM {this.TableName} WHERE eb_created_at_device > @date AND eb_synced <> 0; ";
+        }
+
         public async Task<FormSaveResponse> Save(int rowId, string pageRefId)
         {
             FormSaveResponse response = new FormSaveResponse();

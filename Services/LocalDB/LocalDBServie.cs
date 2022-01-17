@@ -3,6 +3,7 @@ using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,10 @@ namespace ExpressBase.Mobile.Services
                     }
                 }
                 if (response.Status)
+                {
                     response.Message = "Push completed";
+                    DeleteUnwantedRecords();
+                }
                 else if (failedCount > 0)
                     response.Message = $"{failedCount} of {totalRecords} failed to push";
             }
@@ -70,6 +74,26 @@ namespace ExpressBase.Mobile.Services
                 EbLog.Error(ex.Message);
             }
             return response;
+        }
+
+        private void DeleteUnwantedRecords()
+        {
+            try
+            {
+                List<EbMobileForm> FormCollection = EbPageHelper.GetOfflineForms();
+                foreach (EbMobileForm Form in FormCollection)
+                {
+                    DbParameter[] parameter = new DbParameter[]
+                    {
+                        new DbParameter{ParameterName="@date", DbType= (int)EbDbTypes.DateTime, Value = DateTime.UtcNow.Subtract(new TimeSpan(7, 0, 0, 0, 0))}
+                    };
+                    App.DataDB.DoNonQuery(Form.GetDeleteQuery(), parameter);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
         }
 
         private async Task<PushResponse> SendRecord(WebformData webdata, EbMobileForm Form, EbDataTable Dt, EbDataRow DataRow, int RowIndex)
