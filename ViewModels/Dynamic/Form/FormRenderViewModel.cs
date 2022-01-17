@@ -7,6 +7,7 @@ using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -68,10 +69,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (this.RowId > 0 || this.Form.RenderAsFilterDialog)
             {
-                Device.BeginInvokeOnMainThread(() => MsgLoader.IsVisible = true);
+                MsgLoader.IsVisible = true;
                 this.Form.NetworkType = this.NetworkType;//
                 await this.Form.Print(this.RowId);
-                Device.BeginInvokeOnMainThread(() => MsgLoader.IsVisible = false);
+                MsgLoader.IsVisible = false;
             }
             else
                 await FormSubmitClicked(true);
@@ -123,9 +124,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public async Task FormSubmitClicked(bool Print)
         {
+            MsgLoader.IsVisible = true;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             if (!Utils.IsNetworkReady(this.NetworkType))
             {
                 Utils.Alert_NoInternet();
+                MsgLoader.IsVisible = false;
                 return;
             }
 
@@ -140,14 +145,16 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 EbLog.Info($"Form '{this.PageName}' validation failed, some fields are required");
                 Utils.Toast("Fields required");
             }
+            sw.Stop();
+            if (sw.ElapsedMilliseconds < 1500)
+                await Task.Delay(1500 - (int)sw.ElapsedMilliseconds);
+            MsgLoader.IsVisible = false;
         }
 
         protected virtual async Task Submit(bool Print)
         {
             try
             {
-                Device.BeginInvokeOnMainThread(() => MsgLoader.IsVisible = true);
-
                 FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
 
                 if (response.Status && Print && !this.Form.RenderAsFilterDialog)
@@ -179,7 +186,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 EbLog.Info($"Submit() raised some error");
                 EbLog.Error(ex.Message);
             }
-            Device.BeginInvokeOnMainThread(() => MsgLoader.IsVisible = false);
         }
 
         protected void InitDefaultValueExpressions()
