@@ -163,7 +163,7 @@ namespace ExpressBase.Mobile.Services
         private List<MobilePagesWraper> GetExternalPages() => Store.GetJSON<List<MobilePagesWraper>>(AppConst.EXTERNAL_PAGES);
 
         //version 2
-        public async Task<SyncResponse> GetSolutionDataAsync(Loader loader)
+        public async Task<SyncResponse> GetSolutionDataAsyncV2(Loader loader)
         {
             SyncResponse resp = new SyncResponse();
             RestClient client = new RestClient(App.Settings.RootUrl)
@@ -269,43 +269,66 @@ namespace ExpressBase.Mobile.Services
             }
         }
 
-        public async Task<EbMobileSolutionData> GetSolutionDataAsync(bool export, int timeout = 0, Action<ResponseStatus> callback = null)
+        public async Task<EbMobileSolutionData> GetSolutionDataAsync(Loader loader)
         {
-            int timeoutCalc = export ? ApiConstants.TIMEOUT_IMPORT : ApiConstants.TIMEOUT_STD;
-            //export = true;////////////
-            //timeout = 20000;/////////////
-            RestClient client = new RestClient(App.Settings.RootUrl)
-            {
-                Timeout = timeout == 0 ? timeoutCalc : timeout
-            };
-
-            RestRequest request = new RestRequest(ApiConstants.GET_SOLUTION_DATA, Method.GET);
-
-            request.AddParameter("export", export);
-            request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
-            request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
-
             EbMobileSolutionData solutionData = null;
+            bool flag = false;
             try
             {
-                IRestResponse response = await client.ExecuteAsync(request);
-                if (response.IsSuccessful)
+                loader.Message = "Sync started...";
+
+                LocalDBServie service = new LocalDBServie();
+                SyncResponse response = await service.PushDataToCloud(loader);
+
+                if (response.Status)
                 {
-                    solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
-                    await ImportSolutionData(solutionData, export);
-                    await GetLatestAutoId(solutionData.Applications);
+                    loader.Message = "Fetching data from server...";
+
+                    RestClient client = new RestClient(App.Settings.RootUrl)
+                    {
+                        Timeout = ApiConstants.TIMEOUT_IMPORT
+                    };
+                    RestRequest request = new RestRequest(ApiConstants.GET_SOLUTION_DATAv2, Method.POST);
+
+                    request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                    request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+                    Dictionary<string, object> metaDict = new Dictionary<string, object>();
+                    request.AddParameter("metadata", JsonConvert.SerializeObject(metaDict));
+
+                    IRestResponse resp = await client.ExecuteAsync(request);
+                    if (resp.IsSuccessful)
+                    {
+                        loader.Message = "Processing pulled data...";
+                        solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(resp.Content);
+                        await ImportSolutionData(solutionData, true);
+                        loader.Message = "Importing latest document ids...";
+                        if (await GetLatestAutoId(solutionData.Applications))
+                        {
+                            LastSyncInfo syncInfo = new LastSyncInfo()
+                            {
+                                PullSuccess = true,
+                                LastSyncTs = solutionData.last_sync_ts,
+                                LastOfflineSaveTs = solutionData.last_sync_ts
+                            };
+                            await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+                            flag = true;
+                        }
+                        else
+                            Utils.Toast("Sync failed");
+                    }
+                    else
+                        Utils.Toast(response.Message ?? "Sync failed");
                 }
                 else
-                {
-                    callback?.Invoke(response.ResponseStatus);
-                    EbLog.Info("[GetSolutionData] api failure, callback invoked");
-                }
+                    Utils.Toast(response.Message);
             }
             catch (Exception ex)
             {
                 EbLog.Error("Error on [GetSolutionData] request" + ex.Message);
+                Utils.Toast(ex.Message);
             }
-            return solutionData;
+            loader.IsVisible = false;
+            return flag ? solutionData : null;
         }
 
         private async Task ImportSolutionData(EbMobileSolutionData solutionData, bool export)

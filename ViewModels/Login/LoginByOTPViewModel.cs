@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System;
@@ -11,6 +12,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
     public class LoginByOTPViewModel : LoginBaseViewModel
     {
         private string username;
+        private Loader msgLoader;
 
         public string UserName
         {
@@ -24,9 +26,10 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         public Command SendOTPCommand => new Command(async (o) => await SendOTP());
 
-        public LoginByOTPViewModel() : base()
+        public LoginByOTPViewModel(Loader loader) : base()
         {
             this.UserName = App.Settings.CurrentSolution?.LastUser;
+            this.msgLoader = loader;
         }
 
         private async Task SendOTP()
@@ -69,7 +72,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
                 ApiAuthResponse resp = await Service.VerifyOTP(AuthResponse, otp);
 
                 if (resp != null && resp.IsValid)
-                    await AfterLoginSuccess(resp, this.UserName, LoginType.SSO);
+                    await AfterLoginSuccess(resp, this.UserName, LoginType.SSO, msgLoader);
                 else
                     Utils.Toast("The OTP is Invalid or Expired");
             }

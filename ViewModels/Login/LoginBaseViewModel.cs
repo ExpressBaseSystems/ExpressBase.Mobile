@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
@@ -97,17 +98,16 @@ namespace ExpressBase.Mobile.ViewModels.Login
             }
         }
 
-        protected async Task AfterLoginSuccess(ApiAuthResponse resp, string username, LoginType loginType)
+        protected async Task AfterLoginSuccess(ApiAuthResponse resp, string username, LoginType loginType, Loader loader)
         {
             try
             {
                 await Service.UpdateAuthInfo(resp, username);
                 await Service.UpdateLastUser(username, loginType);
 
-                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true, callback: status =>
-                {
-                    Utils.Alert_SlowNetwork();
-                });
+                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(loader);
+
+                IsBusy = true;
 
                 if (App.Settings.Vendor.AllowNotifications)
                 {

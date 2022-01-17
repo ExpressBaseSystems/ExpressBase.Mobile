@@ -462,7 +462,8 @@ namespace ExpressBase.Mobile
                     DbParameter[] parameter = new DbParameter[]
                     {
                         new DbParameter{ParameterName="@rowid",Value = rowId},
-                        new DbParameter{ParameterName="@cloudrowid",Value = response.RowId}
+                        new DbParameter{ParameterName="@cloudrowid",Value = response.RowId},
+                        new DbParameter{ParameterName="@eb_synced",Value = response.RowId > 0 ? 1 : 2}
                     };
                     int rowAffected = App.DataDB.DoNonQuery(string.Format(StaticQueries.FLAG_LOCALROW_SYNCED, this.TableName), parameter);
                 }

@@ -9,7 +9,7 @@ namespace ExpressBase.Mobile.Services
     {
         Task<List<MobilePagesWraper>> GetDataAsync();
 
-        Task<List<MobilePagesWraper>> UpdateDataAsync();
+        //Task<List<MobilePagesWraper>> UpdateDataAsync();
 
         Task<List<MobilePagesWraper>> GetFromMenuPreload(EbApiMeta apimeta);
     }

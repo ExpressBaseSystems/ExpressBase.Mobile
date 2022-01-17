@@ -28,7 +28,7 @@ namespace ExpressBase.Mobile.Services
             {
                 RestRequest request = new RestRequest(ApiConstants.AUTHETICATE, Method.GET);
 
-                request.AddParameter("username", username.Trim());
+                request.AddParameter("username", username.Trim().ToLower());
                 request.AddParameter("password", string.Concat(password, username).ToMD5());
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
                 request.AddParameter("deviceid", helper.DeviceId);
@@ -57,7 +57,7 @@ namespace ExpressBase.Mobile.Services
             {
                 RestRequest request = new RestRequest(ApiConstants.AUTHETICATE_SSO, Method.GET);
 
-                request.AddParameter("username", username.Trim());
+                request.AddParameter("username", username.Trim().ToLower());
                 request.AddParameter("authid", authid);
                 request.AddParameter("token", token);
 

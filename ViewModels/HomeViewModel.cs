@@ -174,7 +174,7 @@ namespace ExpressBase.Mobile.ViewModels
                 if (response.Status)
                 {
                     Device.BeginInvokeOnMainThread(() => { loader.Message = "Fetching data from server..."; });
-                    response = await App.Settings.GetSolutionDataAsync(loader);
+                    response = await App.Settings.GetSolutionDataAsyncV2(loader);
                     if (response.Status)
                     {
                         Utils.Toast("Sync completed");

@@ -43,41 +43,42 @@ namespace ExpressBase.Mobile.Services
             return filter;
         }
 
-        public async Task<List<MobilePagesWraper>> UpdateDataAsync()
-        {
-            List<MobilePagesWraper> collection = null;
-            try
-            {
-                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(false, 6000, async status =>
-                {
-                    collection = await this.GetDataAsync();
+        //HomeViewModel.cs 
+        //public async Task<List<MobilePagesWraper>> UpdateDataAsync()
+        //{
+        //    List<MobilePagesWraper> collection = null;
+        //    try
+        //    {
+        //        EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(false, 6000, async status =>
+        //        {
+        //            collection = await this.GetDataAsync();
 
-                    if (status == ResponseStatus.TimedOut)
-                    {
-                        Utils.Alert_SlowNetwork();
-                        EbLog.Info("[solutiondata api] raised timeout in UpdateDataAsync");
-                    }
-                    else
-                    {
-                        Utils.Alert_NetworkError();
-                        EbLog.Info("[solutiondata api] raised network error in UpdateDataAsync");
-                    }
-                });
+        //            if (status == ResponseStatus.TimedOut)
+        //            {
+        //                Utils.Alert_SlowNetwork();
+        //                EbLog.Info("[solutiondata api] raised timeout in UpdateDataAsync");
+        //            }
+        //            else
+        //            {
+        //                Utils.Alert_NetworkError();
+        //                EbLog.Info("[solutiondata api] raised network error in UpdateDataAsync");
+        //            }
+        //        });
 
-                if (data != null)
-                {
-                    App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
-                    App.Settings.WebObjects = App.Settings.CurrentApplication.WebObjects;
-                    collection = await this.GetDataAsync();
-                    Utils.Toast("Refreshed");
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("menu update failed :: " + ex.Message);
-            }
-            return collection ?? new List<MobilePagesWraper>();
-        }
+        //        if (data != null)
+        //        {
+        //            App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
+        //            App.Settings.WebObjects = App.Settings.CurrentApplication.WebObjects;
+        //            collection = await this.GetDataAsync();
+        //            Utils.Toast("Refreshed");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        EbLog.Error("menu update failed :: " + ex.Message);
+        //    }
+        //    return collection ?? new List<MobilePagesWraper>();
+        //}
 
         public async Task<List<MobilePagesWraper>> GetFromMenuPreload(EbApiMeta apimeta)
         {

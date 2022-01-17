@@ -53,7 +53,7 @@ namespace ExpressBase.Mobile.Services
                         else
                         {
                             Form.FlagLocalRow(resp, resp.LocalRowId);
-                            if (DependencyForm != null)
+                            if (DependencyForm != null)//// error submission must be consider [flow pending...]
                                 await PushDependencyData(webdata, Form, DependencyForm, resp.RowId, resp.LocalRowId);
                         }
                     }

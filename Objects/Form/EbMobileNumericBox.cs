@@ -99,7 +99,13 @@ namespace ExpressBase.Mobile
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             Button btn = new Button
             {
-                Style = (Style)HelperFunctions.GetResourceValue("NumericBoxIncrButton"),
+                //Style = (Style)HelperFunctions.GetResourceValue("NumericBoxIncrButton"),
+                WidthRequest = 40,
+                HeightRequest = 40,
+                CornerRadius = 4,
+                Padding = 0,
+                BackgroundColor = App.Settings.Vendor.GetPrimaryColor(),
+                TextColor = App.Settings.Vendor.GetPrimaryFontColor(),
                 Text = prefix + Math.Abs(val),
                 IsEnabled = !this.ReadOnly
             };

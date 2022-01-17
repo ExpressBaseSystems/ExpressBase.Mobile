@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -18,6 +19,8 @@ namespace ExpressBase.Mobile.ViewModels
         private readonly IApplicationService appService;
 
         private List<AppData> applications;
+
+        private Loader msgLoader;
 
         public List<AppData> Applications
         {
@@ -49,8 +52,9 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command RefreshListCommand => new Command(async () => await UpdateAsync());
 
-        public MyApplicationsViewModel()
+        public MyApplicationsViewModel(Loader loader)
         {
+            msgLoader = loader;
             appService = new ApplicationService();
         }
 
@@ -63,7 +67,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public override async Task UpdateAsync()
         {
-            Applications = await appService.UpdateDataAsync();
+            Applications = await appService.UpdateDataAsync(msgLoader);
             IsEmpty = IsNullOrEmpty();
             IsRefreshing = false;
             IsResetVisible = IsEmpty;

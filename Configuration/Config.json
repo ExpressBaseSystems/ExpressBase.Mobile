@@ -14,7 +14,7 @@
       "HasBrandingInHome": true,
       "Logo": "icon_eb.png",
       "PoweredBy": "Powered by EXPRESSbase",
-      "DefaultLoginType": "SSO",
+      "DefaultLoginType": "CREDENTIALS",
       "Content": {
         "NewSolution": {
           "WallLabel": "Add new Solution",

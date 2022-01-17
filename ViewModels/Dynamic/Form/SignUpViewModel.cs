@@ -119,10 +119,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 await identityService.UpdateAuthInfo(resp, userInfo.UserName);
                 await identityService.UpdateLastUser(userInfo.UserName, LoginType.SSO);
 
-                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(true, callback: status =>
-                {
-                    Utils.Alert_SlowNetwork();
-                });
+                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(MsgLoader);
 
                 if (data != null)
                 {

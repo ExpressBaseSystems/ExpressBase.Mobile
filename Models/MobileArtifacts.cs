@@ -288,15 +288,15 @@ namespace ExpressBase.Mobile.Models
         {
             this.Columns.Add(new MobileTableColumn { Name = "eb_loc_id", Type = EbDbTypes.Int32, Value = App.Settings.CurrentLocId });
 
-            if (addCreatedAt)
+            if (addCreatedAt)//eb_created_at_device for Offline submission
                 this.Columns.Add(new MobileTableColumn { Name = "eb_created_at_device", Type = EbDbTypes.DateTime, Value = DateTime.UtcNow });
-
-            INativeHelper helper = DependencyService.Get<INativeHelper>();
 
             try
             {
-                this.Columns.Add(new MobileTableColumn { Name = "eb_device_id", Type = EbDbTypes.String, Value = helper.DeviceId });
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
                 string appversion = string.Format("{0}({1} {2}:{3})-{4}", DeviceInfo.Manufacturer, DeviceInfo.Model, DeviceInfo.Platform, DeviceInfo.VersionString, helper.AppVersion);
+
+                this.Columns.Add(new MobileTableColumn { Name = "eb_device_id", Type = EbDbTypes.String, Value = helper.DeviceId });
                 this.Columns.Add(new MobileTableColumn { Name = "eb_appversion", Type = EbDbTypes.String, Value = appversion });
             }
             catch (Exception ex)

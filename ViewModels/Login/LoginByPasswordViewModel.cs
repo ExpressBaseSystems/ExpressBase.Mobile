@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Enums;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System;
@@ -11,6 +12,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
     {
         private string email;
         private string password;
+        private Loader msgLoader;
 
         public string Email
         {
@@ -34,9 +36,10 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         public Command LoginCommand => new Command(async () => await LoginAction());
 
-        public LoginByPasswordViewModel() : base()
+        public LoginByPasswordViewModel(Loader loader) : base()
         {
             this.Email = App.Settings.CurrentSolution?.LastUser;
+            this.msgLoader = loader;
         }
 
         private async Task LoginAction()
@@ -51,7 +54,10 @@ namespace ExpressBase.Mobile.ViewModels.Login
             {
                 string _username = this.Email.Trim();
                 string _password = this.PassWord.Trim();
-                IsBusy = true;
+
+                msgLoader.IsVisible = true;
+                msgLoader.Message = "Logging in...";
+
                 try
                 {
                     AuthResponse = await Service.AuthenticateAsync(_username, _password);
@@ -67,7 +73,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
                     if (AuthResponse.Is2FEnabled)
                         Toggle2FAW?.Invoke(AuthResponse);
                     else
-                        await AfterLoginSuccess(AuthResponse, _username, LoginType.CREDENTIALS);
+                        await AfterLoginSuccess(AuthResponse, _username, LoginType.CREDENTIALS, msgLoader);
                 }
                 else
                     Utils.Toast("wrong username or password.");
@@ -81,13 +87,16 @@ namespace ExpressBase.Mobile.ViewModels.Login
         protected override async Task SubmitOTP(object o)
         {
             string otp = o?.ToString();
-            IsBusy = true;
+
+            msgLoader.IsVisible = true;
+            msgLoader.Message = "Logging in...";
+
             try
             {
                 ApiAuthResponse resp = await Service.VerifyOTP(AuthResponse, otp);
 
                 if (resp != null && resp.IsValid)
-                    await AfterLoginSuccess(resp, this.Email.Trim(), LoginType.CREDENTIALS);
+                    await AfterLoginSuccess(resp, this.Email.Trim(), LoginType.CREDENTIALS, msgLoader);
                 else
                     Utils.Toast("The OTP is Invalid or Expired");
             }
@@ -95,6 +104,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
             {
                 EbLog.Error("Otp verification failed :: " + ex.Message);
             }
+            msgLoader.IsVisible = false;
             IsBusy = false;
         }
 

@@ -76,7 +76,7 @@ namespace ExpressBase.Mobile.Data
         {
             get
             {
-                return "UPDATE {0} SET eb_synced = 1,eb_syncrecord_id = @cloudrowid WHERE id = @rowid";
+                return "UPDATE {0} SET eb_synced = @eb_synced,eb_syncrecord_id = @cloudrowid WHERE id = @rowid";
             }
         }
 

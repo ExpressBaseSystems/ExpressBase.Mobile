@@ -8,7 +8,21 @@ namespace ExpressBase.Mobile.Models
 {
     public class MobilePagesWraper
     {
-        private EbMobilePage page;
+        private EbMobilePage _page;
+
+        private EbMobilePage page
+        {
+            get
+            {
+                if (_page == null)
+                    _page = this.DeserializeJsonPage();
+                return _page;
+            }
+            set
+            {
+                _page = value;
+            }
+        }
 
         public string DisplayName { set; get; }
 
@@ -71,9 +85,7 @@ namespace ExpressBase.Mobile.Models
 
         public EbMobilePage GetPage()
         {
-            if (page == null)
-                page = this.DeserializeJsonPage();
-            return page;
+            return this.DeserializeJsonPage();
         }
 
         [OnDeserialized()]

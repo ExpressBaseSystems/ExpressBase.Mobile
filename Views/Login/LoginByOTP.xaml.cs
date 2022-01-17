@@ -22,7 +22,7 @@ namespace ExpressBase.Mobile.Views.Login
         public LoginByOTP()
         {
             InitializeComponent();
-            BindingContext = viewModel = new LoginByOTPViewModel();
+            BindingContext = viewModel = new LoginByOTPViewModel(EbLayout.GetMessageLoader());
             viewModel.Bind2FAToggleEvent(ShowTwoFAWindow);
         }
 

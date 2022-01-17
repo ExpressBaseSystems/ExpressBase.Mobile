@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.Views
             InitializeComponent();
 
             EbLayout.ShowLoader();
-            BindingContext = viewModel = new MyApplicationsViewModel();
+            BindingContext = viewModel = new MyApplicationsViewModel(EbLayout.GetMessageLoader());
             EbLayout.HasBackButton = false;
         }
 
@@ -30,7 +30,7 @@ namespace ExpressBase.Mobile.Views
             InitializeComponent();
 
             EbLayout.ShowLoader();
-            BindingContext = viewModel = new MyApplicationsViewModel { IsInternal = is_internal };
+            BindingContext = viewModel = new MyApplicationsViewModel(EbLayout.GetMessageLoader()) { IsInternal = is_internal };
             EbLayout.HasBackButton = isInternal;
         }
 
@@ -85,7 +85,7 @@ namespace ExpressBase.Mobile.Views
             {
                 await viewModel.UpdateAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Error("error at [EmptyBoxReload] event in application page, " + ex.Message);
             }

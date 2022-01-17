@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System;
 using System.Collections.Generic;
@@ -13,22 +14,26 @@ namespace ExpressBase.Mobile.Services
             return Utils.Applications;
         }
 
-        public async Task<List<AppData>> UpdateDataAsync()
+        public async Task<List<AppData>> UpdateDataAsync(Loader loader)
         {
             List<AppData> apps = null;
+            loader.IsVisible = true;
+            loader.Message = "Refreshing...";
             try
             {
-                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(false);
+                EbMobileSolutionData data = await App.Settings.GetSolutionDataAsync(loader);
 
                 if (data != null)
                 {
                     apps = data.Applications;
+                    Utils.Toast("Refreshed");
                 }
             }
             catch (Exception ex)
             {
                 EbLog.Error("Failed to get solution data :: " + ex.Message);
             }
+            loader.IsVisible = false;
             return apps;
         }
     }

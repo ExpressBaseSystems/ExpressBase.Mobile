@@ -22,7 +22,7 @@ namespace ExpressBase.Mobile.Views.Login
         public LoginByPassword()
         {
             InitializeComponent();
-            BindingContext = viewModel = new LoginByPasswordViewModel();
+            BindingContext = viewModel = new LoginByPasswordViewModel(EbLayout.GetMessageLoader());
             viewModel.Bind2FAToggleEvent(ShowTwoFAWindow);
         }
 
