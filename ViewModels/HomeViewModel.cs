@@ -103,6 +103,7 @@ namespace ExpressBase.Mobile.ViewModels
         private async Task ItemTapedEvent(MobilePagesWraper item)
         {
             if (isTapped) return;
+            IsBusy = true;
             try
             {
                 EbMobilePage page = EbPageHelper.GetPage(item.RefId);
@@ -111,6 +112,7 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     Utils.Toast("page not found");
                     EbLog.Error($"requested page with refid '{item.RefId}' not found");
+                    IsBusy = false;
                     return;
                 }
 
@@ -120,10 +122,8 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (page.Container is EbMobileForm form)
                 {
-                    Device.BeginInvokeOnMainThread(() => IsBusy = true);
                     render = await EbPageHelper.ValidateFormRendering(form);
                     message = form.MessageOnFailed;
-                    Device.BeginInvokeOnMainThread(() => IsBusy = false);
                 }
 
                 if (render)
@@ -138,9 +138,9 @@ namespace ExpressBase.Mobile.ViewModels
             }
             catch (Exception ex)
             {
-                Device.BeginInvokeOnMainThread(() => IsBusy = false);
                 EbLog.Error("Failed to open page ::" + ex.Message);
             }
+            IsBusy = false;
             isTapped = false;
         }
 

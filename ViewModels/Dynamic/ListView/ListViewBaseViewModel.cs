@@ -253,6 +253,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             try
             {
+                IsBusy = true;
                 if (Visualization.LinkExpr != null && !Visualization.LinkExpr.IsEmpty())
                 {
                     if (!EbListHelper.EvaluateLinkExpr(item.DataRow, Visualization.LinkExpr.GetCode()))
@@ -262,6 +263,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         else
                             Utils.Toast(Visualization.LinkExprFailMsg);
                         EbLog.Info("[LinkExpr] evaluation blocked link navigation");
+                        IsBusy = false;
                         return;
                     }
                 }
@@ -277,6 +279,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     if (this.NetworkType != page.NetworkMode)
                     {
                         Utils.Toast("Link page Mode is different.");
+                        IsBusy = false;
                         return;
                     }
                     else
@@ -294,6 +297,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 Console.WriteLine(ex.Message);
             }
+            IsBusy = false;
             IsTapped = false;
         }
 
@@ -333,8 +337,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     });
                 }
 
-                Device.BeginInvokeOnMainThread(() => IsBusy = true);
-
                 PdfService PdfService = new PdfService();
                 ReportRenderResponse r = null;
                 try
@@ -366,7 +368,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     EbLog.Error("ListBaseViewModel.RenderReport---" + ex.Message);
                 }
-                Device.BeginInvokeOnMainThread(() => IsBusy = false);
             }
         }
     }
