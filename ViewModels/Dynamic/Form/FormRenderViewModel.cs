@@ -216,32 +216,51 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (this.Form.ContextToFormControlMap?.Count > 0)
             {
-                if (!Utils.IsNetworkReady(this.NetworkType))
+                bool tryOffline = false;
+                if (this.Page.NetworkMode == NetworkMode.Online)
                 {
-                    Utils.Alert_NoInternet();
-                    return;
-                }
-
-                if (this.Page.NetworkMode == NetworkMode.Online && !string.IsNullOrWhiteSpace(this.Form.ContextOnlineData))
-                {
-                    List<Param> cParams = new List<Param>();
-
-                    cParams.Add(new Param
+                    if (!string.IsNullOrWhiteSpace(this.Form.ContextOnlineData))
                     {
-                        Name = "eb_loc_id",
-                        Type = "11",
-                        Value = App.Settings.CurrentLocation.LocId.ToString()
-                    });
 
-                    MobileDataResponse data = await DataService.Instance.GetDataAsync(this.Form.ContextOnlineData, 0, 0, cParams, null, null, false);
+                        if (!Utils.IsNetworkReady(this.NetworkType))
+                        {
+                            Utils.Alert_NoInternet();
+                            return;
+                        }
 
-                    if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
-                    {
-                        this.PrefillData = row;
-                        EbLog.Info("ContextOnlineData api returned valid data");
+                        List<Param> cParams = new List<Param>();
+
+                        cParams.Add(new Param
+                        {
+                            Name = "eb_loc_id",
+                            Type = "11",
+                            Value = App.Settings.CurrentLocation.LocId.ToString()
+                        });
+
+                        MobileDataResponse data = await DataService.Instance.GetDataAsync(this.Form.ContextOnlineData, 0, 0, cParams, null, null, false);
+
+                        if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
+                        {
+                            this.PrefillData = row;
+                            EbLog.Info("ContextOnlineData api returned valid data");
+                        }
+                        else
+                            EbLog.Info("ContextOnlineData api returned empty row collection");
                     }
                     else
-                        EbLog.Info("ContextOnlineData api returned empty row collection");
+                        tryOffline = true;
+                }
+                if (this.Page.NetworkMode == NetworkMode.Offline || tryOffline)
+                {
+                    if (!string.IsNullOrWhiteSpace(this.Form.ContextOfflineData?.Code))
+                    {
+                        EbDataTable dt = App.DataDB.DoQuery(this.Form.ContextOfflineData.GetCode());
+                        if (dt.Rows.Count > 0)
+                        {
+                            this.PrefillData = dt.Rows[0];
+                            EbLog.Info("ContextOfflineData query returned valid data");
+                        }
+                    }
                 }
             }
         }

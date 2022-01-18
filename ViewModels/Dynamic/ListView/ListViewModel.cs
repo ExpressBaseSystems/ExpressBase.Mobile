@@ -29,21 +29,23 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected override async Task NavigateToFabLink()
         {
-            string linkRefID = Visualization.UseLinkSettings ? Visualization.LinkRefId: Visualization.FabLinkRefId;
+            if (IsTaped())
+                return;
 
+            IsBusy = true;
+            string linkRefID = Visualization.UseLinkSettings ? Visualization.LinkRefId : Visualization.FabLinkRefId;
             EbMobilePage page = EbPageHelper.GetPage(linkRefID);
 
             if (page != null && page.Container is EbMobileForm form)
             {
-                Device.BeginInvokeOnMainThread(() => IsBusy = true);
                 bool validation = await EbPageHelper.ValidateFormRendering(form, this.ContextRecord);
-                Device.BeginInvokeOnMainThread(() => IsBusy = false);
 
                 if (validation)
                     await App.Navigation.NavigateMasterAsync(new FormRender(page));
                 else
                     await App.Navigation.NavigateMasterAsync(new Redirect(form.MessageOnFailed));
             }
+            IsBusy = false;
         }
 
         protected override List<DbParameter> GetFilterParameters()

@@ -265,7 +265,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                     EbLog.Error("DataGrid autofill api error : " + ex.Message);
                 }
             }
-            else if (dataGrid.NetworkType == NetworkMode.Offline && !string.IsNullOrWhiteSpace(dataGrid.OfflineQuery?.Code))
+            else if ((dataGrid.NetworkType == NetworkMode.Offline || dataGrid.NetworkType == NetworkMode.Online) && !string.IsNullOrWhiteSpace(dataGrid.OfflineQuery?.Code))
             {
                 try
                 {

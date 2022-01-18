@@ -56,7 +56,7 @@ namespace ExpressBase.Mobile
                     VerticalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center },
                     GestureRecognizers = { recognizer },
                     BindingContext = btn,
-                    Padding = new Thickness(0, 10, 10, 10)
+                    Padding = new Thickness(0, 6, 10, 6)
                 };
 
                 opt.XButton = btn;

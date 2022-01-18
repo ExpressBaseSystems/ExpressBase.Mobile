@@ -248,9 +248,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected async Task NavigateToLink(DynamicFrame item)
         {
-            if (IsTapped)
+            if (IsTaped())
                 return;
-
             try
             {
                 IsBusy = true;
@@ -284,8 +283,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     }
                     else
                     {
-                        IsTapped = true;
-
                         ContentPage renderer = EbPageHelper.ResolveByContext(this.Visualization, item.DataRow, page);
 
                         if (renderer != null)
@@ -298,7 +295,19 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Console.WriteLine(ex.Message);
             }
             IsBusy = false;
-            IsTapped = false;
+        }
+
+        public bool IsTaped()
+        {
+            if (IsTapped)
+                return true;
+            IsTapped = true;
+            Task task = Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                IsTapped = false;
+            });
+            return false;
         }
 
         protected async Task FilterData(List<DbParameter> filters)
@@ -366,7 +375,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
                 catch (Exception ex)
                 {
-                    EbLog.Error("ListBaseViewModel.RenderReport---" + ex.Message);
+                    EbLog.Error("ListBaseViewModel.RenderReport---" + ex.Message + " \n" + ex.StackTrace);
                 }
             }
         }

@@ -53,9 +53,9 @@ namespace ExpressBase.Mobile
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
                 XValueBox = new EbXTextBox
                 {
-                    Text = "0" + decimalPadding,
+                    Text = this.MinLimit + decimalPadding,
                     Keyboard = Keyboard.Numeric,
-                    HorizontalTextAlignment = TextAlignment.End,
+                    HorizontalTextAlignment = TextAlignment.Center,
                     IsReadOnly = this.ReadOnly,
                     XBackgroundColor = this.XBackground,
                     EnableFocus = true,
@@ -118,9 +118,14 @@ namespace ExpressBase.Mobile
         {
             if (arg.OldTextValue == arg.NewTextValue || DoNotPropagateChange)
                 return;
-
-            SetValue(arg.NewTextValue);
-            ValueChanged();
+            decimal.TryParse(arg.NewTextValue, out decimal _t);
+            if (CanSetValue(_t))
+            {
+                SetValue(arg.NewTextValue);
+                ValueChanged();
+            }
+            else
+                SetValue(arg.OldTextValue);
         }
 
         private void IncrBtn_Clicked(object sender, EventArgs e)
@@ -128,8 +133,11 @@ namespace ExpressBase.Mobile
             Button btn = sender as Button;
             int val = Convert.ToInt32(btn.BindingContext);
             decimal value = val + Convert.ToDecimal(XValueBox.Text);
-            SetValue(value);
-            ValueChanged();
+            if (CanSetValue(value))
+            {
+                SetValue(value);
+                ValueChanged();
+            }
         }
 
         public override object GetValue()
@@ -154,12 +162,25 @@ namespace ExpressBase.Mobile
             return value;
         }
 
+        private bool CanSetValue(decimal _num)
+        {
+            bool flag = true;
+            if (!AllowNegative && _num < 0)
+                flag = false;
+            if (MinLimit != 0 && MinLimit > _num)
+                flag = false;
+            if (MaxLimit != 0 && MaxLimit < _num)
+                flag = false;
+            return flag;
+        }
+
         public override void SetValue(object value)
         {
-            double _t;
-            double.TryParse(Convert.ToString(value), out _t);
-            if (!AllowNegative && _t < 0)
+            decimal _t;
+            decimal.TryParse(Convert.ToString(value), out _t);
+            if (!CanSetValue(_t))
                 return;
+
             string strval = string.Format("{0:0" + decimalPadding + "}", _t);
 
             if (RenderType == NumericBoxTypes.ButtonType)

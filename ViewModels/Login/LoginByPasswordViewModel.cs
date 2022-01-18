@@ -44,9 +44,13 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         private async Task LoginAction()
         {
+            msgLoader.IsVisible = true;
+            msgLoader.Message = "Logging in...";
+
             if (!Utils.HasInternet)
             {
                 Utils.Alert_NoInternet();
+                msgLoader.IsVisible = false;
                 return;
             }
 
@@ -54,9 +58,6 @@ namespace ExpressBase.Mobile.ViewModels.Login
             {
                 string _username = this.Email.Trim();
                 string _password = this.PassWord.Trim();
-
-                msgLoader.IsVisible = true;
-                msgLoader.Message = "Logging in...";
 
                 try
                 {
@@ -82,6 +83,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
             }
             else
                 Utils.Toast("Email/Password cannot be empty");
+            msgLoader.IsVisible = false;
         }
 
         protected override async Task SubmitOTP(object o)
