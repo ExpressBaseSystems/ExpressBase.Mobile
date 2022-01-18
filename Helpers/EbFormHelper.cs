@@ -125,16 +125,30 @@ namespace ExpressBase.Mobile.Helpers
             }
         }
 
-        public static bool Validate()
+        public static string Validate()
         {
+            string msg = null;
             foreach (EbMobileControl ctrl in Instance.controls.Values)
             {
+                if (!ctrl.Validate())
+                {
+                    msg = string.IsNullOrEmpty(ctrl.Label) ? ctrl.Name : ctrl.Label;
+                    msg = string.IsNullOrEmpty(msg) ? "Fields required" : (msg + " is required");
+                    if (ctrl.Hidden)
+                        msg += " (Hidden)";
+                    break;
+                }
+
                 bool valid = Instance.InitValidators(ctrl.Name, ctrl.Parent);
 
-                if (!ctrl.Validate() || !valid)
-                    return false;
+                if (!valid)
+                {
+                    msg = ctrl.GetValidatorFailureMsg();
+                    msg = string.IsNullOrEmpty(msg) ? ("Validation failed: " + ctrl.Label ?? ctrl.Name) : msg;
+                    break;
+                }
             }
-            return true;
+            return msg;
         }
 
         public List<Param> GetPsParams(List<Param> Params)

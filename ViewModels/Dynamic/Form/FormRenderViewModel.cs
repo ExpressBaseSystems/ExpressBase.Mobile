@@ -134,7 +134,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 return;
             }
 
-            if (EbFormHelper.Validate())
+            string invalidMsg = EbFormHelper.Validate();
+            if (invalidMsg == null)
             {
                 EbLog.Info($"Form '{this.PageName}' validation success ready to submit");
                 this.Form.NetworkType = this.NetworkType;
@@ -142,11 +143,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             }
             else
             {
-                EbLog.Info($"Form '{this.PageName}' validation failed, some fields are required");
-                Utils.Toast("Fields required");
+                EbLog.Info($"Form '{this.PageName}' validation failed: " + invalidMsg);
+                Utils.Toast(invalidMsg);
             }
             sw.Stop();
-            if (sw.ElapsedMilliseconds < 1500)
+            if (invalidMsg == null && sw.ElapsedMilliseconds < 1500)
                 await Task.Delay(1500 - (int)sw.ElapsedMilliseconds);
             MsgLoader.IsVisible = false;
         }

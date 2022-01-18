@@ -156,6 +156,7 @@ namespace ExpressBase.Mobile
 
         public virtual void Reset() { }
 
+        //Required validation
         public virtual bool Validate()
         {
             if (this.Required && GetValue() == null)
@@ -196,6 +197,13 @@ namespace ExpressBase.Mobile
 
             validationLabel.Text = message;
             validationLabel.IsVisible = !status;
+        }
+
+        public string GetValidatorFailureMsg()
+        {
+            if (validationLabel == null)
+                return null;
+            return validationLabel.Text;
         }
 
         public bool HasExpression(ExpressionType type)
