@@ -220,7 +220,7 @@ namespace ExpressBase.Mobile
             }
             catch (Exception ex)
             {
-                EbLog.Error("Error in [EbMobileForm.Print] " + ex.Message);
+                EbLog.Error("Error in [EbMobileForm.Print] " + ex.Message + " " + ex.StackTrace);
             }
         }
 

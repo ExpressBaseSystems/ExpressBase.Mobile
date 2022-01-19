@@ -281,46 +281,47 @@ namespace ExpressBase.Mobile.Services
                 SyncResponse response = await service.PushDataToCloud(loader);
 
                 if (response.Status)
+                    loader.Message = string.Empty;
+                else
+                    loader.Message = response.Message + " \n";
+
+                loader.Message += "Fetching data from server...";
+
+                RestClient client = new RestClient(App.Settings.RootUrl)
                 {
-                    loader.Message = "Fetching data from server...";
+                    Timeout = ApiConstants.TIMEOUT_IMPORT
+                };
+                RestRequest request = new RestRequest(ApiConstants.GET_SOLUTION_DATAv2, Method.POST);
 
-                    RestClient client = new RestClient(App.Settings.RootUrl)
+                request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
+                request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
+                Dictionary<string, object> metaDict = new Dictionary<string, object>();
+                request.AddParameter("metadata", JsonConvert.SerializeObject(metaDict));
+
+                IRestResponse resp = await client.ExecuteAsync(request);
+                if (resp.IsSuccessful)
+                {
+                    loader.Message = "Processing pulled data...";
+                    solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(resp.Content);
+                    await ImportSolutionData(solutionData, true);
+                    loader.Message = "Importing latest document ids...";
+                    if (await GetLatestAutoId(solutionData.Applications))
                     {
-                        Timeout = ApiConstants.TIMEOUT_IMPORT
-                    };
-                    RestRequest request = new RestRequest(ApiConstants.GET_SOLUTION_DATAv2, Method.POST);
-
-                    request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
-                    request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
-                    Dictionary<string, object> metaDict = new Dictionary<string, object>();
-                    request.AddParameter("metadata", JsonConvert.SerializeObject(metaDict));
-
-                    IRestResponse resp = await client.ExecuteAsync(request);
-                    if (resp.IsSuccessful)
-                    {
-                        loader.Message = "Processing pulled data...";
-                        solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(resp.Content);
-                        await ImportSolutionData(solutionData, true);
-                        loader.Message = "Importing latest document ids...";
-                        if (await GetLatestAutoId(solutionData.Applications))
+                        LastSyncInfo syncInfo = new LastSyncInfo()
                         {
-                            LastSyncInfo syncInfo = new LastSyncInfo()
-                            {
-                                PullSuccess = true,
-                                LastSyncTs = solutionData.last_sync_ts,
-                                LastOfflineSaveTs = solutionData.last_sync_ts
-                            };
-                            await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
-                            flag = true;
-                        }
-                        else
-                            Utils.Toast("Sync failed");
+                            PullSuccess = true,
+                            LastSyncTs = solutionData.last_sync_ts,
+                            LastOfflineSaveTs = solutionData.last_sync_ts
+                        };
+                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+                        flag = true;
                     }
                     else
-                        Utils.Toast(response.Message ?? "Sync failed");
+                        Utils.Toast("Sync failed");
                 }
                 else
-                    Utils.Toast(response.Message);
+                    Utils.Toast(response.Message ?? "Sync failed");
+
             }
             catch (Exception ex)
             {

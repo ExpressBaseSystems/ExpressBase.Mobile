@@ -171,28 +171,31 @@ namespace ExpressBase.Mobile.ViewModels
 
                 SyncResponse response = await service.PushDataToCloud(loader);
 
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    if (response.Status)
+                        loader.Message = string.Empty;
+                    else
+                        loader.Message = response.Message + " \n";
+                    loader.Message += "Fetching data from server...";
+                });
+
+                response = await App.Settings.GetSolutionDataAsyncV2(loader);
                 if (response.Status)
                 {
-                    Device.BeginInvokeOnMainThread(() => { loader.Message = "Fetching data from server..."; });
-                    response = await App.Settings.GetSolutionDataAsyncV2(loader);
-                    if (response.Status)
-                    {
-                        Utils.Toast("Sync completed");
+                    Utils.Toast("Sync completed");
 
-                        App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
-                        App.Settings.WebObjects = App.Settings.CurrentApplication.WebObjects;
+                    App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
+                    App.Settings.WebObjects = App.Settings.CurrentApplication.WebObjects;
 
-                        ObjectList = await menuServices.GetDataAsync();
+                    ObjectList = await menuServices.GetDataAsync();
 
-                        UpdateIsEmptyFlag();
-                        CreateFormContainersTables();
-                        LogApplicationInfo();
-                    }
-                    else
-                        Utils.Toast(response.Message ?? "Sync failed");
+                    UpdateIsEmptyFlag();
+                    CreateFormContainersTables();
+                    LogApplicationInfo();
                 }
                 else
-                    Utils.Toast(response.Message);
+                    Utils.Toast(response.Message ?? "Sync failed");
             }
             catch (Exception ex)
             {
