@@ -237,7 +237,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                     continue;
 
                 if (row.RowId <= 0 && isAppendEbCol)
-                    row.AppendEbColValues(dataGrid.NetworkType == NetworkMode.Offline);
+                    row.AppendEbColValues(dataGrid.NetworkType == NetworkMode.Offline, false);
 
                 mobileTable.Add(row);
             }

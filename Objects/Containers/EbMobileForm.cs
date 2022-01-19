@@ -257,7 +257,7 @@ namespace ExpressBase.Mobile
 
             if (RowId <= 0)
             {
-                row.AppendEbColValues(NetworkType == NetworkMode.Offline);
+                row.AppendEbColValues(NetworkType == NetworkMode.Offline, true);
             };
             return formData;
         }

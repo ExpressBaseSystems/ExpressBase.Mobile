@@ -101,9 +101,9 @@ namespace ExpressBase.Mobile
         public string GetQuery(string parentTable = null)
         {
             List<string> colums = new List<string> {
-                "eb_device_id",
-                "eb_appversion",
-                "eb_created_at_device",
+                //"eb_device_id",
+                //"eb_appversion",
+                //"eb_created_at_device",
                 "eb_loc_id",
                 "id"
             };
