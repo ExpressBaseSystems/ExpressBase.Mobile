@@ -86,6 +86,7 @@ namespace ExpressBase.Mobile.ViewModels
                     await Store.SetJSONAsync(AppConst.CURRENT_APP, app);
                     App.Settings.CurrentApplication = app;
                     App.Settings.MobilePages = app.MobilePages;
+                    App.Settings.WebObjects = app.WebObjects;
 
                     App.RootMaster = new RootMaster();
                     Application.Current.MainPage = App.RootMaster;

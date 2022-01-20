@@ -231,7 +231,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                     if (mpage != null && mpage.Container is EbMobileForm form)
                     {
-                        if (mpage.NetworkMode != NetworkMode.Online)
+                        if (mpage.NetworkMode != NetworkMode.Online && !form.RenderAsFilterDialog)
                         {
                             form.CreateTableSchema();
                         }
