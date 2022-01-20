@@ -165,6 +165,7 @@ namespace ExpressBase.Mobile.Services
         //version 2
         public async Task<SyncResponse> GetSolutionDataAsyncV2(Loader loader)
         {
+            EbLog.BackupLogFiles();
             SyncResponse resp = new SyncResponse();
             RestClient client = new RestClient(App.Settings.RootUrl)
             {
@@ -271,6 +272,7 @@ namespace ExpressBase.Mobile.Services
 
         public async Task<EbMobileSolutionData> GetSolutionDataAsync(Loader loader)
         {
+            EbLog.BackupLogFiles();
             EbMobileSolutionData solutionData = null;
             bool flag = false;
             try

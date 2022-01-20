@@ -27,6 +27,8 @@ namespace ExpressBase.Mobile.Helpers
         string GetAssetsURl();
 
         void WriteLogs(string message, LogTypes logType);
+
+        public void BackupLogFiles();
     }
 
     public interface IToast
@@ -71,6 +73,18 @@ namespace ExpressBase.Mobile.Helpers
                 Helper.WriteLogs(message, LogTypes.WARN);
             }
             catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public static void BackupLogFiles()
+        {
+            try
+            {
+                Helper.BackupLogFiles();
+            }
+            catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
