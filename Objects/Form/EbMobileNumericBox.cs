@@ -141,22 +141,22 @@ namespace ExpressBase.Mobile
                 return;
             if (CanSetValue(_new))
             {
-                if (TrySetText(arg.NewTextValue))
-                    ValueChanged();
+                TrySetText(arg.NewTextValue, true);
+                ValueChanged();
             }
             else
-                TrySetText(arg.OldTextValue);
+                TrySetText(arg.OldTextValue, false);
         }
 
         //set valid numeric value without formatting
-        public bool TrySetText(string value)
+        public bool TrySetText(string value, bool checkEqual)
         {
             decimal _t, afterFormat;
             decimal.TryParse(value, out _t);
             string strval = GetDisplayValue(_t);
             decimal.TryParse(strval, out afterFormat);
 
-            if (_t == afterFormat)
+            if (checkEqual && _t == afterFormat)
                 return false;
 
             if (RenderType == NumericBoxTypes.ButtonType)
