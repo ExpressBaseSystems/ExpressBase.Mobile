@@ -62,6 +62,8 @@ namespace ExpressBase.Mobile
                     BorderOnFocus = App.Settings.Vendor.GetPrimaryColor()
                 };
                 XValueBox.TextChanged += this.NumericValueChanged;
+                XValueBox.Focused += this.OnFocused;
+                XValueBox.Unfocused += this.OnUnFocused;
 
                 grid.Children.Add(XValueBox, index++, 0);
                 foreach (EbMobileNumBoxButtons btn in this.IncrementButtons)
@@ -86,12 +88,27 @@ namespace ExpressBase.Mobile
                     BorderOnFocus = App.Settings.Vendor.GetPrimaryColor(),
                     HorizontalTextAlignment = TextAlignment.End
                 };
-
                 numeric.TextChanged += this.NumericValueChanged;
+                numeric.Focused += this.OnFocused;
+                numeric.Unfocused += this.OnUnFocused;
+
                 this.XControl = numeric;
             }
 
             return base.Draw(Mode, Network);
+        }
+
+        private void OnFocused(object sender, FocusEventArgs arg)
+        {
+            Entry txtBox = sender as Entry;
+            if (decimal.TryParse(txtBox.Text, out decimal res) && res == 0)
+                txtBox.Text = string.Empty;
+        }
+
+        private void OnUnFocused(object sender, FocusEventArgs arg)
+        {
+            Entry txtBox = sender as Entry;
+            SetValue(txtBox.Text);
         }
 
         private void AddIncrButton(Grid grid, int val, int i, string prefix)
@@ -118,14 +135,35 @@ namespace ExpressBase.Mobile
         {
             if (arg.OldTextValue == arg.NewTextValue || DoNotPropagateChange)
                 return;
-            decimal.TryParse(arg.NewTextValue, out decimal _t);
-            if (CanSetValue(_t))
+            decimal.TryParse(arg.OldTextValue, out decimal _old);
+            decimal.TryParse(arg.NewTextValue, out decimal _new);
+            if (_old == _new && _new == 0)
+                return;
+            if (CanSetValue(_new))
             {
-                SetValue(arg.NewTextValue);
-                ValueChanged();
+                if (TrySetText(arg.NewTextValue))
+                    ValueChanged();
             }
             else
-                SetValue(arg.OldTextValue);
+                TrySetText(arg.OldTextValue);
+        }
+
+        //set valid numeric value without formatting
+        public bool TrySetText(string value)
+        {
+            decimal _t, afterFormat;
+            decimal.TryParse(value, out _t);
+            string strval = GetDisplayValue(_t);
+            decimal.TryParse(strval, out afterFormat);
+
+            if (_t == afterFormat)
+                return false;
+
+            if (RenderType == NumericBoxTypes.ButtonType)
+                XValueBox.Text = strval;
+            else
+                (XControl as EbXNumericTextBox).Text = strval;
+            return true;
         }
 
         private void IncrBtn_Clicked(object sender, EventArgs e)
@@ -181,7 +219,7 @@ namespace ExpressBase.Mobile
             if (!CanSetValue(_t))
                 return;
 
-            string strval = string.Format("{0:0" + decimalPadding + "}", _t);
+            string strval = GetDisplayValue(_t);
 
             if (RenderType == NumericBoxTypes.ButtonType)
                 XValueBox.Text = strval;
@@ -233,10 +271,15 @@ namespace ExpressBase.Mobile
 
         public override string GetDisplayName4DG(object valueMember)
         {
+            return GetDisplayValue(valueMember);
+        }
+
+        private string GetDisplayValue(object value)
+        {
             double _t;
             if (decimalPadding == null)
                 decimalPadding = DecimalPlaces > 0 ? ".".PadRight(DecimalPlaces + 1, '0') : string.Empty;
-            double.TryParse(Convert.ToString(valueMember), out _t);
+            double.TryParse(Convert.ToString(value), out _t);
             string strval = string.Format("{0:0" + decimalPadding + "}", _t);
             return strval;
         }
