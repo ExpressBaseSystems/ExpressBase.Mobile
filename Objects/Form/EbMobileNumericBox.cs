@@ -30,6 +30,8 @@ namespace ExpressBase.Mobile
 
         private string decimalPadding;
 
+        private bool fromSetValue { get; set; }
+
         public override View Draw(FormMode Mode, NetworkMode Network)
         {
             decimalPadding = this.DecimalPlaces > 0 ? ".".PadRight(this.DecimalPlaces + 1, '0') : string.Empty;
@@ -133,8 +135,11 @@ namespace ExpressBase.Mobile
 
         private void NumericValueChanged(object sender, TextChangedEventArgs arg)
         {
-            if (arg.OldTextValue == arg.NewTextValue || DoNotPropagateChange)
+            if (arg.OldTextValue == arg.NewTextValue || DoNotPropagateChange || fromSetValue)
+            {
+                fromSetValue = false;
                 return;
+            }
             decimal.TryParse(arg.OldTextValue, out decimal _old);
             decimal.TryParse(arg.NewTextValue, out decimal _new);
             if (_old == _new && _new == 0)
@@ -222,9 +227,21 @@ namespace ExpressBase.Mobile
             string strval = GetDisplayValue(_t);
 
             if (RenderType == NumericBoxTypes.ButtonType)
-                XValueBox.Text = strval;
+            {
+                if (XValueBox.Text != strval)
+                {
+                    fromSetValue = true;
+                    XValueBox.Text = strval;
+                }
+            }
             else
-                (XControl as EbXNumericTextBox).Text = strval;
+            {
+                if ((XControl as EbXNumericTextBox).Text != strval)
+                {
+                    fromSetValue = true;
+                    (XControl as EbXNumericTextBox).Text = strval;
+                }
+            }
         }
 
         public override void SetAsReadOnly(bool disable)
