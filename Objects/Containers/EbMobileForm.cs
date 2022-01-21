@@ -364,7 +364,7 @@ namespace ExpressBase.Mobile
                 if (pushResponse.RowAffected > 0)
                 {
                     response.Status = true;
-                    response.Message = "saved successfully :)";
+                    response.Message = "Saved successfully :)";
                     response.PushResponse = pushResponse;
                 }
                 else

@@ -51,7 +51,7 @@ namespace ExpressBase.Mobile.Views.Base
                 int pageLength = ViewModel.Visualization.PageLength;
                 int total = ViewModel.DataCount;
                 int offset = ViewModel.Offset + 1;
-                int length = pageLength + ViewModel.Offset - 1;
+                int length = pageLength + ViewModel.Offset;
 
                 if (total < pageLength || pageLength + offset > total)
                     length = total;

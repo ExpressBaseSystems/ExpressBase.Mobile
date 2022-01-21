@@ -77,7 +77,7 @@ namespace ExpressBase.Mobile
                 else if (!string.IsNullOrWhiteSpace(idSyncd) && string.IsNullOrWhiteSpace(idMax))
                     idNxt = idSyncd;
                 else if (string.IsNullOrWhiteSpace(idSyncd) && string.IsNullOrWhiteSpace(idMax))
-                    idNxt = prefix + "1".PadLeft(SerialLength, '0');
+                    idNxt = prefix + "0".PadLeft(SerialLength, '0');
 
                 int serialval;
                 int.TryParse(idNxt.Substring(prefix.Length), out serialval);
