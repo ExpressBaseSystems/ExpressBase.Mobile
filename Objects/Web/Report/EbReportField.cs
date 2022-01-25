@@ -170,34 +170,32 @@ namespace ExpressBase.Mobile
 
         public string ImageColName { get; set; }
 
-        //public override void DrawMe(float printingTop, EbReport Rep, List<Param> Linkparams, int slno)
-        //{
-        //    byte[] fileByte = new byte[0]; ;
-        //    if (ImageRefId != 0)
-        //        fileByte = Rep.GetImage(ImageRefId);
-        //    else if (!string.IsNullOrEmpty(ImageColName))
-        //    {
-        //        dynamic val = Rep.GetDataFieldValue(ImageColName.Split('.')[1], slno, Convert.ToInt32(ImageColName.Split('.')[0].Substring(1)));
-        //        Console.WriteLine("Image DrawMe val = " + ImageColName + ":" + val);
-        //        if (val != null)
-        //            if (val is byte[])
-        //                fileByte = val;
-        //            else if (val is string && val.ToString() != string.Empty && Convert.ToInt32(val) != 0)
-        //                fileByte = Rep.GetImage(Convert.ToInt32(val));
-        //    }
+        public override void DrawMe(float printingTop, EbReport Rep, List<Param> Linkparams, int slno)
+        {
+            byte[] fileByte = new byte[0]; ;
+            if (ImageRefId != 0)
+                fileByte = Rep.GetImage(ImageRefId);
+            else if (!string.IsNullOrEmpty(ImageColName))
+            {
+                dynamic val = Rep.GetDataFieldValue(ImageColName.Split('.')[1], slno, Convert.ToInt32(ImageColName.Split('.')[0].Substring(1)));
+                Console.WriteLine("Image DrawMe val = " + ImageColName + ":" + val);
+                if (val != null)
+                    if (val is byte[])
+                        fileByte = val;
+                    else if (val is string && val.ToString() != string.Empty && Convert.ToInt32(val) != 0)
+                        fileByte = Rep.GetImage(Convert.ToInt32(val));
+            }
 
-        //    if (fileByte.Length != 0)
-        //    {
-        //        iTextSharp.text.Image myImage = iTextSharp.text.Image.GetInstance(fileByte);
-        //        myImage.ScaleToFit(WidthPt, HeightPt);
-        //        myImage.SetAbsolutePosition(LeftPt, Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop));
-        //        myImage.Alignment = (int)TextAlign;
-        //        Rep.Doc.Add(myImage);
-        //    }
-        //}
+            if (fileByte.Length != 0)
+            {
+                iTextSharp.text.Image myImage = iTextSharp.text.Image.GetInstance(fileByte);
+                myImage.ScaleToFit(WidthPt, HeightPt);
+                myImage.SetAbsolutePosition(LeftPt, Rep.HeightPt - (printingTop + TopPt + HeightPt + Rep.detailprintingtop));
+                myImage.Alignment = (int)TextAlign;
+                Rep.Doc.Add(myImage);
+            }
+        }
     }
-
-
     public class EbWaterMark : EbReportField
     {
         public string Source { get; set; }

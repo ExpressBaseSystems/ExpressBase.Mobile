@@ -1,4 +1,6 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Helpers.Script;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
@@ -12,7 +14,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Xamarin.Forms;
 using static ExpressBase.Mobile.PdfGEbFont;
+using Color = iTextSharp.text.Color;
+using Element = iTextSharp.text.Element;
 using RowColletion = ExpressBase.Mobile.Data.RowColletion;
 
 namespace ExpressBase.Mobile
@@ -459,7 +464,7 @@ namespace ExpressBase.Mobile
 
         public void CallSummerize(EbDataField field, int serialnumber)
         {
-            string column_val ;
+            string column_val;
             EbPdfGlobals globals = new EbPdfGlobals();
 
             if (field is EbCalcField)
@@ -1087,6 +1092,23 @@ namespace ExpressBase.Mobile
             object value = ExecuteExpression(field.LayoutExpression.GetCode(), 0, globals, _dataFieldsUsed, false);
 
             field.SetValuesFromGlobals(globals.CurrentField);
+        }
+
+        public byte[] GetImage(int refId)
+        {
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+            string root = App.Settings.AppDirectory;
+            string path = helper.NativeRoot + $"/{root}/{App.Settings.CurrentSolution.SolutionName}/files/{refId}.jpg";
+            byte[] fileByte = default(byte[]);
+            using (var streamReader = new StreamReader(path))
+            {
+                using (var memstream = new MemoryStream())
+                {
+                    streamReader.BaseStream.CopyTo(memstream);
+                    fileByte = memstream.ToArray();
+                }
+                return fileByte;
+            }
         }
     }
 

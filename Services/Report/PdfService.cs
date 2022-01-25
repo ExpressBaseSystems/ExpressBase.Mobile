@@ -21,7 +21,6 @@ namespace ExpressBase.Mobile.Services
         {
         }
 
-
         public async Task<ReportRenderResponse> GetPdfOnline(string refid, string param)
         {
             ReportRenderResponse resp = null;

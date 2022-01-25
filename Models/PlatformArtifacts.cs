@@ -30,6 +30,8 @@ namespace ExpressBase.Mobile.Models
 
         public DateTime last_sync_ts { set; get; }
 
+        public Dictionary<int, byte[]> Images { get; set; }
+
         public EbDataSet GetOfflineData()
         {
             EbDataSet ds = new EbDataSet();

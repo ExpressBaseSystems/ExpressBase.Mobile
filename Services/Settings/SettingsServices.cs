@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -214,6 +215,17 @@ namespace ExpressBase.Mobile.Services
                             syncInfo.LastSyncTs = solutionData.last_sync_ts;
                             syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
                             syncInfo.PullSuccess = true;
+                        }
+
+                        if (solutionData.Images.Count > 0)
+                        {
+                            INativeHelper helper = DependencyService.Get<INativeHelper>();
+                            string root = App.Settings.AppDirectory;
+                            foreach (KeyValuePair<int, byte[]> img in solutionData.Images)
+                            {
+                                string path = helper.NativeRoot + $"/{root}/{App.Settings.CurrentSolution.SolutionName}/files/{img.Key}.jpg";
+                                File.WriteAllBytes(path, img.Value);
+                            }
                         }
                     }
                 }
