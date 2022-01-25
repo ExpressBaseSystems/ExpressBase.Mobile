@@ -32,6 +32,7 @@ namespace ExpressBase.Mobile.Views.Login
             SubmitButton.Text = PageContent["LoginButtonText"];
             INativeHelper helper = DependencyService.Get<INativeHelper>();
             DeviceIdButton.Text = helper.DeviceId;
+            DeviceVersion.Text = "v" + helper.AppVersion;
         }
 
         protected override void OnAppearing()

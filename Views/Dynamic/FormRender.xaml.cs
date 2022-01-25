@@ -102,7 +102,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                     HideButtonsAndNavigateBack();
                     Utils.Toast("Sync required (Last pull failed)");
                 }
-                else if (syncInfo.LastSyncTs.AddDays(1) > DateTime.Now)
+                else if (syncInfo.LastSyncTs.AddDays(1) < DateTime.Now)
                 {
                     HideButtonsAndNavigateBack();
                     Utils.Toast($"Sync required (Last sync was {(DateTime.Now - syncInfo.LastSyncTs).Hours} hours back)");

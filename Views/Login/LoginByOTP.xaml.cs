@@ -31,6 +31,7 @@ namespace ExpressBase.Mobile.Views.Login
             LoginButtonLabel.Text = PageContent["NewSolutionButtonText"];
             INativeHelper helper = DependencyService.Get<INativeHelper>();
             DeviceIdButton.Text = helper.DeviceId;
+            DeviceVersion.Text = "v" + helper.AppVersion;
         }
 
         protected override void OnAppearing()

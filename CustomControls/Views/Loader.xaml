@@ -32,6 +32,7 @@
                                 <Label
                                     x:Name="LoaderMessage"
                                     Grid.Row="0"
+                                    Padding="0,0,10,0"
                                     TextColor="Black" 
                                     VerticalOptions="Center" 
                                     Text="Loading..."
