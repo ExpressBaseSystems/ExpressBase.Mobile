@@ -385,7 +385,7 @@ namespace ExpressBase.Mobile
                 LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
                 if (syncInfo.LastOfflineSaveTs > DateTime.Now)
                 {
-                    response.Message = "Device date time is incorrect";
+                    response.Message = "Sync required. Device date time is incorrect.";
                 }
                 else
                 {
