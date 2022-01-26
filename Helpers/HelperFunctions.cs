@@ -208,7 +208,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                string path = $"{App.Settings.AppDirectory}/{App.Settings.Sid}/FILES/{filename}";
+                string path = $"{App.Settings.AppDirectory}/{App.Settings.Sid.ToUpper()}/FILES/{filename}";
 
                 if (!helper.Exist(path, SysContentType.File))
                 {

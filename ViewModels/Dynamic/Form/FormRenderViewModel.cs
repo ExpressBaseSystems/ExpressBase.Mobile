@@ -69,6 +69,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (this.RowId > 0 || this.Form.RenderAsFilterDialog)
             {
+                if (MsgLoader.IsVisible)
+                    return;
                 MsgLoader.IsVisible = true;
                 this.Form.NetworkType = this.NetworkType;//
                 await this.Form.Print(this.RowId);
@@ -124,6 +126,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public async Task FormSubmitClicked(bool Print)
         {
+            if (MsgLoader.IsVisible)
+                return;
             MsgLoader.IsVisible = true;
             Stopwatch sw = new Stopwatch();
             sw.Start();

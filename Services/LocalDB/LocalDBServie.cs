@@ -50,6 +50,7 @@ namespace ExpressBase.Mobile.Services
                         {
                             response.Status = false;
                             failedCount++;
+                            EbLog.Error("Push Data Failed: " + resp.Message + "; " + resp.MessageInt);
                         }
                         else
                         {
@@ -66,6 +67,8 @@ namespace ExpressBase.Mobile.Services
                 }
                 else if (failedCount > 0)
                     response.Message = $"{failedCount} of {totalRecords} failed to push";
+
+                EbLog.Info(response.Message);
             }
             catch (Exception ex)
             {

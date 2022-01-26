@@ -203,7 +203,7 @@ namespace ExpressBase.Mobile
                     {
                         INativeHelper helper = DependencyService.Get<INativeHelper>();
                         string root = App.Settings.AppDirectory;
-                        string path = helper.NativeRoot + $"/{root}/{AppConst.SHARED_MEDIA}/{App.Settings.CurrentSolution.SolutionName}/print.pdf";
+                        string path = helper.NativeRoot + $"/{root}/{AppConst.SHARED_MEDIA}/{App.Settings.Sid.ToUpper()}/print.pdf";
                         File.WriteAllBytes(path, r.ReportBytea);
 
                         IAppHandler handler = DependencyService.Get<IAppHandler>();

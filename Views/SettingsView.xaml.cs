@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SettingsView : ContentPage
     {
-        private readonly string logPath = $"{App.Settings.AppDirectory}/{App.Settings.Sid}/logs.txt";
+        private readonly string logPath = $"{App.Settings.AppDirectory}/{App.Settings.Sid.ToUpper()}/logs.txt";
 
         private readonly INativeHelper nativeHelper = DependencyService.Get<INativeHelper>();
 

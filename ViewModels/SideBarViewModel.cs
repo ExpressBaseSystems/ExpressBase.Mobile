@@ -66,7 +66,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{App.Settings.Sid}/user.png");
+                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{App.Settings.Sid.ToUpper()}/user.png");
 
                 if (bytes != null)
                 {
@@ -111,7 +111,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 MobileProfileData profileData = await this.GetProfileData(page.RefId);
 
-                if(profileData != null && profileData.RowId > 0)
+                if (profileData != null && profileData.RowId > 0)
                 {
                     await App.Navigation.NavigateByRenderer(new FormRender(page, profileData.RowId, profileData.Data));
                 }

@@ -253,7 +253,7 @@ namespace ExpressBase.Mobile.Services
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{App.Settings.Sid}/FILES/{filename}");
+                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{App.Settings.Sid.ToUpper()}/FILES/{filename}");
                 if (bytes != null)
                     return bytes;
             }
