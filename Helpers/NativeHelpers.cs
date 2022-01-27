@@ -20,6 +20,8 @@ namespace ExpressBase.Mobile.Helpers
 
         string Create(string DirectoryPath, SysContentType Type);
 
+        string Delete(string DirectoryPath, SysContentType Type);
+
         byte[] GetFile(string url);
 
         string[] GetFiles(string Url, string Pattern);
@@ -84,7 +86,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 Helper.BackupLogFiles();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }

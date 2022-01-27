@@ -94,28 +94,15 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 }
             }
 
-            if (viewModel.NetworkType == NetworkMode.Offline)
+            string msg = EbPageHelper.GetFormRenderInvalidateMsg(viewModel.NetworkType);
+            if (msg != null)
             {
-                LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
-                if (syncInfo == null || !syncInfo.PullSuccess)
-                {
-                    HideButtonsAndNavigateBack();
-                    Utils.Toast("Sync required (Last pull failed)");
-                }
-                else if (syncInfo.LastSyncTs.AddDays(1) < DateTime.Now)
-                {
-                    HideButtonsAndNavigateBack();
-                    Utils.Toast($"Sync required (Last sync was {(DateTime.Now - syncInfo.LastSyncTs).Hours} hours back)");
-                }
+                (ButtonGrid.Children[0] as Button).IsVisible = false;
+                (ButtonGrid.Children[1] as Button).IsVisible = false;
+                SaveButton.IsEnabled = false;
+                App.Navigation.PopByRenderer(true);
+                Utils.Toast(msg);
             }
-        }
-
-        private void HideButtonsAndNavigateBack()
-        {
-            (ButtonGrid.Children[0] as Button).IsVisible = false;
-            (ButtonGrid.Children[1] as Button).IsVisible = false;
-            SaveButton.IsEnabled = false;
-            App.Navigation.PopByRenderer(true);
         }
 
         private void OnEditButtonClicked(object sender, EventArgs e)

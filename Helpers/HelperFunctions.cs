@@ -134,6 +134,11 @@ namespace ExpressBase.Mobile.Helpers
                     {
                         helper.Create($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
                     }
+                    else
+                    {
+                        helper.Delete($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
+                        helper.Create($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
+                    }
                 }
                 else
                 {

@@ -1,8 +1,10 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views.Dynamic;
+using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,7 +23,13 @@ namespace ExpressBase.Mobile.Helpers
                 if (container is EbMobileForm)
                 {
                     if (vis.FormMode == WebFormDVModes.New_Mode)
-                        renderer = new FormRender(page, vis.LinkFormParameters, row);
+                    {
+                        string msg = GetFormRenderInvalidateMsg(page.NetworkMode);
+                        if (msg == null)
+                            renderer = new FormRender(page, vis.LinkFormParameters, row);
+                        else
+                            renderer = new Redirect(msg);
+                    }
                     else
                     {
                         EbMobileDataColToControlMap map = vis.FormId;
@@ -171,6 +179,20 @@ namespace ExpressBase.Mobile.Helpers
                 EbLog.Info(ex.Message);
             }
             return status;
+        }
+
+        public static string GetFormRenderInvalidateMsg(NetworkMode mode)
+        {
+            string msg = null;
+            if (mode == NetworkMode.Offline)
+            {
+                LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
+                if (syncInfo == null || !syncInfo.PullSuccess)
+                    msg = "Sync required (Last pull failed)";
+                else if (syncInfo.LastSyncTs.AddDays(1) < DateTime.Now)
+                    msg = $"Sync required (Last sync was {(int)(DateTime.Now - syncInfo.LastSyncTs).TotalHours} hours back)";
+            }
+            return msg;
         }
 
         public static ContentPage GetPageByContainer(EbMobilePage page)
