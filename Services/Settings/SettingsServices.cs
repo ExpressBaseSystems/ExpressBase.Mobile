@@ -217,16 +217,6 @@ namespace ExpressBase.Mobile.Services
                             syncInfo.PullSuccess = true;
                         }
 
-                        if (solutionData.Images.Count > 0)
-                        {
-                            INativeHelper helper = DependencyService.Get<INativeHelper>();
-                            string root = App.Settings.AppDirectory;
-                            foreach (KeyValuePair<int, byte[]> img in solutionData.Images)
-                            {
-                                string path = helper.NativeRoot + $"/{root}/{App.Settings.CurrentSolution.SolutionName}/files/{img.Key}.jpg";
-                                File.WriteAllBytes(path, img.Value);
-                            }
-                        }
                     }
                 }
                 else
@@ -361,6 +351,7 @@ namespace ExpressBase.Mobile.Services
             await SetLocationInfo(solutionData.Locations);
             await SetCurrentUser(solutionData.CurrentUser);
             await SetSolutionObject(solutionData.CurrentSolution);
+            await SetImagesInPdf(solutionData.Images);
 
             if (solutionData.ProfilePages != null && solutionData.ProfilePages.Count > 0)
             {
@@ -494,6 +485,31 @@ namespace ExpressBase.Mobile.Services
             catch (Exception ex)
             {
                 EbLog.Error("failed to set user object, " + ex.Message);
+            }
+        }
+
+        private async Task SetImagesInPdf(Dictionary<int, byte[]> imgs)
+        {
+            if (imgs == null || imgs.Count == 0)
+                return;
+            try
+            {
+                Dictionary<int, byte[]> storeImgs = Store.GetJSON<Dictionary<int, byte[]>>(AppConst.IMAGES_IN_PDF);
+                if (storeImgs == null || storeImgs.Count == 0)
+                    await Store.SetJSONAsync(AppConst.IMAGES_IN_PDF, imgs);
+                else
+                {
+                    foreach (KeyValuePair<int, byte[]> item in imgs)
+                    {
+                        if (!storeImgs.ContainsKey(item.Key))
+                            storeImgs.Add(item.Key, item.Value);
+                    }
+                    await Store.SetJSONAsync(AppConst.IMAGES_IN_PDF, storeImgs);
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("failed to set images in pdf: " + ex.Message);
             }
         }
     }

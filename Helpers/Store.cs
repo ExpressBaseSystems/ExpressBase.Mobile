@@ -223,6 +223,8 @@ namespace ExpressBase.Mobile.Helpers
                 //remove application info
                 Store.RemoveJSON(AppConst.APP_COLLECTION);
                 Store.RemoveJSON(AppConst.CURRENT_APP);
+                Store.RemoveJSON(AppConst.LAST_SYNC_INFO);
+                Store.RemoveJSON(AppConst.IMAGES_IN_PDF);
                 App.Settings.CurrentApplication = null;
 
                 //remove objects info

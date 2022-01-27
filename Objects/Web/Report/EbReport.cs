@@ -1096,19 +1096,10 @@ namespace ExpressBase.Mobile
 
         public byte[] GetImage(int refId)
         {
-            INativeHelper helper = DependencyService.Get<INativeHelper>();
-            string root = App.Settings.AppDirectory;
-            string path = helper.NativeRoot + $"/{root}/{App.Settings.CurrentSolution.SolutionName}/files/{refId}.jpg";
-            byte[] fileByte = default(byte[]);
-            using (var streamReader = new StreamReader(path))
-            {
-                using (var memstream = new MemoryStream())
-                {
-                    streamReader.BaseStream.CopyTo(memstream);
-                    fileByte = memstream.ToArray();
-                }
-                return fileByte;
-            }
+            Dictionary<int, byte[]> storeImgs = Store.GetJSON<Dictionary<int, byte[]>>(AppConst.IMAGES_IN_PDF);
+            if (storeImgs?.ContainsKey(refId) == true)
+                return storeImgs[refId];
+            return default(byte[]);
         }
     }
 
