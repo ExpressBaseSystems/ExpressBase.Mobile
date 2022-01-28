@@ -1,5 +1,7 @@
-﻿using ExpressBase.Mobile.CustomControls;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using System;
@@ -47,17 +49,38 @@ namespace ExpressBase.Mobile.ViewModels.Login
             msgLoader.IsVisible = true;
             msgLoader.Message = "Logging in...";
 
-            if (!Utils.HasInternet)
-            {
-                Utils.Alert_NoInternet();
-                msgLoader.IsVisible = false;
-                return;
-            }
-
             if (this.CanLogin())
             {
                 string _username = this.Email.Trim();
                 string _password = this.PassWord.Trim();
+                string _md5PassCode = string.Concat(_password, _username, App.Settings.Sid).ToMD5();
+
+                if (!Utils.HasInternet)
+                {
+                    string _passCode = Store.GetJSON<string>(AppConst.MD5_PASSCODE);
+
+                    if (_passCode != null)
+                    {
+                        if (_passCode == _md5PassCode)
+                        {
+                            string msg = EbPageHelper.GetFormRenderInvalidateMsg(NetworkMode.Offline);
+                            if (msg == null)
+                            {
+                                EbMobileSolutionData data = App.Settings.GetOfflineSolutionDataAsync();
+                                await Service.Navigate(data);
+                                Utils.Toast("Offline login with limited access!");
+                            }
+                            else
+                                Utils.Toast("Offline login is not available. " + msg);
+                        }
+                        else
+                            Utils.Toast("Wrong username or password.");
+                    }
+                    else
+                        Utils.Alert_NoInternet();
+                    msgLoader.IsVisible = false;
+                    return;
+                }
 
                 try
                 {
@@ -71,13 +94,17 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
                 if (AuthResponse != null && AuthResponse.IsValid)
                 {
+                    Store.ResetCashedSolutionData();
                     if (AuthResponse.Is2FEnabled)
                         Toggle2FAW?.Invoke(AuthResponse);
                     else
+                    {
+                        await Store.SetJSONAsync(AppConst.MD5_PASSCODE, _md5PassCode);
                         await AfterLoginSuccess(AuthResponse, _username, LoginType.CREDENTIALS, msgLoader);
+                    }
                 }
                 else
-                    Utils.Toast("wrong username or password.");
+                    Utils.Toast("Wrong username or password.");
 
                 IsBusy = false;
             }
@@ -112,7 +139,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         private bool CanLogin()
         {
-            if (string.IsNullOrEmpty(this.Email) || string.IsNullOrEmpty(this.PassWord))
+            if (string.IsNullOrWhiteSpace(this.Email) || string.IsNullOrWhiteSpace(this.PassWord))
                 return false;
             return true;
         }

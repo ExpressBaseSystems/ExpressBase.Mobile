@@ -41,6 +41,8 @@ namespace ExpressBase.Mobile.Constants
         public const string SHARED_MEDIA = "SHAREDMEDIA";
 
         public const string IMAGES_IN_PDF = "images_in_pdf";
+
+        public const string MD5_PASSCODE = "md5_passcode";
     }
 
     public static class RegexConstants

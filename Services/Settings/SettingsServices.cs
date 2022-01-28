@@ -336,6 +336,19 @@ namespace ExpressBase.Mobile.Services
             return flag ? solutionData : null;
         }
 
+        public EbMobileSolutionData GetOfflineSolutionDataAsync()
+        {
+            EbMobileSolutionData solutionData = new EbMobileSolutionData();
+            solutionData.Applications = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
+            solutionData.Locations = Store.GetJSON<List<EbLocation>>(AppConst.USER_LOCATIONS);
+            solutionData.CurrentUser = Store.GetJSON<User>(AppConst.USER_OBJECT);
+            solutionData.ProfilePages = Store.GetJSON<List<MobilePagesWraper>>(AppConst.EXTERNAL_PAGES);
+            solutionData.CurrentSolution = Store.GetJSON<Eb_Solution>(AppConst.SOLUTION_OBJ);
+            solutionData.Images = Store.GetJSON<Dictionary<int, byte[]>>(AppConst.IMAGES_IN_PDF);
+
+            return solutionData;
+        }
+
         private async Task ImportSolutionData(EbMobileSolutionData solutionData, bool export)
         {
             if (solutionData == null) return;

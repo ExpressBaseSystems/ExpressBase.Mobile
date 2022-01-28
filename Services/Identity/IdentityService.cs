@@ -273,6 +273,8 @@ namespace ExpressBase.Mobile.Services
 
         public static bool IsTokenExpired()
         {
+            if (App.Settings.RToken == null)
+                return true;
             JwtSecurityToken jwtToken = new JwtSecurityToken(App.Settings.RToken);
             return (DateTime.Compare(jwtToken.ValidTo, DateTime.Now) < 0);
         }

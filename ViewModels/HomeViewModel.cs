@@ -104,6 +104,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             if (isTapped) return;
             IsBusy = true;
+            isTapped = true;
             try
             {
                 EbMobilePage page = EbPageHelper.GetPage(item.RefId);
@@ -113,10 +114,17 @@ namespace ExpressBase.Mobile.ViewModels
                     Utils.Toast("page not found");
                     EbLog.Error($"requested page with refid '{item.RefId}' not found");
                     IsBusy = false;
+                    isTapped = false;
                     return;
                 }
 
-                isTapped = true;
+                if (page.NetworkMode == NetworkMode.Online && App.Settings.RToken == null)
+                {
+                    Utils.Toast("Not available: Online login needed");
+                    IsBusy = false;
+                    isTapped = false;
+                    return;
+                }
 
                 bool render = true; string message = string.Empty;
 
@@ -162,6 +170,9 @@ namespace ExpressBase.Mobile.ViewModels
                 }
 
                 LocalDBServie service = new LocalDBServie();
+
+                if (loader.IsVisible)
+                    return;
 
                 Device.BeginInvokeOnMainThread(() =>
                 {

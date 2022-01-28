@@ -87,7 +87,12 @@ namespace ExpressBase.Mobile.ViewModels
 
         public async Task Logout()
         {
-            Store.ResetCashedSolutionData();
+            //Store.ResetCashedSolutionData();
+
+            Store.Remove(AppConst.BTOKEN);
+            Store.Remove(AppConst.RTOKEN);
+            App.Settings.BToken = null;
+            App.Settings.RToken = null;
 
             await App.Navigation.NavigateToLogin(true);
 

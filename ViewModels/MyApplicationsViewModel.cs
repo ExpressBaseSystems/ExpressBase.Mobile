@@ -77,7 +77,7 @@ namespace ExpressBase.Mobile.ViewModels
         {
             try
             {
-                if (IsCurrent(app.AppId))
+                if (IsCurrent(app.AppId) && App.RootMaster != null)
                 {
                     await App.Navigation.PopMasterAsync(true);
                 }
