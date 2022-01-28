@@ -24,8 +24,8 @@ namespace ExpressBase.Mobile.Views
             InitializeComponent();
             BindingContext = new SettingsViewModel();
 
-            LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
-            if (syncInfo == null)
+            LastSyncInfo syncInfo = App.Settings.SyncInfo;
+            if (syncInfo == null || syncInfo.LastSyncTs == DateTime.MinValue)
                 LastSyncAtLbl.Text = "Sync required";
             else
                 LastSyncAtLbl.Text = "Last sync at: " + syncInfo.LastSyncTs.ToString();

@@ -108,6 +108,12 @@ namespace ExpressBase.Mobile.Models
         public DateTime LastSyncTs { get; set; }
 
         public DateTime LastOfflineSaveTs { get; set; }
+
+        public string Md5PassCode { get; set; }
+
+        public bool IsLoggedOut { get; set; }
+
+        public string SolnId { get; set; }
     }
 
     public class EbStageInfo

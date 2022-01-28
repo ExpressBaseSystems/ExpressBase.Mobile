@@ -8,7 +8,8 @@
         <control:EbCPLayout>
             <control:EbCPLayout.Content>
                 <StackLayout VerticalOptions="CenterAndExpand">
-                    <Image Margin="20,0"
+                    <Image x:Name="Image"
+                           Margin="20,0"
                            HorizontalOptions="Center"
                            Source="no_data.png">
                     </Image>

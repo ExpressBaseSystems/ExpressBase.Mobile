@@ -46,6 +46,8 @@ namespace ExpressBase.Mobile.Services
 
         public AppVendor Vendor { set; get; }
 
+        public LastSyncInfo SyncInfo { get; set; }
+
         public string Sid => CurrentSolution?.SolutionName;
 
         public string ISid => CurrentSolution?.ISolutionId;
@@ -106,6 +108,7 @@ namespace ExpressBase.Mobile.Services
                 CurrentUser = this.GetUser();
                 CurrentLocation = this.GetCurrentLocation();
                 ExternalMobilePages = this.GetExternalPages();
+                SyncInfo = this.GetSyncInfo();
             }
             catch (Exception ex)
             {
@@ -163,6 +166,17 @@ namespace ExpressBase.Mobile.Services
 
         private List<MobilePagesWraper> GetExternalPages() => Store.GetJSON<List<MobilePagesWraper>>(AppConst.EXTERNAL_PAGES);
 
+        private LastSyncInfo GetSyncInfo()
+        {
+            LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
+            if (syncInfo == null || syncInfo.SolnId != Sid)
+            {
+                syncInfo = new LastSyncInfo() { SolnId = Sid };
+                Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+            }
+            return syncInfo;
+        }
+
         //version 2
         public async Task<SyncResponse> GetSolutionDataAsyncV2(Loader loader)
         {
@@ -178,10 +192,11 @@ namespace ExpressBase.Mobile.Services
             request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
             Dictionary<string, object> metaDict = new Dictionary<string, object>();
-            LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
+            LastSyncInfo syncInfo = App.Settings.SyncInfo;
             if (syncInfo == null)
                 syncInfo = new LastSyncInfo();
             syncInfo.PullSuccess = false;
+            syncInfo.IsLoggedOut = false;
 
             if (syncInfo.LastSyncTs != DateTime.MinValue)
             {
@@ -216,7 +231,6 @@ namespace ExpressBase.Mobile.Services
                             syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
                             syncInfo.PullSuccess = true;
                         }
-
                     }
                 }
                 else
@@ -311,12 +325,11 @@ namespace ExpressBase.Mobile.Services
                     loader.Message = "Importing latest document ids...";
                     if (await GetLatestAutoId(solutionData.Applications))
                     {
-                        LastSyncInfo syncInfo = new LastSyncInfo()
-                        {
-                            PullSuccess = true,
-                            LastSyncTs = solutionData.last_sync_ts,
-                            LastOfflineSaveTs = solutionData.last_sync_ts
-                        };
+                        LastSyncInfo syncInfo = App.Settings.SyncInfo;
+                        syncInfo.PullSuccess = true;
+                        syncInfo.LastSyncTs = solutionData.last_sync_ts;
+                        syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
+                        syncInfo.IsLoggedOut = false;
                         await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
                         flag = true;
                     }
@@ -336,18 +349,6 @@ namespace ExpressBase.Mobile.Services
             return flag ? solutionData : null;
         }
 
-        public EbMobileSolutionData GetOfflineSolutionDataAsync()
-        {
-            EbMobileSolutionData solutionData = new EbMobileSolutionData();
-            solutionData.Applications = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
-            solutionData.Locations = Store.GetJSON<List<EbLocation>>(AppConst.USER_LOCATIONS);
-            solutionData.CurrentUser = Store.GetJSON<User>(AppConst.USER_OBJECT);
-            solutionData.ProfilePages = Store.GetJSON<List<MobilePagesWraper>>(AppConst.EXTERNAL_PAGES);
-            solutionData.CurrentSolution = Store.GetJSON<Eb_Solution>(AppConst.SOLUTION_OBJ);
-            solutionData.Images = Store.GetJSON<Dictionary<int, byte[]>>(AppConst.IMAGES_IN_PDF);
-
-            return solutionData;
-        }
 
         private async Task ImportSolutionData(EbMobileSolutionData solutionData, bool export)
         {

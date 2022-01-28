@@ -89,10 +89,8 @@ namespace ExpressBase.Mobile.ViewModels
         {
             //Store.ResetCashedSolutionData();
 
-            Store.Remove(AppConst.BTOKEN);
-            Store.Remove(AppConst.RTOKEN);
-            App.Settings.BToken = null;
-            App.Settings.RToken = null;
+            App.Settings.SyncInfo.IsLoggedOut = true;
+            await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, App.Settings.SyncInfo);
 
             await App.Navigation.NavigateToLogin(true);
 

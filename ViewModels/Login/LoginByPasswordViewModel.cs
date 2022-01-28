@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Views;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -57,18 +58,22 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
                 if (!Utils.HasInternet)
                 {
-                    string _passCode = Store.GetJSON<string>(AppConst.MD5_PASSCODE);
-
-                    if (_passCode != null)
+                    if (App.Settings?.SyncInfo?.IsLoggedOut == true && App.Settings.SyncInfo.Md5PassCode != null)
                     {
-                        if (_passCode == _md5PassCode)
+                        if (App.Settings.SyncInfo.Md5PassCode == _md5PassCode)
                         {
                             string msg = EbPageHelper.GetFormRenderInvalidateMsg(NetworkMode.Offline);
                             if (msg == null)
                             {
-                                EbMobileSolutionData data = App.Settings.GetOfflineSolutionDataAsync();
-                                await Service.Navigate(data);
-                                Utils.Toast("Offline login with limited access!");
+                                App.Settings.SyncInfo.IsLoggedOut = false;
+                                await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, App.Settings.SyncInfo);
+                                if (App.Settings.AppId <= 0)
+                                    await App.Navigation.NavigateAsync(new MyApplications());
+                                else
+                                {
+                                    App.RootMaster = new RootMaster();
+                                    Application.Current.MainPage = App.RootMaster;
+                                }
                             }
                             else
                                 Utils.Toast("Offline login is not available. " + msg);
@@ -94,12 +99,12 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
                 if (AuthResponse != null && AuthResponse.IsValid)
                 {
-                    Store.ResetCashedSolutionData();
                     if (AuthResponse.Is2FEnabled)
                         Toggle2FAW?.Invoke(AuthResponse);
                     else
                     {
-                        await Store.SetJSONAsync(AppConst.MD5_PASSCODE, _md5PassCode);
+                        App.Settings.SyncInfo.Md5PassCode = _md5PassCode;
+                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, App.Settings.SyncInfo);
                         await AfterLoginSuccess(AuthResponse, _username, LoginType.CREDENTIALS, msgLoader);
                     }
                 }

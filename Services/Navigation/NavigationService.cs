@@ -136,7 +136,7 @@ namespace ExpressBase.Mobile.Services.Navigation
             }
             else
             {
-                if (App.Settings.RToken == null || IdentityService.IsTokenExpired())
+                if (App.Settings.RToken == null || IdentityService.IsTokenExpired() || App.Settings?.SyncInfo?.IsLoggedOut == true)
                 {
                     await NavigateToLogin();
                     return;

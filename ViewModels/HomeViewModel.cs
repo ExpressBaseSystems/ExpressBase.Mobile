@@ -118,14 +118,6 @@ namespace ExpressBase.Mobile.ViewModels
                     return;
                 }
 
-                if (page.NetworkMode == NetworkMode.Online && App.Settings.RToken == null)
-                {
-                    Utils.Toast("Not available: Online login needed");
-                    IsBusy = false;
-                    isTapped = false;
-                    return;
-                }
-
                 bool render = true; string message = string.Empty;
 
                 if (page.Container is EbMobileForm form)

@@ -94,14 +94,17 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 }
             }
 
-            string msg = EbPageHelper.GetFormRenderInvalidateMsg(viewModel.NetworkType);
-            if (msg != null)
+            if (!viewModel.Form.RenderAsFilterDialog)
             {
-                (ButtonGrid.Children[0] as Button).IsVisible = false;
-                (ButtonGrid.Children[1] as Button).IsVisible = false;
-                SaveButton.IsEnabled = false;
-                App.Navigation.PopByRenderer(true);
-                Utils.Toast(msg);
+                string msg = EbPageHelper.GetFormRenderInvalidateMsg(viewModel.NetworkType);
+                if (msg != null)
+                {
+                    (ButtonGrid.Children[0] as Button).IsVisible = false;
+                    (ButtonGrid.Children[1] as Button).IsVisible = false;
+                    SaveButton.IsEnabled = false;
+                    App.Navigation.PopByRenderer(true);
+                    Utils.Toast(msg);
+                }
             }
         }
 

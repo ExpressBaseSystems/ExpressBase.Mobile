@@ -20,15 +20,15 @@ namespace ExpressBase.Mobile.Helpers
             EbMobileContainer container = page.Container;
             try
             {
-                if (container is EbMobileForm)
+                if (container is EbMobileForm form)
                 {
                     if (vis.FormMode == WebFormDVModes.New_Mode)
                     {
                         string msg = GetFormRenderInvalidateMsg(page.NetworkMode);
-                        if (msg == null)
-                            renderer = new FormRender(page, vis.LinkFormParameters, row);
+                        if (msg != null && !form.RenderAsFilterDialog)
+                            renderer = new Redirect(msg, MessageType.disconnected);
                         else
-                            renderer = new Redirect(msg);
+                            renderer = new FormRender(page, vis.LinkFormParameters, row);
                     }
                     else
                     {
@@ -186,7 +186,7 @@ namespace ExpressBase.Mobile.Helpers
             string msg = null;
             if (mode == NetworkMode.Offline)
             {
-                LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
+                LastSyncInfo syncInfo = App.Settings.SyncInfo;
                 if (syncInfo == null || !syncInfo.PullSuccess)
                     msg = "Sync required (Last pull failed)";
                 else if (syncInfo.LastSyncTs.AddDays(1) < DateTime.Now)

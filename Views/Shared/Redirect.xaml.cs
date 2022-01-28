@@ -13,10 +13,15 @@ namespace ExpressBase.Mobile.Views.Shared
             InitializeComponent();
         }
 
-        public Redirect(string message)
+        public Redirect(string message, MessageType type = MessageType.no_data)
         {
             InitializeComponent();
             Message = message;
+            if (type != MessageType.no_data)
+            {
+                Image.Source = type + ".png";
+                Image.HeightRequest = 200;
+            }
 
             BindingContext = this;
         }
@@ -25,5 +30,11 @@ namespace ExpressBase.Mobile.Views.Shared
         {
             await App.Navigation.PopMasterAsync(true);
         }
+    }
+
+    public enum MessageType
+    {
+        no_data,
+        disconnected
     }
 }

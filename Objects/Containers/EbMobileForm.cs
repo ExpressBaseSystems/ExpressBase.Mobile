@@ -382,7 +382,7 @@ namespace ExpressBase.Mobile
         {
             try
             {
-                LastSyncInfo syncInfo = Store.GetJSON<LastSyncInfo>(AppConst.LAST_SYNC_INFO);
+                LastSyncInfo syncInfo = App.Settings.SyncInfo;
                 if (syncInfo.LastOfflineSaveTs > DateTime.Now)
                 {
                     response.Message = "Sync required. Device date time is incorrect.";
@@ -408,8 +408,8 @@ namespace ExpressBase.Mobile
                     if (response.Status)
                     {
                         response.Message = "Data stored locally :)";
-                        syncInfo.LastOfflineSaveTs = DateTime.Now;
-                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+                        App.Settings.SyncInfo.LastOfflineSaveTs = DateTime.Now;
+                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, App.Settings.SyncInfo);
                     }
                     else
                         throw new Exception("Failed to store data locally");
