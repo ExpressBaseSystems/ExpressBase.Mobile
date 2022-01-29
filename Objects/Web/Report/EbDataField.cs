@@ -734,9 +734,9 @@ namespace ExpressBase.Mobile
             ct.Go();
         }
 
-        public dynamic GetCalcFieldValue(EbPdfGlobals globals, EbDataSet DataSet, int serialnumber, EbReport Rep)
+        public string GetCalcFieldValue(EbPdfGlobals globals, EbDataSet DataSet, int serialnumber, EbReport Rep)
         {
-            return Rep.ExecuteExpression(Rep.ValueScriptCollection[this.Name], serialnumber, globals, DataFieldsUsedInCalc, true);            ;
+            return Rep.ExecuteExpression(Rep.ValueScriptCollection[this.Name], serialnumber, globals, DataFieldsUsedInCalc, true)?.ToString();
         }
     }
 
