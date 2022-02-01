@@ -20,6 +20,8 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         private readonly TapGestureRecognizer tapRecognizer;
 
+        private bool isTapped;
+
         public DataGrid()
         {
             InitializeComponent();
@@ -63,16 +65,18 @@ namespace ExpressBase.Mobile.CustomControls.Views
             }
         }
 
-        private void AddRowButtonClicked(object sender, EventArgs e)
+        private async void AddRowButtonClicked(object sender, EventArgs e)
         {
-            if (dataGrid.IsTaped())
+            if (isTapped)
                 return;
+            isTapped = true;
             DataGridForm gridview = new DataGridForm(dataGrid);
             gridview.OnInserted += (name) =>
             {
                 this.OnRowInserted(name);
             };
-            App.Navigation.NavigateMasterModalAsync(gridview);
+            await App.Navigation.NavigateMasterModalAsync(gridview);
+            isTapped = false;
         }
 
         public void OnRowInserted(string name = null)
@@ -150,8 +154,9 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         private void RowDelete_Clicked(object sender, EventArgs e)
         {
-            if (dataGrid.IsTaped())
+            if (isTapped)
                 return;
+            isTapped = true;
             Button button = sender as Button;
 
             foreach (View el in Body.Children)
@@ -170,12 +175,14 @@ namespace ExpressBase.Mobile.CustomControls.Views
                     break;
                 }
             }
+            isTapped = false;
         }
 
         private async void OpenGridFormOnEdit(object sender, EventArgs e)
         {
-            if (dataGrid.IsTaped())
+            if (isTapped)
                 return;
+            isTapped = true;
             string classId = (sender as DynamicFrame).ClassId;
 
             DataGridForm gridview = new DataGridForm(dataGrid, dataDictionary[classId], classId);
@@ -185,6 +192,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 this.OnRowInserted(name);
             };
             await App.Navigation.NavigateMasterModalAsync(gridview);
+            isTapped = false;
         }
 
         public void SetValue(EbDataTable dataTable)

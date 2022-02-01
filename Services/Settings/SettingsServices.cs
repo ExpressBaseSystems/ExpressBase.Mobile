@@ -330,6 +330,7 @@ namespace ExpressBase.Mobile.Services
                         syncInfo.LastSyncTs = solutionData.last_sync_ts;
                         syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
                         syncInfo.IsLoggedOut = false;
+                        syncInfo.SolnId = App.Settings.Sid;
                         await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
                         flag = true;
                     }

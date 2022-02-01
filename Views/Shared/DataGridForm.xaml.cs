@@ -24,6 +24,8 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private readonly EbMobileDataGrid dataGrid;
 
+        private bool isTapped;
+
         public DataGridForm(EbMobileDataGrid dataGrid)
         {
             mode = GridMode.New;
@@ -79,22 +81,26 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private void OnSaveAndContinueClicked(object sender, EventArgs e)
         {
-            if (this.dataGrid.IsTaped())
+            if (isTapped || this.dataGrid.IsTaped())
                 return;
+            isTapped = true;
             OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
             Utils.Toast("1 row added.");
             ResetControls();
             EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
+            isTapped = false;
         }
 
         private async void OnSaveAndCloseClicked(object sender, EventArgs e)
         {
-            if (this.dataGrid.IsTaped())
+            if (isTapped)
                 return;
+            isTapped = true;
             OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
             ResetControls();
             EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
             await App.Navigation.PopMasterModalAsync(true);
+            isTapped = false;
         }
 
         private void ResetControls()
@@ -109,10 +115,12 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
-            if (this.dataGrid.IsTaped())
+            if (isTapped || this.dataGrid.IsTaped())
                 return;
+            isTapped = true;
             ResetControls();
             await App.Navigation.PopMasterModalAsync(true);
+            isTapped = false;
         }
 
         protected void InitDefaultValueExpressions()

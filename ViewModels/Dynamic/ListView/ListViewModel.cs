@@ -29,7 +29,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected override async Task NavigateToFabLink()
         {
-            if (IsTaped())
+            if (IsTaped() || IsBusy)
                 return;
 
             IsBusy = true;
