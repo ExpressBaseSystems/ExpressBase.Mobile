@@ -39,6 +39,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private bool isSaveBtnVisible = true;
 
+        private bool IsTapped { get; set; }
+
         public bool IsSaveButtonVisible
         {
             get => isSaveBtnVisible;
@@ -63,21 +65,32 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public bool HasWebFormRef => !string.IsNullOrEmpty(this.Form.WebFormRefId);
 
-        public Command SaveCommand => new Command(async () => await FormSubmitClicked(false));
+        public Command SaveCommand => new Command(async () =>
+        {
+            if (IsTapped)
+                return;
+            IsTapped = true;
+            MsgLoader.IsVisible = true;
+            await FormSubmitClicked(false);
+            MsgLoader.IsVisible = false;
+            IsTapped = false;
+        });
 
         public Command PrintCommand => new Command(async () =>
         {
+            if (IsTapped)
+                return;
+            IsTapped = true;
+            MsgLoader.IsVisible = true;
             if (this.RowId > 0 || this.Form.RenderAsFilterDialog)
             {
-                if (MsgLoader.IsVisible)
-                    return;
-                MsgLoader.IsVisible = true;
                 this.Form.NetworkType = this.NetworkType;//
                 await this.Form.Print(this.RowId);
-                MsgLoader.IsVisible = false;
             }
             else
                 await FormSubmitClicked(true);
+            MsgLoader.IsVisible = false;
+            IsTapped = false;
         });
 
         public FormRenderViewModel() { }
@@ -126,15 +139,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public async Task FormSubmitClicked(bool Print)
         {
-            if (MsgLoader.IsVisible)
-                return;
-            MsgLoader.IsVisible = true;
             Stopwatch sw = new Stopwatch();
             sw.Start();
             if (!Utils.IsNetworkReady(this.NetworkType))
             {
                 Utils.Alert_NoInternet();
-                MsgLoader.IsVisible = false;
                 return;
             }
 
@@ -153,7 +162,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             sw.Stop();
             if (invalidMsg == null && sw.ElapsedMilliseconds < 1500)
                 await Task.Delay(1500 - (int)sw.ElapsedMilliseconds);
-            MsgLoader.IsVisible = false;
         }
 
         protected virtual async Task Submit(bool Print)
