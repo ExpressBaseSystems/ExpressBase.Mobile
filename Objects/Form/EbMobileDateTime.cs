@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Structures;
@@ -20,6 +21,8 @@ namespace ExpressBase.Mobile
         public bool BlockBackDatedEntry { set; get; }
 
         public bool BlockFutureDatedEntry { set; get; }
+
+        public EbScript MinValueExpr { set; get; }
 
         private EbXDatePicker datePicker;
 
@@ -76,8 +79,14 @@ namespace ExpressBase.Mobile
                     Date = DateTime.Now,
                     BorderColor = Color.Transparent
                 };
-                if (this.BlockBackDatedEntry) datePicker.MinimumDate = DateTime.Now;
-                if (this.BlockFutureDatedEntry) datePicker.MaximumDate = DateTime.Now;
+
+                if (!string.IsNullOrWhiteSpace(MinValueExpr?.Code))
+                    datePicker.MinimumDate = GetMinDate();
+                else if (this.BlockBackDatedEntry)
+                    datePicker.MinimumDate = DateTime.Now;
+
+                if (this.BlockFutureDatedEntry)
+                    datePicker.MaximumDate = DateTime.Now;
 
                 datePicker.PropertyChanged += PropertyChanged;
                 control = datePicker;
@@ -93,6 +102,23 @@ namespace ExpressBase.Mobile
             this.XControl = new InputGroup(control, icon) { XBackgroundColor = XBackground, HasShadow = false };
 
             return base.Draw(Mode, Network);
+        }
+
+        private DateTime GetMinDate()
+        {
+            DateTime date = DateTime.Now;
+            try
+            {
+                string sql = HelperFunctions.B64ToString(MinValueExpr.Code);
+                EbDataTable dt = App.DataDB.DoQuery(sql);
+                if (dt.Rows.Count > 0)
+                    date = Convert.ToDateTime(dt.Rows[0][0]);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error($"Failed to run date min value expression of {Name}: {ex.Message}");
+            }
+            return date;
         }
 
         private void PropertyChanged(object sender, PropertyChangedEventArgs e)
