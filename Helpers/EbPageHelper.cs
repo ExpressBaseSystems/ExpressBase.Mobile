@@ -1,4 +1,4 @@
-﻿using ExpressBase.Mobile.Constants;
+﻿using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Models;
@@ -141,44 +141,63 @@ namespace ExpressBase.Mobile.Helpers
             return ls;
         }
 
-        public static async Task<bool> ValidateFormRendering(EbMobileForm form, EbDataRow context = null)
+        public static async Task<string> ValidateFormRendering(EbMobileForm form, Loader loader, EbDataRow context = null)
         {
-            if (string.IsNullOrEmpty(form.RenderValidatorRefId))
-                return true;
+            string failMsg = null;
 
-            bool status = true;
-
-            try
+            if (!Utils.IsNetworkReady(form.NetworkType))
             {
-                List<Param> cParams = form.GetRenderValidatorParams(context);
-
-                cParams.Add(new Param
+                failMsg = "Not connected to internet!";
+            }
+            else if (!string.IsNullOrEmpty(form.RenderValidatorRefId))
+            {
+                try
                 {
-                    Name = "eb_loc_id",
-                    Type = "11",
-                    Value = App.Settings.CurrentLocation.LocId.ToString()
-                });
+                    if (loader != null) loader.Message = "Validating...";
+                    List<Param> cParams = form.GetRenderValidatorParams(context);
 
-                MobileDataResponse data = await DataService.Instance.GetDataAsync(form.RenderValidatorRefId, 0, 0, cParams, null, null, false);
+                    cParams.Add(new Param
+                    {
+                        Name = "eb_loc_id",
+                        Type = "11",
+                        Value = App.Settings.CurrentLocation.LocId.ToString()
+                    });
 
-                if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
-                {
-                    var render = row[0];
+                    MobileDataResponse data = await DataService.Instance.GetDataAsync(form.RenderValidatorRefId, 0, 0, cParams, null, null, false);
 
-                    if (render != null)
-                        status = Convert.ToBoolean(render);
+                    if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
+                    {
+                        if (bool.TryParse(row[0]?.ToString(), out bool b) && b)
+                        {
+                            EbLog.Info("Form render validation return true");
+                        }
+                        else
+                        {
+                            failMsg = form.MessageOnFailed;
+                            EbLog.Info("Form render validation return false");
+                        }
+                    }
                     else
-                        EbLog.Info("Form render validation return true");
+                    {
+                        failMsg = "Validation api returned empty data";
+                        EbLog.Info("before render api returned empty row collection");
+                    }
                 }
-                else
-                    EbLog.Info("before render api returned empty row collection");
+                catch (Exception ex)
+                {
+                    failMsg = "Exception in validation api: " + ex.Message;
+                    EbLog.Error("Error at form render validation api call");
+                    EbLog.Info(ex.Message);
+                }
             }
-            catch (Exception ex)
+
+            if (failMsg == null && form.AutoSyncOnLoad && !form.RenderAsFilterDialog)
             {
-                EbLog.Info("Error at form render validation api call");
-                EbLog.Info(ex.Message);
+                LocalDBServie service = new LocalDBServie();
+                failMsg = await service.PushData(loader);
             }
-            return status;
+
+            return failMsg;
         }
 
         public static string GetFormRenderInvalidateMsg(NetworkMode mode)
@@ -239,8 +258,8 @@ namespace ExpressBase.Mobile.Helpers
             {
                 if (container is EbMobileForm mobileForm)
                 {
-                    renderor.IsReady = await ValidateFormRendering(mobileForm);
-                    renderor.Message = renderor.IsReady ? "Ready to render" : mobileForm.MessageOnFailed;
+                    renderor.Message = await ValidateFormRendering(mobileForm, null);
+                    renderor.IsReady = renderor.Message == null;
                     renderor.Renderer = new FormRender(page);
                 }
                 else if (container is EbMobileVisualization viz)
@@ -260,7 +279,7 @@ namespace ExpressBase.Mobile.Helpers
                 }
                 else
                 {
-                    renderor.Message = "inavlid container type";
+                    renderor.Message = "Inavlid container type";
                     renderor.IsReady = false;
                 }
             }
@@ -277,5 +296,21 @@ namespace ExpressBase.Mobile.Helpers
 
             return renderor;
         }
+
+        private static bool _isTapped { get; set; }
+
+        public static bool IsShortTap()
+        {
+            if (_isTapped)
+                return true;
+            _isTapped = true;
+            Task task = Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                _isTapped = false;
+            });
+            return false;
+        }
     }
+
 }

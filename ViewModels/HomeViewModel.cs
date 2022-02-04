@@ -50,6 +50,8 @@ namespace ExpressBase.Mobile.ViewModels
 
         public Command RefreshDataCommand => new Command(async () => await UpdateAsync());
 
+        public EbCPLayout EbLayout { get; set; }
+
         private bool isTapped;
 
         public HomeViewModel() : base(App.Settings.CurrentApplication?.AppName)
@@ -102,9 +104,13 @@ namespace ExpressBase.Mobile.ViewModels
 
         private async Task ItemTapedEvent(MobilePagesWraper item)
         {
-            if (isTapped) return;
-            IsBusy = true;
+            if (isTapped || EbPageHelper.IsShortTap())
+                return;
             isTapped = true;
+            Loader msgLoader = EbLayout.GetMessageLoader();
+            msgLoader.IsVisible = true;
+            msgLoader.Message = "Loading...";
+            await Task.Delay(100);
             try
             {
                 EbMobilePage page = EbPageHelper.GetPage(item.RefId);
@@ -113,7 +119,7 @@ namespace ExpressBase.Mobile.ViewModels
                 {
                     Utils.Toast("page not found");
                     EbLog.Error($"requested page with refid '{item.RefId}' not found");
-                    IsBusy = false;
+                    msgLoader.IsVisible = false;
                     isTapped = false;
                     return;
                 }
@@ -122,8 +128,8 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (page.Container is EbMobileForm form)
                 {
-                    render = await EbPageHelper.ValidateFormRendering(form);
-                    message = form.MessageOnFailed;
+                    message = await EbPageHelper.ValidateFormRendering(form, msgLoader);
+                    if (message != null) render = false;
                 }
 
                 if (render)
@@ -140,7 +146,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 EbLog.Error("Failed to open page ::" + ex.Message);
             }
-            IsBusy = false;
+            msgLoader.IsVisible = false;
             isTapped = false;
         }
 

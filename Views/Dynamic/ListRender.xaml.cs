@@ -16,6 +16,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             InitializeComponent();
             BindingContext = ViewModel = new ListViewModel(Page);
+            ViewModel.EbLayout = EbLayout;
             EbLayout.ShowLoader();
         }
 
@@ -23,6 +24,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             InitializeComponent();
             BindingContext = ViewModel = new ListViewModel(Page, row);
+            ViewModel.EbLayout = EbLayout;
             EbLayout.ShowLoader();
         }
 

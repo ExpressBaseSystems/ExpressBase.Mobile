@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views.Dynamic;
 using ExpressBase.Mobile.Views.Shared;
@@ -32,21 +33,27 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected override async Task NavigateToFabLink()
         {
+            if (IsTapped || EbPageHelper.IsShortTap())
+                return;
+            IsTapped = true;
+            Loader msgLoader = EbLayout.GetMessageLoader();
+            msgLoader.IsVisible = true;
+            msgLoader.Message = "Loading...";
             string linkRefID = Visualization.UseLinkSettings ? Visualization.LinkRefId : Visualization.FabLinkRefId;
 
             EbMobilePage page = EbPageHelper.GetPage(linkRefID);
 
             if (page != null && page.Container is EbMobileForm form)
             {
-                Device.BeginInvokeOnMainThread(() => IsBusy = true);
-                bool validation = await EbPageHelper.ValidateFormRendering(form, this.ContextRecord);
-                Device.BeginInvokeOnMainThread(() => IsBusy = false);
+                string failMsg = await EbPageHelper.ValidateFormRendering(form, msgLoader, this.ContextRecord);
 
-                if (validation)
+                if (failMsg == null)
                     await App.Navigation.NavigateMasterAsync(new FormRender(page, Visualization, ContextRecord));
                 else
-                    await App.Navigation.NavigateMasterAsync(new Redirect(form.MessageOnFailed));
+                    await App.Navigation.NavigateMasterAsync(new Redirect(failMsg));
             }
+            msgLoader.IsVisible = false;
+            IsTapped = false;
         }
 
         private async Task EditButtonClicked()

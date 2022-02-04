@@ -79,6 +79,35 @@ namespace ExpressBase.Mobile.Services
             return response;
         }
 
+        public async Task<string> PushData(Loader loader = null)
+        {
+            string msg = null;
+            try
+            {
+                if (IdentityService.IsTokenExpired())
+                {
+                    msg = "Session expired (Login again to refresh the session)";
+                }
+                else
+                {
+                    if (loader != null) loader.IsVisible = true;
+                    loader.Message = "Sync started...";
+
+                    SyncResponse response = await PushDataToCloud(loader);
+                    if (!response.Status)
+                        msg = response.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                msg = "Push failed: " + ex.Message;
+                Utils.Toast("Failed to push: " + ex.Message);
+                EbLog.Error("Failed to sync::" + ex.Message);
+            }
+            if (loader != null) loader.IsVisible = false;
+            return msg;
+        }
+
         private void DeleteUnwantedRecords()
         {
             try

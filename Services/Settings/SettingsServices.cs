@@ -217,6 +217,7 @@ namespace ExpressBase.Mobile.Services
                         solutionData.last_sync_ts < DateTime.Now.Add(new TimeSpan(0, 2, 0))))
                     {
                         resp.Message = "Device date time is incorrect";
+                        EbLog.Warning("Device date time is incorrect");
                     }
                     else
                     {
@@ -230,6 +231,7 @@ namespace ExpressBase.Mobile.Services
                             syncInfo.LastSyncTs = solutionData.last_sync_ts;
                             syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
                             syncInfo.PullSuccess = true;
+                            EbLog.Info("[GetSolutionDataAsyncV2] api success");
                         }
                     }
                 }

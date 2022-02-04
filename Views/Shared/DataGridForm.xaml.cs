@@ -93,7 +93,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void OnSaveAndCloseClicked(object sender, EventArgs e)
         {
-            if (isTapped)
+            if (isTapped || this.dataGrid.IsTaped())
                 return;
             isTapped = true;
             OnInserted?.Invoke(mode == GridMode.New ? null : rowName);

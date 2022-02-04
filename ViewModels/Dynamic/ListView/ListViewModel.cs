@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Data;
+﻿using ExpressBase.Mobile.CustomControls;
+using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Views.Dynamic;
 using ExpressBase.Mobile.Views.Shared;
@@ -29,23 +30,26 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected override async Task NavigateToFabLink()
         {
-            if (IsTaped() || IsBusy)
+            if (IsTapped || EbPageHelper.IsShortTap())
                 return;
-
-            IsBusy = true;
+            IsTapped = true;
+            Loader msgLoader = EbLayout.GetMessageLoader();
+            msgLoader.IsVisible = true;
+            msgLoader.Message = "Loading...";
             string linkRefID = Visualization.UseLinkSettings ? Visualization.LinkRefId : Visualization.FabLinkRefId;
             EbMobilePage page = EbPageHelper.GetPage(linkRefID);
 
             if (page != null && page.Container is EbMobileForm form)
             {
-                bool validation = await EbPageHelper.ValidateFormRendering(form, this.ContextRecord);
+                string failMsg = await EbPageHelper.ValidateFormRendering(form, msgLoader, this.ContextRecord);
 
-                if (validation)
+                if (failMsg == null)
                     await App.Navigation.NavigateMasterAsync(new FormRender(page));
                 else
-                    await App.Navigation.NavigateMasterAsync(new Redirect(form.MessageOnFailed));
+                    await App.Navigation.NavigateMasterAsync(new Redirect(failMsg));
             }
-            IsBusy = false;
+            msgLoader.IsVisible = false;
+            IsTapped = false;
         }
 
         protected override List<DbParameter> GetFilterParameters()

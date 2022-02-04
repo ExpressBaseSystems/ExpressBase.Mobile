@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.CustomControls;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
@@ -67,10 +68,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command SaveCommand => new Command(async () =>
         {
-            if (IsTapped)
+            if (IsTapped || EbPageHelper.IsShortTap())
                 return;
             IsTapped = true;
             MsgLoader.IsVisible = true;
+            MsgLoader.Message = "Saving record...";
             await FormSubmitClicked(false);
             MsgLoader.IsVisible = false;
             IsTapped = false;
@@ -78,10 +80,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command PrintCommand => new Command(async () =>
         {
-            if (IsTapped)
+            if (IsTapped || EbPageHelper.IsShortTap())
                 return;
             IsTapped = true;
             MsgLoader.IsVisible = true;
+            MsgLoader.Message = "Saving record...";
             if (this.RowId > 0 || this.Form.RenderAsFilterDialog)
             {
                 this.Form.NetworkType = this.NetworkType;//
@@ -168,10 +171,33 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             try
             {
+                bool pullAfter = false;
+
+                if (this.Form.AutoSyncOnLoad && this.NetworkType == NetworkMode.Online &&
+                    !(Print || this.Form.RenderAsFilterDialog))
+                {
+                    pullAfter = true;
+                    App.Settings.SyncInfo.PullSuccess = false;
+                    await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, App.Settings.SyncInfo);
+                }
+
                 FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
 
                 if (response.Status && Print && !this.Form.RenderAsFilterDialog)
+                {
                     await this.Form.Print(response.PushResponse.RowId);
+                }
+
+                if (response.Status && pullAfter)
+                {
+                    MsgLoader.Message = "Fetching data from server...";
+                    SyncResponse resp = await App.Settings.GetSolutionDataAsyncV2(MsgLoader);
+                    response.Status = resp.Status;
+                    if (response.Status)
+                        response.Message = "Saved successfully";
+                    else
+                        response.Message = resp.Message;
+                }
 
                 Device.BeginInvokeOnMainThread(async () =>
                 {

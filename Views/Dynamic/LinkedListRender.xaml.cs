@@ -19,6 +19,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
         {
             InitializeComponent();
             BindingContext = ViewModel = new LinkedListViewModel(page, context, row);
+            ViewModel.EbLayout = EbLayout;
 
             this.DrawContextHeader(row, context);
             EbLayout.ShowLoader();

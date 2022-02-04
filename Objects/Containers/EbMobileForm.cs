@@ -43,6 +43,8 @@ namespace ExpressBase.Mobile
 
         public bool RenderAsFilterDialog { set; get; }
 
+        public bool AutoSyncOnLoad { set; get; } = true;
+
         public List<EbCTCMapper> ContextToFormControlMap { set; get; }
 
         public string ContextOnlineData { set; get; }

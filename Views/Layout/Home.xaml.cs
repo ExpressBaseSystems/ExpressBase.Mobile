@@ -20,6 +20,7 @@ namespace ExpressBase.Mobile.Views
         {
             InitializeComponent();
             BindingContext = viewModel = new HomeViewModel();
+            viewModel.EbLayout = EbLayout;
             EbLayout.ShowLoader();
         }
 

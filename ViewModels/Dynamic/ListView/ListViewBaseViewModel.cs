@@ -24,6 +24,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public int DataCount { set; get; }
 
+        public EbCPLayout EbLayout { get; set; }
+
         private RowColletion datarows;
 
         public RowColletion DataRows
@@ -248,11 +250,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         protected async Task NavigateToLink(DynamicFrame item)
         {
-            if (IsTaped() || IsBusy)
+            if (IsTapped || EbPageHelper.IsShortTap())
                 return;
+            IsTapped = true;
             try
             {
                 IsBusy = true;
+                await Task.Delay(100);
                 if (Visualization.LinkExpr != null && !Visualization.LinkExpr.IsEmpty())
                 {
                     if (!EbListHelper.EvaluateLinkExpr(item.DataRow, Visualization.LinkExpr.GetCode()))
@@ -295,19 +299,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Console.WriteLine(ex.Message);
             }
             IsBusy = false;
-        }
-
-        public bool IsTaped()
-        {
-            if (IsTapped)
-                return true;
-            IsTapped = true;
-            Task task = Task.Run(async () =>
-            {
-                await Task.Delay(1000);
-                IsTapped = false;
-            });
-            return false;
+            IsTapped = false;
         }
 
         protected async Task FilterData(List<DbParameter> filters)
