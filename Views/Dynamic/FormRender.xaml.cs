@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.ViewModels.Dynamic;
@@ -104,6 +105,11 @@ namespace ExpressBase.Mobile.Views.Dynamic
                     SaveButton.IsEnabled = false;
                     App.Navigation.PopByRenderer(true);
                     Utils.Toast(msg);
+                }
+                if (viewModel.Mode == FormMode.EDIT)
+                {
+                    if (!EbPageHelper.HasEditPermission(App.Settings.CurrentUser, viewModel.Page.RefId))
+                        viewModel.IsEditButtonVisible = false;
                 }
             }
         }

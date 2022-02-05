@@ -311,6 +311,34 @@ namespace ExpressBase.Mobile.Helpers
             });
             return false;
         }
+
+        ///temp implementation
+        public static bool HasEditPermission(User UserObj, string RefId)
+        {
+            if (UserObj.Roles.Contains(SystemRoles.SolutionOwner.ToString()) ||
+                UserObj.Roles.Contains(SystemRoles.SolutionAdmin.ToString()) ||
+                UserObj.Roles.Contains(SystemRoles.SolutionPM.ToString()))
+                return true;
+
+            try
+            {
+                //Permission string format => 020-00-00982-02:5
+                string[] refidParts = RefId.Split('-');
+                string objType = refidParts[2].PadLeft(2, '0');
+                string objId = refidParts[3].PadLeft(5, '0');
+                string operation = "02";//Edit
+                string perm = objType + '-' + objId + '-' + operation;
+                string temp = UserObj.Permissions.Find(p => p.Contains(perm));
+                if (temp != null)
+                    return true;
+            }
+            catch (Exception e)
+            {
+                EbLog.Error(string.Format("Exception when checking user permission: {0}  RefId = {1}", e.Message, RefId));
+            }
+
+            return false;
+        }
     }
 
 }
