@@ -195,13 +195,12 @@ namespace ExpressBase.Mobile.Services
             LastSyncInfo syncInfo = App.Settings.SyncInfo;
             if (syncInfo == null)
                 syncInfo = new LastSyncInfo();
-            syncInfo.PullSuccess = false;
-            syncInfo.IsLoggedOut = false;
 
             if (syncInfo.LastSyncTs != DateTime.MinValue)
             {
                 metaDict.Add("last_sync_ts", syncInfo.LastSyncTs);
             }
+            metaDict.Add("draft_ids", GetErrorDraftIds());
             request.AddParameter("metadata", JsonConvert.SerializeObject(metaDict));
 
             EbMobileSolutionData solutionData = null;
@@ -211,6 +210,11 @@ namespace ExpressBase.Mobile.Services
                 if (response.IsSuccessful)
                 {
                     Device.BeginInvokeOnMainThread(() => { loader.Message = "Processing pulled data..."; });
+
+                    syncInfo.PullSuccess = false;
+                    syncInfo.IsLoggedOut = false;
+                    await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+
                     solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
 
                     if (!(solutionData.last_sync_ts > DateTime.Now.Subtract(new TimeSpan(0, 2, 0)) &&
@@ -223,7 +227,7 @@ namespace ExpressBase.Mobile.Services
                     {
                         List<AppData> oldAppData = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
                         MergeObjectsInSolutionData(solutionData, oldAppData);
-                        await ImportSolutionData(solutionData, true);
+                        await ImportSolutionData(solutionData);
                         Device.BeginInvokeOnMainThread(() => { loader.Message = "Importing latest document ids..."; });
                         if (await GetLatestAutoId(solutionData.Applications))
                         {
@@ -231,22 +235,87 @@ namespace ExpressBase.Mobile.Services
                             syncInfo.LastSyncTs = solutionData.last_sync_ts;
                             syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
                             syncInfo.PullSuccess = true;
+                            await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
                             EbLog.Info("[GetSolutionDataAsyncV2] api success");
                         }
+                        else
+                            resp.Message = "Failed to import latest doc ids";
                     }
                 }
                 else
                 {
                     //callback?.Invoke(response.ResponseStatus);
+                    resp.Message = "Pull failed. Try after sometime.";
                     EbLog.Info("[GetSolutionData] api failure, callback invoked");
                 }
             }
             catch (Exception ex)
             {
+                resp.Message = "Exception: " + ex.Message;
                 EbLog.Error("Error on [GetSolutionData] request" + ex.Message);
             }
-            await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
             return resp;
+        }
+
+        private string GetErrorDraftIds()
+        {
+            List<int> draft_ids = new List<int>();
+            int i;
+            try
+            {
+                var depT = new List<string>();
+                List<EbMobileForm> FormCollection = EbPageHelper.GetOfflineForms();
+
+                foreach (EbMobileForm Form in FormCollection)
+                {
+                    if (depT.Contains(Form.TableName)) continue;
+
+                    EbDataTable dt = Form.GetDraftIds();
+
+                    foreach (EbDataRow dr in dt.Rows)
+                    {
+                        i = Convert.ToInt32(dr[0]);
+                        if (!draft_ids.Contains(i))
+                            draft_ids.Add(i);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("GetErrorDraftIds: " + ex.Message);
+            }
+
+            return JsonConvert.SerializeObject(draft_ids);
+        }
+
+        private void UpdateErrorDraftIds(List<int> DraftIds)
+        {
+            try
+            {
+                List<string> depT = new List<string>();
+                int i;
+                List<EbMobileForm> FormCollection = EbPageHelper.GetOfflineForms();
+
+                foreach (EbMobileForm Form in FormCollection)
+                {
+                    if (depT.Contains(Form.TableName)) continue;
+
+                    EbDataTable dt = Form.GetDraftIds();
+
+                    foreach (EbDataRow dr in dt.Rows)
+                    {
+                        i = Convert.ToInt32(dr[0]);
+                        if (!DraftIds.Contains(i))
+                        {
+                            Form.UpdateDraftAsSynced(Convert.ToInt32(dr[1]), i);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("UpdateErrorDraftIds: " + ex.Message);
+            }
         }
 
         private void MergeObjectsInSolutionData(EbMobileSolutionData New, List<AppData> OldApps)
@@ -316,6 +385,7 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
                 Dictionary<string, object> metaDict = new Dictionary<string, object>();
+                metaDict.Add("draft_ids", GetErrorDraftIds());
                 request.AddParameter("metadata", JsonConvert.SerializeObject(metaDict));
 
                 IRestResponse resp = await client.ExecuteAsync(request);
@@ -323,7 +393,7 @@ namespace ExpressBase.Mobile.Services
                 {
                     loader.Message = "Processing pulled data...";
                     solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(resp.Content);
-                    await ImportSolutionData(solutionData, true);
+                    await ImportSolutionData(solutionData);
                     loader.Message = "Importing latest document ids...";
                     if (await GetLatestAutoId(solutionData.Applications))
                     {
@@ -337,7 +407,7 @@ namespace ExpressBase.Mobile.Services
                         flag = true;
                     }
                     else
-                        Utils.Toast("Sync failed");
+                        Utils.Toast("Failed to import latest doc ids");
                 }
                 else
                     Utils.Toast(response.Message ?? "Sync failed");
@@ -353,16 +423,13 @@ namespace ExpressBase.Mobile.Services
         }
 
 
-        private async Task ImportSolutionData(EbMobileSolutionData solutionData, bool export)
+        private async Task ImportSolutionData(EbMobileSolutionData solutionData)
         {
             if (solutionData == null) return;
 
-            if (export)
-            {
-                EbDataSet importData = solutionData.GetOfflineData();
-
-                DBService.Current.ImportData(importData);
-            }
+            EbDataSet importData = solutionData.GetOfflineData();
+            DBService.Current.ImportData(importData);
+            UpdateErrorDraftIds(solutionData.DraftIds);
 
             await Store.SetJSONAsync(AppConst.APP_COLLECTION, solutionData.Applications);
             await SetLocationInfo(solutionData.Locations);

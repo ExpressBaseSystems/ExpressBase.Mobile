@@ -32,6 +32,8 @@ namespace ExpressBase.Mobile.Models
 
         public Dictionary<int, byte[]> Images { get; set; }
 
+        public List<int> DraftIds { get; set; }
+
         public EbDataSet GetOfflineData()
         {
             EbDataSet ds = new EbDataSet();

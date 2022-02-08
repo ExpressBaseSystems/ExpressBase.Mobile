@@ -44,6 +44,8 @@ namespace ExpressBase.Mobile.Services
                         if (loader != null)
                             Device.BeginInvokeOnMainThread(() => { loader.Message = string.Format(msg, i + 1); });
 
+                        Form.UpdateRetryCount(SourceData.Rows[i]);
+
                         PushResponse resp = await SendRecord(webdata, Form, SourceData, SourceData.Rows[i], i);
 
                         if (resp.RowAffected <= 0)
@@ -54,7 +56,7 @@ namespace ExpressBase.Mobile.Services
                         }
                         else
                         {
-                            Form.FlagLocalRow(resp, resp.LocalRowId);
+                            Form.FlagLocalRow(resp);
                             if (DependencyForm != null)//// error submission must be consider [flow pending...]
                                 await PushDependencyData(webdata, Form, DependencyForm, resp.RowId, resp.LocalRowId);
                         }
@@ -194,7 +196,7 @@ namespace ExpressBase.Mobile.Services
                         PushResponse resp = await SendRecord(webdata, dependencyForm, dt, dt.Rows[i], i);
                         if (resp.RowAffected <= 0)
                             continue;
-                        dependencyForm.FlagLocalRow(resp, resp.LocalRowId);
+                        dependencyForm.FlagLocalRow(resp);
                     }
                 }
             }

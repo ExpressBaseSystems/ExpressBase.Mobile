@@ -137,4 +137,11 @@ namespace ExpressBase.Mobile.Enums
         Approval = 1,
         Meeting = 2
     }
+
+    public enum DataSyncStatus
+    {
+        NotSynced,
+        Synced,
+        Error
+    }
 }

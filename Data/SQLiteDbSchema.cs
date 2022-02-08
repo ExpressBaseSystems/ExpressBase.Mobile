@@ -70,6 +70,7 @@ namespace ExpressBase.Mobile.Data
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_device_id", ColumnType = "TEXT" });
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_appversion", ColumnType = "TEXT" });
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_synced", ColumnType = "INT DEFAULT 0 NOT NULL" });//only in mobile
+            this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_retry_count", ColumnType = "INT DEFAULT 0 NOT NULL" });
             this.Columns.Add(new SQLiteColumSchema { ColumnName = "eb_syncrecord_id", ColumnType = "INT" });
         }
     }

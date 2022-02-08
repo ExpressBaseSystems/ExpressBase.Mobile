@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
+using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
@@ -75,7 +76,7 @@ namespace ExpressBase.Mobile
 
         public string GetQuery()
         {
-            List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_loc_id", "id" };
+            List<string> colums = new List<string> { "eb_device_id", "eb_appversion", "eb_created_at_device", "eb_retry_count", "eb_loc_id", "id" };
 
             if (ControlDictionary == null || !ControlDictionary.Any())
                 ControlDictionary = ChildControls.ToControlDictionary();
@@ -105,6 +106,49 @@ namespace ExpressBase.Mobile
             return dt;
         }
 
+        public EbDataTable GetDraftIds()
+        {
+            EbDataTable dt;
+            try
+            {
+                dt = App.DataDB.DoQuery($"SELECT eb_syncrecord_id, id FROM {this.TableName} WHERE eb_synced = {(int)DataSyncStatus.Error}");
+            }
+            catch (Exception ex)
+            {
+                dt = new EbDataTable();
+                EbLog.Error("GetDraftIds" + ex.Message);
+            }
+            return dt;
+        }
+
+        public void UpdateDraftAsSynced(int id, int draftId)
+        {
+            try
+            {
+                App.DataDB.DoNonQuery($"UPDATE {this.TableName} SET eb_synced = {(int)DataSyncStatus.Synced} WHERE id = {id} AND eb_syncrecord_id = {draftId} AND eb_synced = {(int)DataSyncStatus.Error}");
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("UpdateDraftAsSynced: " + ex.Message);
+            }
+        }
+
+        public void UpdateRetryCount(EbDataRow DataRow)
+        {
+            try
+            {
+                int localid = Convert.ToInt32(DataRow["id"]);
+                int retry = Convert.ToInt32(DataRow["eb_retry_count"]);
+                int status = App.DataDB.DoNonQuery($"UPDATE {this.TableName} SET eb_retry_count = {retry + 1} WHERE id = {localid}");
+                if (status > 0 && retry > 1)
+                    EbLog.Info($"Rety count of {this.TableName}({localid}) updated: {retry + 1}");
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Rety count increment failed: " + ex.Message);
+            }
+        }
+
         public string GetDeleteQuery()
         {
             string query = string.Empty;
@@ -114,10 +158,10 @@ namespace ExpressBase.Mobile
             foreach (var pair in ControlDictionary)
             {
                 if (pair.Value is ILinesEnabled grid)
-                    query += $"DELETE FROM {grid.TableName} WHERE {this.TableName}_id = (SELECT id FROM {this.TableName} WHERE eb_created_at_device < @date AND eb_synced <> 0);";
+                    query += $"DELETE FROM {grid.TableName} WHERE {this.TableName}_id = (SELECT id FROM {this.TableName} WHERE eb_created_at_device < @date AND eb_synced <> {(int)DataSyncStatus.NotSynced});";
             }
 
-            return query + $"DELETE FROM {this.TableName} WHERE eb_created_at_device < @date AND eb_synced <> 0; ";
+            return query + $"DELETE FROM {this.TableName} WHERE eb_created_at_device < @date AND eb_synced <> {(int)DataSyncStatus.NotSynced}; ";
         }
 
         public async Task<FormSaveResponse> Save(int rowId, string pageRefId)
@@ -470,7 +514,7 @@ namespace ExpressBase.Mobile
             }
         }
 
-        public void FlagLocalRow(PushResponse response, int rowId)
+        public void FlagLocalRow(PushResponse response)
         {
             try
             {
@@ -478,9 +522,10 @@ namespace ExpressBase.Mobile
                 {
                     DbParameter[] parameter = new DbParameter[]
                     {
-                        new DbParameter{ParameterName="@rowid",Value = rowId},
+                        new DbParameter{ParameterName="@rowid",Value = response.LocalRowId},
                         new DbParameter{ParameterName="@cloudrowid",Value = response.RowId},
-                        new DbParameter{ParameterName="@eb_synced",Value = response.RowId > 0 ? 1 : 2}
+                        new DbParameter{ParameterName="@eb_synced",Value = response.RowAffected == 1000 ? (int)DataSyncStatus.Error : (int)DataSyncStatus.Synced}
+                        //1000 -> inseted in error bin and response.RowId is eb_form_drafts_id 
                     };
                     int rowAffected = App.DataDB.DoNonQuery(string.Format(StaticQueries.FLAG_LOCALROW_SYNCED, this.TableName), parameter);
                 }
