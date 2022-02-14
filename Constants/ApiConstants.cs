@@ -32,6 +32,6 @@
         public const string RESEND_OTP = "api/resend_otp";
 
         public const int TIMEOUT_STD = 10000;
-        public const int TIMEOUT_IMPORT = 15000;
+        public const int TIMEOUT_IMPORT = 30000;
     }
 }

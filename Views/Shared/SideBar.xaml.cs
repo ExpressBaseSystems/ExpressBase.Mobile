@@ -71,8 +71,12 @@ namespace ExpressBase.Mobile.Views.Shared
             await App.Navigation.NavigateMasterAsync(new Home());
         }
 
-        private void SyncDataClicked(object sender, EventArgs e)
+        private async void SyncDataClicked(object sender, EventArgs e)
         {
+            if (App.Settings.SyncInProgress)
+                return;
+            App.Settings.SyncInProgress = true;
+
             if (!Utils.HasInternet)
             {
                 Utils.Alert_NoInternet();
@@ -80,9 +84,11 @@ namespace ExpressBase.Mobile.Views.Shared
             }
 
             if (App.RootMaster.Detail is NavigationPage nav && nav.RootPage is Home hom)
-                hom.SyncDataClicked();
+                await hom.SyncDataClicked();
             else
                 Utils.Toast("Page not found!");
+
+            App.Settings.SyncInProgress = false;
         }
     }
 }

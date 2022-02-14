@@ -4,6 +4,7 @@ using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
 using ExpressBase.Mobile.Views.Shared;
 using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -64,7 +65,7 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        public void SyncDataClicked() => viewModel.SyncData(EbLayout.GetMessageLoader());
+        public async Task SyncDataClicked() => await viewModel.SyncData(EbLayout.GetMessageLoader());
 
         public override bool CanRefresh() => viewModel.RefreshOnAppearing;
 

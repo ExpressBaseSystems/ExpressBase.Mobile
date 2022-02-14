@@ -157,7 +157,7 @@ namespace ExpressBase.Mobile.ViewModels
             CreateFormContainersTables();
         }
 
-        public async void SyncData(Loader loader)
+        public async Task SyncData(Loader loader)
         {
             try
             {
@@ -178,6 +178,8 @@ namespace ExpressBase.Mobile.ViewModels
                     loader.Message = "Sync started...";
                 });
 
+                EbLog.Info("Sync started...");
+
                 SyncResponse response = await service.PushDataToCloud(loader);
 
                 Device.BeginInvokeOnMainThread(() =>
@@ -189,10 +191,13 @@ namespace ExpressBase.Mobile.ViewModels
                     loader.Message += "Fetching data from server...";
                 });
 
+                EbLog.Info("Fetching data from server...");
+
                 response = await App.Settings.GetSolutionDataAsyncV2(loader);
                 if (response.Status)
                 {
                     Utils.Toast("Sync completed");
+                    EbLog.Info("Sync completed");
 
                     App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
                     App.Settings.WebObjects = App.Settings.CurrentApplication.WebObjects;
@@ -204,7 +209,10 @@ namespace ExpressBase.Mobile.ViewModels
                     LogApplicationInfo();
                 }
                 else
+                {
                     Utils.Toast(response.Message ?? "Sync failed");
+                    EbLog.Warning(response.Message ?? "Sync failed");
+                }
             }
             catch (Exception ex)
             {

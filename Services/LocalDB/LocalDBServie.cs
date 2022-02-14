@@ -21,10 +21,9 @@ namespace ExpressBase.Mobile.Services
             try
             {
                 List<EbMobileForm> FormCollection = EbPageHelper.GetOfflineForms();
-
                 WebformData webdata = new WebformData();
-
                 var depT = new List<string>();
+                int localid;
 
                 foreach (EbMobileForm Form in FormCollection)
                 {
@@ -43,6 +42,9 @@ namespace ExpressBase.Mobile.Services
                     {
                         if (loader != null)
                             Device.BeginInvokeOnMainThread(() => { loader.Message = string.Format(msg, i + 1); });
+
+                        localid = Convert.ToInt32(SourceData.Rows[i]["id"]);
+                        EbLog.Info(string.Format(msg, i + 1) + "; Local Id: " + localid);
 
                         Form.UpdateRetryCount(SourceData.Rows[i]);
 

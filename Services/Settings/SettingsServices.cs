@@ -26,6 +26,8 @@ namespace ExpressBase.Mobile.Services
 
         public bool IsFirstRun { set; get; }
 
+        public bool SyncInProgress { set; get; }
+
         public SolutionInfo CurrentSolution { set; get; }
 
         public User CurrentUser { set; get; }
@@ -229,6 +231,7 @@ namespace ExpressBase.Mobile.Services
                         MergeObjectsInSolutionData(solutionData, oldAppData);
                         await ImportSolutionData(solutionData);
                         Device.BeginInvokeOnMainThread(() => { loader.Message = "Importing latest document ids..."; });
+                        EbLog.Info("Importing latest document ids...");
                         if (await GetLatestAutoId(solutionData.Applications))
                         {
                             resp.Status = true;
@@ -359,12 +362,19 @@ namespace ExpressBase.Mobile.Services
 
         public async Task<EbMobileSolutionData> GetSolutionDataAsync(Loader loader)
         {
+            if (App.Settings.SyncInProgress)
+            {
+                EbLog.Info("Sync in progress...");
+                return null;
+            }
+            App.Settings.SyncInProgress = true;
             EbLog.BackupLogFiles();
             EbMobileSolutionData solutionData = null;
             bool flag = false;
             try
             {
                 loader.Message = "Sync started...";
+                EbLog.Info("Sync started...");
 
                 LocalDBServie service = new LocalDBServie();
                 SyncResponse response = await service.PushDataToCloud(loader);
@@ -375,6 +385,7 @@ namespace ExpressBase.Mobile.Services
                     loader.Message = response.Message + " \n";
 
                 loader.Message += "Fetching data from server...";
+                EbLog.Info("Fetching data from server...");
 
                 RestClient client = new RestClient(App.Settings.RootUrl)
                 {
@@ -392,17 +403,25 @@ namespace ExpressBase.Mobile.Services
                 if (resp.IsSuccessful)
                 {
                     loader.Message = "Processing pulled data...";
+
+                    LastSyncInfo syncInfo = App.Settings.SyncInfo;
+                    if (syncInfo == null)
+                        syncInfo = new LastSyncInfo();
+                    syncInfo.PullSuccess = false;
+                    syncInfo.IsLoggedOut = false;
+                    syncInfo.SolnId = App.Settings.Sid;
+                    await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+
                     solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(resp.Content);
                     await ImportSolutionData(solutionData);
                     loader.Message = "Importing latest document ids...";
+                    EbLog.Info("Importing latest document ids...");
                     if (await GetLatestAutoId(solutionData.Applications))
                     {
-                        LastSyncInfo syncInfo = App.Settings.SyncInfo;
                         syncInfo.PullSuccess = true;
                         syncInfo.LastSyncTs = solutionData.last_sync_ts;
                         syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
                         syncInfo.IsLoggedOut = false;
-                        syncInfo.SolnId = App.Settings.Sid;
                         await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
                         flag = true;
                     }
@@ -410,7 +429,10 @@ namespace ExpressBase.Mobile.Services
                         Utils.Toast("Failed to import latest doc ids");
                 }
                 else
+                {
                     Utils.Toast(response.Message ?? "Sync failed");
+                    EbLog.Warning(response.Message ?? "Sync failed");
+                }
 
             }
             catch (Exception ex)
@@ -419,6 +441,7 @@ namespace ExpressBase.Mobile.Services
                 Utils.Toast(ex.Message);
             }
             loader.IsVisible = false;
+            App.Settings.SyncInProgress = false;
             return flag ? solutionData : null;
         }
 
@@ -488,7 +511,7 @@ namespace ExpressBase.Mobile.Services
                     RestRequest request = new RestRequest(ApiConstants.PULL_LATEST_AUTOID, Method.POST);
                     RestClient client = new RestClient(App.Settings.RootUrl)
                     {
-                        Timeout = 10000
+                        Timeout = ApiConstants.TIMEOUT_IMPORT
                     };
                     request.AddParameter("data", JsonConvert.SerializeObject(autoIdData));
                     request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
@@ -500,8 +523,11 @@ namespace ExpressBase.Mobile.Services
                         EbMobileAutoIdDataResponse resp = JsonConvert.DeserializeObject<EbMobileAutoIdDataResponse>(response.Content);
                         ds.Tables.Add(resp.OfflineData);
                         DBService.Current.ImportData(ds);
+                        EbLog.Info("GetLatestAutoId success");
                         return true;
                     }
+                    else
+                        EbLog.Warning("GetLatestAutoId failed");
                 }
             }
             catch (Exception ex)

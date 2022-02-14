@@ -194,7 +194,17 @@ namespace ExpressBase.Mobile.Helpers
             if (failMsg == null && form.AutoSyncOnLoad && !form.RenderAsFilterDialog)
             {
                 LocalDBServie service = new LocalDBServie();
-                failMsg = await service.PushData(loader);
+                if (!App.Settings.SyncInProgress)
+                {
+                    App.Settings.SyncInProgress = true;
+                    failMsg = await service.PushData(loader);
+                    App.Settings.SyncInProgress = false;
+                }
+                else
+                {
+                    failMsg = "Internal error. (SyncInProgress is true)";
+                    EbLog.Info("ValidateFormRendering -> SyncInProgress is true");
+                }
             }
 
             return failMsg;
