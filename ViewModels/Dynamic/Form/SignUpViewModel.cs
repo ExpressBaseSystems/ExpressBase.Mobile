@@ -64,8 +64,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             Device.BeginInvokeOnMainThread(() => IsBusy = show);
         }
 
-        protected override async Task Submit(bool Print)
+        protected override async Task<bool> Submit(bool Print)
         {
+            bool success = false;
             Loading(true);
 
             try
@@ -85,13 +86,17 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     if (createdUser.VerificationRequired)
                     {
                         Device.BeginInvokeOnMainThread(() => OTPWindowVisibility = true);
+                        success = true;
                     }
                     else
                     {
                         ApiAuthResponse authResponse = await identityService.AuthenticateSSOAsync(createdUser.UserName, createdUser.AuthId, createdUser.Token);
 
                         if (authResponse != null && authResponse.IsValid)
+                        {
                             await AfterAuthenticationSuccess(authResponse, createdUser);
+                            success = true;
+                        }
                         else
                         {
                             EbLog.Error("sso authentication failed [auth-response] null");
@@ -110,6 +115,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 Utils.Toast(ex.Message);
             }
             Loading(false);
+            return success;
         }
 
         private async Task AfterAuthenticationSuccess(ApiAuthResponse resp, EbSignUpUserInfo userInfo)

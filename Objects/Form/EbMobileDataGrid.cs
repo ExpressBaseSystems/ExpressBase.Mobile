@@ -41,6 +41,8 @@ namespace ExpressBase.Mobile
 
         private bool isTaped { get; set; }
 
+        public bool IsDgViewOpen { get; set; }
+
         public DataGridRowHelper RowHelper { get; set; }
 
         public override View Draw(FormMode mode, NetworkMode network)

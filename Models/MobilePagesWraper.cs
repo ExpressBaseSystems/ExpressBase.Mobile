@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.Models
         public string RefId { set; get; }
 
         [JsonIgnore]
-        public bool IsHidden => page.HideFromMenu;
+        public bool IsHidden => page?.HideFromMenu == true;
 
         [JsonIgnore]
         public string Category => page?.Category;

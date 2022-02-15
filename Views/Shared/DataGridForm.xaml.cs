@@ -100,6 +100,7 @@ namespace ExpressBase.Mobile.Views.Shared
             ResetControls();
             EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
             await App.Navigation.PopMasterModalAsync(true);
+            this.dataGrid.IsDgViewOpen = false;
             isTapped = false;
         }
 
@@ -120,7 +121,14 @@ namespace ExpressBase.Mobile.Views.Shared
             isTapped = true;
             ResetControls();
             await App.Navigation.PopMasterModalAsync(true);
+            this.dataGrid.IsDgViewOpen = false;
             isTapped = false;
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            OnBackButtonClicked(null, null);
+            return true;
         }
 
         protected void InitDefaultValueExpressions()

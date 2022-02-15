@@ -196,8 +196,9 @@ namespace ExpressBase.Mobile
             return response;
         }
 
-        public async Task Print(int rowId)
+        public async Task<bool> Print(int rowId)
         {
+            bool success = false;
             try
             {
                 if (this.PrintDocs?.Count > 0)
@@ -236,7 +237,7 @@ namespace ExpressBase.Mobile
                         if (!Utils.IsNetworkReady(this.NetworkType))
                         {
                             Utils.Alert_NoInternet();
-                            return;
+                            return false;
                         }
                         r = await PdfService.GetPdfOnline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
                     }
@@ -261,13 +262,16 @@ namespace ExpressBase.Mobile
                                 File = new ReadOnlyFile(path)
                             });
                         }
+                        success = true;
                     }
                 }
             }
             catch (Exception ex)
             {
+                Utils.Toast("Error: " + ex.Message);
                 EbLog.Error("Error in [EbMobileForm.Print] " + ex.Message + " " + ex.StackTrace);
             }
+            return success;
         }
 
         private async Task<MobileFormData> GetFormData(int RowId)

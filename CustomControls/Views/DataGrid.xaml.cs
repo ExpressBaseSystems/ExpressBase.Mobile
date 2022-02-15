@@ -67,9 +67,10 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         private async void AddRowButtonClicked(object sender, EventArgs e)
         {
-            if (isTapped)
+            if (isTapped || dataGrid.IsDgViewOpen)
                 return;
             isTapped = true;
+            dataGrid.IsDgViewOpen = true;
             DataGridForm gridview = new DataGridForm(dataGrid);
             gridview.OnInserted += (name) =>
             {
@@ -180,9 +181,10 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         private async void OpenGridFormOnEdit(object sender, EventArgs e)
         {
-            if (isTapped)
+            if (isTapped || dataGrid.IsDgViewOpen)
                 return;
             isTapped = true;
+            dataGrid.IsDgViewOpen = true;
             string classId = (sender as DynamicFrame).ClassId;
 
             DataGridForm gridview = new DataGridForm(dataGrid, dataDictionary[classId], classId);

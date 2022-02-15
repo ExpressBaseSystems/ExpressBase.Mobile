@@ -259,9 +259,9 @@ namespace ExpressBase.Mobile
         public override void Reset()
         {
             if (RenderType == NumericBoxTypes.ButtonType)
-                XValueBox.ClearValue(EbXTextBox.TextProperty);
+                XValueBox.Text = GetDisplayValue(0);
             else
-                (this.XControl as EbXNumericTextBox).ClearValue(EbXNumericTextBox.TextProperty);
+                (this.XControl as EbXNumericTextBox).Text = GetDisplayValue(0);
         }
 
         public override bool Validate()

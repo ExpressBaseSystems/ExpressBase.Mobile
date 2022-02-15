@@ -69,31 +69,39 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         public Command SaveCommand => new Command(async () =>
         {
             if (IsTapped || EbPageHelper.IsShortTap())
+            {
+                EbLog.Warning($"More than 1 click in save: ({IsTapped}, {EbPageHelper.IsShortTap()})");
                 return;
+            }
             IsTapped = true;
             MsgLoader.IsVisible = true;
             MsgLoader.Message = "Saving record...";
-            await FormSubmitClicked(false);
+            IsTapped = await FormSubmitClicked(false);
             MsgLoader.IsVisible = false;
-            IsTapped = false;
         });
 
         public Command PrintCommand => new Command(async () =>
         {
             if (IsTapped || EbPageHelper.IsShortTap())
+            {
+                EbLog.Warning($"More than 1 click in print: ({IsTapped}, {EbPageHelper.IsShortTap()})");
                 return;
+            }
             IsTapped = true;
             MsgLoader.IsVisible = true;
-            MsgLoader.Message = "Saving record...";
             if (this.RowId > 0 || this.Form.RenderAsFilterDialog)
             {
+                MsgLoader.Message = "Loading...";
                 this.Form.NetworkType = this.NetworkType;//
                 await this.Form.Print(this.RowId);
+                IsTapped = false;
             }
             else
-                await FormSubmitClicked(true);
+            {
+                MsgLoader.Message = "Saving record...";
+                IsTapped = await FormSubmitClicked(true);
+            }
             MsgLoader.IsVisible = false;
-            IsTapped = false;
         });
 
         public FormRenderViewModel() { }
@@ -140,14 +148,15 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             InitOnLoadExpressions();
         }
 
-        public async Task FormSubmitClicked(bool Print)
+        public async Task<bool> FormSubmitClicked(bool Print)
         {
+            bool success = false;
             Stopwatch sw = new Stopwatch();
             sw.Start();
             if (!Utils.IsNetworkReady(this.NetworkType))
             {
                 Utils.Alert_NoInternet();
-                return;
+                return false;
             }
 
             string invalidMsg = EbFormHelper.Validate();
@@ -155,7 +164,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 EbLog.Info($"Form '{this.PageName}' validation success ready to submit");
                 this.Form.NetworkType = this.NetworkType;
-                await Submit(Print);
+                success = await Submit(Print);
             }
             else
             {
@@ -165,10 +174,12 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             sw.Stop();
             if (invalidMsg == null && sw.ElapsedMilliseconds < 1500)
                 await Task.Delay(1500 - (int)sw.ElapsedMilliseconds);
+            return success;
         }
 
-        protected virtual async Task Submit(bool Print)
+        protected virtual async Task<bool> Submit(bool Print)
         {
+            bool success = false;
             try
             {
                 bool pullAfter = false;
@@ -182,6 +193,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 }
 
                 FormSaveResponse response = await this.Form.Save(this.RowId, this.Page.RefId);
+                success = response.Status;
 
                 if (response.Status && Print && !this.Form.RenderAsFilterDialog)
                 {
@@ -225,6 +237,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 EbLog.Info($"Submit() raised some error");
                 EbLog.Error(ex.Message);
             }
+            return success;
         }
 
         protected void InitDefaultValueExpressions()
