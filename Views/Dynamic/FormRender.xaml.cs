@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.CustomControls;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Helpers;
@@ -128,5 +129,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 ImageFullScreen.SetSource(source).Show();
             }
         }
+
+        public EbCPLayout GetCurrentLayout() => EbLayout;
     }
 }

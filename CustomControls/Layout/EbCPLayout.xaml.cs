@@ -198,6 +198,13 @@ namespace ExpressBase.Mobile.CustomControls
             return MessageLoader;
         }
 
+        public void ShowMessage(string title, string message)
+        {
+            MessageDialog.Title = title;
+            MessageDialog.Message = message;
+            MessageDialog.Show();
+        }
+
         private void SecondaryToggleClicked(object sender, EventArgs e)
         {
             SecondaryToolbar.IsVisible = true;

@@ -200,10 +200,13 @@ namespace ExpressBase.Mobile.Services
 
             if (syncInfo.LastSyncTs != DateTime.MinValue)
             {
-                metaDict.Add("last_sync_ts", syncInfo.LastSyncTs);
+                metaDict.Add(AppConst.last_sync_ts, syncInfo.LastSyncTs);
             }
-            metaDict.Add("draft_ids", GetErrorDraftIds());
-            request.AddParameter("metadata", JsonConvert.SerializeObject(metaDict));
+            metaDict.Add(AppConst.draft_ids, GetErrorDraftIds());
+            INativeHelper helper = DependencyService.Get<INativeHelper>();
+            metaDict.Add(AppConst.app_version, helper.AppVersion);
+            metaDict.Add(AppConst.device_id, helper.DeviceId);
+            request.AddParameter(AppConst.metadata, JsonConvert.SerializeObject(metaDict));
 
             EbMobileSolutionData solutionData = null;
             try
@@ -213,19 +216,11 @@ namespace ExpressBase.Mobile.Services
                 {
                     Device.BeginInvokeOnMainThread(() => { loader.Message = "Processing pulled data..."; });
 
-                    syncInfo.PullSuccess = false;
-                    syncInfo.IsLoggedOut = false;
-                    await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
-
                     solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
 
-                    if (!(solutionData.last_sync_ts > DateTime.Now.Subtract(new TimeSpan(0, 2, 0)) &&
-                        solutionData.last_sync_ts < DateTime.Now.Add(new TimeSpan(0, 2, 0))))
-                    {
-                        resp.Message = "Device date time is incorrect";
-                        EbLog.Warning("Device date time is incorrect");
-                    }
-                    else
+                    (bool incorrectDate, bool maintenanceMode) = await UpdateLastSyncInfo(solutionData, syncInfo, helper.AppVersion);
+
+                    if (!maintenanceMode)
                     {
                         List<AppData> oldAppData = Store.GetJSON<List<AppData>>(AppConst.APP_COLLECTION);
                         MergeObjectsInSolutionData(solutionData, oldAppData);
@@ -234,15 +229,23 @@ namespace ExpressBase.Mobile.Services
                         EbLog.Info("Importing latest document ids...");
                         if (await GetLatestAutoId(solutionData.Applications))
                         {
+                            if (!incorrectDate)
+                            {
+                                syncInfo.LastSyncTs = solutionData.last_sync_ts;
+                                syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
+                            }
                             resp.Status = true;
-                            syncInfo.LastSyncTs = solutionData.last_sync_ts;
-                            syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
                             syncInfo.PullSuccess = true;
                             await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
                             EbLog.Info("[GetSolutionDataAsyncV2] api success");
                         }
                         else
                             resp.Message = "Failed to import latest doc ids";
+                    }
+                    else
+                    {
+                        syncInfo.PullSuccess = true;
+                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
                     }
                 }
                 else
@@ -258,6 +261,63 @@ namespace ExpressBase.Mobile.Services
                 EbLog.Error("Error on [GetSolutionData] request" + ex.Message);
             }
             return resp;
+        }
+
+        private async Task<(bool, bool)> UpdateLastSyncInfo(EbMobileSolutionData solutionData, LastSyncInfo syncInfo, string appVersion)
+        {
+            string msg = null;
+            bool leaveLastSyncTsCheck = false, incorrectDate = false, maintenanceMode = false;
+            if (solutionData.MetaData != null)
+            {
+                if (solutionData.MetaData.TryGetValue(AppConst.maintenance_msg, out object val) && val != null)
+                {
+                    msg = val.ToString();
+                    maintenanceMode = true;
+                }
+                else if (solutionData.MetaData.TryGetValue(AppConst.leave_ts_check, out object val3) && bool.TryParse(val3.ToString(), out bool st) && st)
+                {
+                    EbLog.Warning("Last sync ts check avoided");
+                    leaveLastSyncTsCheck = true;
+                }
+
+                if (solutionData.MetaData.TryGetValue(AppConst.app_version, out object val4) && val4 != null)
+                    syncInfo.LatestAppVersion = val4.ToString();
+                else
+                    syncInfo.LatestAppVersion = null;
+            }
+            else
+                syncInfo.LatestAppVersion = null;
+
+            if (!(solutionData.last_sync_ts > DateTime.Now.Subtract(new TimeSpan(0, 2, 0)) &&
+                solutionData.last_sync_ts < DateTime.Now.Add(new TimeSpan(0, 3, 0))) && !leaveLastSyncTsCheck)
+            {
+                incorrectDate = true;
+                EbLog.Warning("Device date time is incorrect. Server time: " + solutionData.last_sync_ts);
+                if (msg == null)
+                    msg = "Device date time is incorrect";
+            }
+
+            if (msg == null && syncInfo.LatestAppVersion != null)
+            {
+                if (Version.Parse(syncInfo.LatestAppVersion).CompareTo(Version.Parse(appVersion)) > 0)
+                {
+                    msg = $"Latest app version {syncInfo.LatestAppVersion} is available. \nCurrent version: {appVersion}";
+                    syncInfo.AppUpdateLastNotifyTs = DateTime.Now;
+                }
+                else
+                    syncInfo.LatestAppVersion = null;
+            }
+
+            if (msg != null)
+                EbLog.Warning(msg);
+
+            syncInfo.InfoMsg = msg;
+            syncInfo.PullSuccess = false;
+            syncInfo.IsLoggedOut = false;
+            syncInfo.SolnId = App.Settings.Sid;
+            await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+
+            return (incorrectDate, maintenanceMode);
         }
 
         private string GetErrorDraftIds()
@@ -396,8 +456,11 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.BTOKEN, App.Settings.BToken);
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
                 Dictionary<string, object> metaDict = new Dictionary<string, object>();
-                metaDict.Add("draft_ids", GetErrorDraftIds());
-                request.AddParameter("metadata", JsonConvert.SerializeObject(metaDict));
+                metaDict.Add(AppConst.draft_ids, GetErrorDraftIds());
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                metaDict.Add(AppConst.app_version, helper.AppVersion);
+                metaDict.Add(AppConst.device_id, helper.DeviceId);
+                request.AddParameter(AppConst.metadata, JsonConvert.SerializeObject(metaDict));
 
                 IRestResponse resp = await client.ExecuteAsync(request);
                 if (resp.IsSuccessful)
@@ -407,33 +470,47 @@ namespace ExpressBase.Mobile.Services
                     LastSyncInfo syncInfo = App.Settings.SyncInfo;
                     if (syncInfo == null)
                         syncInfo = new LastSyncInfo();
-                    syncInfo.PullSuccess = false;
-                    syncInfo.IsLoggedOut = false;
-                    syncInfo.SolnId = App.Settings.Sid;
-                    await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
-
                     solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(resp.Content);
-                    await ImportSolutionData(solutionData);
-                    loader.Message = "Importing latest document ids...";
-                    EbLog.Info("Importing latest document ids...");
-                    if (await GetLatestAutoId(solutionData.Applications))
+
+                    (bool incorrectDate, bool maintenanceMode) = await UpdateLastSyncInfo(solutionData, syncInfo, helper.AppVersion);
+
+                    if (!maintenanceMode)
                     {
-                        syncInfo.PullSuccess = true;
-                        syncInfo.LastSyncTs = solutionData.last_sync_ts;
-                        syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
-                        syncInfo.IsLoggedOut = false;
-                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
-                        flag = true;
+                        await ImportSolutionData(solutionData);
+                        loader.Message = "Importing latest document ids...";
+                        EbLog.Info("Importing latest document ids...");
+                        if (await GetLatestAutoId(solutionData.Applications))
+                        {
+                            if (!incorrectDate)
+                            {
+                                syncInfo.LastSyncTs = solutionData.last_sync_ts;
+                                syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
+                            }
+                            else
+                            {
+                                Utils.Toast(syncInfo.InfoMsg);
+                                syncInfo.InfoMsg = null;
+                            }
+                            syncInfo.PullSuccess = true;
+                            await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+                            flag = true;
+                        }
+                        else
+                            Utils.Toast("Failed to import latest doc ids");
                     }
                     else
-                        Utils.Toast("Failed to import latest doc ids");
+                    {
+                        Utils.Toast(syncInfo.InfoMsg);
+                        syncInfo.InfoMsg = null;
+                        syncInfo.PullSuccess = true;
+                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
+                    }
                 }
                 else
                 {
                     Utils.Toast(response.Message ?? "Sync failed");
                     EbLog.Warning(response.Message ?? "Sync failed");
                 }
-
             }
             catch (Exception ex)
             {

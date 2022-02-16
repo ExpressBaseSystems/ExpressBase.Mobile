@@ -144,6 +144,14 @@
                          ConfirmClicked="LogoutConfirmClicked">
     </controls:ConfirmBox>
 
+    <controls:MessageBox x:Name="MessageDialog"
+                         Title="Message"
+                         Grid.Row="0"
+                         Grid.RowSpan="2"
+                         Grid.ColumnSpan="4"
+                         Message="">
+    </controls:MessageBox>
+
     <controls:LoaderIconed IsVisible="False"
                            Grid.Row="0"
                            Grid.RowSpan="2"

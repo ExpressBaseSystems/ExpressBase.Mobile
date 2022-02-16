@@ -34,6 +34,8 @@ namespace ExpressBase.Mobile.Models
 
         public List<int> DraftIds { get; set; }
 
+        public Dictionary<string, object> MetaData { get; set; }
+
         public EbDataSet GetOfflineData()
         {
             EbDataSet ds = new EbDataSet();
@@ -116,6 +118,12 @@ namespace ExpressBase.Mobile.Models
         public bool IsLoggedOut { get; set; }
 
         public string SolnId { get; set; }
+
+        public string InfoMsg { get; set; }
+
+        public string LatestAppVersion { get; set; }
+
+        public DateTime AppUpdateLastNotifyTs { get; set; }
     }
 
     public class EbStageInfo

@@ -64,7 +64,7 @@ namespace ExpressBase.Mobile.Views
             try
             {
                 File.WriteAllText($"{nativeHelper.NativeRoot}/{logPath}", string.Empty);
-                Utils.Toast("log file cleared :)");
+                Utils.Toast("Log file cleared :)");
             }
             catch (Exception ex)
             {

@@ -160,5 +160,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 ImageFullScreen.SetSource(source).Show();
             }
         }
+
+        public EbCPLayout GetCurrentLayout() => EbLayout;
     }
 }

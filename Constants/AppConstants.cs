@@ -43,6 +43,15 @@ namespace ExpressBase.Mobile.Constants
         public const string IMAGES_IN_PDF = "images_in_pdf";
 
         public const string MD5_PASSCODE = "md5_passcode";
+
+        //Metadata keys
+        public const string metadata = "metadata";
+        public const string last_sync_ts = "last_sync_ts";
+        public const string draft_ids = "draft_ids";
+        public const string app_version = "app_version";
+        public const string device_id = "device_id";
+        public const string maintenance_msg = "maintenance_msg";
+        public const string leave_ts_check = "leave_ts_check";
     }
 
     public static class RegexConstants

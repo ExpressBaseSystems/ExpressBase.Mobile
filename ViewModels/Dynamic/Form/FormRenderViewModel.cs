@@ -6,6 +6,8 @@ using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.ViewModels.BaseModels;
+using ExpressBase.Mobile.Views;
+using ExpressBase.Mobile.Views.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -226,7 +228,27 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                             await App.Navigation.PopMasterAsync(true);
                         }
                     }
-                    Utils.Toast(response.Message);
+
+                    if (App.Settings.SyncInfo.InfoMsg != null)
+                    {
+                        if (App.RootMaster.Detail is NavigationPage nav && nav.CurrentPage != null)
+                        {
+                            EbCPLayout layout = null;
+                            if (nav.CurrentPage is Home hom)
+                                layout = hom.GetCurrentLayout();
+                            else if (nav.CurrentPage is FormRender fom)
+                                layout = fom.GetCurrentLayout();
+                            else if (nav.CurrentPage is ListRender lis)
+                                layout = lis.GetCurrentLayout();
+                            if (layout != null)
+                                layout.ShowMessage("Message", App.Settings.SyncInfo.InfoMsg);
+                        }
+
+                        Utils.Toast("Saved successfully");
+                        App.Settings.SyncInfo.InfoMsg = null;
+                    }
+                    else
+                        Utils.Toast(response.Message);
 
                     EbLog.Info($"{this.PageName} save status '{response.Status}'");
                     EbLog.Info(response.Message);

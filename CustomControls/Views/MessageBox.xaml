@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.CustomControls.MessageBox"
+             IsVisible="False"
+             AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+             AbsoluteLayout.LayoutFlags="All">
+    <ContentView.Content>
+        <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <BoxView
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All"
+                BackgroundColor="#333333"
+                Opacity=".5"/>
+            <StackLayout 
+                Padding="15"
+                AbsoluteLayout.LayoutBounds="0, 0, 1, 1" 
+                AbsoluteLayout.LayoutFlags="All">
+                <Frame 
+                    x:Name="MessageBoxFrame"
+                    HasShadow="True"
+                    BackgroundColor="White"
+                    BorderColor="#fafafa"
+                    Padding="5"
+                    IsClippedToBounds="True"
+                    CornerRadius="6"
+                    VerticalOptions="CenterAndExpand">
+                    <Frame.Content>
+                        <Grid RowSpacing="0" Margin="-3" ColumnSpacing="1" BackgroundColor="#eeeeee">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <StackLayout Padding="15" Grid.Row="0" BackgroundColor="White">
+                                <Label 
+                                    x:Name="MessageTitle"
+                                    HorizontalTextAlignment="Center"
+                                    Text="Message"
+                                    FontFamily="{StaticResource Roboto-Regular}"
+                                    FontSize="18"
+                                    TextColor="#333"/>
+                                <Label
+                                    LineHeight="1.2"
+                                    FontFamily="{StaticResource Roboto-Light}"
+                                    Margin="0,20,0,20"
+                                    x:Name="MessageContent"
+                                    Grid.Row="0"
+                                    TextColor="#333333" 
+                                    VerticalOptions="Center" 
+                                    HorizontalTextAlignment="Center"
+                                    Text=""/>
+                            </StackLayout>
+                            <BoxView Grid.Row="1" Color="#eee" HeightRequest="1"/>                            
+                            <Button
+                                x:Name="OkButton"
+                                CornerRadius="0"
+                                Padding="0"
+                                Grid.Row="2"
+                                Text="Ok"
+                                BackgroundColor="White"
+                                TextColor="#0076ff"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="OkButton_Clicked"/>
+                        </Grid>
+                    </Frame.Content>
+                </Frame>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentView.Content>
+</ContentView>
