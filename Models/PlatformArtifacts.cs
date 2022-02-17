@@ -119,8 +119,6 @@ namespace ExpressBase.Mobile.Models
 
         public string SolnId { get; set; }
 
-        public string InfoMsg { get; set; }
-
         public string LatestAppVersion { get; set; }
 
         public DateTime AppUpdateLastNotifyTs { get; set; }

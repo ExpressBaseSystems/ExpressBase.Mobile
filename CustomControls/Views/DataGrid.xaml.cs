@@ -126,6 +126,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 Padding = new Thickness(5, 5, 0, 5)
             };
             stack.BackgroundColor = dataGrid.RowHelper.GetBackGroundColor(row);
+            dataGrid.RowHelper.SetFontFromExprEvalResult();
 
             DGDynamicFrame dynamicFrame = new DGDynamicFrame(row, dataGrid.DataLayout)
             {

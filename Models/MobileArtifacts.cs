@@ -329,6 +329,8 @@ namespace ExpressBase.Mobile.Models
 
         public EbMobileControl Control { set; get; }
 
+        public EbFont Font { set; get; }
+
         public MobileTableColumn() { }
 
         public MobileTableColumn(string name, EbDbTypes type, object value)
@@ -341,6 +343,34 @@ namespace ExpressBase.Mobile.Models
         public object getValue() //for script
         {
             return Value;
+        }
+
+        public void setColor(string hexCode)// for dg row color expression
+        {
+            if (Font == null)
+                Font = new EbFont();
+            Font.Color = hexCode;
+        }
+
+        public void toUpper()// for dg row color expression
+        {
+            if (Font == null)
+                Font = new EbFont();
+            Font.Caps = true;
+        }
+
+        public void toLower()// for dg row color expression
+        {
+            if (Font == null)
+                Font = new EbFont();
+            Font.Caps = false;
+        }
+
+        public void setFontSize(int size)// for dg row color expression
+        {
+            if (Font == null)
+                Font = new EbFont();
+            Font.Size = size;
         }
     }
 

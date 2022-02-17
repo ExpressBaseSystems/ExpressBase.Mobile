@@ -218,7 +218,8 @@ namespace ExpressBase.Mobile.Services
 
                     solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(response.Content);
 
-                    (bool incorrectDate, bool maintenanceMode) = await UpdateLastSyncInfo(solutionData, syncInfo, helper.AppVersion);
+                    (bool incorrectDate, bool maintenanceMode, string msg) = await UpdateLastSyncInfo(solutionData, syncInfo, helper.AppVersion);
+                    resp.Message = msg;
 
                     if (!maintenanceMode)
                     {
@@ -263,7 +264,7 @@ namespace ExpressBase.Mobile.Services
             return resp;
         }
 
-        private async Task<(bool, bool)> UpdateLastSyncInfo(EbMobileSolutionData solutionData, LastSyncInfo syncInfo, string appVersion)
+        private async Task<(bool, bool, string)> UpdateLastSyncInfo(EbMobileSolutionData solutionData, LastSyncInfo syncInfo, string appVersion)
         {
             string msg = null;
             bool leaveLastSyncTsCheck = false, incorrectDate = false, maintenanceMode = false;
@@ -311,13 +312,12 @@ namespace ExpressBase.Mobile.Services
             if (msg != null)
                 EbLog.Warning(msg);
 
-            syncInfo.InfoMsg = msg;
             syncInfo.PullSuccess = false;
             syncInfo.IsLoggedOut = false;
             syncInfo.SolnId = App.Settings.Sid;
             await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
 
-            return (incorrectDate, maintenanceMode);
+            return (incorrectDate, maintenanceMode, msg);
         }
 
         private string GetErrorDraftIds()
@@ -472,7 +472,7 @@ namespace ExpressBase.Mobile.Services
                         syncInfo = new LastSyncInfo();
                     solutionData = JsonConvert.DeserializeObject<EbMobileSolutionData>(resp.Content);
 
-                    (bool incorrectDate, bool maintenanceMode) = await UpdateLastSyncInfo(solutionData, syncInfo, helper.AppVersion);
+                    (bool incorrectDate, bool maintenanceMode, string msg) = await UpdateLastSyncInfo(solutionData, syncInfo, helper.AppVersion);
 
                     if (!maintenanceMode)
                     {
@@ -487,10 +487,8 @@ namespace ExpressBase.Mobile.Services
                                 syncInfo.LastOfflineSaveTs = solutionData.last_sync_ts;
                             }
                             else
-                            {
-                                Utils.Toast(syncInfo.InfoMsg);
-                                syncInfo.InfoMsg = null;
-                            }
+                                Utils.Toast(msg);
+
                             syncInfo.PullSuccess = true;
                             await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
                             flag = true;
@@ -500,8 +498,7 @@ namespace ExpressBase.Mobile.Services
                     }
                     else
                     {
-                        Utils.Toast(syncInfo.InfoMsg);
-                        syncInfo.InfoMsg = null;
+                        Utils.Toast(msg);
                         syncInfo.PullSuccess = true;
                         await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, syncInfo);
                     }

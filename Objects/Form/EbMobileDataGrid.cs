@@ -233,7 +233,11 @@ namespace ExpressBase.Mobile
 
         private readonly EbSciptEvaluator evaluator;
 
-        private Dictionary<string, MobileTableColumn> ColumnDictionary;
+        private Dictionary<string, MobileTableColumn> ColumnDictionary;//all ctrls
+
+        private Dictionary<string, EbMobileDataColumn> ColumnDictOriginal;//table columns
+
+        private Dictionary<string, EbFont> FontCopyDict;
 
         public DataGridRowHelper(EbMobileDataGrid dataGrid)
         {
@@ -244,6 +248,7 @@ namespace ExpressBase.Mobile
             {
                 string script = DataGrid.RowColorExpr.GetCode();
                 RowColorExprCode = GetComputedExpression(script);
+                InitColumnDictOriginal();
                 initEvaluator = true;
             }
             if (!string.IsNullOrWhiteSpace(DataGrid?.PersistRowOnlyIf?.Code))
@@ -269,6 +274,34 @@ namespace ExpressBase.Mobile
             }
         }
 
+        private void InitColumnDictOriginal()
+        {
+            ColumnDictOriginal = new Dictionary<string, EbMobileDataColumn>();
+            FontCopyDict = new Dictionary<string, EbFont>();
+
+            foreach (EbMobileTableCell cell in DataGrid.DataLayout.CellCollection)
+            {
+                foreach (EbMobileControl ctrl in cell.ControlCollection)
+                {
+                    if (ctrl is EbMobileDataColumn column)
+                    {
+                        ColumnDictOriginal.Add(column.ColumnName, column);
+                        if (column.Font == null)
+                            FontCopyDict.Add(column.ColumnName, null);
+                        else
+                        {
+                            FontCopyDict.Add(column.ColumnName, new EbFont()
+                            {
+                                Color = column.Font.Color,
+                                Caps = column.Font.Caps,
+                                Size = column.Font.Size
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
         public Color GetBackGroundColor(MobileTableRow row)
         {
             Color color = Color.White;
@@ -287,6 +320,27 @@ namespace ExpressBase.Mobile
                 }
             }
             return color;
+        }
+
+        public void SetFontFromExprEvalResult()
+        {
+            if (RowColorExprCode == null)
+                return;
+
+            foreach (KeyValuePair<string, EbMobileDataColumn> item in ColumnDictOriginal)
+            {
+                if (ColumnDictionary.TryGetValue(item.Key, out MobileTableColumn col))
+                {
+                    if (col.Font != null)
+                    {
+                        if (item.Value.Font == null)
+                            item.Value.Font = new EbFont();
+                        item.Value.Font.Color = col.Font.Color;
+                        item.Value.Font.Caps = col.Font.Caps;
+                        item.Value.Font.Size = col.Font.Size;
+                    }
+                }
+            }
         }
 
         public bool CanRowPersist(MobileTableRow row)
@@ -317,16 +371,29 @@ namespace ExpressBase.Mobile
         {
             foreach (MobileTableColumn Column in row.Columns)
             {
-                if (ColumnDictionary.ContainsKey(Column.Name))
+                if (ColumnDictionary.TryGetValue(Column.Name, out MobileTableColumn column))
                 {
                     if (Column.Type == EbDbTypes.Decimal)
                     {
                         decimal.TryParse(Column.Value?.ToString(), out decimal val);
-                        ColumnDictionary[Column.Name].Value = val;
+                        column.Value = val;
                     }
                     else
                     {
-                        ColumnDictionary[Column.Name].Value = Column.Value;
+                        column.Value = Column.Value;
+                    }
+                    if (RowColorExprCode != null && FontCopyDict.TryGetValue(Column.Name, out EbFont _font))
+                    {
+                        if (_font == null)
+                            column.Font = null;
+                        else
+                        {
+                            if (column.Font == null)
+                                column.Font = new EbFont();
+                            column.Font.Color = _font.Color;
+                            column.Font.Caps = _font.Caps;
+                            column.Font.Size = _font.Size;
+                        }
                     }
                 }
             }

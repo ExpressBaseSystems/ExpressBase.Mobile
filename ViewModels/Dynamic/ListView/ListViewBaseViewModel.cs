@@ -267,6 +267,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                             Utils.Toast(Visualization.LinkExprFailMsg);
                         EbLog.Info("[LinkExpr] evaluation blocked link navigation");
                         IsBusy = false;
+                        IsTapped = false;
                         return;
                     }
                 }
@@ -283,6 +284,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     {
                         Utils.Toast("Link page Mode is different.");
                         IsBusy = false;
+                        IsTapped = false;
                         return;
                     }
                     else

@@ -185,6 +185,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             try
             {
                 bool pullAfter = false;
+                string popupTitle = null, popupMsg = null;
 
                 if (this.Form.AutoSyncOnLoad && this.NetworkType == NetworkMode.Online &&
                     !(Print || this.Form.RenderAsFilterDialog))
@@ -206,11 +207,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     MsgLoader.Message = "Fetching data from server...";
                     SyncResponse resp = await App.Settings.GetSolutionDataAsyncV2(MsgLoader);
-                    response.Status = resp.Status;
-                    if (response.Status)
-                        response.Message = "Saved successfully";
-                    else
-                        response.Message = resp.Message;
+                    if (resp.Message != null)
+                    {
+                        popupTitle = resp.Status ? "Warning" : "Sync required";
+                        popupMsg = resp.Message;
+                    }
                 }
 
                 Device.BeginInvokeOnMainThread(async () =>
@@ -229,7 +230,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         }
                     }
 
-                    if (App.Settings.SyncInfo.InfoMsg != null)
+                    if (popupTitle != null)
                     {
                         if (App.RootMaster.Detail is NavigationPage nav && nav.CurrentPage != null)
                         {
@@ -241,14 +242,11 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                             else if (nav.CurrentPage is ListRender lis)
                                 layout = lis.GetCurrentLayout();
                             if (layout != null)
-                                layout.ShowMessage("Message", App.Settings.SyncInfo.InfoMsg);
+                                layout.ShowMessage(popupTitle, popupMsg);
                         }
-
-                        Utils.Toast("Saved successfully");
-                        App.Settings.SyncInfo.InfoMsg = null;
                     }
-                    else
-                        Utils.Toast(response.Message);
+
+                    Utils.Toast(response.Message);
 
                     EbLog.Info($"{this.PageName} save status '{response.Status}'");
                     EbLog.Info(response.Message);

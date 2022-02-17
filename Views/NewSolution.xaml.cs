@@ -22,6 +22,8 @@ namespace ExpressBase.Mobile.Views
 
         private readonly bool isMasterPage;
 
+        private string SoluUrl;
+
         public Dictionary<string, string> PageContent => App.Settings.Vendor.Content.NewSolution;
 
         public NewSolution(bool hasBackButton = false)
@@ -126,7 +128,6 @@ namespace ExpressBase.Mobile.Views
                 if (surl.Split(CharConstants.DOT).Length == 1)
                 {
                     surl += $".{domain}";
-                    SolutionName.Text = surl;
                 }
 
                 if (viewModel.IsSolutionExist(surl))
@@ -145,6 +146,7 @@ namespace ExpressBase.Mobile.Views
                     SolutionLogoPrompt.Source = ImageSource.FromStream(() => new MemoryStream(response.Logo));
                     SolutionLabel.Text = surl.Split(CharConstants.DOT)[0];
                     ShowSIDConfirmBox();
+                    SoluUrl = surl;
                 }
                 else
                 {
@@ -187,7 +189,7 @@ namespace ExpressBase.Mobile.Views
         {
             try
             {
-                await viewModel.AddSolution(SolutionName.Text.Trim(), response);
+                await viewModel.AddSolution(SoluUrl?.Trim(), response);
 
                 EbLayout.HideLoader();
                 this.HideSIDConfirmBox();

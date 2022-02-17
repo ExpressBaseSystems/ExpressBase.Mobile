@@ -183,13 +183,18 @@ namespace ExpressBase.Mobile.ViewModels
                 EbLog.Info("Sync started...");
 
                 SyncResponse response = await service.PushDataToCloud(loader);
+                string popupTitle = null, popupMsg = null;
 
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     if (response.Status)
                         loader.Message = string.Empty;
                     else
+                    {
                         loader.Message = response.Message + " \n";
+                        popupTitle = "Warning";
+                        popupMsg = response.Message;
+                    }
                     loader.Message += "Fetching data from server...";
                 });
 
@@ -209,19 +214,23 @@ namespace ExpressBase.Mobile.ViewModels
                     UpdateIsEmptyFlag();
                     CreateFormContainersTables();
                     LogApplicationInfo();
+
+                    if (response.Message != null)
+                    {
+                        popupTitle = "Message";
+                        popupMsg = response.Message;
+                    }
                 }
                 else
                 {
-                    if (App.Settings.SyncInfo.InfoMsg == null)
-                        Utils.Toast(response.Message ?? "Sync failed");
                     EbLog.Warning(response.Message ?? "Sync failed");
+                    if (popupTitle == null) popupTitle = "Warning";
+                    if (popupMsg != null) popupMsg += "\n";
+                    popupMsg += response.Message;
                 }
 
-                if (App.Settings.SyncInfo.InfoMsg != null)
-                {
-                    EbLayout.ShowMessage("Message", App.Settings.SyncInfo.InfoMsg);
-                    App.Settings.SyncInfo.InfoMsg = null;
-                }
+                if (popupTitle != null)
+                    EbLayout.ShowMessage(popupTitle, popupMsg);
             }
             catch (Exception ex)
             {
