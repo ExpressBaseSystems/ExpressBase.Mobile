@@ -372,6 +372,14 @@ namespace ExpressBase.Mobile.Models
                 Font = new EbFont();
             Font.Size = size;
         }
+
+        public void setFontStyle(string fontStyle)// for dg row color expression
+        {
+            if (Font == null)
+                Font = new EbFont();
+            if (Enum.TryParse(fontStyle.ToUpper(), out FontStyle style))
+                Font.Style = style;
+        }
     }
 
     public class FileWrapper

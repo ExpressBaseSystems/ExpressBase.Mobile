@@ -294,7 +294,8 @@ namespace ExpressBase.Mobile
                             {
                                 Color = column.Font.Color,
                                 Caps = column.Font.Caps,
-                                Size = column.Font.Size
+                                Size = column.Font.Size,
+                                Style = column.Font.Style
                             });
                         }
                     }
@@ -338,6 +339,7 @@ namespace ExpressBase.Mobile
                         item.Value.Font.Color = col.Font.Color;
                         item.Value.Font.Caps = col.Font.Caps;
                         item.Value.Font.Size = col.Font.Size;
+                        item.Value.Font.Style = col.Font.Style;
                     }
                 }
             }
@@ -393,6 +395,7 @@ namespace ExpressBase.Mobile
                             column.Font.Color = _font.Color;
                             column.Font.Caps = _font.Caps;
                             column.Font.Size = _font.Size;
+                            column.Font.Style = _font.Style;
                         }
                     }
                 }
