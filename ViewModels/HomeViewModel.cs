@@ -130,6 +130,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 if (page.Container is EbMobileForm form)
                 {
+                    form.NetworkType = page.NetworkMode;
                     message = await EbPageHelper.ValidateFormRendering(form, msgLoader);
                     if (message != null) render = false;
                 }

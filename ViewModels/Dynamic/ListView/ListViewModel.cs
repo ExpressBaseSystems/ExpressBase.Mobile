@@ -41,6 +41,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
             if (page != null && page.Container is EbMobileForm form)
             {
+                form.NetworkType = page.NetworkMode;
                 string failMsg = await EbPageHelper.ValidateFormRendering(form, msgLoader, this.ContextRecord);
 
                 if (failMsg == null)

@@ -268,6 +268,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 if (container is EbMobileForm mobileForm)
                 {
+                    mobileForm.NetworkType = page.NetworkMode;
                     renderor.Message = await ValidateFormRendering(mobileForm, null);
                     renderor.IsReady = renderor.Message == null;
                     renderor.Renderer = new FormRender(page);

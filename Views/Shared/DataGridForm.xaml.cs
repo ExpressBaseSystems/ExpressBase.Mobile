@@ -84,10 +84,16 @@ namespace ExpressBase.Mobile.Views.Shared
             if (isTapped || this.dataGrid.IsTaped())
                 return;
             isTapped = true;
-            OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
-            Utils.Toast("1 row added.");
-            ResetControls();
-            EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
+            string invalidMsg = EbFormHelper.ValidateDataGrid(this.dataGrid);
+            if (invalidMsg == null)
+            {
+                OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
+                Utils.Toast("1 row added.");
+                ResetControls();
+                EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
+            }
+            else
+                Utils.Toast(invalidMsg);
             isTapped = false;
         }
 
@@ -96,11 +102,17 @@ namespace ExpressBase.Mobile.Views.Shared
             if (isTapped || this.dataGrid.IsTaped())
                 return;
             isTapped = true;
-            OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
-            ResetControls();
-            EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
-            await App.Navigation.PopMasterModalAsync(true);
-            this.dataGrid.IsDgViewOpen = false;
+            string invalidMsg = EbFormHelper.ValidateDataGrid(this.dataGrid);
+            if (invalidMsg == null)
+            {
+                OnInserted?.Invoke(mode == GridMode.New ? null : rowName);
+                ResetControls();
+                EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
+                await App.Navigation.PopMasterModalAsync(true);
+                this.dataGrid.IsDgViewOpen = false;
+            }
+            else
+                Utils.Toast(invalidMsg);
             isTapped = false;
         }
 
@@ -110,6 +122,7 @@ namespace ExpressBase.Mobile.Views.Shared
             {
                 ctrl.DoNotPropagateChange = true;
                 ctrl.Reset();
+                ctrl.SetValidation(true, string.Empty);
                 ctrl.DoNotPropagateChange = false;
             }
         }

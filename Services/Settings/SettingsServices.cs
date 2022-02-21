@@ -424,7 +424,7 @@ namespace ExpressBase.Mobile.Services
         {
             if (App.Settings.SyncInProgress)
             {
-                EbLog.Info("Sync in progress...");
+                EbLog.Info(App.Settings.Sid + ": Sync in progress...");
                 return null;
             }
             App.Settings.SyncInProgress = true;
@@ -543,6 +543,8 @@ namespace ExpressBase.Mobile.Services
             if (CurrentApplication != null)
             {
                 CurrentApplication = solutionData.Applications.Find(item => item.AppId == CurrentApplication.AppId);
+                MobilePages = CurrentApplication.MobilePages;
+                WebObjects = CurrentApplication.WebObjects;
                 await Store.SetJSONAsync(AppConst.CURRENT_APP, CurrentApplication);
             }
         }

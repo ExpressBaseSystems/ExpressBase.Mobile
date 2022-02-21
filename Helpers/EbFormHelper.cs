@@ -130,23 +130,42 @@ namespace ExpressBase.Mobile.Helpers
             string msg = null;
             foreach (EbMobileControl ctrl in Instance.controls.Values)
             {
-                if (!ctrl.Validate())
-                {
-                    msg = string.IsNullOrEmpty(ctrl.Label) ? ctrl.Name : ctrl.Label;
-                    msg = string.IsNullOrEmpty(msg) ? "Fields required" : (msg + " is required");
-                    if (ctrl.Hidden)
-                        msg += " (Hidden)";
+                msg = Validate_inner(ctrl);
+                if (msg != null)
                     break;
-                }
+            }
+            return msg;
+        }
 
-                bool valid = Instance.InitValidators(ctrl.Name, ctrl.Parent);
+        private static string Validate_inner(EbMobileControl ctrl)
+        {
+            string msg = null;
+            if (!ctrl.Validate())
+            {
+                msg = string.IsNullOrEmpty(ctrl.Label) ? ctrl.Name : ctrl.Label;
+                msg = string.IsNullOrEmpty(msg) ? "Fields required" : (msg + " is required");
+                if (ctrl.Hidden)
+                    msg += " (Hidden)";
+            }
 
-                if (!valid)
-                {
-                    msg = ctrl.GetValidatorFailureMsg();
-                    msg = string.IsNullOrEmpty(msg) ? ("Validation failed: " + ctrl.Label ?? ctrl.Name) : msg;
+            bool valid = Instance.InitValidators(ctrl.Name, ctrl.Parent);
+
+            if (!valid)
+            {
+                msg = ctrl.GetValidatorFailureMsg();
+                msg = string.IsNullOrEmpty(msg) ? ("Validation failed: " + ctrl.Label ?? ctrl.Name) : msg;
+            }
+            return msg;
+        }
+
+        public static string ValidateDataGrid(EbMobileDataGrid dataGrid)
+        {
+            string msg = null;
+            foreach (EbMobileControl ctrl in dataGrid.ChildControls)
+            {
+                msg = Validate_inner(ctrl);
+                if (msg != null)
                     break;
-                }
             }
             return msg;
         }
