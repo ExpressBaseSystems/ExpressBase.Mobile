@@ -40,12 +40,12 @@ namespace ExpressBase.Mobile.Services
                 if (response.StatusCode == HttpStatusCode.OK)
                     resp = JsonConvert.DeserializeObject<ApiAuthResponse>(response.Content);
                 else
-                    resp = new ApiAuthResponse { IsValid = false };
+                    resp = new ApiAuthResponse { IsValid = false, Message = "Auth failed: " + response.ErrorMessage };
             }
             catch (Exception ex)
             {
                 EbLog.Error(ex.Message);
-                resp = new ApiAuthResponse { IsValid = false };
+                resp = new ApiAuthResponse { IsValid = false, Message = "Auth failed: " + ex.Message };
             }
             return resp;
         }

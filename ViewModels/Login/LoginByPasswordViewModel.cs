@@ -109,7 +109,12 @@ namespace ExpressBase.Mobile.ViewModels.Login
                     }
                 }
                 else
-                    Utils.Toast("Wrong username or password.");
+                {
+                    if (AuthResponse?.Message != null)
+                        Utils.Toast(AuthResponse.Message);
+                    else
+                        Utils.Toast("Authentication failed");
+                }
 
                 IsBusy = false;
             }
