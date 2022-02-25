@@ -158,10 +158,10 @@ namespace ExpressBase.Mobile
             foreach (var pair in ControlDictionary)
             {
                 if (pair.Value is ILinesEnabled grid)
-                    query += $"DELETE FROM {grid.TableName} WHERE {this.TableName}_id = (SELECT id FROM {this.TableName} WHERE eb_created_at_device < @date AND eb_synced <> {(int)DataSyncStatus.NotSynced});";
+                    query += $"DELETE FROM {grid.TableName} WHERE {this.TableName}_id = (SELECT id FROM {this.TableName} WHERE STRFTIME('%Y%m%d', eb_created_at_device) < @strdate AND eb_synced <> {(int)DataSyncStatus.NotSynced});";
             }
 
-            return query + $"DELETE FROM {this.TableName} WHERE eb_created_at_device < @date AND eb_synced <> {(int)DataSyncStatus.NotSynced}; ";
+            return query + $"DELETE FROM {this.TableName} WHERE STRFTIME('%Y%m%d', eb_created_at_device) < @strdate AND eb_synced <> {(int)DataSyncStatus.NotSynced}; ";
         }
 
         public async Task<FormSaveResponse> Save(int rowId, string pageRefId)

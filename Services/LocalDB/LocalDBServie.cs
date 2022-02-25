@@ -6,6 +6,7 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Structures;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -119,11 +120,14 @@ namespace ExpressBase.Mobile.Services
                 List<EbMobileForm> FormCollection = EbPageHelper.GetOfflineForms();
                 foreach (EbMobileForm Form in FormCollection)
                 {
+                    DateTime date = DateTime.UtcNow.AddDays(-7);
                     DbParameter[] parameter = new DbParameter[]
                     {
-                        new DbParameter{ParameterName="@date", DbType= (int)EbDbTypes.DateTime, Value = DateTime.UtcNow.Subtract(new TimeSpan(7, 0, 0, 0, 0))}
+                        new DbParameter{ParameterName="@strdate", DbType= (int)EbDbTypes.String, Value = date.ToString("yyyyMMdd", CultureInfo.InvariantCulture)}
                     };
-                    App.DataDB.DoNonQuery(Form.GetDeleteQuery(), parameter);
+                    string query = Form.GetDeleteQuery();
+                    int rowsAffected = App.DataDB.DoNonQuery(query, parameter);
+                    EbLog.Info(rowsAffected + " row(s) deleted from " + Form.TableName + " and its lines table");
                 }
             }
             catch (Exception ex)
