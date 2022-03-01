@@ -73,15 +73,16 @@ namespace ExpressBase.Mobile.Views.Shared
 
         private async void SyncDataClicked(object sender, EventArgs e)
         {
-            if (App.Settings.SyncInProgress)
-                return;
-            App.Settings.SyncInProgress = true;
-
             if (!Utils.HasInternet)
             {
                 Utils.Alert_NoInternet();
                 return;
             }
+
+            if (App.Settings.SyncInProgress)
+                return;
+
+            App.Settings.SyncInProgress = true;
 
             if (App.RootMaster.Detail is NavigationPage nav && nav.RootPage is Home hom)
                 await hom.SyncDataClicked();

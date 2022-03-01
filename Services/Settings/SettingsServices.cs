@@ -268,11 +268,17 @@ namespace ExpressBase.Mobile.Services
         {
             string msg = null;
             bool leaveLastSyncTsCheck = false, incorrectDate = false, maintenanceMode = false;
+
             if (solutionData.MetaData != null)
             {
                 if (solutionData.MetaData.TryGetValue(AppConst.maintenance_msg, out object val) && val != null)
                 {
                     msg = val.ToString();
+                    maintenanceMode = true;
+                }
+                else if (solutionData.MetaData.TryGetValue(AppConst.session_expired, out object val2) && bool.TryParse(val2.ToString(), out bool b) && b)
+                {
+                    msg = AppConst.session_expired;
                     maintenanceMode = true;
                 }
                 else if (solutionData.MetaData.TryGetValue(AppConst.leave_ts_check, out object val3) && bool.TryParse(val3.ToString(), out bool st) && st)
@@ -296,17 +302,6 @@ namespace ExpressBase.Mobile.Services
                 EbLog.Warning("Device date time is incorrect. Server time: " + solutionData.last_sync_ts);
                 if (msg == null)
                     msg = "Device date time is incorrect";
-            }
-
-            if (msg == null && syncInfo.LatestAppVersion != null)
-            {
-                if (Version.Parse(syncInfo.LatestAppVersion).CompareTo(Version.Parse(appVersion)) > 0)
-                {
-                    msg = $"Latest app version {syncInfo.LatestAppVersion} is available. \nCurrent version: {appVersion}";
-                    syncInfo.AppUpdateLastNotifyTs = DateTime.Now;
-                }
-                else
-                    syncInfo.LatestAppVersion = null;
             }
 
             if (msg != null)

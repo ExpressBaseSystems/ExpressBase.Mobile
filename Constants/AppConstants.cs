@@ -52,6 +52,7 @@ namespace ExpressBase.Mobile.Constants
         public const string device_id = "device_id";
         public const string maintenance_msg = "maintenance_msg";
         public const string leave_ts_check = "leave_ts_check";
+        public const string session_expired = "session_expired";
     }
 
     public static class RegexConstants

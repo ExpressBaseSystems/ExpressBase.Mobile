@@ -230,19 +230,33 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         }
                     }
 
-                    if (popupTitle != null)
+                    if (App.RootMaster.Detail is NavigationPage nav && nav.CurrentPage != null)
                     {
-                        if (App.RootMaster.Detail is NavigationPage nav && nav.CurrentPage != null)
+                        EbCPLayout layout = null;
+                        if (nav.CurrentPage is Home hom)
+                            layout = hom.GetCurrentLayout();
+                        else if (nav.CurrentPage is FormRender fom)
+                            layout = fom.GetCurrentLayout();
+                        else if (nav.CurrentPage is ListRender lis)
+                            layout = lis.GetCurrentLayout();
+                        if (layout != null)
                         {
-                            EbCPLayout layout = null;
-                            if (nav.CurrentPage is Home hom)
-                                layout = hom.GetCurrentLayout();
-                            else if (nav.CurrentPage is FormRender fom)
-                                layout = fom.GetCurrentLayout();
-                            else if (nav.CurrentPage is ListRender lis)
-                                layout = lis.GetCurrentLayout();
-                            if (layout != null)
-                                layout.ShowMessage(popupTitle, popupMsg);
+                            if (popupTitle != null)
+                            {
+                                if (popupMsg == AppConst.session_expired)
+                                {
+                                    Store.ResetCashedSolutionData();
+                                    EbLog.Error("Failed to sync:::" + popupMsg);
+                                    await Logout();
+                                    Utils.Toast("Session expired");
+                                }
+                                else
+                                {
+                                    layout.ShowMessage(popupTitle, popupMsg);
+                                }
+                            }
+                            else
+                                await layout.ShowMsgIfLatestAppAvailable(true);
                         }
                     }
 

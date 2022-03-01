@@ -37,8 +37,9 @@
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <StackLayout Padding="15" Grid.Row="0" BackgroundColor="White">
+                            <StackLayout Padding="15" Grid.Row="0" Grid.ColumnSpan="2" BackgroundColor="White">
                                 <Label 
                                     x:Name="MessageTitle"
                                     HorizontalTextAlignment="Center"
@@ -51,18 +52,28 @@
                                     FontFamily="{StaticResource Roboto-Light}"
                                     Margin="0,20,0,20"
                                     x:Name="MessageContent"
-                                    Grid.Row="0"
                                     TextColor="#333333" 
                                     VerticalOptions="Center" 
                                     HorizontalTextAlignment="Center"
                                     Text=""/>
                             </StackLayout>
-                            <BoxView Grid.Row="1" Color="#eee" HeightRequest="1"/>                            
+                            <BoxView Grid.Row="1" Grid.ColumnSpan="2" Color="#eee" HeightRequest="1"/>
+                            <Button
+                                x:Name="CancelButton"
+                                CornerRadius="0"
+                                Padding="0"
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Text="Cancel"
+                                BackgroundColor="White"
+                                HorizontalOptions="FillAndExpand"
+                                Clicked="CancelButton_Clicked"/>
                             <Button
                                 x:Name="OkButton"
                                 CornerRadius="0"
                                 Padding="0"
                                 Grid.Row="2"
+                                Grid.Column="1"
                                 Text="Ok"
                                 BackgroundColor="White"
                                 TextColor="#0076ff"

@@ -48,7 +48,7 @@ namespace ExpressBase.Mobile
                     Utils.Alert_NoInternet();
             };
 
-            if (Mode == FormMode.NEW)
+            if (Mode == FormMode.NEW || Mode == FormMode.PREFILL || Mode == FormMode.REF)
             {
                 this.SetCordinates();
             }
@@ -125,7 +125,7 @@ namespace ExpressBase.Mobile
                 this.SetCordinates();
                 return;
             }
-            
+
             try
             {
                 string[] cordinates = value.ToString().Split(CharConstants.COMMA);

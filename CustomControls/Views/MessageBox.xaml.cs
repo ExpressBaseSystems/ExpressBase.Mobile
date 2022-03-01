@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Windows.Input;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -69,8 +70,25 @@ namespace ExpressBase.Mobile.CustomControls
             }
         }
 
-        public void Show()
+        public void Show(string title, string message)
         {
+            Title = title;
+            Message = message;
+            CancelButton.IsVisible = false;
+            Grid.SetColumn(OkButton, 0);
+            Grid.SetColumnSpan(OkButton, 2);
+            OkButton.Text = "Ok";
+            this.IsVisible = true;
+        }
+
+        public void ShowUpdateMessage(string message)
+        {
+            Title = "Update available";
+            Message = message;
+            CancelButton.IsVisible = true;
+            Grid.SetColumn(OkButton, 1);
+            Grid.SetColumnSpan(OkButton, 1);
+            OkButton.Text = "Update Now";
             this.IsVisible = true;
         }
 
@@ -80,6 +98,16 @@ namespace ExpressBase.Mobile.CustomControls
         }
 
         private void OkButton_Clicked(object sender, EventArgs e)
+        {
+            this.Hide();
+
+            if (sender is Button btn && btn.Text == "Update Now")
+            {
+                Launcher.OpenAsync(new Uri("https://play.google.com/store/apps/details?id=com.expressbase.R_Mad"));
+            }
+        }
+
+        private void CancelButton_Clicked(object sender, EventArgs e)
         {
             this.Hide();
         }

@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Helpers;
+﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.ViewModels;
 using ExpressBase.Mobile.Views.Base;
 using System;
@@ -200,9 +201,34 @@ namespace ExpressBase.Mobile.CustomControls
 
         public void ShowMessage(string title, string message)
         {
-            MessageDialog.Title = title;
-            MessageDialog.Message = message;
-            MessageDialog.Show();
+            MessageDialog.Show(title, message);
+        }
+
+        public async Task ShowMsgIfLatestAppAvailable(bool force)
+        {
+            try
+            {
+                if (App.Settings.SyncInfo.LatestAppVersion != null)
+                {
+                    if (force || App.Settings.SyncInfo.AppUpdateLastNotifyTs < DateTime.Now.Subtract(new TimeSpan(4, 0, 0)))
+                    {
+                        INativeHelper helper = DependencyService.Get<INativeHelper>();
+                        if (Version.Parse(App.Settings.SyncInfo.LatestAppVersion).CompareTo(Version.Parse(helper.AppVersion)) > 0)
+                        {
+                            string msg = $"Latest app version {App.Settings.SyncInfo.LatestAppVersion} is available. \n(Current version: {helper.AppVersion})";
+                            MessageDialog.ShowUpdateMessage(msg);
+                            App.Settings.SyncInfo.AppUpdateLastNotifyTs = DateTime.Now;
+                        }
+                        else
+                            App.Settings.SyncInfo.LatestAppVersion = null;
+                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, App.Settings.SyncInfo);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("ShowMsgIfLatestAppAvailable: " + ex.Message);
+            }
         }
 
         private void SecondaryToggleClicked(object sender, EventArgs e)

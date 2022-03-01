@@ -72,7 +72,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 CreateFormContainersTables();
                 LogApplicationInfo();
-                await ShowMsgIfLatestAppAvailable();
+                await EbLayout.ShowMsgIfLatestAppAvailable(false);
             }
             catch (Exception ex)
             {
@@ -231,7 +231,21 @@ namespace ExpressBase.Mobile.ViewModels
                 }
 
                 if (popupTitle != null)
-                    EbLayout.ShowMessage(popupTitle, popupMsg);
+                {
+                    if (response.Message == AppConst.session_expired)
+                    {
+                        Store.ResetCashedSolutionData();
+                        EbLog.Error("Failed to sync:::" + popupMsg);
+                        await Logout();
+                        Utils.Toast("Session expired");
+                    }
+                    else
+                    {
+                        EbLayout.ShowMessage(popupTitle, popupMsg);
+                    }
+                }
+                else
+                    await EbLayout.ShowMsgIfLatestAppAvailable(true);
             }
             catch (Exception ex)
             {
@@ -253,33 +267,6 @@ namespace ExpressBase.Mobile.ViewModels
             EbLog.Info($"Current Application :'{PageTitle}'");
             int objeCount = ObjectList == null ? 0 : ObjectList.Count;
             EbLog.Info($"Rendering total of {objeCount} pages with location id: {App.Settings.CurrentLocation?.LocId}");
-        }
-
-        private async Task ShowMsgIfLatestAppAvailable()
-        {
-            try
-            {
-                if (App.Settings.SyncInfo.LatestAppVersion != null)
-                {
-                    if (App.Settings.SyncInfo.AppUpdateLastNotifyTs < DateTime.Now.Subtract(new TimeSpan(4, 0, 0)))
-                    {
-                        INativeHelper helper = DependencyService.Get<INativeHelper>();
-                        if (Version.Parse(App.Settings.SyncInfo.LatestAppVersion).CompareTo(Version.Parse(helper.AppVersion)) > 0)
-                        {
-                            string msg = $"Latest app version {App.Settings.SyncInfo.LatestAppVersion} is available. \n(Current version: {helper.AppVersion})";
-                            EbLayout.ShowMessage("Update available", msg);
-                            App.Settings.SyncInfo.AppUpdateLastNotifyTs = DateTime.Now;
-                        }
-                        else
-                            App.Settings.SyncInfo.LatestAppVersion = null;
-                        await Store.SetJSONAsync(AppConst.LAST_SYNC_INFO, App.Settings.SyncInfo);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                EbLog.Error("ShowMsgIfLatestAppAvailable: " + ex.Message);
-            }
         }
 
         private void CreateFormContainersTables()
