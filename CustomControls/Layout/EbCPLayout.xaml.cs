@@ -208,7 +208,7 @@ namespace ExpressBase.Mobile.CustomControls
         {
             try
             {
-                if (App.Settings.SyncInfo.LatestAppVersion != null)
+                if (Utils.HasInternet && App.Settings.SyncInfo.LatestAppVersion != null)
                 {
                     if (force || App.Settings.SyncInfo.AppUpdateLastNotifyTs < DateTime.Now.Subtract(new TimeSpan(4, 0, 0)))
                     {

@@ -256,7 +256,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                                 }
                             }
                             else
-                                await layout.ShowMsgIfLatestAppAvailable(true);
+                                await layout.ShowMsgIfLatestAppAvailable(pullAfter);
                         }
                     }
 
