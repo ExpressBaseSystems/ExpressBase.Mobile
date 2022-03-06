@@ -81,7 +81,10 @@ namespace ExpressBase.Mobile
                 };
 
                 if (!string.IsNullOrWhiteSpace(MinValueExpr?.Code))
-                    datePicker.MinimumDate = GetMinDate();
+                {
+                    datePicker.Date = GetMinDate();
+                    datePicker.MinimumDate = datePicker.Date;
+                }
                 else if (this.BlockBackDatedEntry)
                     datePicker.MinimumDate = DateTime.Now;
 
