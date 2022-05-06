@@ -94,4 +94,23 @@
 
         public const string GMapiOSKey = "";
     }
+
+    public static class LegitEase
+    {
+        public const string VendorName = "LegitEase";
+
+        public const string AppIcon = "@mipmap/icon_le";
+
+        public const string AppLabel = "LegitEase";
+
+        public const string StatusBar = "#272d63";
+
+        public const string SplashTheme = "@style/Theme.SplashLE";
+
+        public const bool NFEnabled = true;
+
+        public const string GMapAndroidKey = "AIzaSyDDgTEIxUMxT71PPeZzazJAV6caQ205mds";
+
+        public const string GMapiOSKey = "";
+    }
 }

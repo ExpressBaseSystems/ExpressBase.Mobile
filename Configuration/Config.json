@@ -203,6 +203,49 @@
           "ButtonText": "Got It!"
         }
       }
+    },
+    "LegitEase": {
+      "BuildType": "Dynamic",
+      "SolutionURL": "*.expressbase.com",
+      "AllowNotifications": true,
+      "PrimaryColor": "272d63",
+      "PrimaryFontColor": "ffffff",
+      "HasOfflineFeature": true,
+      "HasActions": true,
+      "HasAppSwitcher": true,
+      "HasLocationSwitcher": true,
+      "HasSolutionSwitcher": true,
+      "HasBrandingInHome": true,
+      "Logo": "icon_le.png",
+      "PoweredBy": "Powered by LegitEase",
+      "DefaultLoginType": "CREDENTIALS",
+      "Content": {
+        "NewSolution": {
+          "WallLabel": "Add new Solution",
+          "TextBoxPlaceHolder": "Enter solution URL"
+        },
+        "MySolutions": {
+          "Title": "Solution Switcher"
+        },
+        "Login": {
+          "NewSolutionButtonText": "Add new Solution",
+          "LoginButtonText": "Login"
+        },
+        "About": {
+          "VendorName": "LegitEase",
+          "Description": "Cloud based Attorney's Office Management Tool",
+          "Url": "https://legitease.com/about.html"
+        },
+        "WelcomePage": {
+          "Description": "Increase the operational efficiency of '@solutionname@' with the power of the LegitEase platform"
+        },
+        "WelcomeBoard": {
+          "LogoText": "LegitEase",
+          "Title": "Cloud based Attorney's Office Management Tool",
+          "Description": "LegitEase gives you the freedom of creating, managing, sharing cases within the office users through web, android and iOS.",
+          "ButtonText": "Got It!"
+        }
+      }
     }
   }
 }
