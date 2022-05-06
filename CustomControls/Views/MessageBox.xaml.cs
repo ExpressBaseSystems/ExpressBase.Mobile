@@ -1,4 +1,5 @@
-﻿using ExpressBase.Mobile.Views.Base;
+﻿using ExpressBase.Mobile.Configuration;
+using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Windows.Input;
 using Xamarin.Essentials;
@@ -103,7 +104,7 @@ namespace ExpressBase.Mobile.CustomControls
 
             if (sender is Button btn && btn.Text == "Update Now")
             {
-                Launcher.OpenAsync(new Uri("https://play.google.com/store/apps/details?id=com.expressbase.R_Mad"));
+                Launcher.OpenAsync(new Uri("https://play.google.com/store/apps/details?id=com." + EbBuildConfig.VendorName.ToLower() + ".R_Mad"));
             }
         }
 

@@ -67,7 +67,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         protected override async Task<bool> Submit(bool Print)
         {
             bool success = false;
-            Loading(true);
 
             try
             {
@@ -90,6 +89,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     }
                     else
                     {
+                        MsgLoader.Message = "Logging in...";
+
                         ApiAuthResponse authResponse = await identityService.AuthenticateSSOAsync(createdUser.UserName, createdUser.AuthId, createdUser.Token);
 
                         if (authResponse != null && authResponse.IsValid)
@@ -114,7 +115,6 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 EbLog.Info(ex.Message);
                 Utils.Toast(ex.Message);
             }
-            Loading(false);
             return success;
         }
 

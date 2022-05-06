@@ -26,6 +26,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             base.OnAppearing();
 
             EbLayout.ShowLoader();
+            viewModel.MsgLoader = EbLayout.GetMessageLoader();
             if (!isRendered)
             {
                 await viewModel.InitializeAsync();

@@ -207,8 +207,8 @@ namespace ExpressBase.Mobile.ViewModels
                     Utils.Toast("Sync completed");
                     EbLog.Info("Sync completed");
 
-                    App.Settings.MobilePages = App.Settings.CurrentApplication.MobilePages;
-                    App.Settings.WebObjects = App.Settings.CurrentApplication.WebObjects;
+                    App.Settings.MobilePages = App.Settings.CurrentApplication?.MobilePages;
+                    App.Settings.WebObjects = App.Settings.CurrentApplication?.WebObjects;
 
                     ObjectList = await menuServices.GetDataAsync();
 
