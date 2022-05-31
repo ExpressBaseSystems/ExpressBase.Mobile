@@ -4,6 +4,7 @@ using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers;
 using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Views;
 using System;
 using System.Threading.Tasks;
@@ -38,6 +39,8 @@ namespace ExpressBase.Mobile.ViewModels.Login
         }
 
         public Command LoginCommand => new Command(async () => await LoginAction());
+
+        public Command RefreshDataCommand => new Command(async () => await UpdateAsync());
 
         public LoginByPasswordViewModel(Loader loader) : base()
         {
@@ -152,6 +155,34 @@ namespace ExpressBase.Mobile.ViewModels.Login
             if (string.IsNullOrWhiteSpace(this.Email) || string.IsNullOrWhiteSpace(this.PassWord))
                 return false;
             return true;
+        }
+
+        public override async Task UpdateAsync()
+        {
+            IsRefreshing = true;
+
+            if (App.Settings?.Vendor?.BuildType == AppBuildType.Embedded)
+            {
+                try
+                {
+                    ISolutionService service = new SolutionService();
+
+                    ValidateSidResponse response = await service.ValidateSid(App.Settings?.Vendor?.SolutionURL);
+                    if (response != null && response.IsValid)
+                    {
+                        SolutionInfo sln = Store.GetJSON<SolutionInfo>(AppConst.SOLUTION_OBJ);
+                        sln.SignUpPage = response.SignUpPage;
+                        sln.SolutionObject = response.SolutionObj;
+                        App.Settings.CurrentSolution = sln;
+                        await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, sln);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Utils.Toast("Failed to refresh: " + ex.Message);
+                }
+            }
+            IsRefreshing = false;
         }
     }
 }

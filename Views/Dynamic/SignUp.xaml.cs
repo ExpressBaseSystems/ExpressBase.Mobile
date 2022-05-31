@@ -13,12 +13,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private readonly SignUpViewModel viewModel;
 
-        public SignUp()
+        public SignUp(EbMobilePage page)
         {
             InitializeComponent();
 
-            EbMobilePage page = App.Settings.CurrentSolution.GetSignUpPage();
             BindingContext = viewModel = new SignUpViewModel(page);
+
+            EbLayout.HasBackButton = false;
         }
 
         protected override async void OnAppearing()

@@ -28,6 +28,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         public Command SubmitOTPCommand => new Command(async (o) => await SubmitOTP(o));
 
+        public Command ResendOTPCommand => new Command(async () => await ResendOTP());
+
         public Command GoToLoginCommand => new Command(async () => await App.Navigation.NavigateToLogin());
 
         private EbSignUpUserInfo createdUser;
@@ -169,6 +171,8 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                         MobileProfileData profileData = await this.GetProfileData(page.RefId);
 
+                        await identityService.Navigate(data);
+
                         if (profileData != null && profileData.RowId > 0)
                             await App.Navigation.NavigateByRenderer(new FormRender(page, profileData.RowId, profileData.Data));
                         else
@@ -195,6 +199,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             if (o == null) return;
 
+            MsgLoader.IsVisible = true;
+            MsgLoader.Message = "Verifying...";
+
             try
             {
                 string otp = o?.ToString();
@@ -204,12 +211,27 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 if (authResponse != null && authResponse.IsValid)
                     await AfterAuthenticationSuccess(authResponse, createdUser);
                 else
-                    throw new Exception("userverification api response [null] or [invalid]");
+                    throw new Exception("User verification api response [null] or [invalid]");
             }
             catch (Exception ex)
             {
-                EbLog.Error("user verification on signup error, " + ex.Message);
-                Utils.Toast("unable to signup");
+                EbLog.Error("User verification on signup error:: " + ex.Message);
+                Utils.Toast("Unable to signup: " + ex.Message);
+            }
+
+            MsgLoader.IsVisible = false;
+        }
+
+        private async Task ResendOTP()
+        {
+            try
+            {
+                //ResendOTP code here
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Unable to resend otp :: " + ex.Message);
+                Utils.Toast("Unable to resend otp");
             }
         }
     }

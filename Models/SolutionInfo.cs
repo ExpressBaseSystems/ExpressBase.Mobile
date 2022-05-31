@@ -44,7 +44,7 @@ namespace ExpressBase.Mobile.Models
 
         public bool SignupEnabled()
         {
-            if (SolutionObject == null)
+            if (SolutionObject == null || string.IsNullOrEmpty(SignUpPage))
                 return false;
             return SolutionObject.IsMobileSignupEnabled(out _);
         }
@@ -53,8 +53,16 @@ namespace ExpressBase.Mobile.Models
         {
             if (string.IsNullOrEmpty(SignUpPage))
                 return null;
-            string regexed = EbSerializers.JsonToNETSTD(SignUpPage);
-            return EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
+            try
+            {
+                string regexed = EbSerializers.JsonToNETSTD(SignUpPage);
+                return EbSerializers.Json_Deserialize<EbMobilePage>(regexed);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("GetSignUpPage: " + ex.Message);
+                return null;
+            }
         }
 
         public SolutionInfo Clone()

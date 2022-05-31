@@ -118,7 +118,7 @@
                         <Button 
                             Grid.Column="1"
                             BackgroundColor="Transparent"
-                            Text="resend OTP"
+                            Text="Resend OTP"
                             TextColor="Red"
                             Clicked="ResendButoon_Clicked">
                         </Button>

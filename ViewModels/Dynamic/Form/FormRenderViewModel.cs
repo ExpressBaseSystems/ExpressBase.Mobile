@@ -230,7 +230,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         }
                     }
 
-                    if (App.RootMaster.Detail is NavigationPage nav && nav.CurrentPage != null)
+                    if (App.RootMaster?.Detail is NavigationPage nav && nav?.CurrentPage != null)
                     {
                         EbCPLayout layout = null;
                         if (nav.CurrentPage is Home hom)

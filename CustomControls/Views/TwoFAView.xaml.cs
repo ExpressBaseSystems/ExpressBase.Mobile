@@ -26,6 +26,8 @@ namespace ExpressBase.Mobile.CustomControls
 
         private readonly List<Label> labels;
 
+        public bool DisableBackBtn { get; set; }
+
         public TwoFAView()
         {
             InitializeComponent();
@@ -95,7 +97,8 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void BackButton_Clicked(object sender, EventArgs e)
         {
-            this.Hide();
+            if (!this.DisableBackBtn)
+                this.Hide();
         }
 
         public void Show()

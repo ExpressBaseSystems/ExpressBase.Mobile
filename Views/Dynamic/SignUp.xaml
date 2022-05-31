@@ -30,7 +30,7 @@
                                    FontSize="20"
                                    TextColor="#333">
                             </Label>
-    
+
                             <Image x:Name="LogoUrl"
                                    Source="{Binding LogoUrl}"
                                    Margin="20,20,20,30"
@@ -73,13 +73,15 @@
                                     <TapGestureRecognizer Command="{Binding GoToLoginCommand}"></TapGestureRecognizer>
                                 </Label.GestureRecognizers>
                             </Label>
-                            
+
                         </StackLayout>
                     </ScrollView>
 
                     <controls:TwoFAView x:Name="TwoFAWindow"
                                         IsVisible="{Binding OTPWindowVisibility}"
-                                        SubmitClicked="{Binding SubmitOTPCommand}">
+                                        ResendClicked="{Binding ResendOTPCommand}"
+                                        SubmitClicked="{Binding SubmitOTPCommand}"
+                                        DisableBackBtn="True">
                     </controls:TwoFAView>
 
                     <controls:ImagePopUp x:Name="ImageFullScreen"></controls:ImagePopUp>

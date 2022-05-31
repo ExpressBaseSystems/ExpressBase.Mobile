@@ -67,7 +67,11 @@ namespace ExpressBase.Mobile.ViewModels.Login
 
         private async Task GoToSignUp()
         {
-            await App.Navigation.NavigateAsync(new SignUp());
+            EbMobilePage page = App.Settings.CurrentSolution.GetSignUpPage();
+            if (page != null)
+                await App.Navigation.NavigateAsync(new SignUp(page));
+            else
+                Utils.Toast("Signup page not found");
         }
 
         public void Bind2FAToggleEvent(Action<ApiAuthResponse> action)

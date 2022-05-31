@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.Views.Shared
 
             SelectSearchBox.Placeholder = $"Search {powerSelect.Label}...";
             SelectSearchBox.Text = powerSelect.SearchBox.Text;
-            searchLength = this.powerSelect.MinSearchLength < 3 ? 3 : this.powerSelect.MinSearchLength;
+            searchLength = this.powerSelect.MinSearchLength < 0 ? 0 : this.powerSelect.MinSearchLength;
         }
 
         protected async override void OnAppearing()
