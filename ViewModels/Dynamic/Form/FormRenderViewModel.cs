@@ -123,7 +123,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
         {
             this.Form.InitializeControlDict();
 
-            EbFormHelper.Initialize(this.Form, this.Mode);
+            EbFormHelper.Initialize(this.Form, this.Mode, this.Page.RefId);
 
             //if (IsOffline())
             //{

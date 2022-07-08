@@ -17,6 +17,7 @@
         public const string GET_SOLUTION_DATAv2 = "api/get_solution_datav2";
         public const string GET_VIS_DATA = "api/get_data";
         public const string GET_VIS_DATA_V2 = "api/v2/data/visualization";
+        public const string GET_SQL_EXPR_RESULT = "api/get_sql_expr_result";
         public const string GET_PROFILE_DATA = "api/get_profile";
         public const string GET_DATA_FLAT = "api/get_data_flat";
         public const string GET_DATA_PS = "api/get_data_ps";

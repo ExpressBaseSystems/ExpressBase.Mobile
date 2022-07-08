@@ -148,6 +148,29 @@ namespace ExpressBase.Mobile.Services
             return null;
         }
 
+        public async Task<MobileDataResponse> GetSqlExprResult(string refid, string control, List<Param> param)
+        {
+            try
+            {
+                RestRequest request = base.GetRequest(ApiConstants.GET_SQL_EXPR_RESULT, Method.POST);
+
+                request.AddParameter("refid", refid);
+                request.AddParameter("control", control);
+                request.AddParameter("param", JsonConvert.SerializeObject(param));
+                IRestResponse iresp = await HttpClient.ExecuteAsync(request);
+
+                if (iresp.IsSuccessful)
+                    return JsonConvert.DeserializeObject<MobileDataResponse>(iresp.Content);
+                else
+                    base.LogHttpResponse(iresp);
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error(ex.Message);
+            }
+            return null;
+        }
+
         public async Task<MobileProfileData> GetProfileDataAsync(string refid, int loc_id)
         {
             try

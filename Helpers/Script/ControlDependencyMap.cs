@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Constants;
+using ExpressBase.Mobile.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,26 +66,45 @@ namespace ExpressBase.Mobile.Helpers.Script
         {
             foreach (int value in Enum.GetValues(typeof(ExpressionType)))
             {
-                if (control.HasExpression((ExpressionType)value, out string script))
+                if (control.HasExpression((ExpressionType)value, out string script, out ScriptingLanguage language))
                 {
-                    foreach (string dependent in GetDependentNames(script))
+                    if (language == ScriptingLanguage.SQL)
                     {
-                        string dparent = dependent.Split(CharConstants.DOT)[0];
-                        if (dparent != CTRL_PARENT_FORM && parent == CTRL_PARENT_FORM)// grid to form dependency
+                        foreach (string dependent in HelperFunctions.GetSqlParams(script))
                         {
-                            if (!DGDependencyMapColl.ContainsKey(dparent))
+                            string _dominant = CTRL_PARENT_FORM + CharConstants.DOT + control.Name;
+                            string _dependent = CTRL_PARENT_FORM + CharConstants.DOT + dependent;
+                            if (NameCollection.Contains(_dominant) && NameCollection.Contains(_dependent))
                             {
-                                DGDependencyMapColl[dparent] = new ExprDependency();
+                                if (!DependencyMapCollection.ContainsKey(_dependent))
+                                {
+                                    DependencyMapCollection[_dependent] = new ExprDependency();
+                                }
+                                DependencyMapCollection[_dependent].Add((ExpressionType)value, _dominant);
                             }
-                            DGDependencyMapColl[dparent].Add((ExpressionType)value, $"{parent}.{control.Name}");
                         }
-                        else if (parent == dparent)// avoid form to grid dependency
+                    }
+                    else
+                    {
+                        foreach (string dependent in GetDependentNames(script))
                         {
-                            if (!DependencyMapCollection.ContainsKey(dependent))
+                            string dparent = dependent.Split(CharConstants.DOT)[0];
+                            if (dparent != CTRL_PARENT_FORM && parent == CTRL_PARENT_FORM)// grid to form dependency
                             {
-                                DependencyMapCollection[dependent] = new ExprDependency();
+                                if (!DGDependencyMapColl.ContainsKey(dparent))
+                                {
+                                    DGDependencyMapColl[dparent] = new ExprDependency();
+                                }
+                                DGDependencyMapColl[dparent].Add((ExpressionType)value, $"{parent}.{control.Name}");
                             }
-                            DependencyMapCollection[dependent].Add((ExpressionType)value, $"{parent}.{control.Name}");
+                            else if (parent == dparent)// avoid form to grid dependency
+                            {
+                                if (!DependencyMapCollection.ContainsKey(dependent))
+                                {
+                                    DependencyMapCollection[dependent] = new ExprDependency();
+                                }
+                                DependencyMapCollection[dependent].Add((ExpressionType)value, $"{parent}.{control.Name}");
+                            }
                         }
                     }
                 }

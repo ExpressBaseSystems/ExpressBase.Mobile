@@ -220,7 +220,7 @@ namespace ExpressBase.Mobile
                 return false;
         }
 
-        public bool HasExpression(ExpressionType type, out string script)
+        public bool HasExpression(ExpressionType type, out string script, out ScriptingLanguage language)
         {
             EbScript obj = null;
 
@@ -234,6 +234,7 @@ namespace ExpressBase.Mobile
                 obj = DefaultValueExpression;
 
             script = obj?.GetCode();
+            language = obj?.Lang ?? ScriptingLanguage.CSharp;
 
             return obj != null && !obj.IsEmpty();
         }

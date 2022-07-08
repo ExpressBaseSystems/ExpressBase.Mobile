@@ -1,10 +1,14 @@
 ﻿using ExpressBase.Mobile.Constants;
 using ExpressBase.Mobile.Data;
 using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Extensions;
 using ExpressBase.Mobile.Helpers.Script;
+using ExpressBase.Mobile.Models;
+using ExpressBase.Mobile.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
@@ -19,6 +23,8 @@ namespace ExpressBase.Mobile.Helpers
 
         private readonly EbSciptEvaluator evaluator;
 
+        private string FormRefId;
+
         public const string CTRL_PARENT_FORM = "form";
 
         private EbFormHelper()
@@ -29,11 +35,12 @@ namespace ExpressBase.Mobile.Helpers
             };
         }
 
-        public static void Initialize(EbMobileForm form, FormMode mode)
+        public static void Initialize(EbMobileForm form, FormMode mode, string PageRefId)
         {
             Instance = new EbFormHelper
             {
-                controls = form.ControlDictionary
+                controls = form.ControlDictionary,
+                FormRefId = PageRefId
             };
             Instance.evaluator.SetVariable("form", new EbFormEvaluator(mode, form.ControlDictionary));
 
@@ -41,18 +48,18 @@ namespace ExpressBase.Mobile.Helpers
             Instance.dependencyMap.Init(form.ControlDictionary);
         }
 
-        public static void ControlValueChanged(string controlName, string parent = CTRL_PARENT_FORM)
+        public static async void ControlValueChanged(string controlName, string parent = CTRL_PARENT_FORM)
         {
             if (Instance.dependencyMap.HasDependency(controlName, parent, out ExprDependency dependency))
             {
-                Instance.InitValueExpr(dependency, controlName, parent);
+                await Instance.InitValueExpr(dependency, controlName, parent);
                 Instance.InitHideExpr(dependency, parent: parent);
                 Instance.InitDisableExpr(dependency, parent: parent);
             }
             Instance.InitValidators(controlName, parent);
         }
 
-        public static void EvaluateExprOnLoad(EbMobileControl ctrl, FormMode mode)
+        public static async void EvaluateExprOnLoad(EbMobileControl ctrl, FormMode mode)
         {
             string parent = ctrl.Parent;
 
@@ -70,7 +77,7 @@ namespace ExpressBase.Mobile.Helpers
                     else if (mode == FormMode.EDIT)
                     {
                         if (ctrl.DoNotPersist)
-                            Instance.InitValueExpr(exprDep, ctrl.Name, parent);
+                            await Instance.InitValueExpr(exprDep, ctrl.Name, parent);
 
                         Instance.InitHideExpr(exprDep, ctrl, parent);
                     }
@@ -107,7 +114,7 @@ namespace ExpressBase.Mobile.Helpers
             return map.ValueExpr.Contains(dependency);
         }
 
-        public static void SwitchViewToEdit()
+        public static async void SwitchViewToEdit()
         {
             foreach (EbMobileControl ctrl in Instance.controls.Values)
             {
@@ -118,7 +125,7 @@ namespace ExpressBase.Mobile.Helpers
                     ExprDependency exprDep = Instance.dependencyMap.GetDependency($"{ctrl.Parent}.{ctrl.Name}");
 
                     if (ctrl.DoNotPersist)
-                        Instance.InitValueExpr(exprDep, ctrl.Name, ctrl.Parent);
+                        await Instance.InitValueExpr(exprDep, ctrl.Name, ctrl.Parent);
 
                     Instance.InitDisableExpr(exprDep, parent: ctrl.Parent);
                 }
@@ -272,14 +279,14 @@ namespace ExpressBase.Mobile.Helpers
                 FormViewContainer.Children.Add(v);
         }
 
-        private void InitValueExpr(ExprDependency exprDep, string trigger_control, string parent = CTRL_PARENT_FORM)
+        private async Task InitValueExpr(ExprDependency exprDep, string trigger_control, string parent = CTRL_PARENT_FORM)
         {
             if (exprDep.HasValueDependency)
             {
                 foreach (string name in exprDep.ValueExpr)
                 {
                     EbMobileControl ctrl = GetControl(name);
-                    EvaluateValueExpr(ctrl, trigger_control, parent);
+                    await EvaluateValueExpr(ctrl, trigger_control, parent);
                 }
             }
         }
@@ -358,23 +365,93 @@ namespace ExpressBase.Mobile.Helpers
             return flag;
         }
 
-        private void EvaluateValueExpr(EbMobileControl ctrl, string trigger_control, string parent)
+        private async Task EvaluateValueExpr(EbMobileControl ctrl, string trigger_control, string parent)
         {
             string expr = ctrl.ValueExpr.GetCode();
 
-            string computed = GetComputedExpression(expr, ctrl.Name, parent);
+            if (ctrl.ValueExpr.Lang == ScriptingLanguage.SQL)
+            {
+                try
+                {
+                    object value = await EvaluateSqlValueExpr(ctrl);
+                    ctrl.SetValue(value);
+                    ctrl.ValueChanged(trigger_control);
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info($"Sql value script evaluation error in control '{ctrl.Name}'");
+                    EbLog.Error(ex.Message);
+                }
+            }
+            else
+            {
+                string computed = GetComputedExpression(expr, ctrl.Name, parent);
 
-            try
-            {
-                object value = evaluator.Execute(computed);
-                ctrl.SetValue(value);
-                ctrl.ValueChanged(trigger_control);
+                try
+                {
+                    object value = evaluator.Execute(computed);
+                    ctrl.SetValue(value);
+                    ctrl.ValueChanged(trigger_control);
+                }
+                catch (Exception ex)
+                {
+                    EbLog.Info($"Value script evaluation error in control '{ctrl.Name}'");
+                    EbLog.Error(ex.Message);
+                }
             }
-            catch (Exception ex)
+        }
+
+        private async Task<object> EvaluateSqlValueExpr(EbMobileControl ctrl)
+        {
+            object result = null;
+            string script = ctrl.ValueExpr.GetCode();
+            List<Param> _params = new List<Param>();
+
+            foreach (string dependent in HelperFunctions.GetSqlParams(script))
             {
-                EbLog.Info($"Value script evaluation error in control '{ctrl.Name}'");
-                EbLog.Error(ex.Message);
+                if (Instance.controls.TryGetValue(dependent, out EbMobileControl d_ctrl))
+                {
+                    _params.Add(new Param()
+                    {
+                        Name = dependent,
+                        Type = ((int)d_ctrl.EbDbType).ToString(),
+                        Value = d_ctrl.getValue()?.ToString()
+                    });
+                }
+                else
+                {
+                    _params.Add(new Param()
+                    {
+                        Name = dependent,
+                        Type = "16",
+                        Value = string.Empty
+                    }); ;
+                }
             }
+            if (_params.Find(e => e.Name == EbKeywords.Location) == null)
+            {
+                _params.Add(new Param
+                {
+                    Name = EbKeywords.Location,
+                    Type = "11",
+                    Value = App.Settings.CurrentLocation.LocId.ToString()
+                });
+            }
+
+            MobileDataResponse dataResponse = await DataService.Instance.GetSqlExprResult(Instance.FormRefId, ctrl.Name, _params);
+
+            if (dataResponse?.Data != null)
+            {
+                EbDataTable dt;
+                if (dataResponse.Data != null && dataResponse.Data.Tables.HasLength(2))
+                    dt = dataResponse.Data.Tables[1];
+                else
+                    dt = new EbDataTable();
+
+                if (dt.Rows.Count > 0)
+                    result = dt.Rows[0][0];
+            }
+            return result;
         }
 
         private void EvaluateHideExpr(EbMobileControl ctrl, string parent)
