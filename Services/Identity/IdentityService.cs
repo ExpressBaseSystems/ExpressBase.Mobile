@@ -167,7 +167,7 @@ namespace ExpressBase.Mobile.Services
             }
 
             request.AddParameter("token", autheresp.TwoFAToken);
-            request.AddParameter("authid", autheresp.User.AuthId);
+            request.AddParameter("authid", autheresp.User?.AuthId ?? autheresp.UserAuthId);
 
             try
             {

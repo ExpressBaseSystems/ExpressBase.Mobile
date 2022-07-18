@@ -105,7 +105,28 @@
                         </customcontrols:EbXHiddenEntry>
                     </Grid>
 
-                    <Grid>
+                    <Grid x:Name="gridTmrResendOtp"
+                          IsVisible="false"
+                          HorizontalOptions="End">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label
+                            Grid.Column="0"
+                            VerticalOptions="End"
+                            Text="Resend Otp in "
+                            TextColor="#888">
+                        </Label>
+                        <Label x:Name="timerLblResendOtp"
+                            Grid.Column="1"
+                            Text="0:00"
+                            FontSize="16"
+                            TextColor="{DynamicResource Primary_Color}">
+                        </Label>
+                    </Grid>
+
+                    <Grid x:Name="gridResendOtp">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                             <ColumnDefinition Width="Auto"></ColumnDefinition>

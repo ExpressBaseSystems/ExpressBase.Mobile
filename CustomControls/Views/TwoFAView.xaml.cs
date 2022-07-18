@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -91,6 +92,7 @@ namespace ExpressBase.Mobile.CustomControls
         {
             if (ResendClicked.CanExecute(null))
             {
+                StartOtpTimer();
                 ResendClicked.Execute(null);
             }
         }
@@ -101,8 +103,31 @@ namespace ExpressBase.Mobile.CustomControls
                 this.Hide();
         }
 
+        private void StartOtpTimer()
+        {
+            TimeSpan timeSpan = new TimeSpan(0, 0, 60);// countdown time
+            gridResendOtp.IsVisible = false;
+            gridTmrResendOtp.IsVisible = true;
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            Device.StartTimer(TimeSpan.FromSeconds(1), () =>
+            {
+                TimeSpan cd = timeSpan - stopWatch.Elapsed;
+                if (cd.TotalMilliseconds < 0 || !this.IsVisible)
+                {
+                    gridTmrResendOtp.IsVisible = false;
+                    gridResendOtp.IsVisible = true;
+                    return false;
+                }
+                timerLblResendOtp.Text = $"{cd.Minutes}:{cd.Seconds.ToString().PadLeft(2, '0')}";
+                return true;
+            });
+        }
+
         public void Show()
         {
+            StartOtpTimer();
             this.IsVisible = true;
         }
 
