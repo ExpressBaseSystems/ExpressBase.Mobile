@@ -105,7 +105,7 @@ namespace ExpressBase.Mobile.CustomControls
 
         private void StartOtpTimer()
         {
-            TimeSpan timeSpan = new TimeSpan(0, 0, 60);// countdown time
+            TimeSpan timeSpan = new TimeSpan(0, 1, 0);// countdown time
             gridResendOtp.IsVisible = false;
             gridTmrResendOtp.IsVisible = true;
             Stopwatch stopWatch = new Stopwatch();
@@ -118,6 +118,7 @@ namespace ExpressBase.Mobile.CustomControls
                 {
                     gridTmrResendOtp.IsVisible = false;
                     gridResendOtp.IsVisible = true;
+                    stopWatch.Stop();
                     return false;
                 }
                 timerLblResendOtp.Text = $"{cd.Minutes}:{cd.Seconds.ToString().PadLeft(2, '0')}";
