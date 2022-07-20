@@ -45,6 +45,8 @@ namespace ExpressBase.Mobile
 
         public virtual bool DoNotPropagateChange { set; get; }
 
+        public bool ValueExprFailure { get; set; }
+
         public string SQLiteType
         {
             get

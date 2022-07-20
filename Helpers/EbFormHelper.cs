@@ -137,6 +137,11 @@ namespace ExpressBase.Mobile.Helpers
             string msg = null;
             foreach (EbMobileControl ctrl in Instance.controls.Values)
             {
+                if (ctrl.ValueExprFailure)
+                {
+                    msg = $"Unexpected error ({(string.IsNullOrWhiteSpace(ctrl.Label) ? ctrl.Name : ctrl.Label)})[5438]";
+                    break;
+                }
                 msg = Validate_inner(ctrl);
                 if (msg != null)
                     break;
@@ -376,9 +381,11 @@ namespace ExpressBase.Mobile.Helpers
                     object value = await EvaluateSqlValueExpr(ctrl);
                     ctrl.SetValue(value);
                     ctrl.ValueChanged(trigger_control);
+                    ctrl.ValueExprFailure = false;
                 }
                 catch (Exception ex)
                 {
+                    ctrl.ValueExprFailure = true;
                     EbLog.Info($"Sql value script evaluation error in control '{ctrl.Name}'");
                     EbLog.Error(ex.Message);
                 }
@@ -392,11 +399,13 @@ namespace ExpressBase.Mobile.Helpers
                     object value = evaluator.Execute(computed);
                     ctrl.SetValue(value);
                     ctrl.ValueChanged(trigger_control);
+                    ctrl.ValueExprFailure = false;
                 }
                 catch (Exception ex)
                 {
                     EbLog.Info($"Value script evaluation error in control '{ctrl.Name}'");
                     EbLog.Error(ex.Message);
+                    ctrl.ValueExprFailure = true;
                 }
             }
         }
