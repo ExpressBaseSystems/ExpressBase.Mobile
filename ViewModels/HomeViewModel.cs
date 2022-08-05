@@ -72,6 +72,7 @@ namespace ExpressBase.Mobile.ViewModels
 
                 CreateFormContainersTables();
                 LogApplicationInfo();
+                await AutoSyncData();
                 await EbLayout.ShowMsgIfLatestAppAvailable(false);
             }
             catch (Exception ex)
@@ -158,6 +159,21 @@ namespace ExpressBase.Mobile.ViewModels
             ObjectList = await menuServices.GetDataAsync();
 
             CreateFormContainersTables();
+        }
+
+        private async Task AutoSyncData()
+        {
+            try
+            {
+                if (Utils.HasInternet && App.Settings.SyncInfo.LastSyncTs.AddDays(1) < DateTime.Now)
+                {
+                    await this.SyncData(EbLayout.GetMessageLoader());
+                }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error("Exception AutoSyncData: " + ex.Message);
+            }
         }
 
         public async Task SyncData(Loader loader)

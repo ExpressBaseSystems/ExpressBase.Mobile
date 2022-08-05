@@ -24,6 +24,10 @@ namespace ExpressBase.Mobile
 
         public EbGeoLocation Cordinates { set; get; }
 
+        public Location CurrentLocation { get; private set; }
+
+        public bool CurrentLocRequired { get; private set; }
+
         public override View Draw(FormMode Mode, NetworkMode Network)
         {
             this.XControl = new Frame()
@@ -51,6 +55,7 @@ namespace ExpressBase.Mobile
             if (Mode == FormMode.NEW || Mode == FormMode.PREFILL || Mode == FormMode.REF)
             {
                 this.SetCordinates();
+                CurrentLocRequired = Required;
             }
 
             return base.Draw(Mode, Network);
@@ -90,17 +95,17 @@ namespace ExpressBase.Mobile
 
                 if (!hasPermission)
                 {
-                    EbLog.Error("[location} permission revoked by user, failed to set dcurrent gps location");
+                    EbLog.Error("[location} permission revoked by user, failed to set current gps location");
                     Utils.Toast("Location permission revoked");
                     return;
                 }
 
-                Location current = await EbGeoLocationHelper.GetCurrentLocationAsync();
+                CurrentLocation = await EbGeoLocationHelper.GetCurrentLocationAsync();
 
-                if (current != null)
+                if (CurrentLocation != null)
                 {
-                    Cordinates = new EbGeoLocation { Latitude = current.Latitude, Longitude = current.Longitude };
-                    mapView.SetLocation(current.Latitude, current.Longitude);
+                    Cordinates = new EbGeoLocation { Latitude = CurrentLocation.Latitude, Longitude = CurrentLocation.Longitude };
+                    mapView.SetLocation(CurrentLocation.Latitude, CurrentLocation.Longitude);
                 }
             }
             catch (Exception ex)

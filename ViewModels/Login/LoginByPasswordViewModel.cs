@@ -65,7 +65,7 @@ namespace ExpressBase.Mobile.ViewModels.Login
                     {
                         if (App.Settings.SyncInfo.Md5PassCode == _md5PassCode)
                         {
-                            string msg = EbPageHelper.GetFormRenderInvalidateMsg(NetworkMode.Offline);
+                            string msg = await EbPageHelper.GetFormRenderInvalidateMsg(NetworkMode.Offline);
                             if (msg == null)
                             {
                                 App.Settings.SyncInfo.IsLoggedOut = false;

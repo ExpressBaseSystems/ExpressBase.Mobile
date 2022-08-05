@@ -289,7 +289,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     }
                     else
                     {
-                        ContentPage renderer = EbPageHelper.ResolveByContext(this.Visualization, item.DataRow, page);
+                        ContentPage renderer = await EbPageHelper.ResolveByContext(this.Visualization, item.DataRow, page);
 
                         if (renderer != null)
                             await App.Navigation.NavigateMasterAsync(renderer);

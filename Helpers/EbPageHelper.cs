@@ -8,13 +8,14 @@ using ExpressBase.Mobile.Views.Shared;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
 {
     public class EbPageHelper
     {
-        public static ContentPage ResolveByContext(EbMobileVisualization vis, EbDataRow row, EbMobilePage page)
+        public static async Task<ContentPage> ResolveByContext(EbMobileVisualization vis, EbDataRow row, EbMobilePage page)
         {
             ContentPage renderer = null;
             EbMobileContainer container = page.Container;
@@ -24,7 +25,7 @@ namespace ExpressBase.Mobile.Helpers
                 {
                     if (vis.FormMode == WebFormDVModes.New_Mode)
                     {
-                        string msg = GetFormRenderInvalidateMsg(page.NetworkMode);
+                        string msg = await GetFormRenderInvalidateMsg(page.NetworkMode);
                         if (msg != null && !form.RenderAsFilterDialog)
                             renderer = new Redirect(msg, MessageType.disconnected);
                         else
@@ -210,7 +211,7 @@ namespace ExpressBase.Mobile.Helpers
             return failMsg;
         }
 
-        public static string GetFormRenderInvalidateMsg(NetworkMode mode)
+        public static async Task<string> GetFormRenderInvalidateMsg(NetworkMode mode, EbMobileForm Form = null)
         {
             string msg = null;
             if (mode == NetworkMode.Offline)
@@ -220,6 +221,19 @@ namespace ExpressBase.Mobile.Helpers
                     msg = "Sync required (Last pull failed)";
                 else if (syncInfo.LastSyncTs.AddDays(1) < DateTime.Now)
                     msg = $"Sync required (Last sync was {(int)(DateTime.Now - syncInfo.LastSyncTs).TotalHours} hours back)";
+            }
+            if (Form != null && msg == null)
+            {
+                EbMobileGeoLocation ctrl = (EbMobileGeoLocation)Form.ChildControls.Find(e => e is EbMobileGeoLocation);
+                if (ctrl != null && ctrl.CurrentLocRequired && ctrl.CurrentLocation == null)
+                {
+                    bool hasPermission = await AppPermission.GPSLocation();
+                    Location current = null;
+                    if (hasPermission)
+                        current = await EbGeoLocationHelper.GetCurrentLocationAsync();
+                    if (current == null)
+                        msg = "Location permission required";
+                }
             }
             return msg;
         }

@@ -311,6 +311,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         if (!Utils.IsNetworkReady(this.NetworkType))
                         {
                             Utils.Alert_NoInternet();
+                            await App.Navigation.PopByRenderer(true);
                             return;
                         }
 
@@ -324,6 +325,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                         });
 
                         MobileDataResponse data = await DataService.Instance.GetDataAsync(this.Form.ContextOnlineData, 0, 0, cParams, null, null, false);
+
+                        if (!data.HasData())
+                        {
+                            await App.Navigation.PopByRenderer(true);
+                            Utils.Toast("Failed to load page");
+                            return;
+                        }
 
                         if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
                         {

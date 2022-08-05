@@ -8,6 +8,7 @@ using ExpressBase.Mobile.ViewModels.Dynamic;
 using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -65,7 +66,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             if (!isRendered)
             {
                 await viewModel.InitializeAsync();
-                AdjustButtonContainer();
+                await AdjustButtonContainer();
 
                 if (!viewModel.HasWebFormRef && viewModel.IsOnline())
                 {
@@ -77,7 +78,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
             EbLayout.HideLoader();
         }
 
-        private void AdjustButtonContainer()
+        private async Task AdjustButtonContainer()
         {
             if (viewModel.Form.PrintDocs?.Count > 0)
             {
@@ -98,13 +99,13 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
             if (!viewModel.Form.RenderAsFilterDialog)
             {
-                string msg = EbPageHelper.GetFormRenderInvalidateMsg(viewModel.NetworkType);
+                string msg = await EbPageHelper.GetFormRenderInvalidateMsg(viewModel.NetworkType, viewModel.Form);
                 if (msg != null)
                 {
                     (ButtonGrid.Children[0] as Button).IsVisible = false;
                     (ButtonGrid.Children[1] as Button).IsVisible = false;
                     SaveButton.IsEnabled = false;
-                    App.Navigation.PopByRenderer(true);
+                    await App.Navigation.PopByRenderer(true);
                     Utils.Toast(msg);
                 }
                 if (viewModel.Mode == FormMode.EDIT)
