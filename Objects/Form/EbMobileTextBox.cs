@@ -103,11 +103,11 @@ namespace ExpressBase.Mobile
                 (this.XControl as EbXTextBox).XBackgroundColor = bg;
         }
 
-        public override void SetValidation(bool status, string message)
+        public override void SetValidation(bool status, EbMobileValidator validator)
         {
-            base.SetValidation(status, message);
+            base.SetValidation(status, validator);
 
-            Color border = status ? EbMobileControl.DefaultBorder : EbMobileControl.ValidationError;
+            Color border = status ? EbMobileControl.DefaultBorder : (validator.IsWarningOnly ? EbMobileControl.ValidationWarning : EbMobileControl.ValidationError);
 
             if (TextMode == TextMode.MultiLine)
                 (this.XControl as EbXTextArea).BorderColor = border;

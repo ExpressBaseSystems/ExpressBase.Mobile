@@ -15,6 +15,8 @@ namespace ExpressBase.Mobile
 
         public static readonly Color ValidationError = Color.Red;
 
+        public static readonly Color ValidationWarning = Color.Orange;
+
         public static readonly Color ReadOnlyBackground = Color.FromHex("eeeeee");
 
         public virtual string Label { set; get; }
@@ -193,11 +195,16 @@ namespace ExpressBase.Mobile
             };
         }
 
-        public virtual void SetValidation(bool status, string message)
+        public virtual void SetValidation(bool status, EbMobileValidator validator)
         {
             if (validationLabel == null) return;
 
-            validationLabel.Text = message;
+            if (validator.IsWarningOnly)
+                validationLabel.TextColor = ValidationWarning;
+            else
+                validationLabel.TextColor = ValidationError;
+
+            validationLabel.Text = validator.FailureMSG;
             validationLabel.IsVisible = !status;
         }
 

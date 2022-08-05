@@ -364,7 +364,9 @@ namespace ExpressBase.Mobile.Helpers
                     continue;
 
                 flag = EvaluateValidatorExpr(validator, controlName, parent);
-                ctrl.SetValidation(flag, validator.FailureMSG);
+                ctrl.SetValidation(flag, validator);
+                if (validator.IsWarningOnly)
+                    flag = true;
                 if (!flag) break;
             }
             return flag;

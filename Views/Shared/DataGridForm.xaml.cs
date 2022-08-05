@@ -122,7 +122,7 @@ namespace ExpressBase.Mobile.Views.Shared
             {
                 ctrl.DoNotPropagateChange = true;
                 ctrl.Reset();
-                ctrl.SetValidation(true, string.Empty);
+                ctrl.SetValidation(true, new EbMobileValidator() { FailureMSG = string.Empty });
                 ctrl.DoNotPropagateChange = false;
             }
         }
