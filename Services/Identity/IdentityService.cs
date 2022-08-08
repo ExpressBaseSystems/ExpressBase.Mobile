@@ -201,7 +201,7 @@ namespace ExpressBase.Mobile.Services
                 {
                     INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                    string url = helper.NativeRoot + $"/{App.Settings.AppDirectory}/{ App.Settings.Sid.ToUpper()}/user.png";
+                    string url = helper.NativeRoot + $"/{ App.Settings.Sid.ToUpper()}/user.png";
                     File.WriteAllBytes(url, resp.DisplayPicture);
                 }
             }

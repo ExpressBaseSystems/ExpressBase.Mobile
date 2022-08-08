@@ -15,7 +15,7 @@ namespace ExpressBase.Mobile.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SettingsView : ContentPage
     {
-        private readonly string logPath = $"{App.Settings.AppDirectory}/{App.Settings.Sid.ToUpper()}/logs.txt";
+        private readonly string logPath = $"{App.Settings.Sid.ToUpper()}/logs.txt";
 
         private readonly INativeHelper nativeHelper = DependencyService.Get<INativeHelper>();
 
@@ -44,12 +44,13 @@ namespace ExpressBase.Mobile.Views
                 if (nativeHelper.Exist(logPath, SysContentType.File))
                 {
                     message.Attachments.Add(new EmailAttachment($"{nativeHelper.NativeRoot}/{logPath}"));
+                    nativeHelper.AddBackupLogFiles(message.Attachments);
                     await Email.ComposeAsync(message);
                 }
                 else
                     Utils.Toast("logs.txt not found!");
             }
-            catch (FeatureNotSupportedException)
+            catch (FeatureNotSupportedException ex)
             {
                 EbLog.Error("Email is not supported on this device");
             }

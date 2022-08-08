@@ -66,7 +66,7 @@ namespace ExpressBase.Mobile.ViewModels
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{App.Settings.Sid.ToUpper()}/user.png");
+                byte[] bytes = helper.GetFile($"{App.Settings.Sid.ToUpper()}/user.png");
 
                 if (bytes != null)
                 {

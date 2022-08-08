@@ -45,7 +45,7 @@ namespace ExpressBase.Mobile
             foreach (FileWrapper wrapr in files)
             {
                 wrapr.Name = $"{TableName}-{RowId}-{this.Name}-{Guid.NewGuid().ToString("n").Substring(0, 10)}.jpg";
-                File.WriteAllBytes(helper.NativeRoot + $"/{App.Settings.AppDirectory}/{ App.Settings.Sid.ToUpper()}/FILES/{wrapr.Name}", wrapr.Bytea);
+                File.WriteAllBytes(helper.NativeRoot + $"/{ App.Settings.Sid.ToUpper()}/FILES/{wrapr.Name}", wrapr.Bytea);
             }
         }
 

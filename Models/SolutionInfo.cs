@@ -31,7 +31,7 @@ namespace ExpressBase.Mobile.Models
             INativeHelper helper = DependencyService.Get<INativeHelper>();
             try
             {
-                byte[] bytes = helper.GetFile($"{App.Settings.AppDirectory}/{this.SolutionName}/logo.png");
+                byte[] bytes = helper.GetFile($"{this.SolutionName}/logo.png");
 
                 if (bytes != null)
                     this.Logo = ImageSource.FromStream(() => new MemoryStream(bytes));

@@ -20,7 +20,7 @@ namespace ExpressBase.Mobile.ViewModels
 
         public override void Initialize()
         {
-            LogFilePath = $"../{App.Settings.AppDirectory}/{App.Settings.Sid.ToUpper()}/log.txt";
+            //LogFilePath = $"../{App.Settings.AppDirectory}/{App.Settings.Sid.ToUpper()}/log.txt";
         }
     }
 }

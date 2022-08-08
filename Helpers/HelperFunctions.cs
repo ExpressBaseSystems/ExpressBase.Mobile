@@ -104,51 +104,37 @@ namespace ExpressBase.Mobile.Helpers
         private static string CreatePlatFormDir(string FolderName)
         {
             string sid = App.Settings.Sid.ToUpper();
-            string root = App.Settings.AppDirectory;
 
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                if (helper.Exist(root, SysContentType.Directory))
+                if (!helper.Exist($"{sid}", SysContentType.Directory))
                 {
-                    if (!helper.Exist($"{root}/{sid}", SysContentType.Directory))
-                    {
-                        helper.Create($"{root}/{sid}", SysContentType.Directory);
+                    helper.Create($"{sid}", SysContentType.Directory);
 
-                        if (FolderName != null)
-                            helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
-                    }
-                    else
-                    {
-                        if (FolderName != null)
-                            helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
-                    }
-
-                    if (!helper.Exist($"{root}/{AppConst.SHARED_MEDIA}", SysContentType.Directory))
-                    {
-                        helper.Create($"{root}/{AppConst.SHARED_MEDIA}", SysContentType.Directory);
-                        helper.Create($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
-                    }
-                    else if (!helper.Exist($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory))
-                    {
-                        helper.Create($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
-                    }
-                    else
-                    {
-                        helper.Delete($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
-                        helper.Create($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
-                    }
+                    if (FolderName != null)
+                        helper.Create($"{sid}/{FolderName}", SysContentType.Directory);
                 }
                 else
                 {
-                    helper.Create(root, SysContentType.Directory);
-                    helper.Create($"{root}/{sid}", SysContentType.Directory);
-                    helper.Create($"{root}/{AppConst.SHARED_MEDIA}", SysContentType.Directory);
-                    helper.Create($"{root}/{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
-
                     if (FolderName != null)
-                        return helper.Create($"{root}/{sid}/{FolderName}", SysContentType.Directory);
+                        helper.Create($"{sid}/{FolderName}", SysContentType.Directory);
+                }
+
+                if (!helper.Exist($"{AppConst.SHARED_MEDIA}", SysContentType.Directory))
+                {
+                    helper.Create($"{AppConst.SHARED_MEDIA}", SysContentType.Directory);
+                    helper.Create($"{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
+                }
+                else if (!helper.Exist($"{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory))
+                {
+                    helper.Create($"{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
+                }
+                else
+                {
+                    helper.Delete($"{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
+                    helper.Create($"{AppConst.SHARED_MEDIA}/{sid}", SysContentType.Directory);
                 }
             }
             catch (Exception ex)
@@ -175,15 +161,14 @@ namespace ExpressBase.Mobile.Helpers
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
                 string sid = App.Settings.Sid.ToUpper();
-                string root = App.Settings.AppDirectory;
 
-                string[] filenames = helper.GetFiles($"{root}/{sid}/FILES", Patten);
+                string[] filenames = helper.GetFiles($"{sid}/FILES", Patten);
 
                 foreach (string filepath in filenames)
                 {
                     string filename = Path.GetFileName(filepath);
 
-                    var bytes = helper.GetFile($"{root}/{sid}/FILES/{filename}");
+                    var bytes = helper.GetFile($"{sid}/FILES/{filename}");
 
                     Files.Add(new FileWrapper
                     {
@@ -213,7 +198,7 @@ namespace ExpressBase.Mobile.Helpers
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
 
-                string path = $"{App.Settings.AppDirectory}/{App.Settings.Sid.ToUpper()}/FILES/{filename}";
+                string path = $"{App.Settings.Sid.ToUpper()}/FILES/{filename}";
 
                 if (!helper.Exist(path, SysContentType.File))
                 {

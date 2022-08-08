@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Mobile.Enums;
 using ExpressBase.Mobile.Views.Base;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace ExpressBase.Mobile.Helpers
@@ -31,6 +33,8 @@ namespace ExpressBase.Mobile.Helpers
         void WriteLogs(string message, LogTypes logType);
 
         public void BackupLogFiles();
+
+        public void AddBackupLogFiles(List<EmailAttachment> Attachments);
     }
 
     public interface IToast

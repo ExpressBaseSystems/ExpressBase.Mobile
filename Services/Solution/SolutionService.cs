@@ -95,11 +95,10 @@ namespace ExpressBase.Mobile.Services
             try
             {
                 INativeHelper helper = DependencyService.Get<INativeHelper>();
-                string root = App.Settings.AppDirectory;
 
-                if (!helper.Exist($"{root}/{solutionname}/logo.png", SysContentType.File))
+                if (!helper.Exist($"{solutionname}/logo.png", SysContentType.File))
                 {
-                    File.WriteAllBytes(helper.NativeRoot + $"/{root}/{solutionname}/logo.png", imageByte);
+                    File.WriteAllBytes(helper.NativeRoot + $"/{solutionname}/logo.png", imageByte);
                 }
             }
             catch (Exception ex)

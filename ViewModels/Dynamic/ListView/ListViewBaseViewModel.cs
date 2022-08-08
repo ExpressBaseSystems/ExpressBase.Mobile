@@ -352,8 +352,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     if (r?.ReportBytea != null)
                     {
                         INativeHelper helper = DependencyService.Get<INativeHelper>();
-                        string root = App.Settings.AppDirectory;
-                        string path = helper.NativeRoot + $"/{root}/{AppConst.SHARED_MEDIA}/{App.Settings.Sid.ToUpper()}/PDF{(DateTime.UtcNow.ToString("yyyyMMddHHmmss"))}.pdf";
+                        string path = helper.NativeRoot + $"/{AppConst.SHARED_MEDIA}/{App.Settings.Sid.ToUpper()}/PDF{(DateTime.UtcNow.ToString("yyyyMMddHHmmss"))}.pdf";
                         File.WriteAllBytes(path, r.ReportBytea);
 
                         IAppHandler handler = DependencyService.Get<IAppHandler>();
