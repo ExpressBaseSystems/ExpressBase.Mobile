@@ -64,17 +64,24 @@
                                                         <ColumnDefinition Width="40*" />
                                                         <ColumnDefinition Width="60*" />
                                                     </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
                                                     <Label Grid.Column="0"
                                                            Padding="8"
                                                            Text="{Binding Name}"
                                                            BackgroundColor="White"
                                                            VerticalOptions="FillAndExpand"
+                                                           LineBreakMode="TailTruncation"
+                                                           MaxLines="3"
                                                            FontFamily="{StaticResource Roboto-Medium}">
                                                     </Label>
                                                     <Label Grid.Column="1"
                                                            Padding="8"
                                                            Text="{Binding Value}"
                                                            BackgroundColor="White"
+                                                           LineBreakMode="TailTruncation"
+                                                           MaxLines="3"
                                                            VerticalOptions="FillAndExpand">
                                                     </Label>
                                                 </Grid>

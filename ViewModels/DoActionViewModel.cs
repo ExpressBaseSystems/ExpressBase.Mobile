@@ -158,7 +158,7 @@ namespace ExpressBase.Mobile.ViewModels
                 }
                 else
                 {
-                    Utils.Toast("Unable to save action :( ");
+                    Utils.Toast(resp.Message);
                     EbLog.Error(resp.Message + resp.MessageInt);
                 }
             }
