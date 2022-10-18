@@ -197,13 +197,13 @@ namespace ExpressBase.Mobile.Services
 
                 await Store.SetJSONAsync(AppConst.USER_OBJECT, resp.User);
 
-                if (resp.DisplayPicture != null)
-                {
-                    INativeHelper helper = DependencyService.Get<INativeHelper>();
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                string url = helper.NativeRoot + $"/{App.Settings.Sid.ToUpper()}/user.png";
 
-                    string url = helper.NativeRoot + $"/{ App.Settings.Sid.ToUpper()}/user.png";
+                if (resp.DisplayPicture != null)
                     File.WriteAllBytes(url, resp.DisplayPicture);
-                }
+                else
+                    File.Delete(url);
             }
             catch (Exception ex)
             {

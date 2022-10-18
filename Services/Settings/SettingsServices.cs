@@ -519,15 +519,15 @@ namespace ExpressBase.Mobile.Services
         {
             if (solutionData == null) return;
 
-            EbDataSet importData = solutionData.GetOfflineData();
-            DBService.Current.ImportData(importData);
-            UpdateErrorDraftIds(solutionData.DraftIds);
-
             await Store.SetJSONAsync(AppConst.APP_COLLECTION, solutionData.Applications);
             await SetLocationInfo(solutionData.Locations);
             await SetCurrentUser(solutionData.CurrentUser);
             await SetSolutionObject(solutionData.CurrentSolution);
             await SetImagesInPdf(solutionData.Images);
+
+            EbDataSet importData = solutionData.GetOfflineData();
+            DBService.Current.ImportData(importData);
+            UpdateErrorDraftIds(solutionData.DraftIds);
 
             if (solutionData.ProfilePages != null && solutionData.ProfilePages.Count > 0)
             {
@@ -646,6 +646,8 @@ namespace ExpressBase.Mobile.Services
                     current.SolutionObject = solution;
                     await Store.SetJSONAsync(AppConst.MYSOLUTIONS, allSolutions);
                     await Store.SetJSONAsync(AppConst.SOLUTION_OBJ, current);
+
+                    App.DataDB.SetDbPath(current.SolutionName);
                 }
             }
             catch (Exception ex)

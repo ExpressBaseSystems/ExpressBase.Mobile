@@ -55,14 +55,14 @@
                                        HasShadow="true"
                                        BackgroundColor="Transparent">
                                     <StackLayout BindableLayout.ItemsSource="{Binding ActionData}"
-                                                 Spacing="1">
+                                                 Spacing="1"> 
                                         <BindableLayout.ItemTemplate>
                                             <DataTemplate>
                                                 <Grid ColumnSpacing="1"
                                                       RowSpacing="1">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="40*" />
-                                                        <ColumnDefinition Width="60*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                        <ColumnDefinition Width="1.5*" />
                                                     </Grid.ColumnDefinitions>
                                                     <Grid.RowDefinitions>
                                                         <RowDefinition Height="Auto" />
@@ -72,16 +72,12 @@
                                                            Text="{Binding Name}"
                                                            BackgroundColor="White"
                                                            VerticalOptions="FillAndExpand"
-                                                           LineBreakMode="TailTruncation"
-                                                           MaxLines="3"
                                                            FontFamily="{StaticResource Roboto-Medium}">
                                                     </Label>
                                                     <Label Grid.Column="1"
                                                            Padding="8"
                                                            Text="{Binding Value}"
                                                            BackgroundColor="White"
-                                                           LineBreakMode="TailTruncation"
-                                                           MaxLines="3"
                                                            VerticalOptions="FillAndExpand">
                                                     </Label>
                                                 </Grid>
