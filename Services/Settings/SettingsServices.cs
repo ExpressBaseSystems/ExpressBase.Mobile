@@ -519,13 +519,14 @@ namespace ExpressBase.Mobile.Services
         {
             if (solutionData == null) return;
 
+            EbDataSet importData = solutionData.GetOfflineData();//Offline data cleared OnSerializing
+
             await Store.SetJSONAsync(AppConst.APP_COLLECTION, solutionData.Applications);
             await SetLocationInfo(solutionData.Locations);
             await SetCurrentUser(solutionData.CurrentUser);
             await SetSolutionObject(solutionData.CurrentSolution);
             await SetImagesInPdf(solutionData.Images);
 
-            EbDataSet importData = solutionData.GetOfflineData();
             DBService.Current.ImportData(importData);
             UpdateErrorDraftIds(solutionData.DraftIds);
 
@@ -614,13 +615,19 @@ namespace ExpressBase.Mobile.Services
                 return;
             try
             {
-                if (CurrentLocation == null)
-                {
-                    EbLocation loc = locations.Find(item => item.LocId == CurrentUser.Preference.DefaultLocation);
-                    await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, loc);
-                    App.Settings.CurrentLocation = loc;
-                }
+                EbLocation cur_loc = null;
 
+                if (CurrentLocation != null)
+                    cur_loc = locations.Find(item => item.LocId == CurrentLocation.LocId);
+
+                if (cur_loc == null)
+                    cur_loc = locations.Find(item => item.LocId == CurrentUser.Preference.DefaultLocation);
+
+                if (cur_loc == null && locations.Count > 0)
+                    cur_loc = locations[0];
+
+                await Store.SetJSONAsync(AppConst.CURRENT_LOCOBJ, cur_loc);
+                App.Settings.CurrentLocation = cur_loc;
                 await Store.SetJSONAsync(AppConst.USER_LOCATIONS, locations);
             }
             catch (Exception ex)
