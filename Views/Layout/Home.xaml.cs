@@ -37,6 +37,7 @@ namespace ExpressBase.Mobile.Views
                 {
                     await viewModel.InitializeAsync();
                     IsRendered = true;
+                    CurrentLocation.Text = App.Settings.CurrentLocation?.LongName?.ToLower();
                 }
             }
             catch (Exception ex)
@@ -65,7 +66,11 @@ namespace ExpressBase.Mobile.Views
             }
         }
 
-        public async Task SyncDataClicked() => await viewModel.SyncData(EbLayout.GetMessageLoader());
+        public async Task SyncDataClicked() 
+        {
+            await viewModel.SyncData(EbLayout.GetMessageLoader());
+            CurrentLocation.Text = App.Settings.CurrentLocation?.LongName?.ToLower();
+        }
 
         public override bool CanRefresh() => viewModel.RefreshOnAppearing;
 
