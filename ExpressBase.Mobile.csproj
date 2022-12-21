@@ -26,6 +26,7 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
     <PackageReference Include="Xam.Plugin.Media" Version="5.0.1" />
     <PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.4.0" />
+    <PackageReference Include="Xamarin.Controls.SignaturePad.Forms" Version="3.0.0" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1534" />
     <PackageReference Include="Xamarin.Forms.Maps" Version="4.8.0.1534" />
@@ -36,6 +37,9 @@
   <ItemGroup>
     <Compile Update="CustomControls\Views\DashBoardView.xaml.cs">
       <DependentUpon>DashBoardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="CustomControls\Views\EbSignaturePad.xaml.cs">
+      <DependentUpon>EbSignaturePad.xaml</DependentUpon>
     </Compile>
     <Compile Update="Themes\FormStyles.xaml.cs">
       <DependentUpon>FormStyles.xaml</DependentUpon>
@@ -69,6 +73,9 @@
     </Compile>
     <Compile Update="Views\Shared\MyLocations.xaml.cs">
       <DependentUpon>MyLocations.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Shared\SignaturePadForm.xaml.cs">
+      <DependentUpon>SignaturePadForm.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -110,6 +117,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="CustomControls\Views\SideBarLink.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="CustomControls\Views\EbSignaturePad.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="CustomControls\Views\TwoFAView.xaml">
@@ -200,6 +210,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\OnBoarding\WelcomPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Shared\SignaturePadForm.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
