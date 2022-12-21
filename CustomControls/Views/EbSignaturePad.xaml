@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ExpressBase.Mobile.CustomControls.EbSignaturePad">
+    <ContentView.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Frame
+                Grid.Row="0"
+                Padding="5"
+                BackgroundColor="#eeeeee"
+                HasShadow="False"
+                CornerRadius="6">
+                <StackLayout>
+                    <Grid x:Name="ClickHereLayout"
+                        IsVisible="false">
+                        <Label 
+                            Grid.Row="0" 
+                            Padding="60" 
+                            HorizontalOptions="CenterAndExpand" 
+                            HeightRequest="150">
+                            Tap here to sign
+                        </Label>
+                    </Grid>
+                    <Grid x:Name="ImageLayout" 
+                          IsVisible="false">
+                        <AbsoluteLayout 
+                            Grid.Row="0" HeightRequest="150" WidthRequest="300">
+                            <Image
+                                x:Name="ImageCont"
+                                AbsoluteLayout.LayoutBounds="0,0,1,1" 
+                                AbsoluteLayout.LayoutFlags="All"
+                                Source="image_avatar.jpg">
+                            </Image>
+                            <Button 
+                                x:Name="ImageCloseBtn"
+                                AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
+                                AbsoluteLayout.LayoutFlags="XProportional"
+                                Clicked="ImageCloseBtn_Clicked"
+                                Style="{DynamicResource SignPadImgCloseButton}"></Button>
+                        </AbsoluteLayout>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+        </Grid>
+    </ContentView.Content>
+</ContentView>

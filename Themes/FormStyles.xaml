@@ -110,6 +110,28 @@
     </Style>
 
     <Style TargetType="Button"
+           x:Key="SignPadImgCloseButton">
+        <Setter Property="Padding"
+                Value="0"></Setter>
+        <Setter Property="WidthRequest"
+                Value="24"></Setter>
+        <Setter Property="HeightRequest"
+                Value="24"></Setter>
+        <Setter Property="CornerRadius"
+                Value="12"></Setter>
+        <Setter Property="TextColor"
+                Value="Red"></Setter>
+        <Setter Property="FontSize"
+                Value="24"></Setter>
+        <Setter Property="BackgroundColor"
+                Value="Transparent"></Setter>
+        <Setter Property="Text"
+                Value="&#xf00d;"></Setter>
+        <Setter Property="FontFamily"
+                Value="{DynamicResource FontAwesome}"></Setter>
+    </Style>
+
+    <Style TargetType="Button"
            x:Key="DGEditRowButton">
         <Setter Property="VerticalOptions"
                 Value="Center"></Setter>

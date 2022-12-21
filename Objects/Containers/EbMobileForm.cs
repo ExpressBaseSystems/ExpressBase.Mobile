@@ -317,7 +317,7 @@ namespace ExpressBase.Mobile
             {
                 table.Files.Add(ctrl.Name, fup.GetValue<List<FileWrapper>>());
             }
-            else if (ctrl is EbMobileDisplayPicture || ctrl is EbMobileAudioInput)
+            else if (ctrl is EbMobileDisplayPicture || ctrl is EbMobileAudioInput || ctrl is EbMobileSignaturePad)
             {
                 await SendAndFillFupPersisant(ctrl, row);
             }

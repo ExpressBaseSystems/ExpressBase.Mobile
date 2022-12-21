@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:forms="clr-namespace:SignaturePad.Forms;assembly=SignaturePad.Forms"
+             x:Class="ExpressBase.Mobile.Views.Shared.SignaturePadForm" 
+             BackgroundColor="#444">
+
+    <ContentPage.Content>
+        <StackLayout 
+            VerticalOptions="Center">
+            <forms:SignaturePadView x:Name="MainSignaturePad"
+                BackgroundColor="White"
+                StrokeColor="Black"
+                StrokeWidth="2"
+                WidthRequest="480"
+                HeightRequest="240"
+                ClearText="Clear"
+                PromptText="" 
+                CaptionText=""
+                SignatureLineColor="White"
+                CaptionTextColor="White"
+                ClearTextColor="{DynamicResource Primary_Color}"/>
+            <Grid x:Name="ButtonContainer" Padding="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button 
+                        x:Name="SaveBtn"
+                        Grid.Column="0" 
+                        CornerRadius="4"
+                        HorizontalOptions="FillAndExpand"
+                        BackgroundColor="{DynamicResource Primary_Color}"
+                        Text="Done"
+                        TextColor="White"
+                        Clicked="SaveBtn_Clicked"/>
+                <Button 
+                        x:Name="CancelBtn"
+                        Grid.Column="1"
+                        CornerRadius="4"
+                        HorizontalOptions="FillAndExpand"
+                        Text="Cancel"
+                        TextColor="{DynamicResource Secondary_Color}"
+                        Clicked="CancelBtn_Clicked"/>
+            </Grid>
+
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>
