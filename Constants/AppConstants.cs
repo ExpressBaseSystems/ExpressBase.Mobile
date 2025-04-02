@@ -30,6 +30,8 @@ namespace ExpressBase.Mobile.Constants
 
         public const string CURRENT_LOCOBJ = "current_loc_object";
 
+        public const string CURRENT_BT_PRINTER = "current_bt_printer";
+
         public const string PNS_TOKEN = "eb_pns_token";
 
         public const string AZURE_REGID = "azure_regid";

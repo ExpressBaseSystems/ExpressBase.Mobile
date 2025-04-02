@@ -267,4 +267,9 @@ namespace ExpressBase.Mobile
         public string Title { get; set; }
     }
 
+    public class ObjectBasicPrintLayout : ObjectBasicInfo
+    {
+        public string Title { get; set; }
+    }
+
 }

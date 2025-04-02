@@ -149,7 +149,7 @@ namespace ExpressBase.Mobile.Models
 
                 filtered = pages.Where(item => objids.Contains(item.RefId.ToObjId())).ToList();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 EbLog.Info("Error in filtering pages by location");
                 EbLog.Error(ex.Message);
@@ -188,6 +188,42 @@ namespace ExpressBase.Mobile.Models
         public Dictionary<string, string> Meta { get; set; }
 
         public string Logo { get; set; }
+
+        public bool Selected { set; get; }
+
+        public Color SelectionColor => Selected ? App.Settings.Vendor.GetPrimaryColor() : Color.White;
+
+        public Color Bordercolor => Selected ? App.Settings.Vendor.GetPrimaryColor() : Color.FromHex("cccccc");
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Select()
+        {
+            Selected = true;
+            RaisePropertyChanged("SelectionColor");
+            RaisePropertyChanged("Bordercolor");
+        }
+
+        public void UnSelect()
+        {
+            Selected = false;
+            RaisePropertyChanged("SelectionColor");
+            RaisePropertyChanged("Bordercolor");
+        }
+    }
+
+    public class EbBTDevice : INotifyPropertyChanged
+    {
+        public EbBTDevice() { }
+
+        public string DeviceName { get; set; }
+
+        public string Address { get; set; }
 
         public bool Selected { set; get; }
 

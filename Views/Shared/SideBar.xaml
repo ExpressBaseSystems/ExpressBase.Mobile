@@ -82,6 +82,12 @@
                                              Clicked="ChangeLocation">
                         </control:SideBarLink>
 
+                        <control:SideBarLink IsVisible="true"
+                                             Icon="&#xf021;"
+                                             Text="Switch BT Printer"
+                                             Clicked="SwitchBtPrinterClicked">
+                        </control:SideBarLink>
+
                         <control:SideBarLink IsVisible="{Binding HasMyActions}"
                                              Icon="&#xf25a;"
                                              Text="Action Required"
@@ -119,7 +125,7 @@
                                              Text="Logout"
                                              Clicked="LogoutClicked">
                         </control:SideBarLink>
-                        
+
                     </StackLayout>
                 </StackLayout>
             </ScrollView>

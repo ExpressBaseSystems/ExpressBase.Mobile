@@ -40,6 +40,8 @@ namespace ExpressBase.Mobile.Services
 
         public EbLocation CurrentLocation { set; get; }
 
+        public EbBTDevice SelectedBtDevice { set; get; }
+
         public List<MobilePagesWraper> MobilePages { set; get; }
 
         public List<WebObjectsWraper> WebObjects { set; get; }
@@ -500,8 +502,9 @@ namespace ExpressBase.Mobile.Services
                 }
                 else
                 {
-                    Utils.Toast(response.Message ?? "Sync failed");
-                    EbLog.Warning(response.Message ?? "Sync failed");
+                    string t = "Failed to get solution data :: " + resp.StatusDescription;
+                    Utils.Toast(t);
+                    EbLog.Warning(t);
                 }
             }
             catch (Exception ex)

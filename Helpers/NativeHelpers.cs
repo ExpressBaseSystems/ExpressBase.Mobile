@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Mobile.Enums;
+using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Views.Base;
 using System;
 using System.Collections.Generic;
@@ -118,6 +119,17 @@ namespace ExpressBase.Mobile.Helpers
         void StopRecording();
 
         event EbEventHandler OnRecordingCompleted;
+    }
+
+    public interface IEbBluetoothHelper
+    {
+        bool RequestBluetoothPermissions();
+        bool EnableAndCheckBluetoothAdapter();
+        Task<bool> ConnectToPrinter(string printerName);
+        Task PrintText(string text);
+        void Disconnect();
+        Task<List<EbBTDevice>> GetBluetoothDeviceList();
+        Task<bool> PrintInvoice(string refid, string param);
     }
 
     public interface ILocationHelper

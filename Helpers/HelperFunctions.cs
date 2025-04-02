@@ -92,13 +92,13 @@ namespace ExpressBase.Mobile.Helpers
 
         public static async Task CreateDirectory(string FolderName = null)
         {
-            var read = await AppPermission.ReadStorage();
-            var write = await AppPermission.WriteStorage();
+            //var read = await AppPermission.ReadStorage();
+            //var write = await AppPermission.WriteStorage();
 
-            if (read && write)
-            {
-                CreatePlatFormDir(FolderName);
-            }
+            //if (read && write)
+            //{
+            CreatePlatFormDir(FolderName);
+            //}
         }
 
         private static string CreatePlatFormDir(string FolderName)

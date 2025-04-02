@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:ExpressBase.Mobile.CustomControls"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.Views.Shared.BluetoothDevices"
+             Style="{StaticResource ContentPageStyle}">
+
+    <ContentPage.Content>
+
+        <controls:EbCPLayout x:Name="EbLayout"
+                             Title="Bluetooth Devices"
+                             BackButtonPressed="OnBackButtonPressed">
+
+            <controls:EbCPLayout.Content>
+                <Grid RowSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <ListView Grid.Row="0"
+                              ItemsSource="{Binding BtDevices,Mode=TwoWay}"
+                              HasUnevenRows="true"
+                              ItemTapped="ListView_ItemTapped">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Grid Padding="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Frame Grid.RowSpan="2"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center"
+                                               HasShadow="False"
+                                               Padding="0"
+                                               Margin="10,0,15,0"
+                                               BorderColor="{Binding Bordercolor}"
+                                               HeightRequest="20"
+                                               WidthRequest="20"
+                                               CornerRadius="10"
+                                               BackgroundColor="{Binding SelectionColor}">
+                                            <BoxView BackgroundColor="White"
+                                                     WidthRequest="8"
+                                                     HeightRequest="8"
+                                                     VerticalOptions="Center"
+                                                     HorizontalOptions="Center"
+                                                     CornerRadius="4">
+                                            </BoxView>
+                                        </Frame>
+
+                                        <Label Grid.Row="0"
+                                               Grid.Column="1"
+                                               Text="{Binding DeviceName}"
+                                               FontFamily="{StaticResource Roboto-Medium}"
+                                               FontSize="14">
+                                        </Label>
+
+                                        <Label Grid.Row="1"
+                                               Grid.Column="1"
+                                               Text="{Binding Address}"
+                                               FontFamily="{StaticResource Roboto-Regular}"
+                                               FontSize="12"
+                                               TextColor="{DynamicResource Gray-700}">
+                                        </Label>
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <Button Grid.Row="1"
+                            Text="Select"
+                            BackgroundColor="{DynamicResource Primary_Color}"
+                            TextColor="{DynamicResource Primary_FontColor}"
+                            CornerRadius="0"
+                            Command="{Binding SelectBtDeviceCommand}">
+                    </Button>
+
+                    <Label x:Name="EmptyLabel"
+                           IsVisible="False"
+                           Grid.RowSpan="2"
+                           Text="No Bluetooth device found."
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center">
+                    </Label>
+
+                </Grid>
+            </controls:EbCPLayout.Content>
+        </controls:EbCPLayout>
+    </ContentPage.Content>
+</ContentPage>

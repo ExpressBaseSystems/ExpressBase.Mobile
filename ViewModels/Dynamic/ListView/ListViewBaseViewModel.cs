@@ -276,6 +276,22 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 {
                     await RenderReport(item.DataRow);
                 }
+                else if (this.Visualization.LinkRefId.Split(CharConstants.DASH)[2] == "31")
+                {
+                    List<Param> param = new List<Param>();
+                    foreach (EbCTCMapper map in Visualization.ContextToControlMap)
+                    {
+                        param.Add(new Param
+                        {
+                            Name = map.ControlName,
+                            Type = ((int)EbDbTypes.Int32).ToString(),
+                            Value = item.DataRow[map.ColumnName]?.ToString()
+                        });
+                    }
+
+                    IEbBluetoothHelper printer = DependencyService.Get<IEbBluetoothHelper>();
+                    await printer.PrintInvoice(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
+                }
                 else
                 {
                     EbMobilePage page = EbPageHelper.GetPage(this.Visualization.LinkRefId);

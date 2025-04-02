@@ -243,7 +243,17 @@ namespace ExpressBase.Mobile
                     }
                     else if (NetworkType == NetworkMode.Offline)
                     {
-                        r = PdfService.GetPdfOffline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
+                        int objType = string.IsNullOrWhiteSpace(this.PrintDocs[0].ObjRefId) ? 0 : Convert.ToInt32(this.PrintDocs[0].ObjRefId.Split('-')[2]);
+
+                        if (objType == 3)
+                        {
+                            r = PdfService.GetPdfOffline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
+                        }
+                        else if (objType == 31)
+                        {
+                            IEbBluetoothHelper printer = DependencyService.Get<IEbBluetoothHelper>();
+                            success = await printer.PrintInvoice(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
+                        }
                     }
 
                     if (r?.ReportBytea != null)
@@ -307,7 +317,7 @@ namespace ExpressBase.Mobile
             if (RowId <= 0)
             {
                 row.AppendEbColValues(NetworkType == NetworkMode.Offline, true);
-            };
+            }
             return formData;
         }
 

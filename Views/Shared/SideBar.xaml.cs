@@ -91,5 +91,10 @@ namespace ExpressBase.Mobile.Views.Shared
 
             App.Settings.SyncInProgress = false;
         }
+
+        private async void SwitchBtPrinterClicked(object sender, EventArgs e)
+        {
+            await App.Navigation.NavigateMasterAsync(new BluetoothDevices());
+        }
     }
 }
