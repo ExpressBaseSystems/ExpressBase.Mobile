@@ -16,7 +16,7 @@ namespace ExpressBase.Mobile.Helpers
 
             if (string.IsNullOrEmpty(cordinates))
             {
-                toast.Show("cordinates empty");
+                toast.Show("Empty Coordinates");
                 return;
             }
 
@@ -35,7 +35,7 @@ namespace ExpressBase.Mobile.Helpers
                 }
                 catch (Exception ex)
                 {
-                    EbLog.Error($"Cordinates value format error 'Value:{cordinates}'");
+                    EbLog.Error($"Coordinates value format error 'Value:{cordinates}'");
                     EbLog.Error(ex.Message);
 
                     toast.Show("Unable to open map");
@@ -52,11 +52,11 @@ namespace ExpressBase.Mobile.Helpers
             }
             catch (ArgumentNullException)
             {
-                toast.Show("no number");
+                toast.Show("No number");
             }
             catch (FeatureNotSupportedException)
             {
-                toast.Show("Feature unsuported");
+                toast.Show("Unsupported feature");
             }
             catch (Exception)
             {
@@ -70,7 +70,7 @@ namespace ExpressBase.Mobile.Helpers
 
             if (string.IsNullOrEmpty(email))
             {
-                toast.Show("email empty");
+                toast.Show("Empty email");
                 return;
             }
 

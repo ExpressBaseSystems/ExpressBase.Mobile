@@ -227,7 +227,7 @@ namespace ExpressBase.Mobile.CustomControls
             {
                 if (value == null)
                 {
-                    Utils.Toast("location info empty");
+                    Utils.Toast("Empty Location Info");
                     return;
                 }
                 await NativeLauncher.OpenMapAsync(value?.ToString());
