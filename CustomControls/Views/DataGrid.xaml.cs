@@ -56,13 +56,15 @@ namespace ExpressBase.Mobile.CustomControls.Views
                 Margin = new Thickness(5, 5, 0, 0),
                 Padding = 0
             };
-            Container.Children.Add(frame, 0, 0);
+            Container.Children.Add(frame, 0, 1);
 
             if (dataGrid.DisableAdd)
             {
                 Container.Children.Remove(AddRowButton);
                 AddColumnDefinition.Width = 0;
             }
+
+            SearchContainer.IsVisible = dataGrid.ShowSearchBox;
         }
 
         private async void AddRowButtonClicked(object sender, EventArgs e)
@@ -78,6 +80,39 @@ namespace ExpressBase.Mobile.CustomControls.Views
             };
             await App.Navigation.NavigateMasterModalAsync(gridview);
             isTapped = false;
+        }
+
+        private void SearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var searchText = e.NewTextValue?.ToLower() ?? "";
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                foreach (View row in Body.Children)
+                {
+                    row.IsVisible = true;
+                }
+            }
+            else
+            {
+                foreach (View row in Body.Children)
+                {
+                    if (row is StackLayout stack && stack.Children[0] is DGDynamicFrame frame)
+                    {
+                        bool isVisible = false;
+                        foreach (var gl in (frame.Content as DynamicGrid).Children)
+                        {
+                            if (gl is Label lbl)
+                            {
+                                isVisible = lbl.Text?.ToLower().Contains(searchText) == true;
+                                if (isVisible)
+                                    break;
+                            }
+                        }
+                        row.IsVisible = isVisible;
+                    }
+                }
+            }
         }
 
         public void OnRowInserted(string name = null)
@@ -236,6 +271,8 @@ namespace ExpressBase.Mobile.CustomControls.Views
         public void SetAsReadOnly(bool flag)
         {
             ReadOnlyMask.IsVisible = flag;
+            AddRowButton.IsVisible = !flag;
+            SearchContainer.IsVisible = !flag && dataGrid.ShowSearchBox;
         }
 
         public MobileTable GetValue(bool isAppendEbCol)

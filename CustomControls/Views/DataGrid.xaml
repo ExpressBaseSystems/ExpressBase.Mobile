@@ -9,6 +9,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -16,14 +17,36 @@
                 <ColumnDefinition Width="35" x:Name="AddColumnDefinition"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <BoxView Grid.RowSpan="2"
+            <BoxView Grid.RowSpan="3"
                      Grid.ColumnSpan="2"
                      CornerRadius="4"
                      BackgroundColor="#eee">
             </BoxView>
 
+            <Grid x:Name="SearchContainer" 
+                  Grid.Row="0" 
+                  Grid.Column="0" 
+                  Grid.ColumnSpan="2"
+                  IsVisible="false">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"></ColumnDefinition>
+                    <ColumnDefinition Width="4*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Entry x:Name="SearchBox"
+                       HeightRequest="34"
+                       Grid.Row="0" 
+                       Grid.Column="1" 
+                       FontSize="12" 
+                       TextChanged="SearchTextChanged"
+                       Placeholder="Search..."
+                       Keyboard="Text" />
+            </Grid>
+
             <Button x:Name="AddRowButton"
-                    Grid.Row="0"
+                    Grid.Row="1"
                     Grid.Column="1"
                     Padding="0"
                     HeightRequest="30"
@@ -42,13 +65,13 @@
                          Margin="1"
                          Spacing="1"
                          BackgroundColor="Transparent"
-                         Grid.Row="1"
+                         Grid.Row="2"
                          Grid.ColumnSpan="2">
             </StackLayout>
 
             <BoxView x:Name="ReadOnlyMask"
                      IsVisible="False"
-                     Grid.RowSpan="2"
+                     Grid.RowSpan="3"
                      Grid.ColumnSpan="2">
             </BoxView>
 

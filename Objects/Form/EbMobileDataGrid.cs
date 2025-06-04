@@ -33,6 +33,8 @@ namespace ExpressBase.Mobile
 
         public bool DisableEdit { set; get; }
 
+        public bool ShowSearchBox { set; get; }
+
         public EbDataRow Context { set; get; }
 
         public EbScript RowColorExpr { get; set; }
