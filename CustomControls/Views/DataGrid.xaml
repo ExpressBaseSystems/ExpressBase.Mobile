@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:customcontrols="clr-namespace:ExpressBase.Mobile.CustomControls"
              x:Class="ExpressBase.Mobile.CustomControls.Views.DataGrid">
 
     <ContentView.Content>
@@ -27,22 +27,35 @@
                   Grid.Row="0" 
                   Grid.Column="0" 
                   Grid.ColumnSpan="2"
-                  IsVisible="false">
+                  IsVisible="true">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="6*"></ColumnDefinition>
-                    <ColumnDefinition Width="4*"></ColumnDefinition>
+                    <ColumnDefinition Width="5*"></ColumnDefinition>
+                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                    <ColumnDefinition Width="34"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Entry x:Name="SearchBox"
+                
+                <customcontrols:EbXTextBox x:Name="SearchBox"
                        HeightRequest="34"
                        Grid.Row="0" 
                        Grid.Column="1" 
                        FontSize="12" 
                        TextChanged="SearchTextChanged"
                        Placeholder="Search..."
+                       BackgroundColor="Transparent"
+                       BorderColor="Transparent"
                        Keyboard="Text" />
+                <Button x:Name="SearchBoxClearButton"
+                        Grid.Column="2"
+                        Text="✕"
+                        FontSize="12"
+                        HeightRequest="34"
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Clicked="SearchBoxClearButton_Clicked"
+                        IsVisible="False"/>
             </Grid>
 
             <Button x:Name="AddRowButton"

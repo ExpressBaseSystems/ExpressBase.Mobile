@@ -88,6 +88,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
             if (string.IsNullOrWhiteSpace(searchText))
             {
+                SearchBoxClearButton.IsVisible = false;
                 foreach (View row in Body.Children)
                 {
                     row.IsVisible = true;
@@ -95,6 +96,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
             }
             else
             {
+                SearchBoxClearButton.IsVisible = true;
                 foreach (View row in Body.Children)
                 {
                     if (row is StackLayout stack && stack.Children[0] is DGDynamicFrame frame)
@@ -113,6 +115,12 @@ namespace ExpressBase.Mobile.CustomControls.Views
                     }
                 }
             }
+        }
+
+        private void SearchBoxClearButton_Clicked(object sender, EventArgs e)
+        {
+            SearchBoxClearButton.IsVisible = false;
+            SearchBox.Text = string.Empty;
         }
 
         public void OnRowInserted(string name = null)
