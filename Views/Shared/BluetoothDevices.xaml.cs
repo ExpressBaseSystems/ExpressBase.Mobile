@@ -30,7 +30,7 @@ namespace ExpressBase.Mobile.Views.Shared
             }
             viewModel.InitBtDevicesList();
 
-            EmptyLabel.IsVisible = viewModel.BtDevices.Count <= 0;
+            EmptyLabel.IsVisible = viewModel.BtDevices?.Count <= 0;
         }
 
         private void ListView_ItemTapped(object sender, ItemTappedEventArgs e)

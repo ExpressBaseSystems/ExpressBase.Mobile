@@ -63,6 +63,7 @@ namespace ExpressBase.Mobile.Services
                             if (DependencyForm != null)//// error submission must be consider [flow pending...]
                                 await PushDependencyData(webdata, Form, DependencyForm, resp.RowId, resp.LocalRowId);
                         }
+                        await Task.Delay(500); // to avoid server overload
                     }
                 }
                 if (response.Status)

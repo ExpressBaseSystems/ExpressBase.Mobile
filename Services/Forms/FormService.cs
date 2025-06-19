@@ -94,13 +94,14 @@ namespace ExpressBase.Mobile.Services
                 request.AddHeader(AppConst.RTOKEN, App.Settings.RToken);
 
                 IRestResponse response = await HttpClient.ExecuteAsync(request);
-                return JsonConvert.DeserializeObject<PushResponse>(response.Content);
+                if (response.StatusCode == HttpStatusCode.OK)
+                    return JsonConvert.DeserializeObject<PushResponse>(response.Content);
+                return new PushResponse() { Message = "Save Failed with message: " + response.StatusDescription };
             }
             catch (Exception e)
             {
-                EbLog.Error(e.Message);
+                return new PushResponse() { Message = e.Message, StackTraceInt = e.StackTrace };
             }
-            return null;
         }
 
         public async Task<List<ApiFileData>> SendFilesAsync(List<FileWrapper> Files)
