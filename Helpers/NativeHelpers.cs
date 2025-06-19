@@ -36,6 +36,10 @@ namespace ExpressBase.Mobile.Helpers
         public void BackupLogFiles();
 
         public void AddBackupLogFiles(List<EmailAttachment> Attachments);
+
+        public Task<bool> RequestGalleryPermissionAsync();
+
+        public Task<bool> RequestCameraPermissionAsync();
     }
 
     public interface IToast

@@ -66,6 +66,14 @@ namespace ExpressBase.Mobile.CustomControls
                 if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
                     return;
 
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                var cameraPermission = await helper.RequestCameraPermissionAsync();
+                if (!cameraPermission)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Permission Denied", "Camera access is required.", "OK");
+                    //return;
+                }
+
                 MediaFile photo = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions()
                 {
                     PhotoSize = PhotoSize.Small,
@@ -93,6 +101,14 @@ namespace ExpressBase.Mobile.CustomControls
         {
             try
             {
+                INativeHelper helper = DependencyService.Get<INativeHelper>();
+                var readPermission = await helper.RequestGalleryPermissionAsync();
+                if (!readPermission)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Permission Denied", "Gallery access is required.", "OK");
+                    //return;
+                }
+
                 var photo = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions() { PhotoSize = PhotoSize.Small });
 
                 if (photo != null)
