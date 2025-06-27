@@ -231,6 +231,49 @@ namespace ExpressBase.Mobile
                     }
 
                     ReportRenderResponse r = null;
+                    ObjectBasicInfo selectedPrint = this.PrintDocs[0];
+                    if (this.PrintDocs.Count > 1)
+                    {
+                        string preferedPrinter = Store.GetJSON<string>(AppConst.PRINTER_PREFERENCE);
+                        preferedPrinter = string.IsNullOrEmpty(preferedPrinter) ? "None" : preferedPrinter;
+                        List<ObjectBasicInfo> eligiblePrints = new List<ObjectBasicInfo>();
+                        foreach (ObjectBasicInfo print in this.PrintDocs)
+                        {
+                            int _objT = print.ObjRefId.GetObjType();
+
+                            if (_objT == 3 && (preferedPrinter == "None" || preferedPrinter == "Laser"))
+                            {
+                                eligiblePrints.Add(print);
+                            }
+                            else if (_objT == 31 && (preferedPrinter == "None" || preferedPrinter == "Thermal"))
+                            {
+                                eligiblePrints.Add(print);
+                            }
+                        }
+                        if (eligiblePrints.Count == 0)
+                        {
+                            selectedPrint = null;
+                        }
+                        else if (eligiblePrints.Count == 1)
+                        {
+                            selectedPrint = eligiblePrints[0];
+                        }
+                        else
+                        {
+                            string[] strings = eligiblePrints.Select(x => { return x is ObjectBasicPrintLayout a ? a.Title : x is ObjectBasicReport b ? b.Title : x.ObjDisplayName; }).ToArray();
+                            string action = await Application.Current.MainPage.DisplayActionSheet("Choose a print", "Cancel", null, strings);
+                            selectedPrint = eligiblePrints.Find(x => (x is ObjectBasicPrintLayout a ? a.Title : x is ObjectBasicReport b ? b.Title : x.ObjDisplayName) == action);
+                            if (selectedPrint == null)
+                                return success;
+                        }
+                    }
+
+                    if (selectedPrint == null)
+                    {
+                        if (this.RenderAsFilterDialog)
+                            Utils.Toast("Check printer preference");
+                        return success;
+                    }
 
                     if (NetworkType == NetworkMode.Online)
                     {
@@ -239,20 +282,19 @@ namespace ExpressBase.Mobile
                             Utils.Alert_NoInternet();
                             return false;
                         }
-                        r = await PdfService.GetPdfOnline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
+                        r = await PdfService.GetPdfOnline(selectedPrint.ObjRefId, JsonConvert.SerializeObject(param));
                     }
                     else if (NetworkType == NetworkMode.Offline)
                     {
-                        int objType = string.IsNullOrWhiteSpace(this.PrintDocs[0].ObjRefId) ? 0 : Convert.ToInt32(this.PrintDocs[0].ObjRefId.Split('-')[2]);
-
+                        int objType = string.IsNullOrWhiteSpace(selectedPrint.ObjRefId) ? 0 : selectedPrint.ObjRefId.GetObjType();
                         if (objType == 3)
                         {
-                            r = PdfService.GetPdfOffline(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
+                            r = PdfService.GetPdfOffline(selectedPrint.ObjRefId, JsonConvert.SerializeObject(param));
                         }
                         else if (objType == 31)
                         {
                             IEbBluetoothHelper printer = DependencyService.Get<IEbBluetoothHelper>();
-                            success = await printer.PrintInvoice(this.PrintDocs[0].ObjRefId, JsonConvert.SerializeObject(param));
+                            success = await printer.PrintInvoice(selectedPrint.ObjRefId, JsonConvert.SerializeObject(param));
                         }
                     }
 

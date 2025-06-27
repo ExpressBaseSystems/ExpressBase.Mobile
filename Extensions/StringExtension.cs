@@ -29,6 +29,11 @@ namespace ExpressBase.Mobile.Extensions
             return Convert.ToInt32(refid.Split(CharConstants.DASH)[3]);
         }
 
+        public static int GetObjType(this string refid)
+        {
+            return Convert.ToInt32(refid.Split(CharConstants.DASH)[2]);
+        }
+
         public static string RemoveSubstring(this string current, string word)
         {
             return current.Replace(word, string.Empty);
@@ -68,7 +73,7 @@ namespace ExpressBase.Mobile.Extensions
             }
             catch (Exception ex)
             {
-                EbLog.Error("Error at extension [ToCharNotation]" + "\n" +ex.Message);
+                EbLog.Error("Error at extension [ToCharNotation]" + "\n" + ex.Message);
                 notation = "??";
             }
             return notation;

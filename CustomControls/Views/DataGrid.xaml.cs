@@ -253,7 +253,7 @@ namespace ExpressBase.Mobile.CustomControls.Views
 
         private MobileTableRow DR2TableRow(EbDataRow row)
         {
-            int dataId = row["id"] != null ? Convert.ToInt32(row["id"]) : 0;
+            int dataId = row["id"] != null ? (int.TryParse(Convert.ToString(row["id"]), out int _temp) ? _temp : 0) : 0;
 
             MobileTableRow tableRow = new MobileTableRow(dataId);
 

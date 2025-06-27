@@ -108,6 +108,33 @@
                             </Grid>
                         </Frame>
 
+                        <Frame Padding="10"
+                               HasShadow="False"
+                               CornerRadius="6">
+                            <Grid RowSpacing="15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Text="Printer Preference"
+                                    FontSize="16"
+                                    Grid.Row="0"
+                                    FontFamily="{StaticResource Roboto-Medium}"
+                                    TextColor="#333">
+                                </Label>
+                                <StackLayout x:Name="printer_preference_rad_grp"
+                                             Grid.Row="1" 
+                                             Orientation="Horizontal"
+                                             HorizontalOptions="Start"
+                                             Spacing="20"
+                                             Padding="10">
+                                    <RadioButton FontSize="16" Content="None" GroupName="printer_preference" Value="None" CheckedChanged="OnPrinterPrefernceChanged"/>
+                                    <RadioButton FontSize="16" Content="Laser" GroupName="printer_preference" Value="Laser" CheckedChanged="OnPrinterPrefernceChanged"/>
+                                    <RadioButton FontSize="16" Content="Thermal" GroupName="printer_preference" Value="Thermal" CheckedChanged="OnPrinterPrefernceChanged"/>
+                                </StackLayout>
+                            </Grid>
+                        </Frame>
+
                     </StackLayout>
                 </Grid>
             </control:EbCPLayout.Content>

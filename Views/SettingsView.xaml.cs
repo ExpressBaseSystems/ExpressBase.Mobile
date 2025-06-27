@@ -29,6 +29,19 @@ namespace ExpressBase.Mobile.Views
                 LastSyncAtLbl.Text = "Sync required";
             else
                 LastSyncAtLbl.Text = "Last sync at: " + syncInfo.LastSyncTs.ToString();
+
+            string valueToSelect = Store.GetJSON<string>(AppConst.PRINTER_PREFERENCE);
+            if (string.IsNullOrWhiteSpace(valueToSelect))
+                valueToSelect = "None";
+
+            foreach (var child in printer_preference_rad_grp.Children)
+            {
+                if (child is RadioButton radio && radio.Value?.ToString() == valueToSelect)
+                {
+                    radio.IsChecked = true;
+                    break;
+                }
+            }
         }
 
         private async void ShareLog_Clicked(object sender, EventArgs e)
@@ -85,6 +98,18 @@ namespace ExpressBase.Mobile.Views
             catch (Exception ex)
             {
                 EbLog.Error("Failed to open logs file, " + ex.Message);
+            }
+        }
+
+        private async void OnPrinterPrefernceChanged(object sender, CheckedChangedEventArgs e)
+        {
+            if (e.Value)
+            {
+                var radio = (RadioButton)sender;
+                string selectedValue = radio.Value?.ToString();
+                await Store.SetJSONAsync(AppConst.PRINTER_PREFERENCE, selectedValue);
+                App.Settings.PrinterPreference = selectedValue;
+                EbLog.Info("Printer preference changed to " + selectedValue);
             }
         }
 

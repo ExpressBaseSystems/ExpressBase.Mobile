@@ -8,7 +8,9 @@ namespace ExpressBase.Mobile
     public enum ThermalPrintTemplates
     {
         None = 0,
-        SalesInvoiceV1 = 1
+        SalesInvoiceV1 = 1,
+        SalesInvoiceV2 = 2,
+        DeliveryNoteV1 = 3
     }
 
     public class EbPrintLayout : EbObject
