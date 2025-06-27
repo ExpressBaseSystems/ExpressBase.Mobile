@@ -61,12 +61,17 @@ namespace ExpressBase.Mobile.Views
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     Utils.Toast("Press again to EXIT!");
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(5000);
+                        backButtonCount = 0;
+                    });
                 });
                 return true;
             }
         }
 
-        public async Task SyncDataClicked() 
+        public async Task SyncDataClicked()
         {
             await viewModel.SyncData(EbLayout.GetMessageLoader());
             CurrentLocation.Text = App.Settings.CurrentLocation?.LongName?.ToLower();

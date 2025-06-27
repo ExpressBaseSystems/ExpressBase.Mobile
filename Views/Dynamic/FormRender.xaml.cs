@@ -21,6 +21,8 @@ namespace ExpressBase.Mobile.Views.Dynamic
 
         private readonly FormRenderViewModel viewModel;
 
+        private int backButtonCount;
+
         //new mode
         public FormRender(EbMobilePage page)
         {
@@ -76,6 +78,7 @@ namespace ExpressBase.Mobile.Views.Dynamic
                 isRendered = true;
             }
             EbLayout.HideLoader();
+            backButtonCount = 0;
         }
 
         private async Task AdjustButtonContainer()
@@ -129,6 +132,34 @@ namespace ExpressBase.Mobile.Views.Dynamic
             {
                 ImageFullScreen.SetSource(source).Show();
             }
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (viewModel.IsSaveButtonVisible)
+            {
+                backButtonCount++;
+
+                if (backButtonCount == 2)
+                {
+                    backButtonCount = 0;
+                    return false;
+                }
+                else
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Utils.Toast("Press again to exit this page");
+                    });
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(5000);
+                        backButtonCount = 0;
+                    });
+                    return true;
+                }
+            }
+            return false;
         }
 
         public EbCPLayout GetCurrentLayout() => EbLayout;
