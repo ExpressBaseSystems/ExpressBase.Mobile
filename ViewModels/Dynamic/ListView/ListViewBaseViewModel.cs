@@ -257,6 +257,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             {
                 IsBusy = true;
                 await Task.Delay(100);
+
                 if (Visualization.LinkExpr != null && !Visualization.LinkExpr.IsEmpty())
                 {
                     if (!EbListHelper.EvaluateLinkExpr(item.DataRow, Visualization.LinkExpr.GetCode()))
@@ -272,11 +273,13 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     }
                 }
 
-                if (this.Visualization.LinkRefId.Split(CharConstants.DASH)[2] == "3")
+                int LinkObjType = string.IsNullOrWhiteSpace(this.Visualization.LinkRefId) ? -1 : this.Visualization.LinkRefId.GetObjType();
+
+                if (LinkObjType == 3)
                 {
-                    await RenderReport(item.DataRow);
+                    await RenderReport(item.DataRow, this.Visualization.ContextToControlMap, this.Visualization.RefId);
                 }
-                else if (this.Visualization.LinkRefId.Split(CharConstants.DASH)[2] == "31")
+                else if (LinkObjType == 31)
                 {
                     List<Param> param = new List<Param>();
                     foreach (EbCTCMapper map in Visualization.ContextToControlMap)
@@ -288,11 +291,10 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                             Value = item.DataRow[map.ColumnName]?.ToString()
                         });
                     }
-
                     IEbBluetoothHelper printer = DependencyService.Get<IEbBluetoothHelper>();
                     await printer.PrintInvoice(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
                 }
-                else
+                else if (LinkObjType == 13)
                 {
                     EbMobilePage page = EbPageHelper.GetPage(this.Visualization.LinkRefId);
 
@@ -311,10 +313,83 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                             await App.Navigation.NavigateMasterAsync(renderer);
                     }
                 }
+                else if (Visualization.LinkCollection != null && Visualization.LinkCollection.Count > 0)
+                {
+                    string preferedPrinter = Store.GetJSON<string>(AppConst.PRINTER_PREFERENCE);
+                    preferedPrinter = string.IsNullOrWhiteSpace(preferedPrinter) ? "None" : preferedPrinter;
+                    List<EbMobileLinkCollection> eligibleLinks = new List<EbMobileLinkCollection>();
+                    foreach (EbMobileLinkCollection link in Visualization.LinkCollection)
+                    {
+                        if (!string.IsNullOrEmpty(link.LinkRefId))
+                        {
+                            int linkType = link.LinkRefId.GetObjType();
+                            if (linkType == 3 && (preferedPrinter == "None" || preferedPrinter == "Laser"))
+                            {
+                                eligibleLinks.Add(link);
+                            }
+                            else if (linkType == 31 && (preferedPrinter == "None" || preferedPrinter == "Thermal"))
+                            {
+                                eligibleLinks.Add(link);
+                            }
+                        }
+                    }
+                    if (eligibleLinks.Count > 0)
+                    {
+                        EbMobileLinkCollection selected = null;
+                        if (eligibleLinks.Count > 1)
+                        {
+                            string[] strings = eligibleLinks.Select(x => string.IsNullOrWhiteSpace(x.LinkName) ? x.LinkRefId : x.LinkName).ToArray();
+                            string action = await Application.Current.MainPage.DisplayActionSheet("Choose an option", "Cancel", null, strings);
+                            selected = eligibleLinks.Find(x => string.IsNullOrWhiteSpace(x.LinkName) ? x.LinkRefId == action : x.LinkName == action);
+                        }
+                        else
+                        {
+                            selected = eligibleLinks[0];
+                        }
+                        if (selected != null)
+                        {
+                            if (!EbListHelper.EvaluateLinkExpr(item.DataRow, selected.LinkExpr.GetCode()))
+                            {
+                                if (string.IsNullOrWhiteSpace(selected.LinkExprFailMsg))
+                                    Utils.Toast("Link Blocked");
+                                else
+                                    Utils.Toast(selected.LinkExprFailMsg);
+                                EbLog.Info("[LinkExpr] evaluation blocked link navigation");
+                            }
+                            else
+                            {
+                                if (selected.LinkRefId.GetObjType() == 3)
+                                {
+                                    await RenderReport(item.DataRow, selected.ContextToControlMap, selected.LinkRefId);
+                                }
+                                else if (selected.LinkRefId.GetObjType() == 31)
+                                {
+                                    List<Param> param = new List<Param>();
+                                    foreach (EbCTCMapper map in selected.ContextToControlMap)
+                                    {
+                                        param.Add(new Param
+                                        {
+                                            Name = map.ControlName,
+                                            Type = ((int)EbDbTypes.Int32).ToString(),
+                                            Value = item.DataRow[map.ColumnName]?.ToString()
+                                        });
+                                    }
+                                    IEbBluetoothHelper printer = DependencyService.Get<IEbBluetoothHelper>();
+                                    await printer.PrintInvoice(selected.LinkRefId, JsonConvert.SerializeObject(param));
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Utils.Toast("Check printer preference");
+                    }
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                EbLog.Error("ListBaseViewModel.NavigateToLink---" + ex.Message + " \n" + ex.StackTrace);
             }
             IsBusy = false;
             IsTapped = false;
@@ -336,9 +411,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             return new List<DbParameter>();
         }
 
-        private async Task RenderReport(EbDataRow Row)
+        private async Task RenderReport(EbDataRow Row, List<EbCTCMapper> ContextToControlMap, string LinkRefId)
         {
-            if (Visualization.ContextToControlMap?.Count > 0)
+            if (ContextToControlMap?.Count > 0)
             {
                 if (NetworkType == NetworkMode.Online && !Utils.IsNetworkReady(this.NetworkType))
                 {
@@ -346,7 +421,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                     return;
                 }
                 List<Param> param = new List<Param>();
-                foreach (EbCTCMapper map in Visualization.ContextToControlMap)
+                foreach (EbCTCMapper map in ContextToControlMap)
                 {
                     param.Add(new Param
                     {
@@ -361,9 +436,9 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
                 try
                 {
                     if (NetworkType == NetworkMode.Online)
-                        r = await PdfService.GetPdfOnline(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
+                        r = await PdfService.GetPdfOnline(LinkRefId, JsonConvert.SerializeObject(param));
                     else
-                        r = PdfService.GetPdfOffline(this.Visualization.LinkRefId, JsonConvert.SerializeObject(param));
+                        r = PdfService.GetPdfOffline(LinkRefId, JsonConvert.SerializeObject(param));
 
                     if (r?.ReportBytea != null)
                     {

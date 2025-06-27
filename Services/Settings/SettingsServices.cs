@@ -42,6 +42,8 @@ namespace ExpressBase.Mobile.Services
 
         public EbBTDevice SelectedBtDevice { set; get; }
 
+        public string PrinterPreference { set; get; }
+
         public List<MobilePagesWraper> MobilePages { set; get; }
 
         public List<WebObjectsWraper> WebObjects { set; get; }

@@ -60,19 +60,19 @@ namespace ExpressBase.Mobile
             get
             {
                 if (Type == ((int)EbDbTypes.Decimal).ToString())
-                    return Convert.ToDecimal(Value);
+                    return decimal.TryParse(Value, out decimal _t) ? _t : 0;
                 else if (Type == ((int)EbDbTypes.Int16).ToString())
-                    return Convert.ToInt16(Value);
+                    return Int16.TryParse(Value, out Int16 _t) ? _t : 0;
                 else if (Type == ((int)EbDbTypes.Int32).ToString())
-                    return Convert.ToInt32(Value);
+                    return Int32.TryParse(Value, out Int32 _t) ? _t : 0;
                 else if (Type == ((int)EbDbTypes.Int64).ToString())
-                    return Convert.ToInt64(Value);
+                    return Int64.TryParse(Value, out Int64 _t) ? _t : 0;
                 else if (Type == ((int)EbDbTypes.Date).ToString())
-                    return Convert.ToDateTime(Value);
+                    return DateTime.TryParse(Value, out DateTime _t) ? _t : DateTime.MinValue;
                 else if (Type == ((int)EbDbTypes.DateTime).ToString())
-                    return Convert.ToDateTime(Value);
+                    return DateTime.TryParse(Value, out DateTime _t) ? _t : DateTime.MinValue;
                 else if (Type == ((int)EbDbTypes.Boolean).ToString())
-                    return Convert.ToBoolean(Value);
+                    return bool.TryParse(Value, out bool _t) ? _t : false;
                 else
                     return Value;
             }
@@ -100,6 +100,19 @@ namespace ExpressBase.Mobile
         public string ColumnName { set; get; }
 
         public string ControlName { set; get; }
+    }
+
+    public class EbMobileLinkCollection : EbMobilePageBase
+    {
+        public string LinkName { get; set; }
+
+        public string LinkRefId { get; set; }
+
+        public List<EbCTCMapper> ContextToControlMap { set; get; }
+
+        public EbScript LinkExpr { get; set; }
+
+        public string LinkExprFailMsg { get; set; }
     }
 
     public class EbThickness
