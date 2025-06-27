@@ -300,62 +300,71 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
         private async Task ExpandContextIfConfigured()
         {
-            if (this.Form.ContextToFormControlMap?.Count > 0)
+            try
             {
-                bool tryOffline = false;
-                if (this.Page.NetworkMode == NetworkMode.Online)
+                if (this.Form.ContextToFormControlMap?.Count > 0)
                 {
-                    if (!string.IsNullOrWhiteSpace(this.Form.ContextOnlineData))
+                    bool tryOffline = false;
+                    if (this.Page.NetworkMode == NetworkMode.Online)
                     {
-
-                        if (!Utils.IsNetworkReady(this.NetworkType))
+                        if (!string.IsNullOrWhiteSpace(this.Form.ContextOnlineData))
                         {
-                            Utils.Alert_NoInternet();
-                            await App.Navigation.PopByRenderer(true);
-                            return;
-                        }
 
-                        List<Param> cParams = new List<Param>();
+                            if (!Utils.IsNetworkReady(this.NetworkType))
+                            {
+                                Utils.Alert_NoInternet();
+                                await App.Navigation.PopByRenderer(true);
+                                return;
+                            }
 
-                        cParams.Add(new Param
-                        {
-                            Name = "eb_loc_id",
-                            Type = "11",
-                            Value = App.Settings.CurrentLocation.LocId.ToString()
-                        });
+                            List<Param> cParams = new List<Param>();
 
-                        MobileDataResponse data = await DataService.Instance.GetDataAsync(this.Form.ContextOnlineData, 0, 0, cParams, null, null, false);
+                            cParams.Add(new Param
+                            {
+                                Name = "eb_loc_id",
+                                Type = "11",
+                                Value = App.Settings.CurrentLocation.LocId.ToString()
+                            });
 
-                        if (!data.HasData())
-                        {
-                            await App.Navigation.PopByRenderer(true);
-                            Utils.Toast("Failed to load page");
-                            return;
-                        }
+                            MobileDataResponse data = await DataService.Instance.GetDataAsync(this.Form.ContextOnlineData, 0, 0, cParams, null, null, false);
 
-                        if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
-                        {
-                            this.PrefillData = row;
-                            EbLog.Info("ContextOnlineData api returned valid data");
+                            if (!data.HasData())
+                            {
+                                await App.Navigation.PopByRenderer(true);
+                                Utils.Toast("Failed to load page");
+                                return;
+                            }
+
+                            if (data.HasData() && data.TryGetFirstRow(1, out EbDataRow row))
+                            {
+                                this.PrefillData = row;
+                                EbLog.Info("ContextOnlineData api returned valid data");
+                            }
+                            else
+                                EbLog.Info("ContextOnlineData api returned empty row collection");
                         }
                         else
-                            EbLog.Info("ContextOnlineData api returned empty row collection");
+                            tryOffline = true;
                     }
-                    else
-                        tryOffline = true;
-                }
-                if (this.Page.NetworkMode == NetworkMode.Offline || tryOffline)
-                {
-                    if (!string.IsNullOrWhiteSpace(this.Form.ContextOfflineData?.Code))
+                    if (this.Page.NetworkMode == NetworkMode.Offline || tryOffline)
                     {
-                        EbDataTable dt = App.DataDB.DoQuery(this.Form.ContextOfflineData.GetCode());
-                        if (dt.Rows.Count > 0)
+                        if (!string.IsNullOrWhiteSpace(this.Form.ContextOfflineData?.Code))
                         {
-                            this.PrefillData = dt.Rows[0];
-                            EbLog.Info("ContextOfflineData query returned valid data");
+                            EbDataTable dt = App.DataDB.DoQuery(this.Form.ContextOfflineData.GetCode());
+                            if (dt.Rows.Count > 0)
+                            {
+                                this.PrefillData = dt.Rows[0];
+                                EbLog.Info("ContextOfflineData query returned valid data");
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                EbLog.Error($"FormRenderViewModel.ExpandContextIfConfigured-- : {ex.Message} {ex.StackTrace}");
+                await Application.Current.MainPage.DisplayAlert("Failed to expand the context", ex.Message + ". Please report this issue to the software provider.", "OK");
+                await App.Navigation.PopByRenderer(true);
             }
         }
 

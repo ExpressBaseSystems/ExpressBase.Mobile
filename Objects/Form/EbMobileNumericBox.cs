@@ -174,8 +174,8 @@ namespace ExpressBase.Mobile
         private void IncrBtn_Clicked(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            int val = Convert.ToInt32(btn.BindingContext);
-            decimal value = val + Convert.ToDecimal(XValueBox.Text);
+            int val = int.TryParse(Convert.ToString(btn.BindingContext), out int _temp) ? _temp : 0;
+            decimal value = val + (decimal.TryParse(XValueBox.Text, out decimal _v) ? _v : 0);
             if (CanSetValue(value))
             {
                 SetValue(value);
@@ -190,11 +190,11 @@ namespace ExpressBase.Mobile
             {
                 if (RenderType == NumericBoxTypes.ButtonType)
                 {
-                    value = Convert.ToDecimal(XValueBox.Text);
+                    value = decimal.TryParse(XValueBox.Text, out decimal _v) ? _v : 0;
                 }
                 else
                 {
-                    value = Convert.ToDecimal((XControl as EbXNumericTextBox).Text);
+                    value = decimal.TryParse((XControl as EbXNumericTextBox).Text, out decimal _v) ? _v : 0;
                 }
             }
             catch (Exception ex)
@@ -268,7 +268,7 @@ namespace ExpressBase.Mobile
         {
             var value = this.GetValue();
 
-            if (this.Required && Convert.ToDecimal(value) <= 0)
+            if (this.Required && (decimal.TryParse(Convert.ToString(value), out decimal _v) ? _v : 0) <= 0)
                 return false;
 
             return true;
