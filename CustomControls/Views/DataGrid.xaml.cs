@@ -309,16 +309,20 @@ namespace ExpressBase.Mobile.CustomControls.Views
             {
                 try
                 {
+                    Utils.Toast("Loading data grid...");
+
                     MobileDataResponse data = await DataService.Instance.GetDataAsync(dataGrid.DataSourceRefId, 0, 0, dataGrid.Context?.ConvertToParams(), null, null, false, true);
 
                     if (data != null && data.Data != null && data.Data.Tables.HasLength(2))
                     {
                         SetValue(data.Data.Tables[1]);
+                        EbFormHelper.ExecDGOuterDependency(this.dataGrid.Name);
                     }
                 }
                 catch (Exception ex)
                 {
                     EbLog.Error("DataGrid autofill api error : " + ex.Message);
+                    await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load data with message: {ex.Message}. Please try again or contact support.", "OK");
                 }
             }
             else if ((dataGrid.NetworkType == NetworkMode.Offline || dataGrid.NetworkType == NetworkMode.Online) && !string.IsNullOrWhiteSpace(dataGrid.OfflineQuery?.Code))
@@ -332,11 +336,14 @@ namespace ExpressBase.Mobile.CustomControls.Views
                         dbParameters.Add(new DbParameter { ParameterName = _p.Name, Value = _p.Value, DbType = Convert.ToInt32(_p.Type) });
                     EbDataTable dt = App.DataDB.DoQuery(sql, dbParameters.ToArray());
                     if (dt.Rows.Count > 0)
+                    {
                         SetValue(dt);
+                    }
                 }
                 catch (Exception ex)
                 {
                     EbLog.Error("DataGrid autofill offline query error : " + ex.Message);
+                    await Application.Current.MainPage.DisplayAlert("Error", $"Failed to load data with message: {ex.Message}. Please try again or contact support.", "OK");
                 }
             }
         }

@@ -277,7 +277,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
 
                 if (LinkObjType == 3)
                 {
-                    await RenderReport(item.DataRow, this.Visualization.ContextToControlMap, this.Visualization.RefId);
+                    await RenderReport(item.DataRow, this.Visualization.ContextToControlMap, this.Visualization.LinkRefId);
                 }
                 else if (LinkObjType == 31)
                 {

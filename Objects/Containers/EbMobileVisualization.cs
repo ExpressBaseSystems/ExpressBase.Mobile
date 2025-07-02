@@ -101,7 +101,7 @@ namespace ExpressBase.Mobile
 
         public bool HasLink()
         {
-            return !string.IsNullOrEmpty(LinkRefId) || (LinkCollection.Count > 0 && !string.IsNullOrEmpty(LinkCollection[0].LinkRefId));
+            return !string.IsNullOrEmpty(LinkRefId) || (LinkCollection?.Count > 0 && !string.IsNullOrEmpty(LinkCollection[0].LinkRefId));
         }
 
         public bool HasSourceFormLink()

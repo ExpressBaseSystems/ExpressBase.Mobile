@@ -363,7 +363,7 @@ namespace ExpressBase.Mobile.ViewModels.Dynamic
             catch (Exception ex)
             {
                 EbLog.Error($"FormRenderViewModel.ExpandContextIfConfigured-- : {ex.Message} {ex.StackTrace}");
-                await Application.Current.MainPage.DisplayAlert("Failed to expand the context", ex.Message + ". Please report this issue to the software provider.", "OK");
+                await Application.Current.MainPage.DisplayAlert("Failed to expand the context", ex.Message + ". Please try again or contact support.", "OK");
                 await App.Navigation.PopByRenderer(true);
             }
         }

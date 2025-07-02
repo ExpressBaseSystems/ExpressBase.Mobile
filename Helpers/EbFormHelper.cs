@@ -202,7 +202,7 @@ namespace ExpressBase.Mobile.Helpers
 
         public static void ExecDGOuterDependency(string dgname)
         {
-            if (Instance.dependencyMap.DGDependencyMapColl.TryGetValue(dgname, out ExprDependency exprDep))
+            if (Instance != null && Instance.dependencyMap.DGDependencyMapColl.TryGetValue(dgname, out ExprDependency exprDep))
             {
                 if (exprDep.HasValueDependency)
                 {
