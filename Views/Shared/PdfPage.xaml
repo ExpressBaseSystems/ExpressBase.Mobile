@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:ExpressBase.Mobile.CustomControls"
+             mc:Ignorable="d"
+             x:Class="ExpressBase.Mobile.Views.Shared.PdfPage"
+             Style="{StaticResource ContentPageStyle}">
+
+    <ContentPage.Content>
+
+        <controls:EbCPLayout x:Name="EbLayout"
+                             Title="PDF Viewer"
+                             BackButtonPressed="OnBackButtonPressed">
+
+            <controls:EbCPLayout.Content>
+
+                <WebView x:Name="PdfWebView" />
+
+            </controls:EbCPLayout.Content>
+        </controls:EbCPLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -7,6 +7,7 @@ using ExpressBase.Mobile.Models;
 using ExpressBase.Mobile.Services;
 using ExpressBase.Mobile.Services.LocalDB;
 using ExpressBase.Mobile.Structures;
+using ExpressBase.Mobile.Views.Shared;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,8 @@ namespace ExpressBase.Mobile
         public string PrintButtonText { set; get; }
 
         public bool RenderAsFilterDialog { set; get; }
+
+        public bool UsePdfViewer { set; get; }
 
         public bool AutoSyncOnLoad { set; get; }
 
@@ -304,15 +307,31 @@ namespace ExpressBase.Mobile
                         string path = helper.NativeRoot + $"/{AppConst.SHARED_MEDIA}/{App.Settings.Sid.ToUpper()}/PDF{(DateTime.UtcNow.ToString("yyyyMMddHHmmss"))}.pdf";
                         File.WriteAllBytes(path, r.ReportBytea);
 
-                        IAppHandler handler = DependencyService.Get<IAppHandler>();
-                        string res = await handler.PrintPdfFile(path);
-                        if (res != "success")
+                        if (File.Exists(path))
                         {
-                            await Launcher.OpenAsync(new OpenFileRequest
+                            if (this.UsePdfViewer)
                             {
-                                File = new ReadOnlyFile(path)
-                            });
+                                string printName = selectedPrint is ObjectBasicReport b ? b.Title : selectedPrint.ObjDisplayName;
+                                await App.Navigation.NavigateMasterAsync(new PdfPage(Convert.ToBase64String(r.ReportBytea), printName));
+                            }
+                            else
+                            {
+                                IAppHandler handler = DependencyService.Get<IAppHandler>();
+                                string res = await handler.PrintPdfFile(path);
+                                if (res != "success")
+                                {
+                                    await Launcher.OpenAsync(new OpenFileRequest
+                                    {
+                                        File = new ReadOnlyFile(path)
+                                    });
+                                }
+                            }
                         }
+                        else
+                        {
+                            await Application.Current.MainPage.DisplayAlert("Error", "PDF file not found", "OK");
+                        }
+
                         success = true;
                     }
                 }
